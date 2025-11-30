@@ -5,995 +5,245 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FS Creative Studio</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #0f172a;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #0f172a; }
 
-        /* Language Popup */
-        .popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(15, 23, 42, 0.95);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-        }
-        
-        .popup-overlay.hidden {
-            display: none;
-        }
-        
-        .popup-box {
-            background: white;
-            padding: 3rem;
-            border-radius: 16px;
-            text-align: center;
-            max-width: 500px;
-        }
-        
-        .popup-box h2 {
-            margin-bottom: 1rem;
-            font-size: 2rem;
-        }
-        
-        .popup-box p {
-            color: #64748b;
-            margin-bottom: 2rem;
-        }
-        
-        .popup-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-        }
-        
-        .popup-buttons button {
-            padding: 1rem 2rem;
-            border: 2px solid #e2e8f0;
-            background: white;
-            border-radius: 10px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .popup-buttons button:hover {
-            background: #06b6d4;
-            color: white;
-            border-color: #06b6d4;
-            transform: translateY(-3px);
-        }
+        /* Language Popup - VISIBLE BY DEFAULT */
+        .lang-popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); display: flex; align-items: center; justify-content: center; z-index: 10000; }
+        .lang-popup.hidden { display: none !important; }
+        .lang-modal { background: white; padding: 3rem; border-radius: 16px; text-align: center; max-width: 500px; }
+        .lang-modal h2 { margin-bottom: 1rem; font-size: 2rem; }
+        .lang-modal p { color: #64748b; margin-bottom: 2rem; }
+        .lang-buttons { display: flex; gap: 1rem; justify-content: center; }
+        .lang-buttons button { padding: 1rem 2rem; border: 2px solid #e2e8f0; background: white; border-radius: 10px; font-size: 1.2rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .lang-buttons button:hover { background: #06b6d4; color: white; border-color: #06b6d4; transform: translateY(-3px); }
 
         /* Floating Buttons */
-        .float-buttons {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            z-index: 999;
-        }
-        
-        .btn-circle {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s;
-            cursor: pointer;
-            border: none;
-            overflow: hidden;
-        }
-        
-        .btn-circle:hover {
-            transform: translateY(-3px) scale(1.1);
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
-        }
-        
-        .btn-wa {
-            background: #25D366;
-        }
-        
-        .btn-fb {
-            background: #1877F2;
-        }
-        
-        .btn-lang {
-            background: #0f172a;
-            border: 2px solid #06b6d4;
-            color: white;
-            font-weight: 700;
-            font-size: 1.2rem;
-        }
-        
-        .btn-lang:hover {
-            background: #06b6d4;
-        }
-        
-        .btn-circle img {
-            width: 35px;
-            height: 35px;
-            object-fit: contain;
-        }
+        .float-btns { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 15px; z-index: 999; }
+        .btn-circle { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); transition: all 0.3s; cursor: pointer; border: none; overflow: hidden; text-decoration: none; }
+        .btn-circle:hover { transform: translateY(-3px) scale(1.1); box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4); }
+        .btn-wa { background: #25D366; }
+        .btn-fb { background: #1877F2; }
+        .btn-lang { background: #0f172a; border: 2px solid #06b6d4; color: white; font-weight: 700; font-size: 1.2rem; }
+        .btn-lang:hover { background: #06b6d4; }
+        .btn-circle img { width: 35px; height: 35px; object-fit: contain; }
 
         /* Nav */
-        nav {
-            background: #0f172a;
-            padding: 1rem 0;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 1px solid rgba(6, 182, 212, 0.1);
-        }
-        
-        nav .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: white;
-        }
-        
-        .logo span {
-            color: #06b6d4;
-        }
-        
-        nav ul {
-            list-style: none;
-            display: flex;
-            gap: 2rem;
-        }
-        
-        nav a {
-            color: white;
-            text-decoration: none;
-            transition: color 0.3s;
-            font-weight: 500;
-        }
-        
-        nav a:hover {
-            color: #06b6d4;
-        }
+        nav { background: #0f172a; padding: 1rem 0; position: fixed; width: 100%; top: 0; z-index: 1000; border-bottom: 1px solid rgba(6, 182, 212, 0.1); }
+        nav .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.8rem; font-weight: bold; color: white; }
+        .logo span { color: #06b6d4; }
+        nav ul { list-style: none; display: flex; gap: 2rem; }
+        nav a { color: white; text-decoration: none; transition: color 0.3s; font-weight: 500; }
+        nav a:hover { color: #06b6d4; }
 
         /* Hero */
-        .hero {
-            background: linear-gradient(135deg, #0f172a, #1e293b);
-            color: white;
-            padding: 150px 20px 100px;
-            text-align: center;
-            margin-top: 60px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero-slider {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-        }
-        
-        .hero-slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
-        }
-        
-        .hero-slide.active {
-            opacity: 0.3;
-        }
-        
-        .hero-slide img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .hero-content {
-            position: relative;
-            z-index: 1;
-        }
-        
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            font-weight: 700;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
-        
-        .hero p {
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-        }
-        
-        .cta-btn {
-            background: #06b6d4;
-            color: white;
-            padding: 15px 40px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        
-        .cta-btn:hover {
-            background: #3b82f6;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(6, 182, 212, 0.4);
-        }
+        .hero { background: linear-gradient(135deg, #0f172a, #1e293b); color: white; padding: 150px 20px 100px; text-align: center; margin-top: 60px; position: relative; overflow: hidden; }
+        .hero-slider { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+        .hero-slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 1s; }
+        .hero-slide.active { opacity: 0.3; }
+        .hero-slide img { width: 100%; height: 100%; object-fit: cover; }
+        .hero-content { position: relative; z-index: 1; }
+        .hero h1 { font-size: 3rem; margin-bottom: 1rem; font-weight: 700; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        .hero p { font-size: 1.3rem; margin-bottom: 2rem; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
+        .cta { background: #06b6d4; color: white; padding: 15px 40px; border: none; border-radius: 8px; font-size: 1.1rem; cursor: pointer; text-decoration: none; display: inline-block; font-weight: 600; transition: all 0.3s; }
+        .cta:hover { background: #3b82f6; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(6, 182, 212, 0.4); }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        section {
-            padding: 80px 20px;
-        }
-        
-        h2 {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            font-weight: 700;
-        }
-        
-        .subtitle {
-            text-align: center;
-            color: #64748b;
-            font-size: 1.2rem;
-            margin-bottom: 3rem;
-        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        section { padding: 80px 20px; }
+        h2 { text-align: center; font-size: 2.5rem; margin-bottom: 1rem; font-weight: 700; }
+        .subtitle { text-align: center; color: #64748b; font-size: 1.2rem; margin-bottom: 3rem; }
 
         /* Services */
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-        
-        .service-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            border-top: 3px solid #06b6d4;
-            transition: all 0.3s;
-        }
-        
-        .service-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(6, 182, 212, 0.15);
-        }
-        
-        .service-card h3 {
-            font-size: 1.5rem;
-            margin: 1rem 0;
-            font-weight: 600;
-        }
-        
-        .service-card p {
-            color: #64748b;
-            margin-bottom: 1.5rem;
-        }
-        
-        .service-card ul {
-            list-style: none;
-        }
-        
-        .service-card li {
-            padding: 0.5rem 0 0.5rem 1.5rem;
-            position: relative;
-            color: #64748b;
-        }
-        
-        .service-card li:before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: #06b6d4;
-            font-weight: bold;
-        }
+        .services { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 3rem; }
+        .service { background: white; padding: 2rem; border-radius: 12px; border: 1px solid #e2e8f0; border-top: 3px solid #06b6d4; transition: all 0.3s; }
+        .service:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(6, 182, 212, 0.15); }
+        .service h3 { font-size: 1.5rem; margin: 1rem 0; font-weight: 600; }
+        .service p { color: #64748b; margin-bottom: 1.5rem; }
+        .service ul { list-style: none; }
+        .service li { padding: 0.5rem 0 0.5rem 1.5rem; position: relative; color: #64748b; }
+        .service li:before { content: "✓"; position: absolute; left: 0; color: #06b6d4; font-weight: bold; }
 
         /* About */
-        .about-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            align-items: center;
-        }
-        
-        .about-text h3 {
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-        
-        .stats-box {
-            background: #f8fafc;
-            padding: 2rem;
-            border-radius: 12px;
-            border-left: 4px solid #06b6d4;
-        }
-        
-        .stat-item {
-            margin: 1.5rem 0;
-        }
-        
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #06b6d4, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .stat-label {
-            color: #64748b;
-            font-size: 1.1rem;
-        }
+        .about-content { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+        .about-text h3 { font-size: 1.8rem; margin-bottom: 1rem; font-weight: 600; }
+        .stats { background: #f8fafc; padding: 2rem; border-radius: 12px; border-left: 4px solid #06b6d4; }
+        .stat { margin: 1.5rem 0; }
+        .stat-num { font-size: 2.5rem; font-weight: 700; background: linear-gradient(135deg, #06b6d4, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-label { color: #64748b; font-size: 1.1rem; }
 
-        /* Contact Form */
-        .contact-form {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            padding: 3rem;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-        }
-        
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-        
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 1rem;
-            background: #f8fafc;
-            transition: all 0.3s;
-        }
-        
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #06b6d4;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
-        }
-        
-        .form-group textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
+        /* Form */
+        .form { max-width: 600px; margin: 0 auto; background: white; padding: 3rem; border-radius: 12px; border: 1px solid #e2e8f0; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1rem; background: #f8fafc; transition: all 0.3s; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #06b6d4; background: white; box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1); }
+        .form-group textarea { resize: vertical; min-height: 120px; }
 
         /* Footer */
-        footer {
-            background: #0f172a;
-            color: white;
-            padding: 3rem 20px 1rem;
-        }
-        
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-        
-        .footer-section h3 {
-            color: #06b6d4;
-            margin-bottom: 1rem;
-        }
-        
-        .footer-section p,
-        .footer-section li {
-            color: #cbd5e1;
-        }
-        
-        .social-links {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .social-links a {
-            width: 40px;
-            height: 40px;
-            background: #1e293b;
-            color: white;
-            text-align: center;
-            line-height: 40px;
-            border-radius: 8px;
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-        
-        .social-links a:hover {
-            background: #06b6d4;
-            transform: translateY(-3px);
-        }
-        
-        .footer-bottom {
-            text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(100, 116, 139, 0.2);
-            color: #cbd5e1;
-        }
+        footer { background: #0f172a; color: white; padding: 3rem 20px 1rem; }
+        .footer-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem; }
+        .footer-section h3 { color: #06b6d4; margin-bottom: 1rem; }
+        .footer-section p, .footer-section li { color: #cbd5e1; }
+        .social { display: flex; gap: 1rem; margin-top: 1rem; }
+        .social a { width: 40px; height: 40px; background: #1e293b; color: white; text-align: center; line-height: 40px; border-radius: 8px; text-decoration: none; transition: all 0.3s; }
+        .social a:hover { background: #06b6d4; transform: translateY(-3px); }
+        .footer-bottom { text-align: center; padding-top: 2rem; border-top: 1px solid rgba(100, 116, 139, 0.2); color: #cbd5e1; }
 
-        #about {
-            background: #f8fafc;
-        }
-        
-        #contact {
-            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-        }
+        #about { background: #f8fafc; }
+        #contact { background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%); }
 
-        @media (max-width: 768px) {
-            nav ul {
-                display: none;
-            }
-            .hero h1 {
-                font-size: 2rem;
-            }
-            .about-content {
-                grid-template-columns: 1fr;
-            }
-            .popup-buttons {
-                flex-direction: column;
-            }
-            .float-buttons {
-                bottom: 20px;
-                right: 20px;
-            }
-        }
+        @media (max-width: 768px) { nav ul { display: none; } .hero h1 { font-size: 2rem; } .about-content { grid-template-columns: 1fr; } .lang-buttons { flex-direction: column; } .float-btns { bottom: 20px; right: 20px; } }
     </style>
 </head>
 <body>
-    <!-- Language Selection Popup -->
-    <div class="popup-overlay" id="languagePopup">
-        <div class="popup-box">
+    <!-- Language Popup -->
+    <div class="lang-popup" id="popup">
+        <div class="lang-modal">
             <h2>Select Your Language / Selecciona tu Idioma</h2>
             <p>Choose your preferred language</p>
-            <div class="popup-buttons">
-                <button onclick="selectLanguage('en')">🇺🇸 English</button>
-                <button onclick="selectLanguage('es')">🇪🇸 Español</button>
+            <div class="lang-buttons">
+                <button onclick="pickLang('en')">🇺🇸 English</button>
+                <button onclick="pickLang('es')">🇪🇸 Español</button>
             </div>
         </div>
     </div>
 
-    <!-- Floating Action Buttons -->
-    <div class="float-buttons">
-        <a href="https://wa.me/15713156093" class="btn-circle btn-wa" id="whatsappBtn" title="WhatsApp" target="_blank">
-            <img src="wpp.png" alt="WhatsApp">
-        </a>
-        <a href="https://facebook.com" class="btn-circle btn-fb" title="Facebook" target="_blank">
-            <img src="fb.png" alt="Facebook">
-        </a>
-        <button class="btn-circle btn-lang" id="langBtn" onclick="toggleLanguage()" title="Change Language">ES</button>
+    <!-- Floating Buttons -->
+    <div class="float-btns">
+        <a href="https://wa.me/15713156093" class="btn-circle btn-wa" id="wa" title="WhatsApp" target="_blank"><img src="wpp.png" alt="WhatsApp"></a>
+        <a href="https://www.facebook.com/FSstudio" class="btn-circle btn-fb" title="Facebook" target="_blank"><img src="fb.png" alt="Facebook"></a>
+        <button class="btn-circle btn-lang" onclick="toggleLang()" id="langBtn" title="Change Language">ES</button>
     </div>
 
-    <!-- Navigation -->
     <nav>
         <div class="container">
-            <div class="logo">FS <span id="nav-brand">Creative Studio</span></div>
+            <div class="logo">FS <span id="t1">Creative Studio</span></div>
             <ul>
-                <li><a href="#home" id="nav-home">Home</a></li>
-                <li><a href="#services" id="nav-services">Services</a></li>
-                <li><a href="#about" id="nav-about">About Us</a></li>
-                <li><a href="#contact" id="nav-contact">Contact</a></li>
+                <li><a href="#home" id="t2">Home</a></li>
+                <li><a href="#services" id="t3">Services</a></li>
+                <li><a href="#about" id="t4">About Us</a></li>
+                <li><a href="#contact" id="t5">Contact</a></li>
             </ul>
         </div>
     </nav>
 
-    <!-- Hero Section -->
     <section id="home" class="hero">
         <div class="hero-slider">
-            <div class="hero-slide active">
-                <img src="img1.jpg" alt="Slide 1">
-            </div>
-            <div class="hero-slide">
-                <img src="img2.jpg" alt="Slide 2">
-            </div>
-            <div class="hero-slide">
-                <img src="img3.jpg" alt="Slide 3">
-            </div>
+            <div class="hero-slide active"><img src="img1.jpg" alt="1"></div>
+            <div class="hero-slide"><img src="img2.jpg" alt="2"></div>
+            <div class="hero-slide"><img src="img3.jpg" alt="3"></div>
         </div>
         <div class="container hero-content">
-            <h1 id="hero-title">Boost Your Digital Presence</h1>
-            <p id="hero-subtitle">Web Development • Digital Marketing • Remote Technical Support</p>
-            <a href="#contact" class="cta-btn" id="hero-cta">Request a Quote</a>
+            <h1 id="t6">Boost Your Digital Presence</h1>
+            <p id="t7">Web Development • Digital Marketing • Remote Technical Support</p>
+            <a href="#contact" class="cta" id="t8">Request a Quote</a>
         </div>
     </section>
 
-    <!-- Services Section -->
     <section id="services">
         <div class="container">
-            <h2 id="services-title">Our Services</h2>
-            <p class="subtitle" id="services-subtitle">Comprehensive digital solutions to grow your business</p>
-            
-            <div class="services-grid">
-                <!-- Service 1: Web Development -->
-                <div class="service-card">
+            <h2 id="t9">Our Services</h2>
+            <p class="subtitle" id="t10">Comprehensive digital solutions to grow your business</p>
+            <div class="services">
+                <div class="service">
                     <div style="font-size: 3rem; margin-bottom: 1rem;">🌐</div>
-                    <h3 id="service1-title">Web Development</h3>
-                    <p id="service1-desc">We create professional websites that convert visitors into customers.</p>
-                    <ul>
-                        <li id="service1-item1">Corporate websites</li>
-                        <li id="service1-item2">Online stores (E-commerce)</li>
-                        <li id="service1-item3">Optimized landing pages</li>
-                        <li id="service1-item4">Responsive design</li>
-                        <li id="service1-item5">SEO optimization</li>
-                        <li id="service1-item6">Web maintenance</li>
-                    </ul>
+                    <h3 id="t11">Web Development</h3>
+                    <p id="t12">We create professional websites that convert visitors into customers.</p>
+                    <ul><li id="t13">Corporate websites</li><li id="t14">Online stores (E-commerce)</li><li id="t15">Optimized landing pages</li><li id="t16">Responsive design</li><li id="t17">SEO optimization</li><li id="t18">Web maintenance</li></ul>
                 </div>
-
-                <!-- Service 2: Digital Marketing -->
-                <div class="service-card">
+                <div class="service">
                     <div style="font-size: 3rem; margin-bottom: 1rem;">📱</div>
-                    <h3 id="service2-title">Digital Marketing</h3>
-                    <p id="service2-desc">Effective strategies to increase your online visibility and sales.</p>
-                    <ul>
-                        <li id="service2-item1">Social media management</li>
-                        <li id="service2-item2">Advertising campaigns (Ads)</li>
-                        <li id="service2-item3">Content creation</li>
-                        <li id="service2-item4">Email marketing</li>
-                        <li id="service2-item5">Metrics analysis</li>
-                        <li id="service2-item6">Personalized digital strategy</li>
-                    </ul>
+                    <h3 id="t19">Digital Marketing</h3>
+                    <p id="t20">Effective strategies to increase your online visibility and sales.</p>
+                    <ul><li id="t21">Social media management</li><li id="t22">Advertising campaigns (Ads)</li><li id="t23">Content creation</li><li id="t24">Email marketing</li><li id="t25">Metrics analysis</li><li id="t26">Personalized digital strategy</li></ul>
                 </div>
-
-                <!-- Service 3: Advertising Design -->
-                <div class="service-card">
+                <div class="service">
                     <div style="font-size: 3rem; margin-bottom: 1rem;">🎨</div>
-                    <h3 id="service3-title">Advertising Design</h3>
-                    <p id="service3-desc">Images and ads that capture your audience's attention.</p>
-                    <ul>
-                        <li id="service3-item1">Digital ad design</li>
-                        <li id="service3-item2">Banners and flyers</li>
-                        <li id="service3-item3">Social media posts</li>
-                        <li id="service3-item4">Brand identity</li>
-                        <li id="service3-item5">Infographics</li>
-                        <li id="service3-item6">Promotional material</li>
-                    </ul>
+                    <h3 id="t27">Advertising Design</h3>
+                    <p id="t28">Images and ads that capture your audience's attention.</p>
+                    <ul><li id="t29">Digital ad design</li><li id="t30">Banners and flyers</li><li id="t31">Social media posts</li><li id="t32">Brand identity</li><li id="t33">Infographics</li><li id="t34">Promotional material</li></ul>
                 </div>
-
-                <!-- Service 4: Technical Support -->
-                <div class="service-card">
+                <div class="service">
                     <div style="font-size: 3rem; margin-bottom: 1rem;">💻</div>
-                    <h3 id="service4-title">Remote Technical Support</h3>
-                    <p id="service4-desc">Professional technical assistance without leaving your office or home.</p>
-                    <ul>
-                        <li id="service4-item1">Support for PCs and laptops</li>
-                        <li id="service4-item2">Software installation</li>
-                        <li id="service4-item3">System optimization</li>
-                        <li id="service4-item4">Problem solving</li>
-                        <li id="service4-item5">Program configuration</li>
-                        <li id="service4-item6">Immediate remote assistance</li>
-                    </ul>
+                    <h3 id="t35">Remote Technical Support</h3>
+                    <p id="t36">Professional technical assistance without leaving your office or home.</p>
+                    <ul><li id="t37">Support for PCs and laptops</li><li id="t38">Software installation</li><li id="t39">System optimization</li><li id="t40">Problem solving</li><li id="t41">Program configuration</li><li id="t42">Immediate remote assistance</li></ul>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- About Section -->
     <section id="about">
         <div class="container">
-            <h2 id="about-title">About Us</h2>
-            <p class="subtitle" id="about-subtitle">A team of professionals committed to your digital success</p>
-            
+            <h2 id="t43">About Us</h2>
+            <p class="subtitle" id="t44">A team of professionals committed to your digital success</p>
             <div class="about-content">
                 <div class="about-text">
-                    <h3 id="about-who">Who Are We?</h3>
-                    <p id="about-text1">We are <strong>FS Creative Studio</strong>, a team of 5 professionals passionate about technology and digital marketing. We combine engineering experience and technical knowledge to offer comprehensive solutions to businesses and entrepreneurs.</p>
-                    <br>
-                    <p id="about-text2">Our goal is to help you establish and strengthen your digital presence, optimize your technological processes, and grow your business with effective and personalized strategies.</p>
-                    <br>
-                    <p id="about-text3">We work 100% remotely, which allows us to offer you flexibility, speed, and competitive costs without compromising the quality of our service.</p>
+                    <h3 id="t45">Who Are We?</h3>
+                    <p id="t46">We are <strong>FS Creative Studio</strong>, a team of 5 professionals passionate about technology and digital marketing. We combine engineering experience and technical knowledge to offer comprehensive solutions to businesses and entrepreneurs.</p>
+                    <br><p id="t47">Our goal is to help you establish and strengthen your digital presence, optimize your technological processes, and grow your business with effective and personalized strategies.</p>
+                    <br><p id="t48">We work 100% remotely, which allows us to offer you flexibility, speed, and competitive costs without compromising the quality of our service.</p>
                 </div>
-                
-                <div class="stats-box">
-                    <div class="stat-item">
-                        <div class="stat-number">5</div>
-                        <div class="stat-label" id="stat1">Specialized Professionals</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">100%</div>
-                        <div class="stat-label" id="stat2">Remote Work</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">24/7</div>
-                        <div class="stat-label" id="stat3">Support Available</div>
-                    </div>
+                <div class="stats">
+                    <div class="stat"><div class="stat-num">5</div><div class="stat-label" id="t49">Specialized Professionals</div></div>
+                    <div class="stat"><div class="stat-num">100%</div><div class="stat-label" id="t50">Remote Work</div></div>
+                    <div class="stat"><div class="stat-num">24/7</div><div class="stat-label" id="t51">Support Available</div></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Contact Section -->
     <section id="contact">
         <div class="container">
-            <h2 id="contact-title">Contact Us</h2>
-            <p class="subtitle" id="contact-subtitle">Tell us about your project and we'll respond soon</p>
-            
-            <form class="contact-form" id="contactForm">
-                <div class="form-group">
-                    <label id="form-name">Full Name *</label>
-                    <input type="text" required>
-                </div>
-                
-                <div class="form-group">
-                    <label id="form-email">Email *</label>
-                    <input type="email" required>
-                </div>
-                
-                <div class="form-group">
-                    <label id="form-phone">Phone</label>
-                    <input type="tel">
-                </div>
-                
-                <div class="form-group">
-                    <label id="form-service">Service of Interest *</label>
-                    <select required>
-                        <option value="" id="form-select">Select a service</option>
-                        <option id="form-option1">Web Development</option>
-                        <option id="form-option2">Digital Marketing</option>
-                        <option id="form-option3">Advertising Design</option>
-                        <option id="form-option4">Technical Support</option>
-                        <option id="form-option5">Multiple Services</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label id="form-message">Tell us about your project *</label>
-                    <textarea required></textarea>
-                </div>
-                
-                <button type="submit" class="cta-btn" style="width: 100%;" id="form-submit">Send Message</button>
+            <h2 id="t52">Contact Us</h2>
+            <p class="subtitle" id="t53">Tell us about your project and we'll respond soon</p>
+            <form class="form" action="https://formsubmit.co/luisfifer705@gmail.com" method="POST">
+                <input type="hidden" name="_subject" value="New message from FS Creative Studio">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_template" value="box">
+                <div class="form-group"><label id="t54">Full Name *</label><input type="text" name="name" required></div>
+                <div class="form-group"><label id="t55">Email *</label><input type="email" name="email" required></div>
+                <div class="form-group"><label id="t56">Phone</label><input type="tel" name="phone"></div>
+                <div class="form-group"><label id="t57">Service of Interest *</label><select name="service" required><option value="" id="t58">Select a service</option><option id="t59">Web Development</option><option id="t60">Digital Marketing</option><option id="t61">Advertising Design</option><option id="t62">Technical Support</option><option id="t63">Multiple Services</option></select></div>
+                <div class="form-group"><label id="t64">Tell us about your project *</label><textarea name="message" required></textarea></div>
+                <button type="submit" class="cta" style="width: 100%;" id="t65">Send Message</button>
             </form>
         </div>
     </section>
 
-    <!-- Footer -->
     <footer>
         <div class="footer-content">
             <div class="footer-section">
-                <h3>FS <span id="footer-brand">Creative Studio</span></h3>
-                <p id="footer-tagline">Your digital ally for web development, marketing and technical support.</p>
-                <div class="social-links">
-                    <a href="#" title="Facebook">f</a>
-                    <a href="#" title="Instagram">📷</a>
-                    <a href="#" title="LinkedIn">in</a>
-                    <a href="#" title="WhatsApp">📱</a>
-                </div>
+                <h3>FS <span id="t66">Creative Studio</span></h3>
+                <p id="t67">Your digital ally for web development, marketing and technical support.</p>
+                <div class="social"><a href="#">f</a><a href="#">📷</a><a href="#">in</a><a href="#">📱</a></div>
             </div>
-            
             <div class="footer-section">
-                <h3 id="footer-services">Services</h3>
-                <ul style="list-style: none;">
-                    <li id="footer-service1">Web Development</li>
-                    <li id="footer-service2">Digital Marketing</li>
-                    <li id="footer-service3">Advertising Design</li>
-                    <li id="footer-service4">Technical Support</li>
-                </ul>
+                <h3 id="t68">Services</h3>
+                <ul style="list-style: none;"><li id="t69">Web Development</li><li id="t70">Digital Marketing</li><li id="t71">Advertising Design</li><li id="t72">Technical Support</li></ul>
             </div>
-            
             <div class="footer-section">
-                <h3 id="footer-contact">Contact</h3>
+                <h3 id="t73">Contact</h3>
                 <p>📧 info@fscreativestudio.com</p>
                 <p>📱 WhatsApp: +1 (571) 315-6093</p>
-                <p id="footer-hours">🕐 Mon - Fri: 9:00 AM - 6:00 PM</p>
+                <p id="t74">🕐 Mon - Fri: 9:00 AM - 6:00 PM</p>
             </div>
         </div>
-        
         <div class="footer-bottom">
-            <p>&copy; 2024 FS <span id="footer-rights-name">Creative Studio</span>. <span id="footer-rights">All rights reserved</span>.</p>
+            <p>&copy; 2024 FS <span id="t75">Creative Studio</span>. <span id="t76">All rights reserved</span>.</p>
         </div>
     </footer>
 
     <script>
-        // Translation data
-        const translations = {
-            en: {
-                'nav-brand': 'Creative Studio',
-                'nav-home': 'Home',
-                'nav-services': 'Services',
-                'nav-about': 'About Us',
-                'nav-contact': 'Contact',
-                'hero-title': 'Boost Your Digital Presence',
-                'hero-subtitle': 'Web Development • Digital Marketing • Remote Technical Support',
-                'hero-cta': 'Request a Quote',
-                'services-title': 'Our Services',
-                'services-subtitle': 'Comprehensive digital solutions to grow your business',
-                'service1-title': 'Web Development',
-                'service1-desc': 'We create professional websites that convert visitors into customers.',
-                'service1-item1': 'Corporate websites',
-                'service1-item2': 'Online stores (E-commerce)',
-                'service1-item3': 'Optimized landing pages',
-                'service1-item4': 'Responsive design',
-                'service1-item5': 'SEO optimization',
-                'service1-item6': 'Web maintenance',
-                'service2-title': 'Digital Marketing',
-                'service2-desc': 'Effective strategies to increase your online visibility and sales.',
-                'service2-item1': 'Social media management',
-                'service2-item2': 'Advertising campaigns (Ads)',
-                'service2-item3': 'Content creation',
-                'service2-item4': 'Email marketing',
-                'service2-item5': 'Metrics analysis',
-                'service2-item6': 'Personalized digital strategy',
-                'service3-title': 'Advertising Design',
-                'service3-desc': 'Images and ads that capture your audience\'s attention.',
-                'service3-item1': 'Digital ad design',
-                'service3-item2': 'Banners and flyers',
-                'service3-item3': 'Social media posts',
-                'service3-item4': 'Brand identity',
-                'service3-item5': 'Infographics',
-                'service3-item6': 'Promotional material',
-                'service4-title': 'Remote Technical Support',
-                'service4-desc': 'Professional technical assistance without leaving your office or home.',
-                'service4-item1': 'Support for PCs and laptops',
-                'service4-item2': 'Software installation',
-                'service4-item3': 'System optimization',
-                'service4-item4': 'Problem solving',
-                'service4-item5': 'Program configuration',
-                'service4-item6': 'Immediate remote assistance',
-                'about-title': 'About Us',
-                'about-subtitle': 'A team of professionals committed to your digital success',
-                'about-who': 'Who Are We?',
-                'about-text1': 'We are <strong>FS Creative Studio</strong>, a team of 5 professionals passionate about technology and digital marketing. We combine engineering experience and technical knowledge to offer comprehensive solutions to businesses and entrepreneurs.',
-                'about-text2': 'Our goal is to help you establish and strengthen your digital presence, optimize your technological processes, and grow your business with effective and personalized strategies.',
-                'about-text3': 'We work 100% remotely, which allows us to offer you flexibility, speed, and competitive costs without compromising the quality of our service.',
-                'stat1': 'Specialized Professionals',
-                'stat2': 'Remote Work',
-                'stat3': 'Support Available',
-                'contact-title': 'Contact Us',
-                'contact-subtitle': 'Tell us about your project and we\'ll respond soon',
-                'form-name': 'Full Name *',
-                'form-email': 'Email *',
-                'form-phone': 'Phone',
-                'form-service': 'Service of Interest *',
-                'form-select': 'Select a service',
-                'form-option1': 'Web Development',
-                'form-option2': 'Digital Marketing',
-                'form-option3': 'Advertising Design',
-                'form-option4': 'Technical Support',
-                'form-option5': 'Multiple Services',
-                'form-message': 'Tell us about your project *',
-                'form-submit': 'Send Message',
-                'footer-brand': 'Creative Studio',
-                'footer-tagline': 'Your digital ally for web development, marketing and technical support.',
-                'footer-services': 'Services',
-                'footer-service1': 'Web Development',
-                'footer-service2': 'Digital Marketing',
-                'footer-service3': 'Advertising Design',
-                'footer-service4': 'Technical Support',
-                'footer-contact': 'Contact',
-                'footer-hours': '🕐 Mon - Fri: 9:00 AM - 6:00 PM',
-                'footer-rights-name': 'Creative Studio',
-                'footer-rights': 'All rights reserved',
-                'wa-message': 'Hello! I would like to request a quote for your services.',
-                'alert-thanks': 'Thank you for contacting us! We\'ll respond soon.'
-            },
-            es: {
-                'nav-brand': 'Creative Studio',
-                'nav-home': 'Inicio',
-                'nav-services': 'Servicios',
-                'nav-about': 'Nosotros',
-                'nav-contact': 'Contacto',
-                'hero-title': 'Impulsamos Tu Presencia Digital',
-                'hero-subtitle': 'Desarrollo Web • Marketing Digital • Soporte Técnico Remoto',
-                'hero-cta': 'Solicita una Cotización',
-                'services-title': 'Nuestros Servicios',
-                'services-subtitle': 'Soluciones digitales integrales para hacer crecer tu negocio',
-                'service1-title': 'Desarrollo Web',
-                'service1-desc': 'Creamos sitios web profesionales que convierten visitantes en clientes.',
-                'service1-item1': 'Páginas web corporativas',
-                'service1-item2': 'Tiendas online (E-commerce)',
-                'service1-item3': 'Landing pages optimizadas',
-                'service1-item4': 'Diseño responsive',
-                'service1-item5': 'Optimización SEO',
-                'service1-item6': 'Mantenimiento web',
-                'service2-title': 'Marketing Digital',
-                'service2-desc': 'Estrategias efectivas para aumentar tu visibilidad y ventas online.',
-                'service2-item1': 'Gestión de redes sociales',
-                'service2-item2': 'Campañas publicitarias (Ads)',
-                'service2-item3': 'Creación de contenido',
-                'service2-item4': 'Email marketing',
-                'service2-item5': 'Análisis de métricas',
-                'service2-item6': 'Estrategia digital personalizada',
-                'service3-title': 'Diseño Publicitario',
-                'service3-desc': 'Imágenes y anuncios que capturan la atención de tu audiencia.',
-                'service3-item1': 'Diseño de anuncios digitales',
-                'service3-item2': 'Banners y flyers',
-                'service3-item3': 'Posts para redes sociales',
-                'service3-item4': 'Identidad de marca',
-                'service3-item5': 'Infografías',
-                'service3-item6': 'Material promocional',
-                'service4-title': 'Soporte Técnico Remoto',
-                'service4-desc': 'Asistencia técnica profesional sin salir de tu oficina u hogar.',
-                'service4-item1': 'Soporte para PCs y laptops',
-                'service4-item2': 'Instalación de software',
-                'service4-item3': 'Optimización de sistemas',
-                'service4-item4': 'Resolución de problemas',
-                'service4-item5': 'Configuración de programas',
-                'service4-item6': 'Asistencia remota inmediata',
-                'about-title': 'Sobre Nosotros',
-                'about-subtitle': 'Un equipo de profesionales comprometidos con tu éxito digital',
-                'about-who': '¿Quiénes Somos?',
-                'about-text1': 'Somos <strong>FS Creative Studio</strong>, un equipo de 5 profesionales apasionados por la tecnología y el marketing digital. Combinamos experiencia en ingeniería y conocimientos técnicos para ofrecer soluciones integrales a empresas y emprendedores.',
-                'about-text2': 'Nuestro objetivo es ayudarte a establecer y fortalecer tu presencia digital, optimizar tus procesos tecnológicos y hacer crecer tu negocio con estrategias efectivas y personalizadas.',
-                'about-text3': 'Trabajamos 100% de forma remota, lo que nos permite ofrecerte flexibilidad, rapidez y costos competitivos sin comprometer la calidad de nuestro servicio.',
-                'stat1': 'Profesionales Especializados',
-                'stat2': 'Trabajo Remoto',
-                'stat3': 'Soporte Disponible',
-                'contact-title': 'Contáctanos',
-                'contact-subtitle': 'Cuéntanos sobre tu proyecto y te responderemos pronto',
-                'form-name': 'Nombre Completo *',
-                'form-email': 'Email *',
-                'form-phone': 'Teléfono',
-                'form-service': 'Servicio de Interés *',
-                'form-select': 'Selecciona un servicio',
-                'form-option1': 'Desarrollo Web',
-                'form-option2': 'Marketing Digital',
-                'form-option3': 'Diseño Publicitario',
-                'form-option4': 'Soporte Técnico',
-                'form-option5': 'Varios Servicios',
-                'form-message': 'Cuéntanos sobre tu proyecto *',
-                'form-submit': 'Enviar Mensaje',
-                'footer-brand': 'Creative Studio',
-                'footer-tagline': 'Tu aliado digital para desarrollo web, marketing y soporte técnico.',
-                'footer-services': 'Servicios',
-                'footer-service1': 'Desarrollo Web',
-                'footer-service2': 'Marketing Digital',
-                'footer-service3': 'Diseño Publicitario',
-                'footer-service4': 'Soporte Técnico',
-                'footer-contact': 'Contacto',
-                'footer-hours': '🕐 Lun - Vie: 9:00 AM - 6:00 PM',
-                'footer-rights-name': 'Creative Studio',
-                'footer-rights': 'Todos los derechos reservados',
-                'wa-message': '¡Hola! Me gustaría solicitar una cotización para sus servicios.',
-                'alert-thanks': '¡Gracias por contactarnos! Te responderemos pronto.'
-            }
-        };
-
-        let currentLang = 'en';
-
-        // Function to select language from popup
-        function selectLanguage(lang) {
-            currentLang = lang;
-            localStorage.setItem('language', lang);
-            applyTranslations();
-            document.getElementById('languagePopup').classList.add('hidden');
-        }
-
-        // Function to toggle language with button
-        function toggleLanguage() {
-            const newLang = currentLang === 'en' ? 'es' : 'en';
-            selectLanguage(newLang);
-        }
-
-        // Apply translations to all elements
-        function applyTranslations() {
-            const texts = translations[currentLang];
-            
-            for (let key in texts) {
-                const element = document.getElementById(key);
-                if (element) {
-                    element.innerHTML = texts[key];
-                }
-            }
-            
-            // Update WhatsApp link
-            const waMessage = encodeURIComponent(texts['wa-message']);
-            document.getElementById('whatsappBtn').href = `https://wa.me/15713156093?text=${waMessage}`;
-            
-            // Update language button text (show opposite language)
-            document.getElementById('langBtn').textContent = currentLang === 'en' ? 'ES' : 'EN';
-            
-            // Update page title
-            document.title = currentLang === 'es' 
-                ? 'FS Creative Studio - Marketing Digital, Desarrollo Web y Soporte Técnico'
-                : 'FS Creative Studio - Digital Marketing, Web Development and Technical Support';
-        }
-
-        // Form submission handler
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert(translations[currentLang]['alert-thanks']);
-            this.reset();
-        });
-
-        // Initialize on page load
-        window.addEventListener('DOMContentLoaded', function() {
-            const savedLang = localStorage.getItem('language');
-            console.log('Saved language:', savedLang);
-            
-            if (savedLang) {
-                // User has selected a language before
-                console.log('Loading saved language:', savedLang);
-                currentLang = savedLang;
-                applyTranslations();
-                document.getElementById('languagePopup').classList.add('hidden');
-            } else {
-                console.log('No saved language - popup should be visible');
-            }
-            // If no saved language, popup will show automatically (it's visible by default)
-        });
-
-        // Image slider for hero section
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.hero-slide');
-        
-        function nextSlide() {
-            slides[currentSlide].classList.remove('active');
-            currentSlide = (currentSlide + 1) % slides.length;
-            slides[currentSlide].classList.add('active');
-        }
-        
-        setInterval(nextSlide, 4000);
-
-        // Smooth scroll for navigation
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
-        });
+const T={en:{t1:'Creative Studio',t2:'Home',t3:'Services',t4:'About Us',t5:'Contact',t6:'Boost Your Digital Presence',t7:'Web Development • Digital Marketing • Remote Technical Support',t8:'Request a Quote',t9:'Our Services',t10:'Comprehensive digital solutions to grow your business',t11:'Web Development',t12:'We create professional websites that convert visitors into customers.',t13:'Corporate websites',t14:'Online stores (E-commerce)',t15:'Optimized landing pages',t16:'Responsive design',t17:'SEO optimization',t18:'Web maintenance',t19:'Digital Marketing',t20:'Effective strategies to increase your online visibility and sales.',t21:'Social media management',t22:'Advertising campaigns (Ads)',t23:'Content creation',t24:'Email marketing',t25:'Metrics analysis',t26:'Personalized digital strategy',t27:'Advertising Design',t28:'Images and ads that capture your audience\'s attention.',t29:'Digital ad design',t30:'Banners and flyers',t31:'Social media posts',t32:'Brand identity',t33:'Infographics',t34:'Promotional material',t35:'Remote Technical Support',t36:'Professional technical assistance without leaving your office or home.',t37:'Support for PCs and laptops',t38:'Software installation',t39:'System optimization',t40:'Problem solving',t41:'Program configuration',t42:'Immediate remote assistance',t43:'About Us',t44:'A team of professionals committed to your digital success',t45:'Who Are We?',t46:'We are <strong>FS Creative Studio</strong>, a team of 5 professionals passionate about technology and digital marketing. We combine engineering experience and technical knowledge to offer comprehensive solutions to businesses and entrepreneurs.',t47:'Our goal is to help you establish and strengthen your digital presence, optimize your technological processes, and grow your business with effective and personalized strategies.',t48:'We work 100% remotely, which allows us to offer you flexibility, speed, and competitive costs without compromising the quality of our service.',t49:'Specialized Professionals',t50:'Remote Work',t51:'Support Available',t52:'Contact Us',t53:'Tell us about your project and we\'ll respond soon',t54:'Full Name *',t55:'Email *',t56:'Phone',t57:'Service of Interest *',t58:'Select a service',t59:'Web Development',t60:'Digital Marketing',t61:'Advertising Design',t62:'Technical Support',t63:'Multiple Services',t64:'Tell us about your project *',t65:'Send Message',t66:'Creative Studio',t67:'Your digital ally for web development, marketing and technical support.',t68:'Services',t69:'Web Development',t70:'Digital Marketing',t71:'Advertising Design',t72:'Technical Support',t73:'Contact',t74:'🕐 Mon - Fri: 9:00 AM - 6:00 PM',t75:'Creative Studio',t76:'All rights reserved',wa:'Hello! I would like to request a quote for your services.',sub:'New message from FS Creative Studio'},es:{t1:'Creative Studio',t2:'Inicio',t3:'Servicios',t4:'Nosotros',t5:'Contacto',t6:'Impulsamos Tu Presencia Digital',t7:'Desarrollo Web • Marketing Digital • Soporte Técnico Remoto',t8:'Solicita una Cotización',t9:'Nuestros Servicios',t10:'Soluciones digitales integrales para hacer crecer tu negocio',t11:'Desarrollo Web',t12:'Creamos sitios web profesionales que convierten visitantes en clientes.',t13:'Páginas web corporativas',t14:'Tiendas online (E-commerce)',t15:'Landing pages optimizadas',t16:'Diseño responsive',t17:'Optimización SEO',t18:'Mantenimiento web',t19:'Marketing Digital',t20:'Estrategias efectivas para aumentar tu visibilidad y ventas online.',t21:'Gestión de redes sociales',t22:'Campañas publicitarias (Ads)',t23:'Creación de contenido',t24:'Email marketing',t25:'Análisis de métricas',t26:'Estrategia digital personalizada',t27:'Diseño Publicitario',t28:'Imágenes y anuncios que capturan la atención de tu audiencia.',t29:'Diseño de anuncios digitales',t30:'Banners y flyers',t31:'Posts para redes sociales',t32:'Identidad de marca',t33:'Infografías',t34:'Material promocional',t35:'Soporte Técnico Remoto',t36:'Asistencia técnica profesional sin salir de tu oficina u hogar.',t37:'Soporte para PCs y laptops',t38:'Instalación de software',t39:'Optimización de sistemas',t40:'Resolución de problemas',t41:'Configuración de programas',t42:'Asistencia remota inmediata',t43:'Sobre Nosotros',t44:'Un equipo de profesionales comprometidos con tu éxito digital',t45:'¿Quiénes Somos?',t46:'Somos <strong>FS Creative Studio</strong>, un equipo de 5 profesionales apasionados por la tecnología y el marketing digital. Combinamos experiencia en ingeniería y conocimientos técnicos para ofrecer soluciones integrales a empresas y emprendedores.',t47:'Nuestro objetivo es ayudarte a establecer y fortalecer tu presencia digital, optimizar tus procesos tecnológicos y hacer crecer tu negocio con estrategias efectivas y personalizadas.',t48:'Trabajamos 100% de forma remota, lo que nos permite ofrecerte flexibilidad, rapidez y costos competitivos sin comprometer la calidad de nuestro servicio.',t49:'Profesionales Especializados',t50:'Trabajo Remoto',t51:'Soporte Disponible',t52:'Contáctanos',t53:'Cuéntanos sobre tu proyecto y te responderemos pronto',t54:'Nombre Completo *',t55:'Email *',t56:'Teléfono',t57:'Servicio de Interés *',t58:'Selecciona un servicio',t59:'Desarrollo Web',t60:'Marketing Digital',t61:'Diseño Publicitario',t62:'Soporte Técnico',t63:'Varios Servicios',t64:'Cuéntanos sobre tu proyecto *',t65:'Enviar Mensaje',t66:'Creative Studio',t67:'Tu aliado digital para desarrollo web, marketing y soporte técnico.',t68:'Servicios',t69:'Desarrollo Web',t70:'Marketing Digital',t71:'Diseño Publicitario',t72:'Soporte Técnico',t73:'Contacto',t74:'🕐 Lun - Vie: 9:00 AM - 6:00 PM',t75:'Creative Studio',t76:'Todos los derechos reservados',wa:'¡Hola! Me gustaría solicitar una cotización para sus servicios.',sub:'Nuevo mensaje desde FS Creative Studio'}};
+let L='en';
+function pickLang(l){L=l;localStorage.setItem('lang',l);apply();document.getElementById('popup').classList.add('hidden');}
+function toggleLang(){pickLang(L==='en'?'es':'en');}
+function apply(){for(let k in T[L]){let e=document.getElementById(k);if(e)e.innerHTML=T[L][k];}document.getElementById('wa').href='https://wa.me/15713156093?text='+encodeURIComponent(T[L].wa);document.getElementById('langBtn').textContent=L==='en'?'ES':'EN';document.title=L==='es'?'FS Creative Studio - Marketing Digital':'FS Creative Studio - Digital Marketing';let f=document.querySelector('input[name="_subject"]');if(f)f.value=T[L].sub;}
+let s=localStorage.getItem('lang');if(s){L=s;apply();document.getElementById('popup').classList.add('hidden');}
+let i=0,sl=document.querySelectorAll('.hero-slide');setInterval(()=>{sl[i].classList.remove('active');i=(i+1)%sl.length;sl[i].classList.add('active');},4000);
+document.querySelectorAll('a[href^="#"]').forEach(a=>a.onclick=e=>{e.preventDefault();document.querySelector(a.getAttribute('href')).scrollIntoView({behavior:'smooth'});});
     </script>
 </body>
 </html>
