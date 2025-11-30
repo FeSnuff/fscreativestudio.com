@@ -18,6 +18,13 @@
         .popup-btns button { padding: 1rem 2.5rem; border: 2px solid #e2e8f0; background: white; border-radius: 10px; font-size: 1.2rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
         .popup-btns button:hover { background: #06b6d4; color: white; border-color: #06b6d4; transform: translateY(-3px); box-shadow: 0 10px 25px rgba(6, 182, 212, 0.3); }
 
+        /* Success Message */
+        .success-message { display: none; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 2rem; border-radius: 12px; text-align: center; margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3); animation: slideIn 0.5s ease; }
+        .success-message.show { display: block; }
+        .success-message h3 { font-size: 1.8rem; margin-bottom: 0.5rem; font-weight: 700; }
+        .success-message p { font-size: 1.2rem; opacity: 0.95; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+
         /* Floating Buttons */
         .floating { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 15px; z-index: 999; }
         .float-btn { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); transition: all 0.3s; cursor: pointer; border: none; text-decoration: none; }
@@ -91,13 +98,6 @@
 
         #about { background: #f8fafc; }
         #contact { background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%); }
-
-        /* Success Message */
-        .success-msg { display: none; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 1.5rem 2rem; border-radius: 12px; text-align: center; margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3); animation: slideDown 0.5s ease; }
-        .success-msg.show { display: block; }
-        .success-msg h3 { font-size: 1.5rem; margin-bottom: 0.5rem; }
-        .success-msg p { font-size: 1.1rem; opacity: 0.95; }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 
         @media (max-width: 768px) { 
             nav ul { display: none; } 
@@ -264,36 +264,30 @@
             <p class="subtitle" id="c2">Tell us about your project and we'll respond soon</p>
             
             <!-- Success Message -->
-            <div class="success-msg" id="successMsg">
+            <div class="success-message" id="successMsg">
                 <h3 id="successTitle">✓ Message Sent Successfully!</h3>
                 <p id="successText">Thank you for contacting us. We'll respond to your message soon.</p>
             </div>
             
-            <form class="contact-form" action="https://formsubmit.co/luisfifer705@gmail.com" method="POST" id="contactForm">
-                <input type="hidden" name="_subject" value="New message from FS Creative Studio" id="formSubject">
-                <input type="hidden" name="_captcha" value="false">
-                <input type="hidden" name="_template" value="box">
-                <input type="hidden" name="_next" value="https://fscreativestudio.com/#contact">
-                <input type="hidden" name="_autoresponse" value="Thank you for contacting FS Creative Studio! We'll respond soon.">
-                
+            <form class="contact-form" id="contactForm" onsubmit="return handleSubmit(event)">
                 <div class="form-group">
                     <label id="c3">Full Name *</label>
-                    <input type="text" name="name" required>
+                    <input type="text" name="name" id="formName" required>
                 </div>
                 
                 <div class="form-group">
                     <label id="c4">Email *</label>
-                    <input type="email" name="email" required>
+                    <input type="email" name="email" id="formEmail" required>
                 </div>
                 
                 <div class="form-group">
                     <label id="c5">Phone</label>
-                    <input type="tel" name="phone">
+                    <input type="tel" name="phone" id="formPhone">
                 </div>
                 
                 <div class="form-group">
                     <label id="c6">Service of Interest *</label>
-                    <select name="service" required>
+                    <select name="service" id="formService" required>
                         <option value="" id="c7">Select a service</option>
                         <option id="c8">Web Development</option>
                         <option id="c9">Digital Marketing</option>
@@ -305,7 +299,7 @@
                 
                 <div class="form-group">
                     <label id="c13">Tell us about your project *</label>
-                    <textarea name="message" required></textarea>
+                    <textarea name="message" id="formMessage" required></textarea>
                 </div>
                 
                 <button type="submit" class="cta" style="width: 100%;" id="c14">Send Message</button>
@@ -392,10 +386,9 @@ const TEXT = {
         f6: 'Advertising Design', f7: 'Technical Support', f8: 'Contact',
         f9: '🕐 Mon - Fri: 9:00 AM - 6:00 PM',
         f10: 'Creative Studio', f11: 'All rights reserved',
-        waMsg: 'Hello! I would like to request a quote for your services.',
-        formSub: 'New message from FS Creative Studio',
         successTitle: '✓ Message Sent Successfully!',
-        successText: 'Thank you for contacting us. We\'ll respond to your message soon.'
+        successText: 'Thank you for contacting us. We\'ll respond to your message soon.',
+        waMsg: 'Hello! I would like to request a quote for your services.'
     },
     es: {
         n1: 'Creative Studio', n2: 'Inicio', n3: 'Servicios', n4: 'Nosotros', n5: 'Contacto',
@@ -439,10 +432,9 @@ const TEXT = {
         f6: 'Diseño Publicitario', f7: 'Soporte Técnico', f8: 'Contacto',
         f9: '🕐 Lun - Vie: 9:00 AM - 6:00 PM',
         f10: 'Creative Studio', f11: 'Todos los derechos reservados',
-        waMsg: '¡Hola! Me gustaría solicitar una cotización para sus servicios.',
-        formSub: 'Nuevo mensaje desde FS Creative Studio',
         successTitle: '✓ ¡Mensaje Enviado Exitosamente!',
-        successText: 'Gracias por contactarnos. Responderemos a tu mensaje pronto.'
+        successText: 'Gracias por contactarnos. Responderemos a tu mensaje pronto.',
+        waMsg: '¡Hola! Me gustaría solicitar una cotización para sus servicios.'
     }
 };
 
@@ -465,7 +457,6 @@ function switchLanguage() {
 function updateContent() {
     const texts = TEXT[currentLang];
     
-    // Update all text elements
     for (let id in texts) {
         const element = document.getElementById(id);
         if (element) {
@@ -473,23 +464,60 @@ function updateContent() {
         }
     }
     
-    // Update WhatsApp link
     const waLink = 'https://wa.me/15713156093?text=' + encodeURIComponent(texts.waMsg);
     document.getElementById('waBtn').href = waLink;
-    
-    // Update language button
     document.getElementById('langBtn').textContent = currentLang === 'en' ? 'ES' : 'EN';
-    
-    // Update page title
     document.title = currentLang === 'es' 
         ? 'FS Creative Studio - Marketing Digital, Desarrollo Web y Soporte Técnico'
         : 'FS Creative Studio - Digital Marketing, Web Development and Technical Support';
+}
+
+// Handle form submission
+function handleSubmit(event) {
+    event.preventDefault();
     
-    // Update form subject
-    const subjectField = document.getElementById('formSubject');
-    if (subjectField) {
-        subjectField.value = texts.formSub;
-    }
+    const formData = new FormData(event.target);
+    const data = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        phone: formData.get('phone') || 'Not provided',
+        service: formData.get('service'),
+        message: formData.get('message'),
+        _subject: currentLang === 'es' ? 'Nuevo mensaje desde FS Creative Studio' : 'New message from FS Creative Studio',
+        _captcha: 'false',
+        _template: 'box'
+    };
+    
+    // Send to FormSubmit
+    fetch('https://formsubmit.co/luisfifer705@gmail.com', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Show success message
+        document.getElementById('successMsg').classList.add('show');
+        document.getElementById('contactForm').reset();
+        
+        // Scroll to message
+        document.getElementById('successMsg').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Hide after 8 seconds
+        setTimeout(() => {
+            document.getElementById('successMsg').classList.remove('show');
+        }, 8000);
+    })
+    .catch(error => {
+        alert(currentLang === 'es' 
+            ? 'Hubo un error. Por favor intenta de nuevo.' 
+            : 'There was an error. Please try again.');
+    });
+    
+    return false;
 }
 
 // Initialize on page load
@@ -500,17 +528,6 @@ window.addEventListener('DOMContentLoaded', function() {
         currentLang = savedLang;
         updateContent();
         document.getElementById('langPopup').classList.add('hide');
-    }
-    
-    // Check if returning from form submission
-    if (window.location.hash === '#contact' && document.referrer.includes('formsubmit')) {
-        document.getElementById('successMsg').classList.add('show');
-        document.getElementById('contactForm').reset();
-        
-        // Hide message after 8 seconds
-        setTimeout(function() {
-            document.getElementById('successMsg').classList.remove('show');
-        }, 8000);
     }
 });
 
