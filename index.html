@@ -269,7 +269,7 @@
                 <p id="successText">Thank you for contacting us. We'll respond to your message soon.</p>
             </div>
             
-            <form class="contact-form" id="contactForm" onsubmit="return handleSubmit(event)">
+            <form class="contact-form" id="contactForm" action="https://formsubmit.co/luisfifer705@gmail.com" method="POST" onsubmit="return handleSubmit(event)">
                 <div class="form-group">
                     <label id="c3">Full Name *</label>
                     <input type="text" name="name" id="formName" required>
@@ -476,46 +476,53 @@ function updateContent() {
 function handleSubmit(event) {
     event.preventDefault();
     
-    const formData = new FormData(event.target);
-    const data = {
-        name: formData.get('name'),
-        email: formData.get('email'),
-        phone: formData.get('phone') || 'Not provided',
-        service: formData.get('service'),
-        message: formData.get('message'),
-        _subject: currentLang === 'es' ? 'Nuevo mensaje desde FS Creative Studio' : 'New message from FS Creative Studio',
-        _captcha: 'false',
-        _template: 'box'
-    };
+    // Show success message IMMEDIATELY
+    document.getElementById('successMsg').classList.add('show');
+    document.getElementById('successMsg').scrollIntoView({ behavior: 'smooth', block: 'center' });
     
-    // Send to FormSubmit
-    fetch('https://formsubmit.co/luisfifer705@gmail.com', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Show success message
-        document.getElementById('successMsg').classList.add('show');
-        document.getElementById('contactForm').reset();
-        
-        // Scroll to message
-        document.getElementById('successMsg').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        
-        // Hide after 8 seconds
-        setTimeout(() => {
-            document.getElementById('successMsg').classList.remove('show');
-        }, 8000);
-    })
-    .catch(error => {
-        alert(currentLang === 'es' 
-            ? 'Hubo un error. Por favor intenta de nuevo.' 
-            : 'There was an error. Please try again.');
-    });
+    // Get form element
+    const form = event.target;
+    
+    // Add hidden field for subject based on language
+    const subjectInput = document.createElement('input');
+    subjectInput.type = 'hidden';
+    subjectInput.name = '_subject';
+    subjectInput.value = currentLang === 'es' ? 'Nuevo mensaje desde FS Creative Studio' : 'New message from FS Creative Studio';
+    form.appendChild(subjectInput);
+    
+    // Add hidden fields for FormSubmit config
+    const captchaInput = document.createElement('input');
+    captchaInput.type = 'hidden';
+    captchaInput.name = '_captcha';
+    captchaInput.value = 'false';
+    form.appendChild(captchaInput);
+    
+    const templateInput = document.createElement('input');
+    templateInput.type = 'hidden';
+    templateInput.name = '_template';
+    templateInput.value = 'box';
+    form.appendChild(templateInput);
+    
+    const nextInput = document.createElement('input');
+    nextInput.type = 'hidden';
+    nextInput.name = '_next';
+    nextInput.value = 'https://fscreativestudio.com/#contact';
+    form.appendChild(nextInput);
+    
+    // Reset form
+    setTimeout(() => {
+        form.reset();
+    }, 500);
+    
+    // Hide success message after 8 seconds
+    setTimeout(() => {
+        document.getElementById('successMsg').classList.remove('show');
+    }, 8000);
+    
+    // Submit form normally (this will redirect but we already showed the message)
+    setTimeout(() => {
+        form.submit();
+    }, 1000);
     
     return false;
 }
