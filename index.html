@@ -92,6 +92,13 @@
         #about { background: #f8fafc; }
         #contact { background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%); }
 
+        /* Success Message */
+        .success-msg { display: none; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 1.5rem 2rem; border-radius: 12px; text-align: center; margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3); animation: slideDown 0.5s ease; }
+        .success-msg.show { display: block; }
+        .success-msg h3 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .success-msg p { font-size: 1.1rem; opacity: 0.95; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
         @media (max-width: 768px) { 
             nav ul { display: none; } 
             .hero h1 { font-size: 2rem; } 
@@ -255,7 +262,14 @@
         <div class="container">
             <h2 id="c1">Contact Us</h2>
             <p class="subtitle" id="c2">Tell us about your project and we'll respond soon</p>
-            <form class="contact-form" action="https://formsubmit.co/luisfifer705@gmail.com" method="POST">
+            
+            <!-- Success Message -->
+            <div class="success-msg" id="successMsg">
+                <h3 id="successTitle">✓ Message Sent Successfully!</h3>
+                <p id="successText">Thank you for contacting us. We'll respond to your message soon.</p>
+            </div>
+            
+            <form class="contact-form" action="https://formsubmit.co/luisfifer705@gmail.com" method="POST" id="contactForm">
                 <input type="hidden" name="_subject" value="New message from FS Creative Studio" id="formSubject">
                 <input type="hidden" name="_captcha" value="false">
                 <input type="hidden" name="_template" value="box">
@@ -379,7 +393,9 @@ const TEXT = {
         f9: '🕐 Mon - Fri: 9:00 AM - 6:00 PM',
         f10: 'Creative Studio', f11: 'All rights reserved',
         waMsg: 'Hello! I would like to request a quote for your services.',
-        formSub: 'New message from FS Creative Studio'
+        formSub: 'New message from FS Creative Studio',
+        successTitle: '✓ Message Sent Successfully!',
+        successText: 'Thank you for contacting us. We\'ll respond to your message soon.'
     },
     es: {
         n1: 'Creative Studio', n2: 'Inicio', n3: 'Servicios', n4: 'Nosotros', n5: 'Contacto',
@@ -424,7 +440,9 @@ const TEXT = {
         f9: '🕐 Lun - Vie: 9:00 AM - 6:00 PM',
         f10: 'Creative Studio', f11: 'Todos los derechos reservados',
         waMsg: '¡Hola! Me gustaría solicitar una cotización para sus servicios.',
-        formSub: 'Nuevo mensaje desde FS Creative Studio'
+        formSub: 'Nuevo mensaje desde FS Creative Studio',
+        successTitle: '✓ ¡Mensaje Enviado Exitosamente!',
+        successText: 'Gracias por contactarnos. Responderemos a tu mensaje pronto.'
     }
 };
 
@@ -483,7 +501,17 @@ window.addEventListener('DOMContentLoaded', function() {
         updateContent();
         document.getElementById('langPopup').classList.add('hide');
     }
-    // Otherwise popup stays visible (default state)
+    
+    // Check if returning from form submission
+    if (window.location.hash === '#contact' && document.referrer.includes('formsubmit')) {
+        document.getElementById('successMsg').classList.add('show');
+        document.getElementById('contactForm').reset();
+        
+        // Hide message after 8 seconds
+        setTimeout(function() {
+            document.getElementById('successMsg').classList.remove('show');
+        }, 8000);
+    }
 });
 
 // Image slider
