@@ -208,6 +208,7 @@
                         <li id="s25">Infographics</li>
                         <li id="s26">Promotional material</li>
                     </ul>
+                    <a href="diseno-publicitario.html" class="cta" id="s19btn">Learn More</a>
                 </div>
                 <div class="service">
                     <div style="font-size: 3rem; margin-bottom: 1rem;">💻</div>
@@ -221,6 +222,7 @@
                         <li id="s33">Program configuration</li>
                         <li id="s34">Immediate remote assistance</li>
                     </ul>
+                    <a href="soporte-tecnico.html" class="cta" id="s27btn">Learn More</a>
                 </div>
             </div>
         </div>
@@ -335,7 +337,7 @@
                 <h3 id="f8">Contact</h3>
                 <p>📧 Contact us via the form above</p>
                 <p>📱 WhatsApp: +1 (571) 315-6093</p>
-                <p id="f9">🕐 Mon - Fri: 9:00 AM - 6:00 PM</p>
+                <p id="f9">🕐 Mon - Fri: 9:00 AM - 10:00 PM<br>Sat: 10:00 AM - 4:00 PM</p>
             </div>
         </div>
         <div class="footer-bottom">
@@ -355,10 +357,10 @@ const TEXT = {
         s11: 'Digital Marketing', s11btn: 'Learn More', s12: 'Effective strategies to increase your online visibility and sales.',
         s13: 'Social media management', s14: 'Advertising campaigns (Ads)', s15: 'Content creation',
         s16: 'Email marketing', s17: 'Metrics analysis', s18: 'Personalized digital strategy',
-        s19: 'Advertising Design', s20: 'Images and ads that capture your audience\'s attention.',
+        s19: 'Advertising Design', s19btn: 'Learn More', s20: 'Images and ads that capture your audience\'s attention.',
         s21: 'Digital ad design', s22: 'Banners and flyers', s23: 'Social media posts',
         s24: 'Brand identity', s25: 'Infographics', s26: 'Promotional material',
-        s27: 'Remote Technical Support', s28: 'Professional technical assistance without leaving your office or home.',
+        s27: 'Remote Technical Support', s27btn: 'Learn More', s28: 'Professional technical assistance without leaving your office or home.',
         s29: 'Support for PCs and laptops', s30: 'Software installation', s31: 'System optimization',
         s32: 'Problem solving', s33: 'Program configuration', s34: 'Immediate remote assistance',
         a1: 'About Us', a2: 'A team of professionals committed to your digital success', a3: 'Who Are We?',
@@ -374,7 +376,7 @@ const TEXT = {
         f1: 'Creative Studio', f2: 'Your digital ally for web development, marketing and technical support.',
         f3: 'Services', f4: 'Web Development', f5: 'Digital Marketing',
         f6: 'Advertising Design', f7: 'Technical Support', f8: 'Contact',
-        f9: '🕐 Mon - Fri: 9:00 AM - 6:00 PM', f10: 'Creative Studio', f11: 'All rights reserved',
+        f9: '🕐 Mon - Fri: 9:00 AM - 10:00 PM<br>Sat: 10:00 AM - 4:00 PM', f10: 'Creative Studio', f11: 'All rights reserved',
         successTitle: '✓ Message Sent Successfully!',
         successText: 'Thank you for contacting us. We\'ll respond to your message soon.',
         waMsg: 'Hello! I would like to request a quote for your services.'
@@ -389,10 +391,10 @@ const TEXT = {
         s11: 'Marketing Digital', s11btn: 'Ver Más', s12: 'Estrategias efectivas para aumentar tu visibilidad y ventas online.',
         s13: 'Gestión de redes sociales', s14: 'Campañas publicitarias (Ads)', s15: 'Creación de contenido',
         s16: 'Email marketing', s17: 'Análisis de métricas', s18: 'Estrategia digital personalizada',
-        s19: 'Diseño Publicitario', s20: 'Imágenes y anuncios que capturan la atención de tu audiencia.',
+        s19: 'Diseño Publicitario', s19btn: 'Ver Más', s20: 'Imágenes y anuncios que capturan la atención de tu audiencia.',
         s21: 'Diseño de anuncios digitales', s22: 'Banners y flyers', s23: 'Posts para redes sociales',
         s24: 'Identidad de marca', s25: 'Infografías', s26: 'Material promocional',
-        s27: 'Soporte Técnico Remoto', s28: 'Asistencia técnica profesional sin salir de tu oficina u hogar.',
+        s27: 'Soporte Técnico Remoto', s27btn: 'Ver Más', s28: 'Asistencia técnica profesional sin salir de tu oficina u hogar.',
         s29: 'Soporte para PCs y laptops', s30: 'Instalación de software', s31: 'Optimización de sistemas',
         s32: 'Resolución de problemas', s33: 'Configuración de programas', s34: 'Asistencia remota inmediata',
         a1: 'Sobre Nosotros', a2: 'Un equipo de profesionales comprometidos con tu éxito digital', a3: '¿Quiénes Somos?',
@@ -408,7 +410,7 @@ const TEXT = {
         f1: 'Creative Studio', f2: 'Tu aliado digital para desarrollo web, marketing y soporte técnico.',
         f3: 'Servicios', f4: 'Desarrollo Web', f5: 'Marketing Digital',
         f6: 'Diseño Publicitario', f7: 'Soporte Técnico', f8: 'Contacto',
-        f9: '🕐 Lun - Vie: 9:00 AM - 6:00 PM', f10: 'Creative Studio', f11: 'Todos los derechos reservados',
+        f9: '🕐 Lun - Vie: 9:00 AM - 10:00 PM<br>Sáb: 10:00 AM - 4:00 PM', f10: 'Creative Studio', f11: 'Todos los derechos reservados',
         successTitle: '✓ ¡Mensaje Enviado Exitosamente!',
         successText: 'Gracias por contactarnos. Responderemos a tu mensaje pronto.',
         waMsg: '¡Hola! Me gustaría solicitar una cotización para sus servicios.'
@@ -493,6 +495,10 @@ window.addEventListener('DOMContentLoaded', function() {
                     // Determine which service to select based on package type
                     if (pkgType.startsWith('marketing-')) {
                         serviceSelect.value = currentLang === 'es' ? 'Marketing Digital' : 'Digital Marketing';
+                    } else if (pkgType === 'design') {
+                        serviceSelect.value = currentLang === 'es' ? 'Diseño Publicitario' : 'Advertising Design';
+                    } else if (pkgType === 'support') {
+                        serviceSelect.value = currentLang === 'es' ? 'Soporte Técnico' : 'Technical Support';
                     } else {
                         serviceSelect.value = currentLang === 'es' ? 'Desarrollo Web' : 'Web Development';
                     }
@@ -539,6 +545,14 @@ window.addEventListener('DOMContentLoaded', function() {
                         'marketing-premium': {
                             en: 'I am interested in the Premium Marketing Package ($999/month).\n\nThis package includes:\n- Management of 2+ platforms (FB, IG, more)\n- 30+ posts per month (daily content)\n- Premium design + video editing\n- Daily Stories and Reels\n- Advanced ad campaigns ($300 ad spend included)\n- A/B testing and optimization\n- Influencer outreach strategy\n- Weekly performance reports\n- Dedicated account manager\n- Priority support\n\nPlease contact me with more details.',
                             es: 'Estoy interesado en el Paquete Premium de Marketing ($999/mes).\n\nEste paquete incluye:\n- Gestión de 2+ plataformas (FB, IG, más)\n- 30+ publicaciones por mes (contenido diario)\n- Diseño premium + edición de video\n- Stories y Reels diarios\n- Campañas publicitarias avanzadas ($300 inversión incluida)\n- Pruebas A/B y optimización\n- Estrategia de acercamiento a influencers\n- Reportes de rendimiento semanales\n- Account manager dedicado\n- Soporte prioritario\n\nPor favor contáctame con más detalles.'
+                        },
+                        'design': {
+                            en: 'I am interested in Advertising Design services.\n\nI need help with:\n- Social media graphics\n- Digital banners/ads\n- Branding and identity\n- Print materials\n- Infographics\n- Presentations\n- [Other - please specify]\n\nPlease contact me to discuss my design needs and provide a quote.',
+                            es: 'Estoy interesado en servicios de Diseño Publicitario.\n\nNecesito ayuda con:\n- Gráficos para redes sociales\n- Banners/anuncios digitales\n- Branding e identidad\n- Material impreso\n- Infografías\n- Presentaciones\n- [Otro - por favor especificar]\n\nPor favor contáctame para discutir mis necesidades de diseño y proporcionar una cotización.'
+                        },
+                        'support': {
+                            en: 'I need Remote Technical Support for my computer.\n\nI need help with:\n- System troubleshooting\n- Software installation\n- Performance optimization\n- Virus/malware removal\n- Data backup\n- Training and guidance\n- [Other - please specify]\n\nPlease contact me to discuss my technical issue.',
+                            es: 'Necesito Soporte Técnico Remoto para mi computadora.\n\nNecesito ayuda con:\n- Resolución de problemas del sistema\n- Instalación de software\n- Optimización de rendimiento\n- Eliminación de virus/malware\n- Respaldo de datos\n- Capacitación y orientación\n- [Otro - por favor especificar]\n\nPor favor contáctame para discutir mi problema técnico.'
                         }
                     };
                     

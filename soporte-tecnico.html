@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remote Technical Support - FS Creative Studio</title>
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #0f172a; }
+
+        #langPopup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); display: flex; align-items: center; justify-content: center; z-index: 10000; }
+        #langPopup.hide { display: none; }
+        .popup-box { background: white; padding: 3rem; border-radius: 16px; text-align: center; max-width: 500px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        .popup-box h2 { margin-bottom: 1rem; font-size: 2rem; color: #0f172a; }
+        .popup-box p { color: #64748b; margin-bottom: 2rem; font-size: 1.1rem; }
+        .popup-btns { display: flex; gap: 1rem; justify-content: center; }
+        .popup-btns button { padding: 1rem 2.5rem; border: 2px solid #e2e8f0; background: white; border-radius: 10px; font-size: 1.2rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .popup-btns button:hover { background: #06b6d4; color: white; border-color: #06b6d4; transform: translateY(-3px); box-shadow: 0 10px 25px rgba(6, 182, 212, 0.3); }
+
+        .floating { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 15px; z-index: 999; }
+        .float-btn { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); transition: all 0.3s; cursor: pointer; border: none; text-decoration: none; }
+        .float-btn:hover { transform: translateY(-3px) scale(1.1); box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4); }
+        .wa { background: #25D366; }
+        .fb { background: #1877F2; }
+        .lang { background: #0f172a; border: 2px solid #06b6d4; color: white; font-weight: 700; font-size: 1.2rem; }
+        .lang:hover { background: #06b6d4; }
+
+        nav { background: #0f172a; padding: 1rem 0; position: fixed; width: 100%; top: 0; z-index: 1000; border-bottom: 1px solid rgba(6, 182, 212, 0.1); transition: all 0.3s ease; }
+        nav.scrolled { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); }
+        nav .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo img { height: 50px; width: auto; transition: transform 0.3s; }
+        .logo:hover img { transform: scale(1.05); }
+        .logo span { font-size: 1.5rem; font-weight: bold; color: white; }
+        .menu-toggle { display: none; background: none; border: none; color: white; font-size: 1.8rem; cursor: pointer; padding: 5px 10px; }
+        nav ul { list-style: none; display: flex; gap: 2rem; }
+        nav a { color: white; text-decoration: none; transition: all 0.3s; font-weight: 500; position: relative; }
+        nav a:hover { color: #06b6d4; }
+        nav a::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 2px; background: #06b6d4; transition: width 0.3s; }
+        nav a:hover::after { width: 100%; }
+
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            nav ul { position: fixed; top: 61px; right: -100%; width: 250px; height: calc(100vh - 61px); background: #0f172a; flex-direction: column; gap: 0; padding: 2rem 0; transition: right 0.3s ease; border-left: 1px solid rgba(6, 182, 212, 0.2); box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3); }
+            nav ul.active { right: 0; }
+            nav ul li { width: 100%; }
+            nav ul a { display: block; padding: 1rem 2rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+            nav ul a::after { display: none; }
+        }
+
+        .hero { background: linear-gradient(135deg, #0f172a, #1e293b); color: white; padding: 150px 20px 100px; text-align: center; margin-top: 60px; position: relative; overflow: hidden; }
+        .hero-slider { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+        .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 1s; }
+        .slide.active { opacity: 0.3; }
+        .slide img { width: 100%; height: 100%; object-fit: cover; }
+        .hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"><path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="rgba(6, 182, 212, 0.1)"/></svg>') no-repeat bottom; background-size: 100% 120px; opacity: 0.3; z-index: 1; }
+        .hero-content { position: relative; z-index: 2; }
+        .hero h1 { font-size: 3rem; margin-bottom: 1rem; font-weight: 700; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); animation: fadeInUp 0.8s ease; }
+        .hero p { font-size: 1.3rem; margin-bottom: 2rem; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); animation: fadeInUp 1s ease; }
+        .hero-badge { display: inline-block; background: rgba(6, 182, 212, 0.2); border: 2px solid #06b6d4; padding: 0.5rem 1.5rem; border-radius: 50px; font-size: 0.95rem; margin-top: 1rem; animation: fadeInUp 1.2s ease; }
+        .breadcrumb { display: flex; justify-content: center; gap: 0.5rem; margin-top: 1rem; font-size: 0.95rem; opacity: 0.9; animation: fadeInUp 1.4s ease; }
+        .breadcrumb a { color: #06b6d4; text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        section { padding: 80px 20px; }
+        h2 { text-align: center; font-size: 2.5rem; margin-bottom: 1rem; font-weight: 700; }
+        .subtitle { text-align: center; color: #64748b; font-size: 1.2rem; margin-bottom: 3rem; }
+
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem; }
+        .service-card { background: white; border-radius: 16px; overflow: hidden; border: 2px solid #e2e8f0; transition: all 0.3s; }
+        .service-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(6, 182, 212, 0.2); border-color: #06b6d4; }
+        .service-img { width: 100%; height: 200px; object-fit: cover; }
+        .service-content { padding: 2rem; }
+        .service-content h3 { font-size: 1.8rem; margin-bottom: 1rem; color: #0f172a; }
+        .service-content p { color: #64748b; margin-bottom: 1.5rem; line-height: 1.8; }
+        .service-features { list-style: none; margin-bottom: 1.5rem; }
+        .service-features li { padding: 0.5rem 0; color: #475569; padding-left: 1.5rem; position: relative; }
+        .service-features li::before { content: "✓"; position: absolute; left: 0; color: #06b6d4; font-weight: bold; font-size: 1.2rem; }
+
+        .tools-section { background: #f8fafc; }
+        .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 3rem; }
+        .tool-card { background: white; padding: 2rem; border-radius: 12px; text-align: center; border: 2px solid #e2e8f0; transition: all 0.3s; }
+        .tool-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(6, 182, 212, 0.15); border-color: #06b6d4; }
+        .tool-icon { font-size: 3.5rem; margin-bottom: 1rem; }
+        .tool-card h3 { font-size: 1.4rem; margin-bottom: 0.75rem; color: #0f172a; }
+        .tool-card p { color: #64748b; line-height: 1.8; font-size: 0.95rem; }
+
+        .limitations { background: white; }
+        .info-box { background: linear-gradient(135deg, #fef3c7, #fde68a); border-left: 4px solid #f59e0b; padding: 2rem; border-radius: 12px; margin: 2rem 0; }
+        .info-box h3 { color: #92400e; margin-bottom: 1rem; font-size: 1.5rem; display: flex; align-items: center; gap: 0.5rem; }
+        .info-box ul { margin-left: 1.5rem; color: #78350f; }
+        .info-box ul li { margin: 0.5rem 0; line-height: 1.8; }
+
+        .cta-section { background: linear-gradient(135deg, #0f172a, #1e293b); color: white; text-align: center; padding: 100px 20px; position: relative; overflow: hidden; }
+        .cta-section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"><path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="rgba(6, 182, 212, 0.1)"/></svg>') no-repeat bottom; background-size: 100% 120px; opacity: 0.2; }
+        .cta-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+        .cta-content h2 { font-size: 2.5rem; margin-bottom: 1.5rem; color: white; }
+        .cta-content p { font-size: 1.3rem; margin-bottom: 2.5rem; opacity: 0.9; }
+        .cta-btn { background: #06b6d4; color: white; padding: 18px 50px; border: none; border-radius: 8px; font-size: 1.2rem; cursor: pointer; text-decoration: none; display: inline-block; font-weight: 600; transition: all 0.3s; box-shadow: 0 10px 30px rgba(6, 182, 212, 0.3); }
+        .cta-btn:hover { background: #3b82f6; transform: translateY(-3px); box-shadow: 0 15px 40px rgba(6, 182, 212, 0.5); }
+
+        .why-us { background: #f8fafc; }
+        .benefits-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 3rem; }
+        .benefit { background: white; padding: 2rem; border-radius: 12px; text-align: center; border-left: 4px solid #06b6d4; transition: all 0.3s; }
+        .benefit:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(6, 182, 212, 0.15); }
+        .benefit-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .benefit h3 { font-size: 1.3rem; margin-bottom: 0.75rem; color: #0f172a; }
+        .benefit p { color: #64748b; line-height: 1.8; }
+
+        footer { background: #0f172a; color: white; padding: 3rem 20px 1rem; }
+        .footer-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem; }
+        .footer-section h3 { color: #06b6d4; margin-bottom: 1rem; }
+        .footer-section p, .footer-section li { color: #cbd5e1; }
+        .footer-section a { color: #cbd5e1; text-decoration: none; transition: color 0.3s; }
+        .footer-section a:hover { color: #06b6d4; }
+        .social { display: flex; gap: 1rem; margin-top: 1rem; }
+        .social a { width: 40px; height: 40px; background: #1e293b; color: white; text-align: center; line-height: 40px; border-radius: 8px; text-decoration: none; transition: all 0.3s; }
+        .social a:hover { background: #06b6d4; transform: translateY(-3px); }
+        .footer-bottom { text-align: center; padding-top: 2rem; border-top: 1px solid rgba(100, 116, 139, 0.2); color: #cbd5e1; }
+
+        @media (max-width: 768px) { 
+            .hero h1 { font-size: 2rem; } 
+            .services-grid { grid-template-columns: 1fr; }
+            .floating { bottom: 20px; right: 20px; } 
+        }
+    </style>
+</head>
+<body>
+    <div id="langPopup">
+        <div class="popup-box">
+            <h2>Select Your Language / Selecciona tu Idioma</h2>
+            <p>Choose your preferred language to continue</p>
+            <div class="popup-btns">
+                <button onclick="selectLanguage('en')">🇺🇸 English</button>
+                <button onclick="selectLanguage('es')">🇪🇸 Español</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="floating">
+        <a href="https://wa.me/15713156093" class="float-btn wa" id="waBtn" title="WhatsApp" target="_blank">
+            <svg width="35" height="35" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </a>
+        <a href="https://www.facebook.com/FSstudio" class="float-btn fb" title="Facebook" target="_blank">
+            <svg width="35" height="35" viewBox="0 0 24 24" fill="white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+        <button class="float-btn lang" onclick="switchLanguage()" id="langBtn" title="Change Language">ES</button>
+    </div>
+
+    <nav id="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="images/logo.png" alt="FS">
+                <span id="n1">Creative Studio</span>
+            </a>
+            <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">☰</button>
+            <ul id="navMenu">
+                <li><a href="index.html#home" id="n2">Home</a></li>
+                <li><a href="index.html#services" id="n3">Services</a></li>
+                <li><a href="index.html#about" id="n4">About Us</a></li>
+                <li><a href="index.html#contact" id="n5">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-slider">
+            <div class="slide active"><img src="images/support1.jpg" alt="Technical Support 1"></div>
+            <div class="slide"><img src="images/support2.webp" alt="Technical Support 2"></div>
+            <div class="slide"><img src="images/support3.jpg" alt="Technical Support 3"></div>
+        </div>
+        <div class="container hero-content">
+            <h1 id="hero-title">Remote Technical Support</h1>
+            <p id="hero-subtitle">Professional IT assistance from anywhere, anytime</p>
+            <div class="hero-badge" id="hero-badge">💻 100% Remote Solutions</div>
+            <div class="breadcrumb">
+                <a href="index.html" id="bread-home">Home</a>
+                <span>/</span>
+                <span id="bread-current">Remote Technical Support</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="services">
+        <div class="container">
+            <h2 id="srv-title">Our Remote Support Services</h2>
+            <p class="subtitle" id="srv-subtitle">Expert technical solutions delivered remotely to your computer</p>
+            
+            <div class="services-grid">
+                <div class="service-card">
+                    <img src="images/troubleshooting.webp" class="service-img" alt="Troubleshooting">
+                    <div class="service-content">
+                        <h3 id="srv1-title">System Troubleshooting</h3>
+                        <p id="srv1-desc">Fast diagnosis and resolution of computer problems remotely.</p>
+                        <ul class="service-features">
+                            <li id="srv1-f1">Windows/Mac system errors</li>
+                            <li id="srv1-f2">Slow computer optimization</li>
+                            <li id="srv1-f3">Startup problems</li>
+                            <li id="srv1-f4">Driver updates</li>
+                            <li id="srv1-f5">System configuration</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <img src="images/software.webp" class="service-img" alt="Software Installation">
+                    <div class="service-content">
+                        <h3 id="srv2-title">Software Installation & Setup</h3>
+                        <p id="srv2-desc">Complete installation and configuration of programs and applications.</p>
+                        <ul class="service-features">
+                            <li id="srv2-f1">Office suite installation</li>
+                            <li id="srv2-f2">Antivirus setup</li>
+                            <li id="srv2-f3">Program configuration</li>
+                            <li id="srv2-f4">Software updates</li>
+                            <li id="srv2-f5">License activation</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <img src="images/optimization.avif" class="service-img" alt="Performance Optimization">
+                    <div class="service-content">
+                        <h3 id="srv3-title">Performance Optimization</h3>
+                        <p id="srv3-desc">Speed up your computer and improve its performance.</p>
+                        <ul class="service-features">
+                            <li id="srv3-f1">Disk cleanup and defrag</li>
+                            <li id="srv3-f2">Startup program management</li>
+                            <li id="srv3-f3">Registry optimization</li>
+                            <li id="srv3-f4">Memory optimization</li>
+                            <li id="srv3-f5">Performance tuning</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <img src="images/virus-removal.jpg" class="service-img" alt="Virus & Malware Removal">
+                    <div class="service-content">
+                        <h3 id="srv4-title">Virus & Malware Removal</h3>
+                        <p id="srv4-desc">Complete system cleaning and protection against threats.</p>
+                        <ul class="service-features">
+                            <li id="srv4-f1">Virus detection & removal</li>
+                            <li id="srv4-f2">Malware elimination</li>
+                            <li id="srv4-f3">Spyware cleaning</li>
+                            <li id="srv4-f4">Security software installation</li>
+                            <li id="srv4-f5">System protection setup</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <img src="images/data-backup.jpg" class="service-img" alt="Data Backup">
+                    <div class="service-content">
+                        <h3 id="srv5-title">Data Backup & Recovery</h3>
+                        <p id="srv5-desc">Protect your important files and recover lost data.</p>
+                        <ul class="service-features">
+                            <li id="srv5-f1">Cloud backup setup</li>
+                            <li id="srv5-f2">External drive backup</li>
+                            <li id="srv5-f3">File recovery assistance</li>
+                            <li id="srv5-f4">Backup automation</li>
+                            <li id="srv5-f5">Data migration</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <img src="images/training.jpg" class="service-img" alt="Training & Guidance">
+                    <div class="service-content">
+                        <h3 id="srv6-title">Training & Guidance</h3>
+                        <p id="srv6-desc">Learn to use your computer and programs effectively.</p>
+                        <ul class="service-features">
+                            <li id="srv6-f1">Basic computer training</li>
+                            <li id="srv6-f2">Software tutorials</li>
+                            <li id="srv6-f3">Email setup help</li>
+                            <li id="srv6-f4">Internet safety tips</li>
+                            <li id="srv6-f5">Personalized guidance</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tools" class="tools-section">
+        <div class="container">
+            <h2 id="tools-title">Professional & Free Tools We Use</h2>
+            <p class="subtitle" id="tools-subtitle">Industry-standard remote access software for secure connections</p>
+            
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-icon">🖥️</div>
+                    <h3 id="tool1-title">AnyDesk</h3>
+                    <p id="tool1-desc">Professional remote desktop software for fast and secure connections to your computer.</p>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">🔒</div>
+                    <h3 id="tool2-title">Secure Connection</h3>
+                    <p id="tool2-desc">Bank-level encryption ensures your data and privacy are protected during remote sessions.</p>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">⚡</div>
+                    <h3 id="tool3-title">Fast & Reliable</h3>
+                    <p id="tool3-desc">Low latency and high-speed connections for smooth remote support experience.</p>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">💯</div>
+                    <h3 id="tool4-title">100% Free for You</h3>
+                    <p id="tool4-desc">No software costs - we use free professional tools so you don't pay extra for technology.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="limitations" class="limitations">
+        <div class="container">
+            <h2 id="limit-title">What We Can & Cannot Do Remotely</h2>
+            <p class="subtitle" id="limit-subtitle">Understanding the scope of remote technical support</p>
+            
+            <div class="info-box">
+                <h3>⚠️ <span id="limit-note-title">Important: Remote Support Limitations</span></h3>
+                <p id="limit-note-intro">Remote support is powerful but has natural limitations. We CAN'T do remotely:</p>
+                <ul>
+                    <li id="limit1">Physical hardware repairs (broken screens, damaged components)</li>
+                    <li id="limit2">Hardware installation (RAM, hard drives, graphics cards)</li>
+                    <li id="limit3">Printer physical setup or paper jam fixes</li>
+                    <li id="limit4">Network cable installation or router physical setup</li>
+                    <li id="limit5">Issues requiring physical access to the computer</li>
+                    <li id="limit6">Data recovery from physically damaged drives</li>
+                </ul>
+                <p id="limit-note-outro" style="margin-top: 1rem; font-weight: 600;">Everything else software-related, we can handle remotely! If you're unsure, contact us and we'll let you know.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="why-us" class="why-us">
+        <div class="container">
+            <h2 id="why-title">Why Choose Our Remote Support?</h2>
+            <p class="subtitle" id="why-subtitle">Fast, professional, and convenient technical assistance</p>
+            
+            <div class="benefits-grid">
+                <div class="benefit">
+                    <div class="benefit-icon">🚀</div>
+                    <h3 id="why1-title">Instant Access</h3>
+                    <p id="why1-desc">Get help immediately without waiting for an on-site technician. We connect remotely in minutes.</p>
+                </div>
+                <div class="benefit">
+                    <div class="benefit-icon">💰</div>
+                    <h3 id="why2-title">Cost-Effective</h3>
+                    <p id="why2-desc">Save money on travel fees and on-site visits. Pay only for the actual support time.</p>
+                </div>
+                <div class="benefit">
+                    <div class="benefit-icon">🏠</div>
+                    <h3 id="why3-title">Work From Anywhere</h3>
+                    <p id="why3-desc">Get support from your home, office, or anywhere with an internet connection.</p>
+                </div>
+                <div class="benefit">
+                    <div class="benefit-icon">👨‍💻</div>
+                    <h3 id="why4-title">Expert Technicians</h3>
+                    <p id="why4-desc">Professional IT specialists with years of experience solving technical problems.</p>
+                </div>
+                <div class="benefit">
+                    <div class="benefit-icon">🔒</div>
+                    <h3 id="why5-title">Safe & Secure</h3>
+                    <p id="why5-desc">Encrypted connections and secure tools protect your data and privacy.</p>
+                </div>
+                <div class="benefit">
+                    <div class="benefit-icon">📞</div>
+                    <h3 id="why6-title">Flexible Support</h3>
+                    <p id="why6-desc">Schedule sessions at your convenience or get emergency support when you need it.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="cta-content">
+            <h2 id="cta-title">Need Technical Help Right Now?</h2>
+            <p id="cta-subtitle">Contact us and we'll connect remotely to solve your computer problems quickly and professionally.</p>
+            <a href="index.html#contact?pkg=support" class="cta-btn" id="cta-btn">Request Support</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-section">
+                <h3>FS <span id="f1">Creative Studio</span></h3>
+                <p id="f2">Your digital ally for web development, marketing and technical support.</p>
+                <div class="social">
+                    <a href="https://www.facebook.com/FSstudio" target="_blank" title="Facebook">f</a>
+                    <a href="#" title="Instagram">📷</a>
+                    <a href="#" title="LinkedIn">in</a>
+                    <a href="https://wa.me/15713156093" target="_blank" title="WhatsApp">📱</a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3 id="f3">Services</h3>
+                <ul style="list-style: none;">
+                    <li><a href="desarrollo-web.html" id="f4">Web Development</a></li>
+                    <li><a href="marketing-digital.html" id="f5">Digital Marketing</a></li>
+                    <li><a href="diseno-publicitario.html" id="f6">Advertising Design</a></li>
+                    <li><a href="soporte-tecnico.html" id="f7">Remote Technical Support</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3 id="f8">Contact</h3>
+                <p>📧 Contact us via the form</p>
+                <p>📱 WhatsApp: +1 (571) 315-6093</p>
+                <p id="f9">🕐 Mon - Fri: 9:00 AM - 10:00 PM<br>Sat: 10:00 AM - 4:00 PM</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 FS <span id="f10">Creative Studio</span>. <span id="f11">All rights reserved</span>.</p>
+        </div>
+    </footer>
+
+    <script>
+const TEXT={en:{'hero-title':'Remote Technical Support','hero-subtitle':'Professional IT assistance from anywhere, anytime','hero-badge':'💻 100% Remote Solutions','bread-home':'Home','bread-current':'Remote Technical Support','srv-title':'Our Remote Support Services','srv-subtitle':'Expert technical solutions delivered remotely to your computer','srv1-title':'System Troubleshooting','srv1-desc':'Fast diagnosis and resolution of computer problems remotely.','srv1-f1':'Windows/Mac system errors','srv1-f2':'Slow computer optimization','srv1-f3':'Startup problems','srv1-f4':'Driver updates','srv1-f5':'System configuration','srv2-title':'Software Installation & Setup','srv2-desc':'Complete installation and configuration of programs and applications.','srv2-f1':'Office suite installation','srv2-f2':'Antivirus setup','srv2-f3':'Program configuration','srv2-f4':'Software updates','srv2-f5':'License activation','srv3-title':'Performance Optimization','srv3-desc':'Speed up your computer and improve its performance.','srv3-f1':'Disk cleanup and defrag','srv3-f2':'Startup program management','srv3-f3':'Registry optimization','srv3-f4':'Memory optimization','srv3-f5':'Performance tuning','srv4-title':'Virus & Malware Removal','srv4-desc':'Complete system cleaning and protection against threats.','srv4-f1':'Virus detection & removal','srv4-f2':'Malware elimination','srv4-f3':'Spyware cleaning','srv4-f4':'Security software installation','srv4-f5':'System protection setup','srv5-title':'Data Backup & Recovery','srv5-desc':'Protect your important files and recover lost data.','srv5-f1':'Cloud backup setup','srv5-f2':'External drive backup','srv5-f3':'File recovery assistance','srv5-f4':'Backup automation','srv5-f5':'Data migration','srv6-title':'Training & Guidance','srv6-desc':'Learn to use your computer and programs effectively.','srv6-f1':'Basic computer training','srv6-f2':'Software tutorials','srv6-f3':'Email setup help','srv6-f4':'Internet safety tips','srv6-f5':'Personalized guidance','tools-title':'Professional & Free Tools We Use','tools-subtitle':'Industry-standard remote access software for secure connections','tool1-title':'AnyDesk','tool1-desc':'Professional remote desktop software for fast and secure connections to your computer.','tool2-title':'Secure Connection','tool2-desc':'Bank-level encryption ensures your data and privacy are protected during remote sessions.','tool3-title':'Fast & Reliable','tool3-desc':'Low latency and high-speed connections for smooth remote support experience.','tool4-title':'100% Free for You','tool4-desc':'No software costs - we use free professional tools so you don\'t pay extra for technology.','limit-title':'What We Can & Cannot Do Remotely','limit-subtitle':'Understanding the scope of remote technical support','limit-note-title':'Important: Remote Support Limitations','limit-note-intro':'Remote support is powerful but has natural limitations. We CAN\'T do remotely:','limit1':'Physical hardware repairs (broken screens, damaged components)','limit2':'Hardware installation (RAM, hard drives, graphics cards)','limit3':'Printer physical setup or paper jam fixes','limit4':'Network cable installation or router physical setup','limit5':'Issues requiring physical access to the computer','limit6':'Data recovery from physically damaged drives','limit-note-outro':'Everything else software-related, we can handle remotely! If you\'re unsure, contact us and we\'ll let you know.','why-title':'Why Choose Our Remote Support?','why-subtitle':'Fast, professional, and convenient technical assistance','why1-title':'Instant Access','why1-desc':'Get help immediately without waiting for an on-site technician. We connect remotely in minutes.','why2-title':'Cost-Effective','why2-desc':'Save money on travel fees and on-site visits. Pay only for the actual support time.','why3-title':'Work From Anywhere','why3-desc':'Get support from your home, office, or anywhere with an internet connection.','why4-title':'Expert Technicians','why4-desc':'Professional IT specialists with years of experience solving technical problems.','why5-title':'Safe & Secure','why5-desc':'Encrypted connections and secure tools protect your data and privacy.','why6-title':'Flexible Support','why6-desc':'Schedule sessions at your convenience or get emergency support when you need it.','cta-title':'Need Technical Help Right Now?','cta-subtitle':'Contact us and we\'ll connect remotely to solve your computer problems quickly and professionally.','cta-btn':'Request Support',n1:'Creative Studio',n2:'Home',n3:'Services',n4:'About Us',n5:'Contact',f1:'Creative Studio',f2:'Your digital ally for web development, marketing and technical support.',f3:'Services',f4:'Web Development',f5:'Digital Marketing',f6:'Advertising Design',f7:'Remote Technical Support',f8:'Contact',f9:'🕐 Mon - Fri: 9:00 AM - 10:00 PM<br>Sat: 10:00 AM - 4:00 PM',f10:'Creative Studio',f11:'All rights reserved'},es:{'hero-title':'Soporte Técnico Remoto','hero-subtitle':'Asistencia profesional de TI desde cualquier lugar, en cualquier momento','hero-badge':'💻 100% Soluciones Remotas','bread-home':'Inicio','bread-current':'Soporte Técnico Remoto','srv-title':'Nuestros Servicios de Soporte Remoto','srv-subtitle':'Soluciones técnicas expertas entregadas remotamente a tu computadora','srv1-title':'Resolución de Problemas del Sistema','srv1-desc':'Diagnóstico y resolución rápida de problemas de computadora de forma remota.','srv1-f1':'Errores de sistema Windows/Mac','srv1-f2':'Optimización de computadora lenta','srv1-f3':'Problemas de inicio','srv1-f4':'Actualización de controladores','srv1-f5':'Configuración del sistema','srv2-title':'Instalación y Configuración de Software','srv2-desc':'Instalación y configuración completa de programas y aplicaciones.','srv2-f1':'Instalación de suite Office','srv2-f2':'Configuración de antivirus','srv2-f3':'Configuración de programas','srv2-f4':'Actualizaciones de software','srv2-f5':'Activación de licencias','srv3-title':'Optimización de Rendimiento','srv3-desc':'Acelera tu computadora y mejora su rendimiento.','srv3-f1':'Limpieza y desfragmentación de disco','srv3-f2':'Gestión de programas de inicio','srv3-f3':'Optimización del registro','srv3-f4':'Optimización de memoria','srv3-f5':'Ajuste de rendimiento','srv4-title':'Eliminación de Virus y Malware','srv4-desc':'Limpieza completa del sistema y protección contra amenazas.','srv4-f1':'Detección y eliminación de virus','srv4-f2':'Eliminación de malware','srv4-f3':'Limpieza de spyware','srv4-f4':'Instalación de software de seguridad','srv4-f5':'Configuración de protección del sistema','srv5-title':'Respaldo y Recuperación de Datos','srv5-desc':'Protege tus archivos importantes y recupera datos perdidos.','srv5-f1':'Configuración de respaldo en la nube','srv5-f2':'Respaldo en disco externo','srv5-f3':'Asistencia en recuperación de archivos','srv5-f4':'Automatización de respaldos','srv5-f5':'Migración de datos','srv6-title':'Capacitación y Orientación','srv6-desc':'Aprende a usar tu computadora y programas de manera efectiva.','srv6-f1':'Capacitación básica en computación','srv6-f2':'Tutoriales de software','srv6-f3':'Ayuda con configuración de email','srv6-f4':'Consejos de seguridad en internet','srv6-f5':'Orientación personalizada','tools-title':'Herramientas Profesionales y Gratuitas que Usamos','tools-subtitle':'Software de acceso remoto estándar de la industria para conexiones seguras','tool1-title':'AnyDesk','tool1-desc':'Software profesional de escritorio remoto para conexiones rápidas y seguras a tu computadora.','tool2-title':'Conexión Segura','tool2-desc':'Cifrado de nivel bancario asegura que tus datos y privacidad estén protegidos durante las sesiones remotas.','tool3-title':'Rápido y Confiable','tool3-desc':'Baja latencia y conexiones de alta velocidad para una experiencia de soporte remoto fluida.','tool4-title':'100% Gratis para Ti','tool4-desc':'Sin costos de software - usamos herramientas profesionales gratuitas para que no pagues extra por tecnología.','limit-title':'Qué Podemos y No Podemos Hacer Remotamente','limit-subtitle':'Comprendiendo el alcance del soporte técnico remoto','limit-note-title':'Importante: Limitaciones del Soporte Remoto','limit-note-intro':'El soporte remoto es poderoso pero tiene limitaciones naturales. NO PODEMOS hacer remotamente:','limit1':'Reparaciones físicas de hardware (pantallas rotas, componentes dañados)','limit2':'Instalación de hardware (RAM, discos duros, tarjetas gráficas)','limit3':'Configuración física de impresoras o reparación de atascos de papel','limit4':'Instalación de cables de red o configuración física de router','limit5':'Problemas que requieren acceso físico a la computadora','limit6':'Recuperación de datos de discos físicamente dañados','limit-note-outro':'¡Todo lo demás relacionado con software, lo podemos manejar remotamente! Si no estás seguro, contáctanos y te lo haremos saber.','why-title':'¿Por Qué Elegir Nuestro Soporte Remoto?','why-subtitle':'Asistencia técnica rápida, profesional y conveniente','why1-title':'Acceso Instantáneo','why1-desc':'Obtén ayuda inmediatamente sin esperar por un técnico en sitio. Nos conectamos remotamente en minutos.','why2-title':'Costo-Efectivo','why2-desc':'Ahorra dinero en tarifas de viaje y visitas en sitio. Paga solo por el tiempo real de soporte.','why3-title':'Trabaja Desde Cualquier Lugar','why3-desc':'Obtén soporte desde tu casa, oficina o cualquier lugar con conexión a internet.','why4-title':'Técnicos Expertos','why4-desc':'Especialistas profesionales de TI con años de experiencia resolviendo problemas técnicos.','why5-title':'Seguro y Protegido','why5-desc':'Conexiones cifradas y herramientas seguras protegen tus datos y privacidad.','why6-title':'Soporte Flexible','why6-desc':'Programa sesiones a tu conveniencia u obtén soporte de emergencia cuando lo necesites.','cta-title':'¿Necesitas Ayuda Técnica Ahora Mismo?','cta-subtitle':'Contáctanos y nos conectaremos remotamente para resolver tus problemas de computadora rápida y profesionalmente.','cta-btn':'Solicitar Soporte',n1:'Creative Studio',n2:'Inicio',n3:'Servicios',n4:'Nosotros',n5:'Contacto',f1:'Creative Studio',f2:'Tu aliado digital para desarrollo web, marketing y soporte técnico.',f3:'Servicios',f4:'Desarrollo Web',f5:'Marketing Digital',f6:'Diseño Publicitario',f7:'Soporte Técnico Remoto',f8:'Contacto',f9:'🕐 Lun - Vie: 9:00 AM - 10:00 PM<br>Sáb: 10:00 AM - 4:00 PM',f10:'Creative Studio',f11:'Todos los derechos reservados'}};
+let L='en';
+function selectLanguage(l){L=l;localStorage.setItem('siteLanguage',l);updateContent();document.getElementById('langPopup').classList.add('hide');}
+function switchLanguage(){selectLanguage(L==='en'?'es':'en');}
+function updateContent(){const t=TEXT[L];for(let i in t){const e=document.getElementById(i);if(e)e.innerHTML=t[i];}document.getElementById('waBtn').href='https://wa.me/15713156093?text='+encodeURIComponent(L==='es'?'¡Hola! Necesito soporte técnico remoto para mi computadora.':'Hello! I need remote technical support for my computer.');document.getElementById('langBtn').textContent=L==='en'?'ES':'EN';document.title=L==='es'?'Soporte Técnico Remoto - FS Creative Studio':'Remote Technical Support - FS Creative Studio';}
+function toggleMenu(){document.getElementById('navMenu').classList.toggle('active');}
+window.addEventListener('DOMContentLoaded',function(){const s=localStorage.getItem('siteLanguage');if(s){L=s;updateContent();document.getElementById('langPopup').classList.add('hide');}document.querySelectorAll('#navMenu a').forEach(l=>{l.addEventListener('click',function(){document.getElementById('navMenu').classList.remove('active');});});});
+window.addEventListener('scroll',function(){const n=document.getElementById('navbar');if(window.scrollY>50){n.classList.add('scrolled');}else{n.classList.remove('scrolled');}});
+
+let slideIndex=0;
+const slides=document.querySelectorAll('.slide');
+function nextSlide(){
+    slides[slideIndex].classList.remove('active');
+    slideIndex=(slideIndex+1)%slides.length;
+    slides[slideIndex].classList.add('active');
+}
+setInterval(nextSlide,4000);
+    </script>
+</body>
+</html>

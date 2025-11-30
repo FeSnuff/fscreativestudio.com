@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advertising Design - FS Creative Studio</title>
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #0f172a; }
+
+        #langPopup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); display: flex; align-items: center; justify-content: center; z-index: 10000; }
+        #langPopup.hide { display: none; }
+        .popup-box { background: white; padding: 3rem; border-radius: 16px; text-align: center; max-width: 500px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        .popup-box h2 { margin-bottom: 1rem; font-size: 2rem; color: #0f172a; }
+        .popup-box p { color: #64748b; margin-bottom: 2rem; font-size: 1.1rem; }
+        .popup-btns { display: flex; gap: 1rem; justify-content: center; }
+        .popup-btns button { padding: 1rem 2.5rem; border: 2px solid #e2e8f0; background: white; border-radius: 10px; font-size: 1.2rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .popup-btns button:hover { background: #06b6d4; color: white; border-color: #06b6d4; transform: translateY(-3px); box-shadow: 0 10px 25px rgba(6, 182, 212, 0.3); }
+
+        .floating { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 15px; z-index: 999; }
+        .float-btn { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); transition: all 0.3s; cursor: pointer; border: none; text-decoration: none; }
+        .float-btn:hover { transform: translateY(-3px) scale(1.1); box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4); }
+        .wa { background: #25D366; }
+        .fb { background: #1877F2; }
+        .lang { background: #0f172a; border: 2px solid #06b6d4; color: white; font-weight: 700; font-size: 1.2rem; }
+        .lang:hover { background: #06b6d4; }
+
+        nav { background: #0f172a; padding: 1rem 0; position: fixed; width: 100%; top: 0; z-index: 1000; border-bottom: 1px solid rgba(6, 182, 212, 0.1); transition: all 0.3s ease; }
+        nav.scrolled { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); }
+        nav .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo img { height: 50px; width: auto; transition: transform 0.3s; }
+        .logo:hover img { transform: scale(1.05); }
+        .logo span { font-size: 1.5rem; font-weight: bold; color: white; }
+        .menu-toggle { display: none; background: none; border: none; color: white; font-size: 1.8rem; cursor: pointer; padding: 5px 10px; }
+        nav ul { list-style: none; display: flex; gap: 2rem; }
+        nav a { color: white; text-decoration: none; transition: all 0.3s; font-weight: 500; position: relative; }
+        nav a:hover { color: #06b6d4; }
+        nav a::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 2px; background: #06b6d4; transition: width 0.3s; }
+        nav a:hover::after { width: 100%; }
+
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            nav ul { position: fixed; top: 61px; right: -100%; width: 250px; height: calc(100vh - 61px); background: #0f172a; flex-direction: column; gap: 0; padding: 2rem 0; transition: right 0.3s ease; border-left: 1px solid rgba(6, 182, 212, 0.2); box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3); }
+            nav ul.active { right: 0; }
+            nav ul li { width: 100%; }
+            nav ul a { display: block; padding: 1rem 2rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+            nav ul a::after { display: none; }
+        }
+
+        .hero { background: linear-gradient(135deg, #0f172a, #1e293b); color: white; padding: 150px 20px 100px; text-align: center; margin-top: 60px; position: relative; overflow: hidden; }
+        .hero-slider { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+        .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 1s; }
+        .slide.active { opacity: 0.3; }
+        .slide img { width: 100%; height: 100%; object-fit: cover; }
+        .hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"><path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="rgba(6, 182, 212, 0.1)"/></svg>') no-repeat bottom; background-size: 100% 120px; opacity: 0.3; z-index: 1; }
+        .hero-content { position: relative; z-index: 2; }
+        .hero h1 { font-size: 3rem; margin-bottom: 1rem; font-weight: 700; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); animation: fadeInUp 0.8s ease; }
+        .hero p { font-size: 1.3rem; margin-bottom: 2rem; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); animation: fadeInUp 1s ease; }
+        .breadcrumb { display: flex; justify-content: center; gap: 0.5rem; margin-top: 1rem; font-size: 0.95rem; opacity: 0.9; animation: fadeInUp 1.2s ease; }
+        .breadcrumb a { color: #06b6d4; text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        section { padding: 80px 20px; }
+        h2 { text-align: center; font-size: 2.5rem; margin-bottom: 1rem; font-weight: 700; }
+        .subtitle { text-align: center; color: #64748b; font-size: 1.2rem; margin-bottom: 3rem; }
+
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem; }
+        .service-card { background: white; border-radius: 16px; overflow: hidden; border: 2px solid #e2e8f0; transition: all 0.3s; }
+        .service-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(6, 182, 212, 0.2); border-color: #06b6d4; }
+        .service-img { width: 100%; height: 200px; object-fit: cover; }
+        .service-content { padding: 2rem; }
+        .service-content h3 { font-size: 1.8rem; margin-bottom: 1rem; color: #0f172a; }
+        .service-content p { color: #64748b; margin-bottom: 1.5rem; line-height: 1.8; }
+        .service-features { list-style: none; margin-bottom: 1.5rem; }
+        .service-features li { padding: 0.5rem 0; color: #475569; padding-left: 1.5rem; position: relative; }
+        .service-features li::before { content: "✓"; position: absolute; left: 0; color: #06b6d4; font-weight: bold; font-size: 1.2rem; }
+
+        .cta-section { background: linear-gradient(135deg, #0f172a, #1e293b); color: white; text-align: center; padding: 100px 20px; position: relative; overflow: hidden; }
+        .cta-section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"><path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="rgba(6, 182, 212, 0.1)"/></svg>') no-repeat bottom; background-size: 100% 120px; opacity: 0.2; }
+        .cta-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+        .cta-content h2 { font-size: 2.5rem; margin-bottom: 1.5rem; color: white; }
+        .cta-content p { font-size: 1.3rem; margin-bottom: 2.5rem; opacity: 0.9; }
+        .cta-btn { background: #06b6d4; color: white; padding: 18px 50px; border: none; border-radius: 8px; font-size: 1.2rem; cursor: pointer; text-decoration: none; display: inline-block; font-weight: 600; transition: all 0.3s; box-shadow: 0 10px 30px rgba(6, 182, 212, 0.3); }
+        .cta-btn:hover { background: #3b82f6; transform: translateY(-3px); box-shadow: 0 15px 40px rgba(6, 182, 212, 0.5); }
+
+        .why-us { background: #f8fafc; }
+        .benefits-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 3rem; }
+        .benefit { background: white; padding: 2rem; border-radius: 12px; text-align: center; border-left: 4px solid #06b6d4; transition: all 0.3s; }
+        .benefit:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(6, 182, 212, 0.15); }
+        .benefit-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .benefit h3 { font-size: 1.3rem; margin-bottom: 0.75rem; color: #0f172a; }
+        .benefit p { color: #64748b; line-height: 1.8; }
+
+        .portfolio { background: white; }
+        .portfolio-note { background: linear-gradient(135deg, #f1f5f9, #e2e8f0); padding: 2rem; border-radius: 12px; text-align: center; border-left: 4px solid #06b6d4; margin-top: 2rem; }
+        .portfolio-note h3 { color: #0f172a; margin-bottom: 1rem; font-size: 1.5rem; }
+        .portfolio-note p { color: #64748b; font-size: 1.1rem; line-height: 1.8; }
+
+        footer { background: #0f172a; color: white; padding: 3rem 20px 1rem; }
+        .footer-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem; }
+        .footer-section h3 { color: #06b6d4; margin-bottom: 1rem; }
+        .footer-section p, .footer-section li { color: #cbd5e1; }
+        .footer-section a { color: #cbd5e1; text-decoration: none; transition: color 0.3s; }
+        .footer-section a:hover { color: #06b6d4; }
+        .social { display: flex; gap: 1rem; margin-top: 1rem; }
+        .social a { width: 40px; height: 40px; background: #1e293b; color: white; text-align: center; line-height: 40px; border-radius: 8px; text-decoration: none; transition: all 0.3s; }
+        .social a:hover { background: #06b6d4; transform: translateY(-3px); }
+        .footer-bottom { text-align: center; padding-top: 2rem; border-top: 1px solid rgba(100, 116, 139, 0.2); color: #cbd5e1; }
+
+        @media (max-width: 768px) { 
+            .hero h1 { font-size: 2rem; } 
+            .services-grid { grid-template-columns: 1fr; }
+            .floating { bottom: 20px; right: 20px; } 
+        }
+    </style>
+</head>
+<body>
+    <div id="langPopup">
+        <div class="popup-box">
+            <h2>Select Your Language / Selecciona tu Idioma</h2>
+            <p>Choose your preferred language to continue</p>
+            <div class="popup-btns">
+                <button onclick="selectLanguage('en')">🇺🇸 English</button>
+                <button onclick="selectLanguage('es')">🇪🇸 Español</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="floating">
+        <a href="https://wa.me/15713156093" class="float-btn wa" id="waBtn" title="WhatsApp" target="_blank">
+            <svg width="35" height="35" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </a>
+        <a href="https://www.facebook.com/FSstudio" class="float-btn fb" title="Facebook" target="_blank">
+            <svg width="35" height="35" viewBox="0 0 24 24" fill="white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+        <button class="float-btn lang" onclick="switchLanguage()" id="langBtn" title="Change Language">ES</button>
+    </div>
+
+    <nav id="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="images/logo.png" alt="FS">
+                <span id="n1">Creative Studio</span>
+            </a>
+            <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">☰</button>
+            <ul id="navMenu">
+                <li><a href="index.html#home" id="n2">Home</a></li>
+                <li><a href="index.html#services" id="n3">Services</a></li>
+                <li><a href="index.html#about" id="n4">About Us</a></li>
+                <li><a href="index.html#contact" id="n5">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-slider">
+            <div class="slide active"><img src="images/ad1.jpg" alt="Advertising Design 1"></div>
+            <div class="slide"><img src="images/ad2.jpg" alt="Advertising Design 2"></div>
+            <div class="slide"><img src="images/ad3.png" alt="Advertising Design 3"></div>
+        </div>
+        <div class="container hero-content">
+            <h1 id="hero-title">Advertising Design</h1>
+            <p id="hero-subtitle">Creative designs that capture attention and convert</p>
+            <div class="breadcrumb">
+                <a href="index.html" id="bread-home">Home</a>
+                <span>/</span>
+                <span id="bread-current">Advertising Design</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="services">
+        <div class="container">
+            <h2 id="srv-title">Our Design Services</h2>
+            <p class="subtitle" id="srv-subtitle">Professional graphic design for all your advertising needs</p>
+            
+            <div class="services-grid">
+                <div class="service-card">
+                    <img src="images/social-posts.webp" class="service-img" alt="Social Media Posts">
+                    <div class="service-content">
+                        <h3 id="srv1-title">Social Media Posts</h3>
+                        <p id="srv1-desc">Eye-catching graphics for Facebook, Instagram, LinkedIn, and more.</p>
+                        <ul class="service-features">
+                            <li id="srv1-f1">Custom post designs</li>
+                            <li id="srv1-f2">Stories and Reels graphics</li>
+                            <li id="srv1-f3">Carousel designs</li>
+                            <li id="srv1-f4">Brand-consistent visuals</li>
+                            <li id="srv1-f5">Multiple size formats</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <img src="images/banners.jpg" class="service-img" alt="Banners & Ads">
+                    <div class="service-content">
+                        <h3 id="srv2-title">Digital Banners & Ads</h3>
+                        <p id="srv2-desc">Professional advertising banners for online campaigns.</p>
+                        <ul class="service-features">
+                            <li id="srv2-f1">Facebook & Instagram ads</li>
+                            <li id="srv2-f2">Google Display ads</li>
+                            <li id="srv2-f3">Web banners</li>
+                            <li id="srv2-f4">Email headers</li>
+                            <li id="srv2-f5">Retargeting ads</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <img src="images/branding.jpg" class="service-img" alt="Branding & Identity">
+                    <div class="service-content">
+                        <h3 id="srv3-title">Branding & Identity</h3>
+                        <p id="srv3-desc">Build a strong and memorable brand identity.</p>
+                        <ul class="service-features">
+                            <li id="srv3-f1">Logo design</li>
+                            <li id="srv3-f2">Brand guidelines</li>
+                            <li id="srv3-f3">Color palette</li>
+                            <li id="srv3-f4">Typography selection</li>
+                            <li id="srv3-f5">Business cards</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <img src="images/print.png" class="service-img" alt="Print Materials">
+                    <div class="service-content">
+                        <h3 id="srv4-title">Print Materials</h3>
+                        <p id="srv4-desc">High-quality designs for physical marketing materials.</p>
+                        <ul class="service-features">
+                            <li id="srv4-f1">Flyers & brochures</li>
+                            <li id="srv4-f2">Posters & signage</li>
+                            <li id="srv4-f3">Business cards</li>
+                            <li id="srv4-f4">Product catalogs</li>
+                            <li id="srv4-f5">Event materials</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <img src="images/infographics.webp" class="service-img" alt="Infographics">
+                    <div class="service-content">
+                        <h3 id="srv5-title">Infographics & Visual Content</h3>
+                        <p id="srv5-desc">Transform complex information into engaging visuals.</p>
+                        <ul class="service-features">
+                            <li id="srv5-f1">Data visualization</li>
+                            <li id="srv5-f2">Process diagrams</li>
+                            <li id="srv5-f3">Comparison charts</li>
+                            <li id="srv5-f4">Educational graphics</li>
+                            <li id="srv5-f5">Shareable content</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <img src="images/presentations.jpg" class="service-img" alt="Presentations">
+                    <div class="service-content">
+                        <h3 id="srv6-title">Presentations & Pitch Decks</h3>
+                        <p id="srv6-desc">Professional presentations that impress and persuade.</p>
+                        <ul class="service-features">
+                            <li id="srv6-f1">PowerPoint/Keynote design</li>
+                            <li id="srv6-f2">Pitch deck creation</li>
+                            <li id="srv6-f3">Sales presentations</li>
+                            <li id="srv6-f4">Corporate templates</li>
+                            <li id="srv6-f5">Visual storytelling</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="why-us" class="why-us">
+        <div class="container">
+            <h2 id="why-title">Why Choose Our Design Services?</h2>
+            <p class="subtitle" id="why-subtitle">What sets our creative work apart</p>
+            
+            <div class="benefits-grid">
+                <div class="benefit">
+                    <div class="benefit-icon">🎨</div>
+                    <h3 id="why1-title">Creative Excellence</h3>
+                    <p id="why1-desc">Every design is crafted with creativity, attention to detail, and professional expertise.</p>
+                </div>
+                <div class="benefit">
+                    <div class="benefit-icon">⚡</div>
+                    <h3 id="why2-title">Fast Turnaround</h3>
+                    <p id="why2-desc">We deliver high-quality designs quickly without compromising on quality.</p>
+                </div>
+                <div class="benefit">
+                    <div class="benefit-icon">🎯</div>
+                    <h3 id="why3-title">Results-Focused</h3>
+                    <p id="why3-desc">Our designs are created to achieve your business goals and drive conversions.</p>
+                </div>
+                <div class="benefit">
+                    <div class="benefit-icon">💎</div>
+                    <h3 id="why4-title">Unlimited Revisions</h3>
+                    <p id="why4-desc">We refine the design until you're 100% satisfied with the final result.</p>
+                </div>
+                <div class="benefit">
+                    <div class="benefit-icon">📐</div>
+                    <h3 id="why5-title">All File Formats</h3>
+                    <p id="why5-desc">Receive your designs in all necessary formats: PNG, JPG, PDF, AI, PSD, and more.</p>
+                </div>
+                <div class="benefit">
+                    <div class="benefit-icon">🤝</div>
+                    <h3 id="why6-title">Collaborative Process</h3>
+                    <p id="why6-desc">We work closely with you to ensure the designs match your vision perfectly.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="portfolio" class="portfolio">
+        <div class="container">
+            <h2 id="port-title">Our Work</h2>
+            <p class="subtitle" id="port-subtitle">Examples of our creative designs</p>
+            
+            <div class="portfolio-note">
+                <h3 id="port-note-title">📸 Portfolio Coming Soon</h3>
+                <p id="port-note-desc">We're currently building our portfolio gallery. In the meantime, contact us to see examples of our work and discuss your design needs. Each project is unique and tailored to your specific requirements and brand identity.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="cta-content">
+            <h2 id="cta-title">Ready to Elevate Your Brand?</h2>
+            <p id="cta-subtitle">Every design project is unique. Let's discuss your needs and create something amazing together.</p>
+            <a href="index.html#contact?pkg=design" class="cta-btn" id="cta-btn">Request a Quote</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-section">
+                <h3>FS <span id="f1">Creative Studio</span></h3>
+                <p id="f2">Your digital ally for web development, marketing and technical support.</p>
+                <div class="social">
+                    <a href="https://www.facebook.com/FSstudio" target="_blank" title="Facebook">f</a>
+                    <a href="#" title="Instagram">📷</a>
+                    <a href="#" title="LinkedIn">in</a>
+                    <a href="https://wa.me/15713156093" target="_blank" title="WhatsApp">📱</a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3 id="f3">Services</h3>
+                <ul style="list-style: none;">
+                    <li><a href="desarrollo-web.html" id="f4">Web Development</a></li>
+                    <li><a href="marketing-digital.html" id="f5">Digital Marketing</a></li>
+                    <li><a href="diseno-publicitario.html" id="f6">Advertising Design</a></li>
+                    <li id="f7">Technical Support</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3 id="f8">Contact</h3>
+                <p>📧 Contact us via the form</p>
+                <p>📱 WhatsApp: +1 (571) 315-6093</p>
+                <p id="f9">🕐 Mon - Fri: 9:00 AM - 10:00 PM<br>Sat: 10:00 AM - 4:00 PM</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 FS <span id="f10">Creative Studio</span>. <span id="f11">All rights reserved</span>.</p>
+        </div>
+    </footer>
+
+    <script>
+const TEXT={en:{'hero-title':'Advertising Design','hero-subtitle':'Creative designs that capture attention and convert','bread-home':'Home','bread-current':'Advertising Design','srv-title':'Our Design Services','srv-subtitle':'Professional graphic design for all your advertising needs','srv1-title':'Social Media Posts','srv1-desc':'Eye-catching graphics for Facebook, Instagram, LinkedIn, and more.','srv1-f1':'Custom post designs','srv1-f2':'Stories and Reels graphics','srv1-f3':'Carousel designs','srv1-f4':'Brand-consistent visuals','srv1-f5':'Multiple size formats','srv2-title':'Digital Banners & Ads','srv2-desc':'Professional advertising banners for online campaigns.','srv2-f1':'Facebook & Instagram ads','srv2-f2':'Google Display ads','srv2-f3':'Web banners','srv2-f4':'Email headers','srv2-f5':'Retargeting ads','srv3-title':'Branding & Identity','srv3-desc':'Build a strong and memorable brand identity.','srv3-f1':'Logo design','srv3-f2':'Brand guidelines','srv3-f3':'Color palette','srv3-f4':'Typography selection','srv3-f5':'Business cards','srv4-title':'Print Materials','srv4-desc':'High-quality designs for physical marketing materials.','srv4-f1':'Flyers & brochures','srv4-f2':'Posters & signage','srv4-f3':'Business cards','srv4-f4':'Product catalogs','srv4-f5':'Event materials','srv5-title':'Infographics & Visual Content','srv5-desc':'Transform complex information into engaging visuals.','srv5-f1':'Data visualization','srv5-f2':'Process diagrams','srv5-f3':'Comparison charts','srv5-f4':'Educational graphics','srv5-f5':'Shareable content','srv6-title':'Presentations & Pitch Decks','srv6-desc':'Professional presentations that impress and persuade.','srv6-f1':'PowerPoint/Keynote design','srv6-f2':'Pitch deck creation','srv6-f3':'Sales presentations','srv6-f4':'Corporate templates','srv6-f5':'Visual storytelling','why-title':'Why Choose Our Design Services?','why-subtitle':'What sets our creative work apart','why1-title':'Creative Excellence','why1-desc':'Every design is crafted with creativity, attention to detail, and professional expertise.','why2-title':'Fast Turnaround','why2-desc':'We deliver high-quality designs quickly without compromising on quality.','why3-title':'Results-Focused','why3-desc':'Our designs are created to achieve your business goals and drive conversions.','why4-title':'Unlimited Revisions','why4-desc':'We refine the design until you\'re 100% satisfied with the final result.','why5-title':'All File Formats','why5-desc':'Receive your designs in all necessary formats: PNG, JPG, PDF, AI, PSD, and more.','why6-title':'Collaborative Process','why6-desc':'We work closely with you to ensure the designs match your vision perfectly.','port-title':'Our Work','port-subtitle':'Examples of our creative designs','port-note-title':'📸 Portfolio Coming Soon','port-note-desc':'We\'re currently building our portfolio gallery. In the meantime, contact us to see examples of our work and discuss your design needs. Each project is unique and tailored to your specific requirements and brand identity.','cta-title':'Ready to Elevate Your Brand?','cta-subtitle':'Every design project is unique. Let\'s discuss your needs and create something amazing together.','cta-btn':'Request a Quote',n1:'Creative Studio',n2:'Home',n3:'Services',n4:'About Us',n5:'Contact',f1:'Creative Studio',f2:'Your digital ally for web development, marketing and technical support.',f3:'Services',f4:'Web Development',f5:'Digital Marketing',f6:'Advertising Design',f7:'Technical Support',f8:'Contact',f9:'🕐 Mon - Fri: 9:00 AM - 10:00 PM<br>Sat: 10:00 AM - 4:00 PM',f10:'Creative Studio',f11:'All rights reserved'},es:{'hero-title':'Diseño Publicitario','hero-subtitle':'Diseños creativos que capturan la atención y convierten','bread-home':'Inicio','bread-current':'Diseño Publicitario','srv-title':'Nuestros Servicios de Diseño','srv-subtitle':'Diseño gráfico profesional para todas tus necesidades publicitarias','srv1-title':'Posts para Redes Sociales','srv1-desc':'Gráficos llamativos para Facebook, Instagram, LinkedIn y más.','srv1-f1':'Diseños de posts personalizados','srv1-f2':'Gráficos para Stories y Reels','srv1-f3':'Diseños de carruseles','srv1-f4':'Visuales consistentes con tu marca','srv1-f5':'Múltiples formatos de tamaño','srv2-title':'Banners Digitales y Anuncios','srv2-desc':'Banners publicitarios profesionales para campañas online.','srv2-f1':'Anuncios Facebook e Instagram','srv2-f2':'Anuncios Google Display','srv2-f3':'Banners web','srv2-f4':'Encabezados de email','srv2-f5':'Anuncios de retargeting','srv3-title':'Branding e Identidad','srv3-desc':'Construye una identidad de marca fuerte y memorable.','srv3-f1':'Diseño de logos','srv3-f2':'Guías de marca','srv3-f3':'Paleta de colores','srv3-f4':'Selección de tipografía','srv3-f5':'Tarjetas de presentación','srv4-title':'Material Impreso','srv4-desc':'Diseños de alta calidad para materiales de marketing físicos.','srv4-f1':'Flyers y folletos','srv4-f2':'Pósters y señalización','srv4-f3':'Tarjetas de presentación','srv4-f4':'Catálogos de productos','srv4-f5':'Material para eventos','srv5-title':'Infografías y Contenido Visual','srv5-desc':'Transforma información compleja en visuales atractivos.','srv5-f1':'Visualización de datos','srv5-f2':'Diagramas de procesos','srv5-f3':'Gráficos comparativos','srv5-f4':'Gráficos educativos','srv5-f5':'Contenido para compartir','srv6-title':'Presentaciones y Pitch Decks','srv6-desc':'Presentaciones profesionales que impresionan y persuaden.','srv6-f1':'Diseño PowerPoint/Keynote','srv6-f2':'Creación de pitch decks','srv6-f3':'Presentaciones de ventas','srv6-f4':'Plantillas corporativas','srv6-f5':'Storytelling visual','why-title':'¿Por Qué Elegir Nuestros Servicios de Diseño?','why-subtitle':'Lo que distingue nuestro trabajo creativo','why1-title':'Excelencia Creativa','why1-desc':'Cada diseño se elabora con creatividad, atención al detalle y experiencia profesional.','why2-title':'Entrega Rápida','why2-desc':'Entregamos diseños de alta calidad rápidamente sin comprometer la calidad.','why3-title':'Enfocados en Resultados','why3-desc':'Nuestros diseños se crean para lograr tus objetivos de negocio y generar conversiones.','why4-title':'Revisiones Ilimitadas','why4-desc':'Refinamos el diseño hasta que estés 100% satisfecho con el resultado final.','why5-title':'Todos los Formatos','why5-desc':'Recibe tus diseños en todos los formatos necesarios: PNG, JPG, PDF, AI, PSD y más.','why6-title':'Proceso Colaborativo','why6-desc':'Trabajamos estrechamente contigo para asegurar que los diseños coincidan perfectamente con tu visión.','port-title':'Nuestro Trabajo','port-subtitle':'Ejemplos de nuestros diseños creativos','port-note-title':'📸 Portafolio Próximamente','port-note-desc':'Actualmente estamos construyendo nuestra galería de portafolio. Mientras tanto, contáctanos para ver ejemplos de nuestro trabajo y discutir tus necesidades de diseño. Cada proyecto es único y adaptado a tus requisitos específicos e identidad de marca.','cta-title':'¿Listo para Elevar Tu Marca?','cta-subtitle':'Cada proyecto de diseño es único. Hablemos sobre tus necesidades y creemos algo increíble juntos.','cta-btn':'Solicitar Cotización',n1:'Creative Studio',n2:'Inicio',n3:'Servicios',n4:'Nosotros',n5:'Contacto',f1:'Creative Studio',f2:'Tu aliado digital para desarrollo web, marketing y soporte técnico.',f3:'Servicios',f4:'Desarrollo Web',f5:'Marketing Digital',f6:'Diseño Publicitario',f7:'Soporte Técnico',f8:'Contacto',f9:'🕐 Lun - Vie: 9:00 AM - 10:00 PM<br>Sáb: 10:00 AM - 4:00 PM',f10:'Creative Studio',f11:'Todos los derechos reservados'}};
+let L='en';
+function selectLanguage(l){L=l;localStorage.setItem('siteLanguage',l);updateContent();document.getElementById('langPopup').classList.add('hide');}
+function switchLanguage(){selectLanguage(L==='en'?'es':'en');}
+function updateContent(){const t=TEXT[L];for(let i in t){const e=document.getElementById(i);if(e)e.innerHTML=t[i];}document.getElementById('waBtn').href='https://wa.me/15713156093?text='+encodeURIComponent(L==='es'?'¡Hola! Me gustaría solicitar una cotización para diseño publicitario.':'Hello! I would like to request a quote for advertising design.');document.getElementById('langBtn').textContent=L==='en'?'ES':'EN';document.title=L==='es'?'Diseño Publicitario - FS Creative Studio':'Advertising Design - FS Creative Studio';}
+function toggleMenu(){document.getElementById('navMenu').classList.toggle('active');}
+window.addEventListener('DOMContentLoaded',function(){const s=localStorage.getItem('siteLanguage');if(s){L=s;updateContent();document.getElementById('langPopup').classList.add('hide');}document.querySelectorAll('#navMenu a').forEach(l=>{l.addEventListener('click',function(){document.getElementById('navMenu').classList.remove('active');});});});
+window.addEventListener('scroll',function(){const n=document.getElementById('navbar');if(window.scrollY>50){n.classList.add('scrolled');}else{n.classList.remove('scrolled');}});
+
+let slideIndex=0;
+const slides=document.querySelectorAll('.slide');
+function nextSlide(){
+    slides[slideIndex].classList.remove('active');
+    slideIndex=(slideIndex+1)%slides.length;
+    slides[slideIndex].classList.add('active');
+}
+setInterval(nextSlide,4000);
+    </script>
+</body>
+</html>
