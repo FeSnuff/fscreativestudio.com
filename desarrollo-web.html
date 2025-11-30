@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Development - FS Creative Studio</title>
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #0f172a; }
+
+        #langPopup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); display: flex; align-items: center; justify-content: center; z-index: 10000; }
+        #langPopup.hide { display: none; }
+        .popup-box { background: white; padding: 3rem; border-radius: 16px; text-align: center; max-width: 500px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        .popup-box h2 { margin-bottom: 1rem; font-size: 2rem; color: #0f172a; }
+        .popup-box p { color: #64748b; margin-bottom: 2rem; font-size: 1.1rem; }
+        .popup-btns { display: flex; gap: 1rem; justify-content: center; }
+        .popup-btns button { padding: 1rem 2.5rem; border: 2px solid #e2e8f0; background: white; border-radius: 10px; font-size: 1.2rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .popup-btns button:hover { background: #06b6d4; color: white; border-color: #06b6d4; transform: translateY(-3px); box-shadow: 0 10px 25px rgba(6, 182, 212, 0.3); }
+
+        .floating { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 15px; z-index: 999; }
+        .float-btn { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); transition: all 0.3s; cursor: pointer; border: none; text-decoration: none; }
+        .float-btn:hover { transform: translateY(-3px) scale(1.1); box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4); }
+        .wa { background: #25D366; }
+        .fb { background: #1877F2; }
+        .lang { background: #0f172a; border: 2px solid #06b6d4; color: white; font-weight: 700; font-size: 1.2rem; }
+        .lang:hover { background: #06b6d4; }
+
+        nav { background: #0f172a; padding: 1rem 0; position: fixed; width: 100%; top: 0; z-index: 1000; border-bottom: 1px solid rgba(6, 182, 212, 0.1); transition: all 0.3s ease; }
+        nav.scrolled { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); }
+        nav .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo img { height: 50px; width: auto; transition: transform 0.3s; }
+        .logo:hover img { transform: scale(1.05); }
+        .logo span { font-size: 1.5rem; font-weight: bold; color: white; }
+        .menu-toggle { display: none; background: none; border: none; color: white; font-size: 1.8rem; cursor: pointer; padding: 5px 10px; }
+        nav ul { list-style: none; display: flex; gap: 2rem; }
+        nav a { color: white; text-decoration: none; transition: all 0.3s; font-weight: 500; position: relative; }
+        nav a:hover { color: #06b6d4; }
+        nav a::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 2px; background: #06b6d4; transition: width 0.3s; }
+        nav a:hover::after { width: 100%; }
+
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            nav ul { position: fixed; top: 61px; right: -100%; width: 250px; height: calc(100vh - 61px); background: #0f172a; flex-direction: column; gap: 0; padding: 2rem 0; transition: right 0.3s ease; border-left: 1px solid rgba(6, 182, 212, 0.2); box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3); }
+            nav ul.active { right: 0; }
+            nav ul li { width: 100%; }
+            nav ul a { display: block; padding: 1rem 2rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+            nav ul a::after { display: none; }
+        }
+
+        .hero { background: linear-gradient(135deg, #0f172a, #1e293b); color: white; padding: 150px 20px 100px; text-align: center; margin-top: 60px; position: relative; overflow: hidden; }
+        .hero-slider { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+        .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 1s; }
+        .slide.active { opacity: 0.3; }
+        .slide img { width: 100%; height: 100%; object-fit: cover; }
+        .hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"><path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="rgba(6, 182, 212, 0.1)"/></svg>') no-repeat bottom; background-size: 100% 120px; opacity: 0.3; z-index: 1; }
+        .hero-content { position: relative; z-index: 2; }
+        .hero h1 { font-size: 3rem; margin-bottom: 1rem; font-weight: 700; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); animation: fadeInUp 0.8s ease; }
+        .hero p { font-size: 1.3rem; margin-bottom: 2rem; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); animation: fadeInUp 1s ease; }
+        .breadcrumb { display: flex; justify-content: center; gap: 0.5rem; margin-top: 1rem; font-size: 0.95rem; opacity: 0.9; animation: fadeInUp 1.2s ease; }
+        .breadcrumb a { color: #06b6d4; text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        section { padding: 80px 20px; }
+        h2 { text-align: center; font-size: 2.5rem; margin-bottom: 1rem; font-weight: 700; }
+        .subtitle { text-align: center; color: #64748b; font-size: 1.2rem; margin-bottom: 3rem; }
+
+        .packages { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-top: 3rem; }
+        .package { background: white; border-radius: 16px; border: 2px solid #e2e8f0; overflow: hidden; transition: all 0.3s; position: relative; }
+        .package:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(6, 182, 212, 0.2); border-color: #06b6d4; }
+        .package.featured { border-color: #06b6d4; border-width: 3px; }
+        .package.featured .badge { position: absolute; top: 20px; right: -35px; background: linear-gradient(135deg, #06b6d4, #3b82f6); color: white; padding: 5px 40px; transform: rotate(45deg); font-weight: 700; font-size: 0.85rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .package-header { background: linear-gradient(135deg, #0f172a, #1e293b); color: white; padding: 2rem; text-align: center; }
+        .package-header h3 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+        .package-price { font-size: 3rem; font-weight: 700; color: #06b6d4; margin: 1rem 0; }
+        .package-price span { font-size: 1.2rem; color: #cbd5e1; }
+        .package-body { padding: 2rem; }
+        .package-features { list-style: none; margin-bottom: 2rem; }
+        .package-features li { padding: 0.75rem 0; border-bottom: 1px solid #e2e8f0; display: flex; align-items: start; gap: 0.75rem; color: #475569; }
+        .package-features li:last-child { border-bottom: none; }
+        .package-features li::before { content: "✓"; color: #06b6d4; font-weight: bold; font-size: 1.2rem; flex-shrink: 0; }
+        .package-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 1.5rem; }
+        .package-gallery img { width: 100%; height: 100px; object-fit: cover; border-radius: 8px; transition: transform 0.3s; cursor: pointer; }
+        .package-gallery img:hover { transform: scale(1.05); }
+        .cta-btn { background: #06b6d4; color: white; padding: 15px 40px; border: none; border-radius: 8px; font-size: 1.1rem; cursor: pointer; text-decoration: none; display: block; text-align: center; font-weight: 600; transition: all 0.3s; }
+        .cta-btn:hover { background: #3b82f6; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(6, 182, 212, 0.4); }
+        .cta-btn.secondary { background: white; color: #06b6d4; border: 2px solid #06b6d4; }
+        .cta-btn.secondary:hover { background: #06b6d4; color: white; }
+
+        .custom-packages { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 3rem; }
+        .custom-package { background: linear-gradient(135deg, #f8fafc, #e2e8f0); border-radius: 16px; padding: 2rem; text-align: center; border: 2px solid #cbd5e1; transition: all 0.3s; }
+        .custom-package:hover { transform: translateY(-5px); border-color: #06b6d4; box-shadow: 0 15px 35px rgba(6, 182, 212, 0.15); }
+        .custom-package-icon { font-size: 3.5rem; margin-bottom: 1rem; }
+        .custom-package h3 { font-size: 1.5rem; margin-bottom: 1rem; color: #0f172a; }
+        .custom-package p { color: #64748b; margin-bottom: 1.5rem; line-height: 1.8; }
+        .custom-package ul { list-style: none; text-align: left; margin-bottom: 1.5rem; }
+        .custom-package li { padding: 0.5rem 0; color: #475569; padding-left: 1.5rem; position: relative; }
+        .custom-package li::before { content: "•"; position: absolute; left: 0; color: #06b6d4; font-weight: bold; font-size: 1.5rem; }
+
+        .process { background: #f8fafc; }
+        .process-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 3rem; }
+        .step { background: white; padding: 2rem; border-radius: 12px; text-align: center; border-left: 4px solid #06b6d4; transition: all 0.3s; }
+        .step:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(6, 182, 212, 0.15); }
+        .step-number { width: 60px; height: 60px; background: linear-gradient(135deg, #06b6d4, #3b82f6); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 700; margin: 0 auto 1.5rem; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3); }
+        .step h3 { font-size: 1.3rem; margin-bottom: 0.75rem; color: #0f172a; }
+        .step p { color: #64748b; line-height: 1.8; }
+
+        footer { background: #0f172a; color: white; padding: 3rem 20px 1rem; }
+        .footer-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem; }
+        .footer-section h3 { color: #06b6d4; margin-bottom: 1rem; }
+        .footer-section p, .footer-section li { color: #cbd5e1; }
+        .footer-section a { color: #cbd5e1; text-decoration: none; transition: color 0.3s; }
+        .footer-section a:hover { color: #06b6d4; }
+        .social { display: flex; gap: 1rem; margin-top: 1rem; }
+        .social a { width: 40px; height: 40px; background: #1e293b; color: white; text-align: center; line-height: 40px; border-radius: 8px; text-decoration: none; transition: all 0.3s; }
+        .social a:hover { background: #06b6d4; transform: translateY(-3px); }
+        .footer-bottom { text-align: center; padding-top: 2rem; border-top: 1px solid rgba(100, 116, 139, 0.2); color: #cbd5e1; }
+
+        @media (max-width: 768px) { 
+            .hero h1 { font-size: 2rem; } 
+            .packages { grid-template-columns: 1fr; }
+            .custom-packages { grid-template-columns: 1fr; }
+            .floating { bottom: 20px; right: 20px; } 
+        }
+    </style>
+</head>
+<body>
+    <div id="langPopup">
+        <div class="popup-box">
+            <h2>Select Your Language / Selecciona tu Idioma</h2>
+            <p>Choose your preferred language to continue</p>
+            <div class="popup-btns">
+                <button onclick="selectLanguage('en')">🇺🇸 English</button>
+                <button onclick="selectLanguage('es')">🇪🇸 Español</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="floating">
+        <a href="https://wa.me/15713156093" class="float-btn wa" id="waBtn" title="WhatsApp" target="_blank">
+            <svg width="35" height="35" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </a>
+        <a href="https://www.facebook.com/FSstudio" class="float-btn fb" title="Facebook" target="_blank">
+            <svg width="35" height="35" viewBox="0 0 24 24" fill="white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+        <button class="float-btn lang" onclick="switchLanguage()" id="langBtn" title="Change Language">ES</button>
+    </div>
+
+    <nav id="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="images/logo.png" alt="FS">
+                <span id="n1">Creative Studio</span>
+            </a>
+            <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">☰</button>
+            <ul id="navMenu">
+                <li><a href="index.html#home" id="n2">Home</a></li>
+                <li><a href="index.html#services" id="n3">Services</a></li>
+                <li><a href="index.html#about" id="n4">About Us</a></li>
+                <li><a href="index.html#contact" id="n5">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-slider">
+            <div class="slide active"><img src="images/wp1.webp" alt="Web Development 1"></div>
+            <div class="slide"><img src="images/wp2.png" alt="Web Development 2"></div>
+            <div class="slide"><img src="images/wp3.jpg" alt="Web Development 3"></div>
+        </div>
+        <div class="container hero-content">
+            <h1 id="hero-title">Web Development</h1>
+            <p id="hero-subtitle">Professional websites that convert visitors into customers</p>
+            <div class="breadcrumb">
+                <a href="index.html" id="bread-home">Home</a>
+                <span>/</span>
+                <span id="bread-current">Web Development</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="packages">
+        <div class="container">
+            <h2 id="pkg-title">Our Packages</h2>
+            <p class="subtitle" id="pkg-subtitle">Choose the perfect plan for your business</p>
+            
+            <div class="packages">
+                <div class="package">
+                    <div class="package-header">
+                        <h3 id="pkg1-name">Basic Website</h3>
+                        <div class="package-price">$150<span id="pkg1-period">/one-time</span></div>
+                        <p id="pkg1-desc">Perfect for small businesses and startups</p>
+                    </div>
+                    <div class="package-body">
+                        <div class="package-gallery">
+                            <img src="images/bw1.png" alt="Basic Website Example 1">
+                            <img src="images/bw2.png" alt="Basic Website Example 2">
+                            <img src="images/bw3.jpg" alt="Basic Website Example 3">
+                        </div>
+                        <ul class="package-features">
+                            <li id="pkg1-f1">1 responsive page</li>
+                            <li id="pkg1-f2">Contact form with email</li>
+                            <li id="pkg1-f3">Social media links</li>
+                            <li id="pkg1-f4">1 year hosting included</li>
+                            <li id="pkg1-f5">1 domain for 1 year</li>
+                            <li id="pkg1-f6">Mobile responsive design</li>
+                            <li id="pkg1-f7">Basic SEO optimization</li>
+                        </ul>
+                        <a href="index.html#contact?pkg=basic" class="cta-btn" id="pkg1-cta">Get Started</a>
+                    </div>
+                </div>
+
+                <div class="package featured">
+                    <span class="badge" id="pkg2-badge">POPULAR</span>
+                    <div class="package-header">
+                        <h3 id="pkg2-name">Professional Website</h3>
+                        <div class="package-price">$250<span id="pkg2-period">/one-time</span></div>
+                        <p id="pkg2-desc">Ideal for growing businesses</p>
+                    </div>
+                    <div class="package-body">
+                        <div class="package-gallery">
+                            <img src="images/pw1.png" alt="Professional Website Example 1">
+                            <img src="images/pw2.jpg" alt="Professional Website Example 2">
+                            <img src="images/pw3.jpg" alt="Professional Website Example 3">
+                        </div>
+                        <ul class="package-features">
+                            <li id="pkg2-f1">Main page + 5 subpages</li>
+                            <li id="pkg2-f2">Contact form with email</li>
+                            <li id="pkg2-f3">Social media integration</li>
+                            <li id="pkg2-f4">1 year hosting included</li>
+                            <li id="pkg2-f5">1 domain for 1 year</li>
+                            <li id="pkg2-f6">Fully responsive design</li>
+                            <li id="pkg2-f7">Advanced SEO optimization</li>
+                            <li id="pkg2-f8">Image gallery</li>
+                            <li id="pkg2-f9">Google Maps integration</li>
+                        </ul>
+                        <a href="index.html#contact?pkg=professional" class="cta-btn" id="pkg2-cta">Get Started</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="custom" style="background: #f8fafc;">
+        <div class="container">
+            <h2 id="custom-title">Custom Solutions</h2>
+            <p class="subtitle" id="custom-subtitle">Tailored to your specific needs - Request a quote</p>
+            
+            <div class="custom-packages">
+                <div class="custom-package">
+                    <div class="custom-package-icon">🛒</div>
+                    <h3 id="custom1-name">E-commerce Store</h3>
+                    <p id="custom1-desc">Complete online store with shopping cart and payment processing</p>
+                    <ul>
+                        <li id="custom1-f1">Product catalog</li>
+                        <li id="custom1-f2">Shopping cart</li>
+                        <li id="custom1-f3">Payment gateway integration</li>
+                        <li id="custom1-f4">Inventory management</li>
+                        <li id="custom1-f5">Order tracking</li>
+                    </ul>
+                    <a href="index.html#contact?pkg=ecommerce" class="cta-btn secondary" id="custom1-cta">Request Quote</a>
+                </div>
+
+                <div class="custom-package">
+                    <div class="custom-package-icon">⚙️</div>
+                    <h3 id="custom2-name">Custom Web Application</h3>
+                    <p id="custom2-desc">Tailored web applications for your business processes</p>
+                    <ul>
+                        <li id="custom2-f1">Custom functionality</li>
+                        <li id="custom2-f2">User authentication</li>
+                        <li id="custom2-f3">Database integration</li>
+                        <li id="custom2-f4">API development</li>
+                        <li id="custom2-f5">Admin dashboard</li>
+                    </ul>
+                    <a href="index.html#contact?pkg=webapp" class="cta-btn secondary" id="custom2-cta">Request Quote</a>
+                </div>
+
+                <div class="custom-package">
+                    <div class="custom-package-icon">🏢</div>
+                    <h3 id="custom3-name">Corporate Website</h3>
+                    <p id="custom3-desc">Professional corporate presence with advanced features</p>
+                    <ul>
+                        <li id="custom3-f1">10+ pages</li>
+                        <li id="custom3-f2">Blog/News section</li>
+                        <li id="custom3-f3">Team profiles</li>
+                        <li id="custom3-f4">Portfolio showcase</li>
+                        <li id="custom3-f5">Multi-language support</li>
+                    </ul>
+                    <a href="index.html#contact?pkg=corporate" class="cta-btn secondary" id="custom3-cta">Request Quote</a>
+                </div>
+
+                <div class="custom-package">
+                    <div class="custom-package-icon">🎯</div>
+                    <h3 id="custom4-name">Landing Page</h3>
+                    <p id="custom4-desc">High-converting landing pages for campaigns</p>
+                    <ul>
+                        <li id="custom4-f1">Conversion optimized</li>
+                        <li id="custom4-f2">A/B testing ready</li>
+                        <li id="custom4-f3">Lead capture forms</li>
+                        <li id="custom4-f4">Analytics integration</li>
+                        <li id="custom4-f5">Fast loading speed</li>
+                    </ul>
+                    <a href="index.html#contact?pkg=landing" class="cta-btn secondary" id="custom4-cta">Request Quote</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="process">
+        <div class="container">
+            <h2 id="process-title">Our Process</h2>
+            <p class="subtitle" id="process-subtitle">How we bring your website to life</p>
+            
+            <div class="process-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3 id="step1-title">Consultation</h3>
+                    <p id="step1-desc">We discuss your needs, goals, and vision for your website</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3 id="step2-title">Design</h3>
+                    <p id="step2-desc">We create mockups and prototypes for your approval</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3 id="step3-title">Development</h3>
+                    <p id="step3-desc">We build your website with clean, modern code</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3 id="step4-title">Testing</h3>
+                    <p id="step4-desc">We test on all devices and browsers for perfection</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <h3 id="step5-title">Launch</h3>
+                    <p id="step5-desc">We deploy your website and make it live</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">6</div>
+                    <h3 id="step6-title">Support</h3>
+                    <p id="step6-desc">We provide ongoing maintenance and updates</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-section">
+                <h3>FS <span id="f1">Creative Studio</span></h3>
+                <p id="f2">Your digital ally for web development, marketing and technical support.</p>
+                <div class="social">
+                    <a href="https://www.facebook.com/FSstudio" target="_blank" title="Facebook">f</a>
+                    <a href="#" title="Instagram">📷</a>
+                    <a href="#" title="LinkedIn">in</a>
+                    <a href="https://wa.me/15713156093" target="_blank" title="WhatsApp">📱</a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3 id="f3">Services</h3>
+                <ul style="list-style: none;">
+                    <li><a href="desarrollo-web.html" id="f4">Web Development</a></li>
+                    <li id="f5">Digital Marketing</li>
+                    <li id="f6">Advertising Design</li>
+                    <li id="f7">Technical Support</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3 id="f8">Contact</h3>
+                <p>📧 Contact us via the form</p>
+                <p>📱 WhatsApp: +1 (571) 315-6093</p>
+                <p id="f9">🕐 Mon - Fri: 9:00 AM - 6:00 PM</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 FS <span id="f10">Creative Studio</span>. <span id="f11">All rights reserved</span>.</p>
+        </div>
+    </footer>
+
+    <script>
+const TEXT={en:{'hero-title':'Web Development','hero-subtitle':'Professional websites that convert visitors into customers','bread-home':'Home','bread-current':'Web Development','pkg-title':'Our Packages','pkg-subtitle':'Choose the perfect plan for your business','pkg1-name':'Basic Website','pkg1-period':'/one-time','pkg1-desc':'Perfect for small businesses and startups','pkg1-f1':'1 responsive page','pkg1-f2':'Contact form with email','pkg1-f3':'Social media links','pkg1-f4':'1 year hosting included','pkg1-f5':'1 domain for 1 year','pkg1-f6':'Mobile responsive design','pkg1-f7':'Basic SEO optimization','pkg1-cta':'Get Started','pkg2-badge':'POPULAR','pkg2-name':'Professional Website','pkg2-period':'/one-time','pkg2-desc':'Ideal for growing businesses','pkg2-f1':'Main page + 5 subpages','pkg2-f2':'Contact form with email','pkg2-f3':'Social media integration','pkg2-f4':'1 year hosting included','pkg2-f5':'1 domain for 1 year','pkg2-f6':'Fully responsive design','pkg2-f7':'Advanced SEO optimization','pkg2-f8':'Image gallery','pkg2-f9':'Google Maps integration','pkg2-cta':'Get Started','custom-title':'Custom Solutions','custom-subtitle':'Tailored to your specific needs - Request a quote','custom1-name':'E-commerce Store','custom1-desc':'Complete online store with shopping cart and payment processing','custom1-f1':'Product catalog','custom1-f2':'Shopping cart','custom1-f3':'Payment gateway integration','custom1-f4':'Inventory management','custom1-f5':'Order tracking','custom1-cta':'Request Quote','custom2-name':'Custom Web Application','custom2-desc':'Tailored web applications for your business processes','custom2-f1':'Custom functionality','custom2-f2':'User authentication','custom2-f3':'Database integration','custom2-f4':'API development','custom2-f5':'Admin dashboard','custom2-cta':'Request Quote','custom3-name':'Corporate Website','custom3-desc':'Professional corporate presence with advanced features','custom3-f1':'10+ pages','custom3-f2':'Blog/News section','custom3-f3':'Team profiles','custom3-f4':'Portfolio showcase','custom3-f5':'Multi-language support','custom3-cta':'Request Quote','custom4-name':'Landing Page','custom4-desc':'High-converting landing pages for campaigns','custom4-f1':'Conversion optimized','custom4-f2':'A/B testing ready','custom4-f3':'Lead capture forms','custom4-f4':'Analytics integration','custom4-f5':'Fast loading speed','custom4-cta':'Request Quote','process-title':'Our Process','process-subtitle':'How we bring your website to life','step1-title':'Consultation','step1-desc':'We discuss your needs, goals, and vision for your website','step2-title':'Design','step2-desc':'We create mockups and prototypes for your approval','step3-title':'Development','step3-desc':'We build your website with clean, modern code','step4-title':'Testing','step4-desc':'We test on all devices and browsers for perfection','step5-title':'Launch','step5-desc':'We deploy your website and make it live','step6-title':'Support','step6-desc':'We provide ongoing maintenance and updates',n1:'Creative Studio',n2:'Home',n3:'Services',n4:'About Us',n5:'Contact',f1:'Creative Studio',f2:'Your digital ally for web development, marketing and technical support.',f3:'Services',f4:'Web Development',f5:'Digital Marketing',f6:'Advertising Design',f7:'Technical Support',f8:'Contact',f9:'🕐 Mon - Fri: 9:00 AM - 6:00 PM',f10:'Creative Studio',f11:'All rights reserved'},es:{'hero-title':'Desarrollo Web','hero-subtitle':'Sitios web profesionales que convierten visitantes en clientes','bread-home':'Inicio','bread-current':'Desarrollo Web','pkg-title':'Nuestros Paquetes','pkg-subtitle':'Elige el plan perfecto para tu negocio','pkg1-name':'Sitio Web Básico','pkg1-period':'/pago único','pkg1-desc':'Perfecto para pequeñas empresas y startups','pkg1-f1':'1 página responsive','pkg1-f2':'Formulario de contacto con email','pkg1-f3':'Enlaces a redes sociales','pkg1-f4':'1 año de hosting incluido','pkg1-f5':'1 dominio por 1 año','pkg1-f6':'Diseño responsive móvil','pkg1-f7':'Optimización SEO básica','pkg1-cta':'Comenzar','pkg2-badge':'POPULAR','pkg2-name':'Sitio Web Profesional','pkg2-period':'/pago único','pkg2-desc':'Ideal para negocios en crecimiento','pkg2-f1':'Página principal + 5 subpáginas','pkg2-f2':'Formulario de contacto con email','pkg2-f3':'Integración de redes sociales','pkg2-f4':'1 año de hosting incluido','pkg2-f5':'1 dominio por 1 año','pkg2-f6':'Diseño completamente responsive','pkg2-f7':'Optimización SEO avanzada','pkg2-f8':'Galería de imágenes','pkg2-f9':'Integración Google Maps','pkg2-cta':'Comenzar','custom-title':'Soluciones Personalizadas','custom-subtitle':'Adaptadas a tus necesidades específicas - Solicita cotización','custom1-name':'Tienda E-commerce','custom1-desc':'Tienda online completa con carrito de compras y procesamiento de pagos','custom1-f1':'Catálogo de productos','custom1-f2':'Carrito de compras','custom1-f3':'Integración de pasarela de pago','custom1-f4':'Gestión de inventario','custom1-f5':'Seguimiento de pedidos','custom1-cta':'Solicitar Cotización','custom2-name':'Aplicación Web Personalizada','custom2-desc':'Aplicaciones web adaptadas a tus procesos de negocio','custom2-f1':'Funcionalidad personalizada','custom2-f2':'Autenticación de usuarios','custom2-f3':'Integración de base de datos','custom2-f4':'Desarrollo de API','custom2-f5':'Panel de administración','custom2-cta':'Solicitar Cotización','custom3-name':'Sitio Corporativo','custom3-desc':'Presencia corporativa profesional con características avanzadas','custom3-f1':'10+ páginas','custom3-f2':'Sección de blog/noticias','custom3-f3':'Perfiles de equipo','custom3-f4':'Portafolio showcase','custom3-f5':'Soporte multiidioma','custom3-cta':'Solicitar Cotización','custom4-name':'Landing Page','custom4-desc':'Páginas de aterrizaje de alta conversión para campañas','custom4-f1':'Optimizada para conversión','custom4-f2':'Lista para A/B testing','custom4-f3':'Formularios de captura de leads','custom4-f4':'Integración de analytics','custom4-f5':'Velocidad de carga rápida','custom4-cta':'Solicitar Cotización','process-title':'Nuestro Proceso','process-subtitle':'Cómo damos vida a tu sitio web','step1-title':'Consulta','step1-desc':'Discutimos tus necesidades, objetivos y visión para tu sitio web','step2-title':'Diseño','step2-desc':'Creamos mockups y prototipos para tu aprobación','step3-title':'Desarrollo','step3-desc':'Construimos tu sitio web con código limpio y moderno','step4-title':'Pruebas','step4-desc':'Probamos en todos los dispositivos y navegadores para la perfección','step5-title':'Lanzamiento','step5-desc':'Desplegamos tu sitio web y lo hacemos público','step6-title':'Soporte','step6-desc':'Proporcionamos mantenimiento y actualizaciones continuas',n1:'Creative Studio',n2:'Inicio',n3:'Servicios',n4:'Nosotros',n5:'Contacto',f1:'Creative Studio',f2:'Tu aliado digital para desarrollo web, marketing y soporte técnico.',f3:'Servicios',f4:'Desarrollo Web',f5:'Marketing Digital',f6:'Diseño Publicitario',f7:'Soporte Técnico',f8:'Contacto',f9:'🕐 Lun - Vie: 9:00 AM - 6:00 PM',f10:'Creative Studio',f11:'Todos los derechos reservados'}};
+let L='en';
+function selectLanguage(l){L=l;localStorage.setItem('siteLanguage',l);updateContent();document.getElementById('langPopup').classList.add('hide');}
+function switchLanguage(){selectLanguage(L==='en'?'es':'en');}
+function updateContent(){const t=TEXT[L];for(let i in t){const e=document.getElementById(i);if(e)e.innerHTML=t[i];}document.getElementById('waBtn').href='https://wa.me/15713156093?text='+encodeURIComponent(L==='es'?'¡Hola! Me gustaría solicitar una cotización para desarrollo web.':'Hello! I would like to request a quote for web development.');document.getElementById('langBtn').textContent=L==='en'?'ES':'EN';document.title=L==='es'?'Desarrollo Web - FS Creative Studio':'Web Development - FS Creative Studio';}
+function toggleMenu(){document.getElementById('navMenu').classList.toggle('active');}
+window.addEventListener('DOMContentLoaded',function(){const s=localStorage.getItem('siteLanguage');if(s){L=s;updateContent();document.getElementById('langPopup').classList.add('hide');}document.querySelectorAll('#navMenu a').forEach(l=>{l.addEventListener('click',function(){document.getElementById('navMenu').classList.remove('active');});});});
+window.addEventListener('scroll',function(){const n=document.getElementById('navbar');if(window.scrollY>50){n.classList.add('scrolled');}else{n.classList.remove('scrolled');}});
+
+let slideIndex=0;
+const slides=document.querySelectorAll('.slide');
+function nextSlide(){
+    slides[slideIndex].classList.remove('active');
+    slideIndex=(slideIndex+1)%slides.length;
+    slides[slideIndex].classList.add('active');
+}
+setInterval(nextSlide,4000);
+    </script>
+</body>
+</html>
