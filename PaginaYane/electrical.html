@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ Electrical Services | Elite Home Services</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Archivo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #1a4d7a;
+            --accent-orange: #ff6b35;
+            --dark-navy: #0a1628;
+            --light-gray: #f4f6f8;
+            --medium-gray: #8b95a5;
+            --white: #ffffff;
+            --success-green: #28a745;
+        }
+
+        body {
+            font-family: 'Archivo', sans-serif;
+            color: var(--dark-navy);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header & Navigation */
+        header {
+            background: linear-gradient(135deg, var(--dark-navy) 0%, var(--primary-blue) 100%);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            background: var(--accent-orange);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Bebas Neue', cursive;
+            font-size: 32px;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: rotate(5deg) scale(1.05);
+        }
+
+        .logo-text {
+            color: white;
+        }
+
+        .logo-text h1 {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 28px;
+            letter-spacing: 2px;
+            line-height: 1;
+        }
+
+        .logo-text p {
+            font-size: 12px;
+            opacity: 0.9;
+            letter-spacing: 3px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-orange);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .cta-button {
+            background: var(--accent-orange);
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .cta-button:hover {
+            background: #ff5520;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .menu-toggle span {
+            width: 30px;
+            height: 3px;
+            background: white;
+            transition: 0.3s;
+        }
+
+        /* Hero Section with Slideshow */
+        .hero {
+            margin-top: 100px;
+            height: 70vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-slideshow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .hero-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .hero-slide.active {
+            opacity: 1;
+        }
+
+        .hero-slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(10, 22, 40, 0.85) 0%, rgba(26, 77, 122, 0.75) 100%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            height: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            color: white;
+        }
+
+        .hero-content h2 {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 72px;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-content p {
+            font-size: 20px;
+            margin-bottom: 2.5rem;
+            opacity: 0.95;
+            line-height: 1.7;
+            max-width: 700px;
+            animation: fadeInUp 1s ease-out 0.3s backwards;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            animation: fadeInUp 1s ease-out 0.6s backwards;
+        }
+
+        .btn {
+            padding: 1.2rem 3rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: var(--accent-orange);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #ff5520;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(255, 107, 53, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: var(--primary-blue);
+        }
+
+        /* Services Detail Section */
+        .services-detail {
+            padding: 6rem 2rem;
+            background: white;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto 4rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 56px;
+            color: var(--dark-navy);
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+        }
+
+        .section-header p {
+            font-size: 18px;
+            color: var(--medium-gray);
+            line-height: 1.8;
+        }
+
+        .content-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+        }
+
+        .service-item {
+            background: var(--light-gray);
+            padding: 3rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .service-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            background: white;
+        }
+
+        .service-item-icon {
+            font-size: 56px;
+            margin-bottom: 1.5rem;
+        }
+
+        .service-item h3 {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 32px;
+            color: var(--dark-navy);
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .service-item p {
+            color: var(--medium-gray);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        .service-item ul {
+            list-style: none;
+            margin-top: 1.5rem;
+        }
+
+        .service-item ul li {
+            padding: 0.5rem 0;
+            color: var(--medium-gray);
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .service-item ul li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--accent-orange);
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* Gallery Section */
+        .gallery-section {
+            padding: 6rem 2rem;
+            background: var(--light-gray);
+        }
+
+        .gallery-grid {
+            max-width: 1400px;
+            margin: 3rem auto 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            height: 350px;
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.4s ease;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.03);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            color: white;
+            padding: 2.5rem;
+            transform: translateY(100%);
+            transition: transform 0.4s ease;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+
+        .gallery-overlay h4 {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 26px;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+        }
+
+        .gallery-overlay p {
+            font-size: 15px;
+            opacity: 0.9;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.95);
+        }
+
+        .modal-content {
+            position: relative;
+            margin: auto;
+            padding: 20px;
+            width: 90%;
+            max-width: 1200px;
+            top: 50%;
+            transform: translateY(-50%);
+            text-align: center;
+        }
+
+        .modal-content img {
+            max-width: 100%;
+            max-height: 85vh;
+            border-radius: 10px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            color: white;
+            font-size: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .close-modal:hover {
+            color: var(--accent-orange);
+        }
+
+        /* Process Section */
+        .process-section {
+            padding: 6rem 2rem;
+            background: white;
+        }
+
+        .process-grid {
+            max-width: 1200px;
+            margin: 3rem auto 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+        }
+
+        .process-step {
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            width: 80px;
+            height: 80px;
+            background: var(--accent-orange);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-family: 'Bebas Neue', cursive;
+            font-size: 40px;
+            color: white;
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+        }
+
+        .process-step h3 {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 28px;
+            color: var(--dark-navy);
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .process-step p {
+            color: var(--medium-gray);
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark-navy);
+            color: white;
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-section h3 {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 24px;
+            margin-bottom: 1.5rem;
+            letter-spacing: 1px;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.8rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: var(--accent-orange);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-link {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: var(--accent-orange);
+            transform: translateY(-5px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Floating Contact Buttons */
+        .floating-buttons {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            z-index: 999;
+        }
+
+        .float-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--success-green);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            text-decoration: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .float-btn:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        }
+
+        .float-btn.phone {
+            background: var(--accent-orange);
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--dark-navy);
+                flex-direction: column;
+                padding: 2rem;
+                gap: 1.5rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .hero-content h2 {
+                font-size: 48px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hero-content h2 {
+                font-size: 36px;
+            }
+
+            .section-header h2 {
+                font-size: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo-container">
+                <div class="logo">EHS</div>
+                <div class="logo-text">
+                    <h1>ELITE HOME SERVICES</h1>
+                    <p>PROFESSIONAL SOLUTIONS</p>
+                </div>
+            </div>
+            <div class="menu-toggle" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="electrical.html" class="active">Electrical</a></li>
+                <li><a href="hvac.html">HVAC</a></li>
+                <li><a href="accent-walls.html">Accent Walls</a></li>
+                <li><a href="epoxy.html">Epoxy</a></li>
+                <li><a href="#contact" class="cta-button">Get Quote</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section with Slideshow -->
+    <section class="hero">
+        <div class="hero-slideshow">
+            <div class="hero-slide active" style="background-image: url('images/hero-electrical-1.webp')"></div>
+            <div class="hero-slide" style="background-image: url('images/hero-electrical-2.jpg')"></div>
+            <div class="hero-slide" style="background-image: url('images/hero-electrical-3.webp')"></div>
+        </div>
+        <div class="hero-content">
+            <h2>⚡ PROFESSIONAL ELECTRICAL SERVICES</h2>
+            <p>Licensed electricians providing safe, reliable, and code-compliant electrical solutions for residential and commercial properties. From simple repairs to complete electrical system installations.</p>
+            <div class="hero-buttons">
+                <a href="tel:5551234567" class="btn btn-primary">Call for Emergency Service</a>
+                <a href="#services" class="btn btn-secondary">View Our Services</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Detail -->
+    <section class="services-detail" id="services">
+        <div class="section-header">
+            <h2>COMPREHENSIVE ELECTRICAL SOLUTIONS</h2>
+            <p>From routine maintenance to complex installations, our licensed electricians deliver quality workmanship and reliable service every time. We ensure all work meets current electrical codes and safety standards.</p>
+        </div>
+        <div class="content-grid">
+            <div class="service-item">
+                <div class="service-item-icon">🔌</div>
+                <h3>Panel Upgrades</h3>
+                <p>Modernize your electrical system with professional panel upgrades to handle today's power demands safely and efficiently.</p>
+                <ul>
+                    <li>100A to 200A service upgrades</li>
+                    <li>Circuit breaker panel replacement</li>
+                    <li>Sub-panel installation</li>
+                    <li>Emergency panel repairs</li>
+                </ul>
+            </div>
+            <div class="service-item">
+                <div class="service-item-icon">💡</div>
+                <h3>Lighting Installation</h3>
+                <p>Expert lighting design and installation to illuminate your space beautifully and efficiently.</p>
+                <ul>
+                    <li>Recessed lighting installation</li>
+                    <li>Chandelier & fixture hanging</li>
+                    <li>LED lighting upgrades</li>
+                    <li>Outdoor landscape lighting</li>
+                </ul>
+            </div>
+            <div class="service-item">
+                <div class="service-item-icon">🏠</div>
+                <h3>Home Rewiring</h3>
+                <p>Complete rewiring services for older homes and renovation projects, ensuring safety and reliability.</p>
+                <ul>
+                    <li>Whole house rewiring</li>
+                    <li>Knob & tube replacement</li>
+                    <li>Aluminum wiring updates</li>
+                    <li>GFCI & AFCI protection</li>
+                </ul>
+            </div>
+            <div class="service-item">
+                <div class="service-item-icon">⚡</div>
+                <h3>Outlet & Switch Work</h3>
+                <p>Installation and repair of outlets, switches, and specialty receptacles throughout your property.</p>
+                <ul>
+                    <li>USB outlet installation</li>
+                    <li>GFCI outlet upgrades</li>
+                    <li>Smart switch installation</li>
+                    <li>Dedicated circuits for appliances</li>
+                </ul>
+            </div>
+            <div class="service-item">
+                <div class="service-item-icon">🚨</div>
+                <h3>Emergency Repairs</h3>
+                <p>24/7 emergency electrical service for urgent issues and power outages.</p>
+                <ul>
+                    <li>Power outage troubleshooting</li>
+                    <li>Circuit breaker repairs</li>
+                    <li>Electrical fire prevention</li>
+                    <li>Same-day service available</li>
+                </ul>
+            </div>
+            <div class="service-item">
+                <div class="service-item-icon">🏢</div>
+                <h3>Commercial Electrical</h3>
+                <p>Professional electrical services for businesses, offices, and commercial properties.</p>
+                <ul>
+                    <li>Office electrical systems</li>
+                    <li>Commercial lighting design</li>
+                    <li>Code compliance inspections</li>
+                    <li>Tenant improvement projects</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section class="process-section">
+        <div class="section-header">
+            <h2>OUR ELECTRICAL SERVICE PROCESS</h2>
+            <p>Simple, transparent, and professional from start to finish</p>
+        </div>
+        <div class="process-grid">
+            <div class="process-step">
+                <div class="step-number">1</div>
+                <h3>Contact Us</h3>
+                <p>Call, email, or use our online form to describe your electrical needs and schedule a consultation</p>
+            </div>
+            <div class="process-step">
+                <div class="step-number">2</div>
+                <h3>Inspection</h3>
+                <p>Licensed electrician visits your property to assess the work and provide a detailed quote</p>
+            </div>
+            <div class="process-step">
+                <div class="step-number">3</div>
+                <h3>Professional Work</h3>
+                <p>Expert installation or repair performed to code, on time, and within budget</p>
+            </div>
+            <div class="process-step">
+                <div class="step-number">4</div>
+                <h3>Quality Check</h3>
+                <p>Final inspection and testing to ensure everything works perfectly and safely</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery -->
+    <section class="gallery-section">
+        <div class="section-header">
+            <h2>OUR ELECTRICAL PROJECTS</h2>
+            <p>See the quality of our electrical work across residential and commercial properties</p>
+        </div>
+        <div class="gallery-grid">
+            <div class="gallery-item" onclick="openModal(this)">
+                <img src="images/electrical-gallery-1.jpg" alt="Panel upgrade installation">
+                <div class="gallery-overlay">
+                    <h4>200A Panel Upgrade</h4>
+                    <p>Complete electrical service upgrade for modern home</p>
+                </div>
+            </div>
+            <div class="gallery-item" onclick="openModal(this)">
+                <img src="images/electrical-gallery-2.avif" alt="Recessed lighting">
+                <div class="gallery-overlay">
+                    <h4>LED Recessed Lighting</h4>
+                    <p>Kitchen and living room lighting transformation</p>
+                </div>
+            </div>
+            <div class="gallery-item" onclick="openModal(this)">
+                <img src="images/electrical-gallery-3.jpg" alt="Outdoor lighting">
+                <div class="gallery-overlay">
+                    <h4>Landscape Lighting</h4>
+                    <p>Beautiful outdoor lighting design and installation</p>
+                </div>
+            </div>
+            <div class="gallery-item" onclick="openModal(this)">
+                <img src="images/electrical-gallery-4.jpg" alt="Home rewiring">
+                <div class="gallery-overlay">
+                    <h4>Whole House Rewiring</h4>
+                    <p>Complete electrical system modernization</p>
+                </div>
+            </div>
+            <div class="gallery-item" onclick="openModal(this)">
+                <img src="images/electrical-gallery-5.jpg" alt="Commercial installation">
+                <div class="gallery-overlay">
+                    <h4>Commercial Office Build</h4>
+                    <p>Complete electrical system for new office space</p>
+                </div>
+            </div>
+            <div class="gallery-item" onclick="openModal(this)">
+                <img src="images/electrical-gallery-6.webp" alt="Smart home integration">
+                <div class="gallery-overlay">
+                    <h4>Smart Home Electrical</h4>
+                    <p>Modern smart switches and automation</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact CTA -->
+    <section class="services-detail" id="contact" style="background: linear-gradient(135deg, var(--dark-navy) 0%, var(--primary-blue) 100%); color: white;">
+        <div class="section-header">
+            <h2 style="color: white;">NEED AN ELECTRICIAN? WE'RE HERE TO HELP</h2>
+            <p style="color: rgba(255,255,255,0.9);">Licensed, insured, and ready to solve your electrical needs. Contact us today for fast, professional service.</p>
+        </div>
+        <div style="text-align: center; margin-top: 3rem;">
+            <div class="hero-buttons" style="justify-content: center;">
+                <a href="tel:5551234567" class="btn btn-primary">Call (555) 123-4567</a>
+                <a href="contact-form.html?service=electrical" class="btn btn-secondary">Get Free Quote</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Elite Home Services</h3>
+                <p>Professional electrical solutions with quality workmanship and reliable service.</p>
+                <p style="margin-top: 1rem;"><strong>Licensed • Insured • Certified</strong></p>
+                <div class="social-links">
+                    <a href="#" class="social-link">📘</a>
+                    <a href="#" class="social-link">📷</a>
+                    <a href="#" class="social-link">🐦</a>
+                    <a href="#" class="social-link">💼</a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Our Services</h3>
+                <a href="electrical.html">Electrical Services</a>
+                <a href="hvac.html">HVAC Solutions</a>
+                <a href="accent-walls.html">Accent Walls</a>
+                <a href="epoxy.html">Epoxy Flooring</a>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Info</h3>
+                <p>📞 (555) 123-4567</p>
+                <p>📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9ef7f0f8f1defbf2f7eafbf6f1f3fbedfbece8f7fdfbedb0fdf1f3">[email&#160;protected]</a></p>
+                <p>📍 Greater Metropolitan Area</p>
+                <p>⏰ 24/7 Emergency Service</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="index.html">Home</a>
+                <a href="#services">Services</a>
+                <a href="#contact">Contact</a>
+                <a href="index.html#about">About Us</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Elite Home Services. All Rights Reserved. | License #123456</p>
+        </div>
+    </footer>
+
+    <!-- Floating Contact Buttons -->
+    <div class="floating-buttons">
+        <a href="https://wa.me/15551234567" class="float-btn whatsapp">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="white">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+            </svg>
+        </a>
+        <a href="tel:5551234567" class="float-btn phone">📞</a>
+    </div>
+
+    <!-- Modal -->
+    <div id="imageModal" class="modal" onclick="closeModal()">
+        <span class="close-modal">&times;</span>
+        <div class="modal-content">
+            <img id="modalImage" src="" alt="Enlarged view">
+        </div>
+    </div>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        function toggleMenu() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        }
+
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.hero-slide');
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + slides.length) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        setInterval(nextSlide, 5000);
+
+        function openModal(element) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            const img = element.querySelector('img');
+            if (img) {
+                modal.style.display = 'block';
+                modalImg.src = img.src;
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') closeModal();
+        });
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector
