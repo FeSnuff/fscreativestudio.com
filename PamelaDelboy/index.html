@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pamela Delboy - Latin Artist</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #D4576D;
+            --secondary: #E8A87C;
+            --accent: #C38D9E;
+            --dark: #1E1E2E;
+            --light: #F8F9FA;
+            --text-light: #E5E7EB;
+            --gradient: linear-gradient(135deg, #D4576D 0%, #E8A87C 100%);
+            --gradient-soft: linear-gradient(135deg, rgba(212, 87, 109, 0.1) 0%, rgba(232, 168, 124, 0.1) 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Language Modal */
+        #languageModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeIn 0.6s ease;
+        }
+
+        #languageModal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 40%, rgba(212, 87, 109, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(232, 168, 124, 0.15) 0%, transparent 50%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        #languageModal.hidden {
+            display: none;
+        }
+
+        .modal-content {
+            text-align: center;
+            z-index: 1;
+            animation: slideUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-width: 600px;
+            padding: 0 2rem;
+        }
+
+        .modal-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+        }
+
+        .modal-content h1 {
+            font-size: 1.8rem;
+            font-weight: 300;
+            margin-bottom: 3rem;
+            color: var(--text-light);
+            letter-spacing: 1px;
+        }
+
+        .language-buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .lang-btn {
+            padding: 2rem 3rem;
+            font-size: 1.2rem;
+            font-weight: 500;
+            border: 2px solid rgba(232, 168, 124, 0.3);
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            min-width: 200px;
+        }
+
+        .lang-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient);
+            transform: translateY(100%);
+            transition: transform 0.4s ease;
+            z-index: -1;
+        }
+
+        .lang-btn:hover::before {
+            transform: translateY(0);
+        }
+
+        .lang-btn:hover {
+            color: white;
+            border-color: var(--secondary);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(212, 87, 109, 0.3);
+        }
+
+        .lang-btn span {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(30, 30, 46, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1.2rem 5%;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(212, 87, 109, 0.2);
+            animation: slideDown 0.8s ease;
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: var(--gradient);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--secondary);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .lang-switcher {
+            padding: 0.6rem 1.5rem;
+            background: var(--gradient-soft);
+            border: 1px solid rgba(232, 168, 124, 0.3);
+            color: var(--secondary);
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+        }
+
+        .lang-switcher:hover {
+            background: var(--gradient);
+            color: white;
+            border-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 87, 109, 0.3);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 1.8rem;
+            cursor: pointer;
+        }
+
+        /* WhatsApp Button */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 65px;
+            height: 65px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 25px rgba(37, 211, 102, 0.4);
+            z-index: 999;
+            animation: bounce 2s ease-in-out infinite;
+            transition: all 0.4s ease;
+            text-decoration: none;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.15);
+            animation: none;
+            box-shadow: 0 8px 35px rgba(37, 211, 102, 0.6);
+        }
+
+        .whatsapp-float svg {
+            width: 36px;
+            height: 36px;
+            fill: white;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding-top: 100px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('images/hero-background.webp');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(212, 87, 109, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(232, 168, 124, 0.2) 0%, transparent 50%);
+            animation: pulse 8s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+            animation: fadeInUp 1s ease;
+            max-width: 900px;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .hero-image {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--secondary);
+            box-shadow: 0 20px 60px rgba(232, 168, 124, 0.3);
+            margin-bottom: 2rem;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4.5rem;
+            margin-bottom: 1rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease 0.2s backwards;
+            font-weight: 900;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            color: var(--secondary);
+            font-weight: 400;
+            letter-spacing: 2px;
+            animation: fadeInUp 1s ease 0.4s backwards;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease 0.6s backwards;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: all 0.4s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 5px 20px rgba(212, 87, 109, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(212, 87, 109, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--secondary);
+            border: 2px solid var(--secondary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary);
+            color: var(--dark);
+            transform: translateY(-3px);
+        }
+
+        /* Sections */
+        section {
+            padding: 6rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+        }
+
+        /* About */
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-text {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--text-light);
+        }
+
+        .about-text h3 {
+            color: var(--secondary);
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+            margin-top: 2rem;
+            font-weight: 600;
+        }
+
+        .about-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(212, 87, 109, 0.3);
+            transition: transform 0.5s ease;
+        }
+
+        .about-image:hover {
+            transform: scale(1.03);
+        }
+
+        /* Collaborations */
+        .collaborations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .collab-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(232, 168, 124, 0.1);
+        }
+
+        .collab-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--secondary);
+            box-shadow: 0 20px 40px rgba(212, 87, 109, 0.3);
+        }
+
+        .collab-thumbnail {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .collab-card:hover .collab-thumbnail {
+            transform: scale(1.1);
+        }
+
+        .collab-info {
+            padding: 1.5rem;
+        }
+
+        .collab-info h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .collab-info p {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .video-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .video-link:hover {
+            color: var(--secondary);
+            transform: translateX(5px);
+        }
+
+        /* Gallery */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            height: 350px;
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.4s ease;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.03);
+        }
+
+        .gallery-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item:hover .gallery-image {
+            transform: scale(1.15);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(30, 30, 46, 0.95));
+            padding: 2rem;
+            transform: translateY(100%);
+            transition: transform 0.4s ease;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+
+        .gallery-overlay h3 {
+            color: var(--secondary);
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        /* Social Media */
+        #social {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 30px;
+            padding: 4rem 2rem;
+        }
+
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .social-item {
+            text-align: center;
+        }
+
+        .social-item a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+            color: var(--text-light);
+            transition: all 0.4s ease;
+        }
+
+        .social-icon-wrapper {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient-soft);
+            border: 2px solid rgba(232, 168, 124, 0.2);
+            transition: all 0.4s ease;
+        }
+
+        .social-item:hover .social-icon-wrapper {
+            background: var(--gradient);
+            border-color: var(--secondary);
+            transform: translateY(-10px) scale(1.1);
+            box-shadow: 0 10px 30px rgba(212, 87, 109, 0.4);
+        }
+
+        .social-icon-wrapper svg {
+            width: 40px;
+            height: 40px;
+            transition: fill 0.4s ease;
+            fill: #E8A87C;
+        }
+
+        .social-item:hover .social-icon-wrapper svg {
+            fill: white;
+        }
+
+        .social-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .social-item:hover .social-name {
+            color: var(--secondary);
+        }
+
+        /* Contact */
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .contact-info h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .contact-info p {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--text-light);
+        }
+
+        .call-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 1rem 2rem;
+            background: var(--gradient);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.4s ease;
+            margin-top: 1rem;
+            width: fit-content;
+        }
+
+        .call-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(212, 87, 109, 0.5);
+        }
+
+        .call-link svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            color: var(--secondary);
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(232, 168, 124, 0.2);
+            border-radius: 10px;
+            color: var(--light);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--secondary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            padding: 1.2rem 2rem;
+            background: var(--gradient);
+            border: none;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(212, 87, 109, 0.5);
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 3rem 5%;
+            text-align: center;
+            border-top: 1px solid rgba(212, 87, 109, 0.2);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .hero h1 { font-size: 3rem; }
+            .section-title { font-size: 2.2rem; }
+            .about-content, .contact-container { grid-template-columns: 1fr; }
+            
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 75%;
+                max-width: 350px;
+                height: 100vh;
+                background: rgba(30, 30, 46, 0.98);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                padding: 6rem 2rem 2rem;
+                gap: 2rem;
+                border-left: 1px solid rgba(212, 87, 109, 0.2);
+                box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
+                transition: right 0.3s ease;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .collaborations-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hero h1 { font-size: 2.2rem; }
+            .hero p { font-size: 1.1rem; }
+            .hero-image { width: 220px; height: 220px; }
+            .section-title { font-size: 1.8rem; }
+            
+            .cta-buttons { flex-direction: column; width: 100%; }
+            .btn { width: 100%; justify-content: center; }
+            
+            nav { padding: 1rem 3%; }
+            .logo { font-size: 1.4rem; }
+            
+            .whatsapp-float {
+                width: 55px;
+                height: 55px;
+                bottom: 1rem;
+                right: 1rem;
+            }
+            
+            .whatsapp-float svg {
+                width: 28px;
+                height: 28px;
+            }
+            
+            .modal-logo { font-size: 2rem; }
+            .modal-content h1 { font-size: 1.3rem; }
+            .lang-btn {
+                padding: 1.5rem 2rem;
+                font-size: 1rem;
+                min-width: 150px;
+            }
+            
+            section { padding: 4rem 5%; }
+            .nav-links { width: 85%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Modal -->
+    <div id="languageModal">
+        <div class="modal-content">
+            <div class="modal-logo">PAMELA DELBOY</div>
+            <h1>Selecciona tu idioma / Choose your language</h1>
+            <div class="language-buttons">
+                <button class="lang-btn" onclick="setLanguage('es')">
+                    <span>🇪🇸 Español</span>
+                </button>
+                <button class="lang-btn" onclick="setLanguage('en')">
+                    <span>🇺🇸 English</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-content">
+            <div class="logo">PAMELA DELBOY</div>
+            <div class="nav-links" id="navLinks">
+                <a href="#about" data-es="Acerca de" data-en="About">Acerca de</a>
+                <a href="#collaborations" data-es="Colaboraciones" data-en="Collaborations">Colaboraciones</a>
+                <a href="#gallery" data-es="Galería" data-en="Gallery">Galería</a>
+                <a href="#social" data-es="Redes Sociales" data-en="Social Media">Redes Sociales</a>
+                <a href="#contact" data-es="Contacto" data-en="Contact">Contacto</a>
+                <button class="lang-switcher" onclick="toggleLanguage()">
+                    <span id="langSwitcherText">EN</span>
+                </button>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()">☰</button>
+        </div>
+    </nav>
+
+    <!-- WhatsApp -->
+    <a href="https://wa.me/15555555555" target="_blank" class="whatsapp-float" title="WhatsApp">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+        </svg>
+    </a>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-content">
+            <img src="images/pamela-profile.webp" alt="Pamela Delboy" class="hero-image">
+            <h1>PAMELA DELBOY</h1>
+            <p data-es="Artista Latina · Cantante" data-en="Latin Artist · Singer">Artista Latina · Cantante</p>
+            <div class="cta-buttons">
+                <a href="#contact" class="btn btn-primary">
+                    <span data-es="Contáctame" data-en="Contact Me">Contáctame</span>
+                </a>
+                <a href="#collaborations" class="btn btn-secondary">
+                    <span data-es="Ver Colaboraciones" data-en="View Collaborations">Ver Colaboraciones</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About -->
+    <section id="about">
+        <h2 class="section-title" data-es="Acerca de Mí" data-en="About Me">Acerca de Mí</h2>
+        <div class="about-content">
+            <div class="about-text">
+                <p data-es="Pamela Delboy es una talentosa artista latina con una voz única que ha conquistado corazones en Estados Unidos. Su pasión por la música latina y su versatilidad para interpretar diversos géneros la convierten en una artista completa y auténtica." data-en="Pamela Delboy is a talented Latin artist with a unique voice that has conquered hearts in the United States. Her passion for Latin music and versatility in performing various genres make her a complete and authentic artist.">
+                    Pamela Delboy es una talentosa artista latina con una voz única que ha conquistado corazones en Estados Unidos. Su pasión por la música latina y su versatilidad para interpretar diversos géneros la convierten en una artista completa y auténtica.
+                </p>
+                <h3 data-es="Géneros Musicales" data-en="Musical Genres">Géneros Musicales</h3>
+                <p data-es="Salsa, Bachata, Cumbia, Reggaeton, Boleros, Baladas Románticas, y mucho más. Pamela domina con maestría todos los ritmos latinos, llevando la esencia de la música latina a cada presentación." data-en="Salsa, Bachata, Cumbia, Reggaeton, Boleros, Romantic Ballads, and much more. Pamela masterfully commands all Latin rhythms, bringing the essence of Latin music to every performance.">
+                    Salsa, Bachata, Cumbia, Reggaeton, Boleros, Baladas Románticas, y mucho más. Pamela domina con maestría todos los ritmos latinos, llevando la esencia de la música latina a cada presentación.
+                </p>
+                <h3 data-es="Experiencia" data-en="Experience">Experiencia</h3>
+                <p data-es="Con años de trayectoria en escenarios en Estados Unidos, Pamela ha compartido escenario con grandes artistas y ha cautivado audiencias en festivales, eventos corporativos, bodas y celebraciones privadas." data-en="With years of experience on stages across the United States, Pamela has shared the stage with great artists and has captivated audiences at festivals, corporate events, weddings, and private celebrations.">
+                    Con años de trayectoria en escenarios en Estados Unidos, Pamela ha compartido escenario con grandes artistas y ha cautivado audiencias en festivales, eventos corporativos, bodas y celebraciones privadas.
+                </p>
+            </div>
+            <div>
+                <img src="images/pamela-about.webp" alt="Pamela Delboy" class="about-image">
+            </div>
+        </div>
+    </section>
+
+    <!-- Collaborations -->
+    <section id="collaborations">
+        <h2 class="section-title" data-es="Colaboraciones" data-en="Collaborations">Colaboraciones</h2>
+        <div class="collaborations-grid">
+            <div class="collab-card">
+                <img src="images/collab-1.webp" alt="Colaboración 1" class="collab-thumbnail">
+                <div class="collab-info">
+                    <h3 data-es="Salsa en el Corazón" data-en="Salsa in the Heart">Salsa en el Corazón</h3>
+                    <p data-es="Colaboración con reconocidos músicos de salsa. Un proyecto que celebra las raíces musicales latinas." data-en="Collaboration with renowned salsa musicians. A project celebrating Latin musical roots.">Colaboración con reconocidos músicos de salsa. Un proyecto que celebra las raíces musicales latinas.</p>
+                    <a href="https://www.youtube.com/watch?v=ejemplo1" target="_blank" class="video-link">
+                        <span>▶</span> <span data-es="Ver Video" data-en="Watch Video">Ver Video</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="collab-card">
+                <img src="images/collab-2.webp" alt="Colaboración 2" class="collab-thumbnail">
+                <div class="collab-info">
+                    <h3 data-es="Ritmos Latinos" data-en="Latin Rhythms">Ritmos Latinos</h3>
+                    <p data-es="Fusión moderna de cumbia y bachata con artistas emergentes de la escena latina." data-en="Modern fusion of cumbia and bachata with emerging artists from the Latin scene.">Fusión moderna de cumbia y bachata con artistas emergentes de la escena latina.</p>
+                    <a href="https://www.youtube.com/watch?v=ejemplo2" target="_blank" class="video-link">
+                        <span>▶</span> <span data-es="Ver Video" data-en="Watch Video">Ver Video</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="collab-card">
+                <img src="images/collab-3.webp" alt="Colaboración 3" class="collab-thumbnail">
+                <div class="collab-info">
+                    <h3 data-es="Noches de Bolero" data-en="Bolero Nights">Noches de Bolero</h3>
+                    <p data-es="Homenaje a los clásicos boleros con arreglos contemporáneos junto a legendarios compositores." data-en="Tribute to classic boleros with contemporary arrangements alongside legendary composers.">Homenaje a los clásicos boleros con arreglos contemporáneos junto a legendarios compositores.</p>
+                    <a href="https://www.youtube.com/watch?v=ejemplo3" target="_blank" class="video-link">
+                        <span>▶</span> <span data-es="Ver Video" data-en="Watch Video">Ver Video</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery -->
+    <section id="gallery">
+        <h2 class="section-title" data-es="Últimos Eventos" data-en="Recent Events">Últimos Eventos</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <img src="images/event-1.webp" alt="Evento 1" class="gallery-image">
+                <div class="gallery-overlay">
+                    <h3 data-es="Festival Latino Miami" data-en="Miami Latin Festival">Festival Latino Miami</h3>
+                    <p data-es="Noviembre 2024" data-en="November 2024">Noviembre 2024</p>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <img src="images/event-2.webp" alt="Evento 2" class="gallery-image">
+                <div class="gallery-overlay">
+                    <h3 data-es="Noche de Salsa - Los Angeles" data-en="Salsa Night - Los Angeles">Noche de Salsa - Los Angeles</h3>
+                    <p data-es="Octubre 2024" data-en="October 2024">Octubre 2024</p>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <img src="images/event-3.webp" alt="Evento 3" class="gallery-image">
+                <div class="gallery-overlay">
+                    <h3 data-es="Concierto Benéfico New York" data-en="Charity Concert New York">Concierto Benéfico New York</h3>
+                    <p data-es="Septiembre 2024" data-en="September 2024">Septiembre 2024</p>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <img src="images/event-4.webp" alt="Evento 4" class="gallery-image">
+                <div class="gallery-overlay">
+                    <h3 data-es="Gala Corporativa Houston" data-en="Corporate Gala Houston">Gala Corporativa Houston</h3>
+                    <p data-es="Agosto 2024" data-en="August 2024">Agosto 2024</p>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <img src="images/event-5.webp" alt="Evento 5" class="gallery-image">
+                <div class="gallery-overlay">
+                    <h3 data-es="Festival de Música Chicago" data-en="Music Festival Chicago">Festival de Música Chicago</h3>
+                    <p data-es="Julio 2024" data-en="July 2024">Julio 2024</p>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <img src="images/event-6.webp" alt="Evento 6" class="gallery-image">
+                <div class="gallery-overlay">
+                    <h3 data-es="Boda Privada San Francisco" data-en="Private Wedding San Francisco">Boda Privada San Francisco</h3>
+                    <p data-es="Junio 2024" data-en="June 2024">Junio 2024</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Media -->
+    <section id="social">
+        <h2 class="section-title" data-es="Sígueme en Redes Sociales" data-en="Follow Me on Social Media">Sígueme en Redes Sociales</h2>
+        <div class="social-grid">
+            <div class="social-item">
+                <a href="https://www.facebook.com/pameladelboyoficial" target="_blank">
+                    <div class="social-icon-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                        </svg>
+                    </div>
+                    <span class="social-name">Facebook</span>
+                </a>
+            </div>
+
+            <div class="social-item">
+                <a href="https://www.instagram.com/pamela_delboy/" target="_blank">
+                    <div class="social-icon-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                        </svg>
+                    </div>
+                    <span class="social-name">Instagram</span>
+                </a>
+            </div>
+
+            <div class="social-item">
+                <a href="https://www.tiktok.com/@pameladelboyoficial" target="_blank">
+                    <div class="social-icon-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
+                        </svg>
+                    </div>
+                    <span class="social-name">TikTok</span>
+                </a>
+            </div>
+
+            <div class="social-item">
+                <a href="https://www.youtube.com/@PamelaDelboy" target="_blank">
+                    <div class="social-icon-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                        </svg>
+                    </div>
+                    <span class="social-name">YouTube</span>
+                </a>
+            </div>
+
+            <div class="social-item">
+                <a href="https://twitter.com/pamela_delboy" target="_blank">
+                    <div class="social-icon-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                        </svg>
+                    </div>
+                    <span class="social-name">X / Twitter</span>
+                </a>
+            </div>
+
+            <div class="social-item">
+                <a href="https://open.spotify.com/artist/pamelaDelboy" target="_blank">
+                    <div class="social-icon-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                        </svg>
+                    </div>
+                    <span class="social-name">Spotify</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+        <h2 class="section-title" data-es="Contáctame" data-en="Contact Me">Contáctame</h2>
+        <div class="contact-container">
+            <div class="contact-info">
+                <h3 data-es="¡Hablemos!" data-en="Let's Talk!">¡Hablemos!</h3>
+                <p data-es="¿Tienes un evento especial? ¿Quieres que forme parte de tu celebración? Contáctame y conversemos sobre cómo puedo hacer de tu evento una experiencia musical inolvidable." data-en="Have a special event? Want me to be part of your celebration? Contact me and let's talk about how I can make your event an unforgettable musical experience.">
+                    ¿Tienes un evento especial? ¿Quieres que forme parte de tu celebración? Contáctame y conversemos sobre cómo puedo hacer de tu evento una experiencia musical inolvidable.
+                </p>
+                <p data-es="Disponible para eventos en todo Estados Unidos." data-en="Available for events throughout the United States.">
+                    Disponible para eventos en todo Estados Unidos.
+                </p>
+                <a href="tel:+15555555555" class="call-link" id="callLink" style="display: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/>
+                    </svg>
+                    <span data-es="Llamar Ahora" data-en="Call Now">Llamar Ahora</span>
+                </a>
+            </div>
+            <form class="contact-form" onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label for="name" data-es="Nombre Completo" data-en="Full Name">Nombre Completo</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email" data-es="Correo Electrónico" data-en="Email">Correo Electrónico</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone" data-es="Teléfono" data-en="Phone">Teléfono</label>
+                    <input type="tel" id="phone" name="phone">
+                </div>
+                <div class="form-group">
+                    <label for="message" data-es="Mensaje" data-en="Message">Mensaje</label>
+                    <textarea id="message" name="message" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">
+                    <span data-es="Enviar Mensaje" data-en="Send Message">Enviar Mensaje</span>
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 Pamela Delboy. <span data-es="Todos los derechos reservados." data-en="All rights reserved.">Todos los derechos reservados.</span></p>
+        </div>
+    </footer>
+
+    <script>
+        let currentLanguage = 'es';
+
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            document.getElementById('languageModal').classList.add('hidden');
+            document.getElementById('langSwitcherText').textContent = lang === 'es' ? 'EN' : 'ES';
+            updateContent();
+            updateCallButton();
+        }
+
+        function toggleLanguage() {
+            currentLanguage = currentLanguage === 'es' ? 'en' : 'es';
+            document.getElementById('langSwitcherText').textContent = currentLanguage === 'es' ? 'EN' : 'ES';
+            updateContent();
+            updateCallButton();
+            
+            // Close mobile menu when language is changed
+            const navLinks = document.getElementById('navLinks');
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            if (navLinks.classList.contains('active')) {
+                navLinks.classList.remove('active');
+                mobileMenuBtn.textContent = '☰';
+            }
+        }
+
+        function updateCallButton() {
+            const callLink = document.getElementById('callLink');
+            callLink.style.display = currentLanguage === 'es' ? 'inline-flex' : 'none';
+        }
+
+        function updateContent() {
+            document.querySelectorAll('[data-es]').forEach(element => {
+                const esText = element.getAttribute('data-es');
+                const enText = element.getAttribute('data-en');
+                element.textContent = currentLanguage === 'es' ? esText : enText;
+            });
+        }
+
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('navLinks');
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            navLinks.classList.toggle('active');
+            mobileMenuBtn.textContent = navLinks.classList.contains('active') ? '✕' : '☰';
+        }
+
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                const navLinks = document.getElementById('navLinks');
+                const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+                if (navLinks.classList.contains('active')) {
+                    navLinks.classList.remove('active');
+                    mobileMenuBtn.textContent = '☰';
+                }
+            });
+        });
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            const message = currentLanguage === 'es' 
+                ? '¡Gracias por tu mensaje! Me pondré en contacto contigo pronto.' 
+                : 'Thank you for your message! I will get in touch with you soon.';
+            alert(message);
+            event.target.reset();
+        }
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const navLinks = document.getElementById('navLinks');
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navContent = document.querySelector('.nav-content');
+            
+            // Check if menu is open and click is outside nav
+            if (navLinks.classList.contains('active')) {
+                if (!navContent.contains(event.target)) {
+                    navLinks.classList.remove('active');
+                    mobileMenuBtn.textContent = '☰';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
