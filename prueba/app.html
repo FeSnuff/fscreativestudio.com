@@ -832,8 +832,8 @@
                          ${isMobile ? `onclick="handleMobileClick(${index})"` : ''}>
                         <div class="tour-image">
                             <span class="selection-badge">${selectionNumber}</span>
-                            <img src="images/${imageFolderName}/main.jpg" alt="${tour.name}" 
-                                 onerror="this.src='images/default/main.jpg'">
+                            <img src="images/${imageFolderName}/Principal.webp" alt="${tour.name}" 
+                                 onerror="this.src='images/default/Principal.webp'">
                             ${!isMobile ? `
                                 <div class="add-to-cart-overlay" onclick="addToCart(${index})">
                                     <div class="add-icon">➕</div>
@@ -955,16 +955,28 @@
                 totalPrice.textContent = `S/ ${total.toFixed(2)}`;
                 btnCheckout.disabled = false;
                 
-                cartItemsEl.innerHTML = cart.map((tour, index) => `
-                    <div class="cart-item">
-                        <div class="cart-item-number">${index + 1}</div>
-                        <div class="cart-item-info">
-                            <div class="cart-item-name">${tour.name}</div>
-                            <div class="cart-item-price">S/ ${tour.price.toFixed(2)}</div>
+                cartItemsEl.innerHTML = cart.map((tour, index) => {
+                    // Calcular noches
+                    let durationText = '';
+                    if (tour.duration_days === 1) {
+                        durationText = '1 día';
+                    } else {
+                        const nights = tour.duration_days - 1;
+                        durationText = `${tour.duration_days}D/${nights}N`;
+                    }
+                    
+                    return `
+                        <div class="cart-item">
+                            <div class="cart-item-number">${index + 1}</div>
+                            <div class="cart-item-info">
+                                <div class="cart-item-name">${tour.name}</div>
+                                <div style="font-size: 12px; color: #888; margin: 3px 0;">📅 ${durationText}</div>
+                                <div class="cart-item-price">S/ ${tour.price.toFixed(2)}</div>
+                            </div>
+                            <button class="btn-remove" onclick="removeFromCart(${index})">✕</button>
                         </div>
-                        <button class="btn-remove" onclick="removeFromCart(${index})">✕</button>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             }
         }
 
