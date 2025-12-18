@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - FS Creative Studio</title>
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #0f172a; }
+
+        .floating { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 15px; z-index: 999; }
+        .float-btn { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); transition: all 0.3s; cursor: pointer; border: none; text-decoration: none; }
+        .float-btn:hover { transform: translateY(-3px) scale(1.1); box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4); }
+        .wa { background: #25D366; }
+        .fb { background: #1877F2; }
+        .lang { background: #0f172a; border: 2px solid #06b6d4; color: white; font-weight: 700; font-size: 1.2rem; }
+        .lang:hover { background: #06b6d4; }
+
+        nav { background: #0f172a; padding: 1rem 0; position: fixed; width: 100%; top: 0; z-index: 1000; border-bottom: 1px solid rgba(6, 182, 212, 0.1); }
+        nav .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo img { height: 50px; width: auto; }
+        .logo span { font-size: 1.5rem; font-weight: bold; color: white; }
+        .menu-toggle { display: none; background: none; border: none; color: white; font-size: 1.8rem; cursor: pointer; padding: 5px 10px; }
+        nav ul { list-style: none; display: flex; gap: 2rem; }
+        nav a { color: white; text-decoration: none; transition: all 0.3s; font-weight: 500; }
+        nav a:hover { color: #06b6d4; }
+
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            nav ul { position: fixed; top: 61px; right: -100%; width: 250px; height: calc(100vh - 61px); background: #0f172a; flex-direction: column; gap: 0; padding: 2rem 0; transition: right 0.3s ease; border-left: 1px solid rgba(6, 182, 212, 0.2); box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3); }
+            nav ul.active { right: 0; }
+            nav ul li { width: 100%; }
+            nav ul a { display: block; padding: 1rem 2rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        }
+
+        .hero { background: linear-gradient(135deg, #0f172a, #1e293b); color: white; padding: 150px 20px 100px; text-align: center; margin-top: 60px; }
+        .hero h1 { font-size: 3rem; margin-bottom: 1rem; font-weight: 700; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        .hero p { font-size: 1.3rem; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); max-width: 800px; margin: 0 auto; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        section { padding: 80px 20px; }
+        h2 { text-align: center; font-size: 2.5rem; margin-bottom: 1rem; font-weight: 700; }
+        .subtitle { text-align: center; color: #64748b; font-size: 1.2rem; margin-bottom: 3rem; }
+
+        .projects-intro { display: flex; gap: 3rem; align-items: center; background: white; padding: 3rem; border-radius: 12px; border: 1px solid #e2e8f0; border-top: 3px solid #06b6d4; margin-bottom: 3rem; }
+        .projects-intro img { max-width: 300px; border-radius: 8px; }
+        .projects-intro p { color: #64748b; line-height: 1.8; font-size: 1.1rem; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 3rem; }
+        .card { background: white; padding: 2rem; border-radius: 12px; border: 1px solid #e2e8f0; border-top: 3px solid #06b6d4; transition: all 0.3s; }
+        .card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(6, 182, 212, 0.15); }
+        .card img { width: 100%; height: 200px; object-fit: contain; border-radius: 8px; margin-bottom: 1.5rem; background: #f8fafc; padding: 1rem; }
+        .card h3 { font-size: 1.5rem; margin-bottom: 1rem; font-weight: 600; }
+        .card p { color: #64748b; margin-bottom: 1.5rem; line-height: 1.8; }
+
+        .tech-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+        .tech-tag { background: #f8fafc; border: 1px solid #e2e8f0; padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.85rem; color: #0f172a; transition: all 0.3s; }
+        .tech-tag:hover { background: #06b6d4; color: white; }
+
+        .collab-card { text-align: center; }
+        .collab-name { font-size: 1.8rem; margin-bottom: 0.5rem; font-weight: 600; }
+        .collab-role { color: #06b6d4; font-weight: 600; margin-bottom: 1.5rem; font-size: 1.1rem; }
+
+        .social-links { display: flex; justify-content: center; gap: 1rem; margin-top: 2rem; }
+        .social-btn { background: #0f172a; color: white; padding: 0.8rem 1.5rem; border-radius: 8px; text-decoration: none; transition: all 0.3s; font-weight: 500; }
+        .social-btn:hover { background: #06b6d4; transform: translateY(-2px); }
+
+        .stack-card { text-align: center; }
+        .stack-icons { font-size: 3rem; margin: 1.5rem 0; display: flex; justify-content: center; gap: 1rem; }
+        .stack-list { list-style: none; margin: 1.5rem 0; text-align: left; max-width: 200px; margin: 1.5rem auto; }
+        .stack-list li { padding: 0.5rem 0; color: #64748b; border-bottom: 1px solid #e2e8f0; }
+
+        footer { background: #0f172a; color: white; padding: 3rem 20px 1rem; }
+        .footer-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem; }
+        .footer-section h3 { color: #06b6d4; margin-bottom: 1rem; }
+        .footer-section p, .footer-section li { color: #cbd5e1; }
+        .footer-section a { color: #cbd5e1; text-decoration: none; transition: color 0.3s; }
+        .footer-section a:hover { color: #06b6d4; }
+        .social { display: flex; gap: 1rem; margin-top: 1rem; }
+        .social a { width: 40px; height: 40px; background: #1e293b; color: white; text-align: center; line-height: 40px; border-radius: 8px; text-decoration: none; transition: all 0.3s; }
+        .social a:hover { background: #06b6d4; transform: translateY(-3px); }
+        .footer-bottom { text-align: center; padding-top: 2rem; border-top: 1px solid rgba(100, 116, 139, 0.2); color: #cbd5e1; }
+
+        #about { background: #f8fafc; }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.4s ease;
+        }
+
+        .modal-header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+            padding: 2rem;
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .modal-close:hover {
+            background: #06b6d4;
+            border-color: #06b6d4;
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-body img {
+            width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .modal-section {
+            margin-bottom: 2rem;
+        }
+
+        .modal-section h4 {
+            font-size: 1.3rem;
+            color: #06b6d4;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-section h4::before {
+            content: "▸";
+            color: #06b6d4;
+        }
+
+        .modal-section p {
+            color: #64748b;
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        .modal-tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .modal-tech-tag {
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(6, 182, 212, 0.3);
+            transition: all 0.3s;
+        }
+
+        .modal-tech-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(6, 182, 212, 0.4);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) { 
+            .hero h1 { font-size: 2rem; } 
+            .projects-intro { flex-direction: column; }
+            .projects-intro img { max-width: 100%; }
+            .grid { grid-template-columns: 1fr; }
+            .floating { bottom: 20px; right: 20px; }
+            .modal-content {
+                max-height: 90vh;
+            }
+            .modal-header {
+                padding: 1.5rem;
+            }
+            .modal-header h3 {
+                font-size: 1.4rem;
+            }
+            .modal-body {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating">
+        <a href="https://wa.me/15713156093" class="float-btn wa" title="WhatsApp" target="_blank">
+            <svg width="35" height="35" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </a>
+        <a href="https://www.facebook.com/FSstudio" class="float-btn fb" title="Facebook" target="_blank">
+            <svg width="35" height="35" viewBox="0 0 24 24" fill="white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+        <button class="float-btn lang" onclick="switchLanguage()" id="langBtn" title="Change Language">ES</button>
+    </div>
+
+    <nav>
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="images/logo.png" alt="FS" style="height: 50px;">
+                <span id="n1">Creative Studio</span>
+            </a>
+            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+            <ul id="navMenu">
+                <li><a href="index.html#home" id="n2">Home</a></li>
+                <li><a href="index.html#services" id="n3">Services</a></li>
+                <li><a href="index.html#about" id="n4">About Us</a></li>
+                <li><a href="index.html#contact" id="n5">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <h1 id="h1">Our Portfolio</h1>
+            <p id="h2">Successful projects in banking and insurance sectors</p>
+        </div>
+    </section>
+
+    <section id="projects">
+        <div class="container">
+            <h2 id="s1">Featured Projects</h2>
+            <p class="subtitle" id="s2">Technological solutions for Latin American enterprises</p>
+            
+            <div class="projects-intro">
+                <img src="https://www.manageengine.com/products/service-desk/itsm/images/it-project-management-software.png" alt="Projects">
+                <p id="s3">We have worked on technological solutions for the banking and administrative sectors in Latin America, delivering robust systems that optimize operations and enhance user experience across multiple industries.</p>
+            </div>
+
+            <div class="grid">
+                <!-- Marsh Insurance -->
+                <div class="card" style="cursor: pointer;" onclick="openModal('marsh')">
+                    <img src="images/marsh.svg" alt="Marsh">
+                    <h3>Marsh Insurance</h3>
+                    <p id="p1">Project focused on automating internal processes to improve efficiency and reduce operational costs.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Angular</span>
+                        <span class="tech-tag">.NET</span>
+                        <span class="tech-tag">SQL Server</span>
+                    </div>
+                    <p style="text-align: center; margin-top: 1rem; color: #06b6d4; font-weight: 600; font-size: 0.9rem;">
+                        <span id="more1">▸ Click to see details</span>
+                    </p>
+                </div>
+
+                <!-- Lockton Insurance -->
+                <div class="card" style="cursor: pointer;" onclick="openModal('lockton')">
+                    <img src="images/lockton.jpg" alt="Lockton">
+                    <h3>Lockton Insurance</h3>
+                    <p id="p2">Project for policy and claims management, aimed at improving customer experience and optimizing internal processes.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Angular</span>
+                        <span class="tech-tag">NestJS</span>
+                        <span class="tech-tag">.NET</span>
+                        <span class="tech-tag">MongoDB</span>
+                    </div>
+                    <p style="text-align: center; margin-top: 1rem; color: #06b6d4; font-weight: 600; font-size: 0.9rem;">
+                        <span id="more2">▸ Click to see details</span>
+                    </p>
+                </div>
+
+                <!-- Zurich Insurance -->
+                <div class="card" style="cursor: pointer;" onclick="openModal('zurich')">
+                    <img src="images/zurich.svg" alt="Zurich">
+                    <h3>Zurich Insurance</h3>
+                    <p id="p3">Scalable project for insurance request submission and evaluation.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Angular</span>
+                        <span class="tech-tag">.NET</span>
+                        <span class="tech-tag">SQL Server</span>
+                    </div>
+                    <p style="text-align: center; margin-top: 1rem; color: #06b6d4; font-weight: 600; font-size: 0.9rem;">
+                        <span id="more3">▸ Click to see details</span>
+                    </p>
+                </div>
+
+                <!-- Recruitment Portal -->
+                <div class="card" style="cursor: pointer;" onclick="openModal('recruitment')">
+                    <img src="images/talent.jpg" alt="Recruitment">
+                    <h3>Recruitment Portal</h3>
+                    <p id="p4">A tool for talent acquisition focused on recruitment and selection processes.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">React</span>
+                        <span class="tech-tag">Tailwind CSS</span>
+                        <span class="tech-tag">.NET</span>
+                        <span class="tech-tag">SQL Server</span>
+                    </div>
+                    <p style="text-align: center; margin-top: 1rem; color: #06b6d4; font-weight: 600; font-size: 0.9rem;">
+                        <span id="more4">▸ Click to see details</span>
+                    </p>
+                </div>
+
+                <!-- Repair Management -->
+                <div class="card" style="cursor: pointer;" onclick="openModal('repair')">
+                    <img src="images/honeywell.png" alt="Honeywell">
+                    <h3>Repair Management</h3>
+                    <p id="p5">System for managing repairs and maintenance of Honeywell equipment.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">React</span>
+                        <span class="tech-tag">Tailwind CSS</span>
+                        <span class="tech-tag">.NET</span>
+                        <span class="tech-tag">SQL Server</span>
+                    </div>
+                    <p style="text-align: center; margin-top: 1rem; color: #06b6d4; font-weight: 600; font-size: 0.9rem;">
+                        <span id="more5">▸ Click to see details</span>
+                    </p>
+                </div>
+
+                <!-- INTEGRA Electronic Invoicing -->
+                <div class="card" style="cursor: pointer;" onclick="openModal('integra')">
+                    <img src="images/integra.jpg" alt="INTEGRA">
+                    <h3>INTEGRA Electronic Invoicing</h3>
+                    <p id="p6">Internal software for payroll operations and electronic invoicing.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">.NET</span>
+                        <span class="tech-tag">SQL Server</span>
+                    </div>
+                    <p style="text-align: center; margin-top: 1rem; color: #06b6d4; font-weight: 600; font-size: 0.9rem;">
+                        <span id="more6">▸ Click to see details</span>
+                    </p>
+                </div>
+                <!-- MemoryKings -->
+<div class="card" style="cursor: pointer;" onclick="openModal('memorykings')">
+    <img src="images/memo.png" alt="MemoryKings">
+    <h3>MemoryKings</h3>
+    <p id="p7">Web interface improvement and bug fixing.</p>
+    <div class="tech-tags">
+        <span class="tech-tag">UI/UX</span>
+        <span class="tech-tag">HTML</span>
+        <span class="tech-tag">CSS</span>
+        <span class="tech-tag">JavaScript</span>
+    </div>
+    <p style="text-align:center;margin-top:1rem;color:#06b6d4;font-weight:600;font-size:0.9rem;">
+        <span id="more7">▸ Click to see details</span>
+    </p>
+</div>
+
+<!-- CuscoPeru -->
+<div class="card" style="cursor: pointer;" onclick="openModal('cuscoperu')">
+    <img src="images/cuscop.png" alt="CuscoPeru">
+    <h3>CuscoPeru.com</h3>
+    <p id="p8">Tourism-focused web design and development.</p>
+    <div class="tech-tags">
+        <span class="tech-tag">Web Design</span>
+        <span class="tech-tag">SEO</span>
+        <span class="tech-tag">Responsive</span>
+    </div>
+    <p style="text-align:center;margin-top:1rem;color:#06b6d4;font-weight:600;font-size:0.9rem;">
+        <span id="more8">▸ Click to see details</span>
+    </p>
+</div>
+
+<!-- Qorianka -->
+<div class="card" style="cursor: pointer;" onclick="openModal('qorianka')">
+    <img src="images/qoria.png" alt="Qorianka">
+    <h3>Qorianka Travel</h3>
+    <p id="p9">Travel agency website development.</p>
+    <div class="tech-tags">
+        <span class="tech-tag">Frontend</span>
+        <span class="tech-tag">UI/UX</span>
+        <span class="tech-tag">Performance</span>
+    </div>
+    <p style="text-align:center;margin-top:1rem;color:#06b6d4;font-weight:600;font-size:0.9rem;">
+        <span id="more9">▸ Click to see details</span>
+    </p>
+</div>
+
+<!-- Transportes William -->
+<div class="card" style="cursor: pointer;" onclick="openModal('transporteswilliam')">
+    <img src="images/transpo.png" alt="Transportes William">
+    <h3>Transportes William</h3>
+    <p id="p10">Corporate website design and optimization.</p>
+    <div class="tech-tags">
+        <span class="tech-tag">Corporate Web</span>
+        <span class="tech-tag">Responsive</span>
+        <span class="tech-tag">Support</span>
+    </div>
+    <p style="text-align:center;margin-top:1rem;color:#06b6d4;font-weight:600;font-size:0.9rem;">
+        <span id="more10">▸ Click to see details</span>
+    </p>
+</div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="collaborators" style="background: #f8fafc;">
+        <div class="container">
+            <h2 id="t1">Our Team</h2>
+            <p class="subtitle" id="t2">Expert developers driving innovation</p>
+            
+            <div class="grid">
+                <!-- Luis Cárdenas - Founder -->
+                <div class="card collab-card">
+                    <h3 class="collab-name">Luis Cárdenas</h3>
+                    <p class="collab-role">Founder & Lead Developer</p>
+                    <p id="t3c">With over 5 years of experience leading web development teams and projects. Specializes in creating comprehensive digital solutions, from initial concept to final deployment. Expert in project management, technical architecture, and client relations. Passionate about building high-performance teams and delivering exceptional results.</p>
+                    
+                    <h4 style="margin-top: 2rem; font-size: 1.2rem;" id="t4c">Technologies</h4>
+                    <div class="tech-tags" style="justify-content: center;">
+                        <span class="tech-tag">Angular</span>
+                        <span class="tech-tag">React</span>
+                        <span class="tech-tag">Node.js</span>
+                        <span class="tech-tag">.NET</span>
+                        <span class="tech-tag">MySQL</span>
+                        <span class="tech-tag">MongoDB</span>
+                        <span class="tech-tag">AWS</span>
+                        <span class="tech-tag">Docker</span>
+                    </div>
+                </div>
+
+                <!-- Daniel Mosqueira -->
+                <div class="card collab-card">
+                    <h3 class="collab-name">Daniel Mosqueira</h3>
+                    <p class="collab-role">Full-stack developer with over 5 years of experience</p>
+                    <p id="t3a">Full-stack software developer with experience building modern web applications using Angular, React, and Tailwind CSS on the frontend, and NestJS and .NET on the backend. Strong command of PostgreSQL and development best practices, integrating APIs, clean architecture, and agile methodologies.</p>
+                    
+                    <h4 style="margin-top: 2rem; font-size: 1.2rem;" id="t4a">Technologies</h4>
+                    <div class="tech-tags" style="justify-content: center;">
+                        <span class="tech-tag">Tailwind CSS</span>
+                        <span class="tech-tag">Angular</span>
+                        <span class="tech-tag">React</span>
+                        <span class="tech-tag">NestJS</span>
+                        <span class="tech-tag">.NET</span>
+                        <span class="tech-tag">SQL Server</span>
+                        <span class="tech-tag">MySQL</span>
+                        <span class="tech-tag">MongoDB</span>
+                        <span class="tech-tag">PostgreSQL</span>
+                    </div>
+
+                    <h4 style="margin-top: 2rem; font-size: 1.2rem;" id="t5a">Social Networks</h4>
+                    <div class="social-links">
+                        <a href="https://www.linkedin.com/in/daniel-mosqueira-obando/" target="_blank" class="social-btn">LinkedIn</a>
+                        <a href="https://github.com/daniel2019-max" target="_blank" class="social-btn">Github</a>
+                    </div>
+                </div>
+
+                <!-- Judith Sanchez -->
+                <div class="card collab-card">
+                    <h3 class="collab-name">Judith Sanchez</h3>
+                    <p class="collab-role">Software Engineer</p>
+                    <p id="t3b">With over 10 years of experience building modern, scalable, and user-focused web applications. Expert in technologies such as .NET, NestJS, React, and Angular. Passionate about innovation and continuous improvement in software development.</p>
+                    
+                    <h4 style="margin-top: 2rem; font-size: 1.2rem;" id="t4b">Technologies</h4>
+                    <div class="tech-tags" style="justify-content: center;">
+                        <span class="tech-tag">Tailwind CSS</span>
+                        <span class="tech-tag">Angular</span>
+                        <span class="tech-tag">React</span>
+                        <span class="tech-tag">NestJS</span>
+                        <span class="tech-tag">.NET</span>
+                        <span class="tech-tag">SQL Server</span>
+                        <span class="tech-tag">MySQL</span>
+                        <span class="tech-tag">MongoDB</span>
+                        <span class="tech-tag">PostgreSQL</span>
+                    </div>
+
+                    <h4 style="margin-top: 2rem; font-size: 1.2rem;" id="t5b">Social Networks</h4>
+                    <div class="social-links">
+                        <a href="https://www.linkedin.com/in/judith-sanchez-0989aa28b/" target="_blank" class="social-btn">LinkedIn</a>
+                        <a href="https://github.com/judithcoders" target="_blank" class="social-btn">Github</a>
+                    </div>
+                </div>
+
+                <!-- Samuel Islas Mateos -->
+                <div class="card collab-card">
+                    <h3 class="collab-name">Samuel Islas Mateos</h3>
+                    <p class="collab-role">Web Developer with 10 years of experience</p>
+                    <p id="t3">Specialized in the automotive, insurance, and financial sectors. Proficient in Angular for dynamic frontend development, .Net Core and NodeJS for robust backend solutions. Skilled in designing and implementing both relational and non-relational databases, using SQL Server and MongoDB.</p>
+                    
+                    <h4 style="margin-top: 2rem; font-size: 1.2rem;" id="t4">Technologies</h4>
+                    <div class="tech-tags" style="justify-content: center;">
+                        <span class="tech-tag">Angular</span>
+                        <span class="tech-tag">React</span>
+                        <span class="tech-tag">NestJS</span>
+                        <span class="tech-tag">.NET</span>
+                        <span class="tech-tag">SQL Server</span>
+                        <span class="tech-tag">MySQL</span>
+                        <span class="tech-tag">MongoDB</span>
+                        <span class="tech-tag">PostgreSQL</span>
+                    </div>
+
+                    <h4 style="margin-top: 2rem; font-size: 1.2rem;" id="t5">Social Networks</h4>
+                    <div class="social-links">
+                        <a href="https://www.linkedin.com/in/islasamuel/" target="_blank" class="social-btn">LinkedIn</a>
+                        <a href="https://github.com/islasamuel" target="_blank" class="social-btn">Github</a>
+                    </div>
+                </div>
+
+                <!-- Nolazco Suyo - Creative Director -->
+                <div class="card collab-card">
+                    <h3 class="collab-name">Nolazco Suyo</h3>
+                    <p class="collab-role">Creative Director & Digital Marketing Strategist</p>
+                    <p id="t3d">Creative visionary specializing in brand identity, visual communication, and digital marketing strategies. Expert in creating compelling visual content that drives engagement and conversions. Combines artistic design with data-driven marketing approaches to deliver measurable results for clients across various industries.</p>
+                    
+                    <h4 style="margin-top: 2rem; font-size: 1.2rem;" id="t4d">Specializations</h4>
+                    <div class="tech-tags" style="justify-content: center;">
+                        <span class="tech-tag">Brand Identity</span>
+                        <span class="tech-tag">UI/UX Design</span>
+                        <span class="tech-tag">Adobe Creative Suite</span>
+                        <span class="tech-tag">Social Media Marketing</span>
+                        <span class="tech-tag">SEO Strategy</span>
+                        <span class="tech-tag">Content Creation</span>
+                        <span class="tech-tag">Google Ads</span>
+                        <span class="tech-tag">Facebook Ads</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="stacks">
+        <div class="container">
+            <h2 id="st1">Technology Stacks</h2>
+            <p class="subtitle" id="st2">Our technology expertise</p>
+            
+            <div class="grid">
+                <div class="card stack-card">
+                    <h3>Front End</h3>
+                    <div class="stack-icons">⚛️ 🅰️</div>
+                    <ul class="stack-list">
+                        <li>Angular</li>
+                        <li>React</li>
+                    </ul>
+                    <p style="color: #64748b;" id="st3">We use Angular and React to build dynamic, responsive, and high-performance user interfaces tailored to the client's needs.</p>
+                </div>
+
+                <div class="card stack-card">
+                    <h3>Back End</h3>
+                    <div class="stack-icons">🟩 🔷</div>
+                    <ul class="stack-list">
+                        <li>NestJS</li>
+                        <li>.NET</li>
+                    </ul>
+                    <p style="color: #64748b;" id="st4">NestJS and .NET are the core of our server-side applications, providing scalability, security, and a robust architecture.</p>
+                </div>
+
+                <div class="card stack-card">
+                    <h3>Database</h3>
+                    <div class="stack-icons">🐘 🍃 🐬</div>
+                    <ul class="stack-list">
+                        <li>PostgreSQL</li>
+                        <li>MongoDB</li>
+                        <li>MySQL</li>
+                    </ul>
+                    <p style="color: #64748b;" id="st5">We work with relational and non-relational databases to ensure flexibility, data integrity, and storage efficiency.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="projectModal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 id="modalTitle">Project Details</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <button id="modalLink"
+        type="button"
+        style="
+          display:none;
+          margin-bottom:2rem;
+          background:#06b6d4;
+          color:white;
+          padding:0.8rem 1.6rem;
+          border-radius:8px;
+          border:none;
+          font-weight:600;
+          cursor:pointer;">
+    🌐 Visit Website
+</button>
+                <img id="modalImage" src="" alt="Project">
+                <div class="modal-section">
+                    <h4 id="modalDetailsTitle">Project Details</h4>
+                    <p id="modalDescription"></p>
+                </div>
+                <div class="modal-section">
+                    <h4 id="modalTechTitle">Technologies Used</h4>
+                    <div class="modal-tech-tags" id="modalTech"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-section">
+                <h3>FS <span id="f1">Creative Studio</span></h3>
+                <p id="f2">Your digital ally for web development, marketing and technical support.</p>
+                <div class="social">
+                    <a href="https://www.facebook.com/FSstudio" target="_blank" title="Facebook">f</a>
+                    <a href="#" title="Instagram">📷</a>
+                    <a href="#" title="LinkedIn">in</a>
+                    <a href="https://wa.me/15713156093" target="_blank" title="WhatsApp">📱</a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3 id="f3">Services</h3>
+                <ul style="list-style: none;">
+                    <li><a href="desarrollo-web.html" id="f4">Web Development</a></li>
+                    <li id="f5">Digital Marketing</li>
+                    <li id="f6">Advertising Design</li>
+                    <li id="f7">Technical Support</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3 id="f8">Contact</h3>
+                <p>📧 Contact us via form</p>
+                <p>📱 WhatsApp: +1 (571) 315-6093</p>
+                <p id="f9">🕐 Mon - Fri: 9:00 AM - 10:00 PM<br>Sat: 10:00 AM - 4:00 PM</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 FS <span id="f10">Creative Studio</span>. <span id="f11">All rights reserved</span>.</p>
+        </div>
+    </footer>
+
+    <script>
+// Project data
+const projectData = {
+    marsh: {
+        title: 'Marsh Insurance',
+        image: 'images/marsh.svg',
+        description: {
+            en: 'The project was built with a frontend architecture in Angular, using Angular Material for UI components. The backend was developed with .NET 6, incorporating an independent process manager (such as Hangfire) for background task execution. Data persistence was handled using SQL Server as the database management system.',
+            es: 'El proyecto fue construido con una arquitectura frontend en Angular, usando Angular Material para componentes UI. El backend fue desarrollado con .NET 6, incorporando un gestor de procesos independiente (como Hangfire) para ejecución de tareas en segundo plano. La persistencia de datos se manejó usando SQL Server como sistema de gestión de base de datos.'
+        },
+        tech: ['Angular', '.NET', 'SQL Server']
+    },
+    lockton: {
+        title: 'Lockton Insurance',
+        image: 'images/lockton.jpg',
+        description: {
+            en: 'We designed and implemented a digital platform focused on managing insurance policies and claims, aiming to enhance the customer experience and streamline internal service and follow-up processes. The frontend was developed using Angular and Material Design, enabling a modern, accessible, and user-centered interface. On the backend, we used Node.js with the NestJS framework, while MongoDB served as the non-relational database to ensure agile and scalable data handling. Additionally, AWS S3 was integrated to provide secure and efficient storage for documents related to policies and claims.',
+            es: 'Diseñamos e implementamos una plataforma digital enfocada en la gestión de pólizas de seguros y reclamos, con el objetivo de mejorar la experiencia del cliente y optimizar los procesos internos de servicio y seguimiento. El frontend fue desarrollado usando Angular y Material Design, permitiendo una interfaz moderna, accesible y centrada en el usuario. En el backend, usamos Node.js con el framework NestJS, mientras que MongoDB sirvió como base de datos no relacional. Además, se integró AWS S3 para proporcionar almacenamiento seguro.'
+        },
+        tech: ['Angular', 'NestJS', '.NET', 'MongoDB']
+    },
+    zurich: {
+        title: 'Zurich Insurance',
+        image: 'images/zurich.svg',
+        description: {
+            en: 'We developed a technology solution focused on the efficient management of policies and claims, designed to enhance customer experience and optimize internal support and tracking processes. The frontend was built using Angular and the PrimeNG component library, allowing for a modern, intuitive, and fully responsive interface. The backend was developed with .NET 8 and SQL Server as the database engine, ensuring high performance, scalability, and security in handling sensitive information.',
+            es: 'Desarrollamos una solución tecnológica enfocada en la gestión eficiente de pólizas y reclamos, diseñada para mejorar la experiencia del cliente y optimizar los procesos internos. El frontend fue construido usando Angular y la biblioteca PrimeNG, permitiendo una interfaz moderna, intuitiva y completamente responsive. El backend fue desarrollado con .NET 8 y SQL Server como motor de base de datos, asegurando alto rendimiento, escalabilidad y seguridad.'
+        },
+        tech: ['Angular', '.NET', 'SQL Server']
+    },
+    recruitment: {
+        title: 'Recruitment Portal',
+        image: 'images/talent.jpg',
+        description: {
+            en: 'We developed a modern web platform focused on managing recruitment and talent acquisition processes, aimed at improving job vacancy visibility and optimizing the experience for both candidates and the recruitment team. The solution included the creation of a new website using frontend technologies such as React.js, ECMAScript 6, and Bootstrap, enabling a fast, responsive interface adaptable to various devices. On the backend, a Web API was developed in C# connected to a SQL Server database.',
+            es: 'Desarrollamos una plataforma web moderna enfocada en la gestión de procesos de reclutamiento y adquisición de talento, orientada a mejorar la visibilidad de vacantes laborales y optimizar la experiencia tanto para candidatos como para el equipo de reclutamiento. La solución incluyó la creación de un nuevo sitio web usando tecnologías frontend como React.js, ECMAScript 6 y Bootstrap. En el backend, se desarrolló una Web API en C# conectada a SQL Server.'
+        },
+        tech: ['React', 'Tailwind CSS', '.NET', 'SQL Server']
+    },
+    repair: {
+        title: 'Repair Management',
+        image: 'images/honeywell.png',
+        description: {
+            en: 'We developed a comprehensive platform for Honeywell focused on contract generation and equipment repair management. The frontend was built using modern technologies such as React.js, ECMAScript, and Bootstrap to deliver a responsive and user-friendly interface. On the backend, we integrated services developed in Node.js and APIs built with C# over SQL Server, providing a robust, efficient, and scalable solution.',
+            es: 'Desarrollamos una plataforma integral para Honeywell enfocada en la generación de contratos y gestión de reparaciones de equipos. El frontend fue construido usando tecnologías modernas como React.js, ECMAScript y Bootstrap para entregar una interfaz responsive y amigable. En el backend, integramos servicios desarrollados en Node.js y APIs construidas con C# sobre SQL Server, proporcionando una solución robusta, eficiente y escalable.'
+        },
+        tech: ['React', 'Tailwind CSS', '.NET', 'SQL Server']
+    },
+    integra: {
+        title: 'INTEGRA Electronic Invoicing',
+        image: 'images/integra.jpg',
+        description: {
+            en: 'We developed a solution designed for the implementation and compliance with version 3.3 of the electronic invoicing and payroll standard. This project included the creation of a robust Web Service using technologies such as Entity Framework and .NET C#, with a centralized database in SQL Server. The main goal was to automate and optimize the issuance of digital tax receipts (CFDI), ensuring the integrity, validation, and traceability of information in accordance with current regulations.',
+            es: 'Desarrollamos una solución diseñada para la implementación y cumplimiento de la versión 3.3 del estándar de facturación electrónica y nómina. Este proyecto incluyó la creación de un Web Service robusto usando tecnologías como Entity Framework y .NET C#, con una base de datos centralizada en SQL Server. El objetivo principal fue automatizar y optimizar la emisión de comprobantes fiscales digitales (CFDI), asegurando la integridad, validación y trazabilidad de la información.'
+        },
+        tech: ['.NET', 'SQL Server']
+    },memorykings: {
+    title: 'MemoryKings',
+    image: 'images/memo.png',
+    url: 'https://www.memorykings.pe/',
+    description: {
+        en: 'Web interface improvement focused on usability, visual refinement and bug fixing to improve stability and performance.',
+        es: 'Mejora de la interfaz web enfocada en usabilidad, refinamiento visual y corrección de errores.'
+    },
+    tech: ['UI/UX','HTML','CSS','JavaScript']
+},
+
+cuscoperu: {
+    title: 'CuscoPeru.com',
+    image: 'images/cuscop.png',
+    url: 'https://www.cuscoperu.com/',
+    description: {
+        en: 'Tourism-oriented website development focused on visual structure, responsive design and content optimization.',
+        es: 'Desarrollo web orientado al turismo y optimización visual.'
+    },
+    tech: ['Web Design','SEO','Responsive']
+},
+
+qorianka: {
+    title: 'Qorianka Travel',
+    image: 'images/qoria.png',
+    url: 'https://qorianka.travel/',
+    description: {
+        en: 'Website development for a travel agency, improving navigation and tour presentation.',
+        es: 'Desarrollo web para agencia de viajes.'
+    },
+    tech: ['Frontend','UI/UX','Performance']
+},
+
+transporteswilliam: {
+    title: 'Transportes William',
+    image: 'images/transpo.png',
+    url: 'https://www.transporteswilliam.com/',
+    description: {
+        en: 'Corporate website development with visual improvements and mobile optimization.',
+        es: 'Desarrollo de sitio web corporativo.'
+    },
+    tech: ['Corporate Web','Responsive','Support']
+},
+
+internalSystem: {
+    title: 'Internal Management System',
+    image: 'https://cdn-icons-png.flaticon.com/512/2099/2099058.png',
+    description: {
+        en: 'Internal administrative platform developed to automate processes.',
+        es: 'Plataforma administrativa interna.'
+    },
+    tech: ['.NET','SQL Server','Automation']
+},
+
+internalSupport: {
+    title: 'Internal Support & Maintenance',
+    image: 'https://cdn-icons-png.flaticon.com/512/1828/1828919.png',
+    description: {
+        en: 'Internal maintenance, bug fixing and system optimization.',
+        es: 'Mantenimiento y optimización de sistemas internos.'
+    },
+    tech: ['Bug Fixing','Refactoring','Optimization']
+}
+
+
+};
+
+// Open modal
+function openModal(projectId) {
+    const project = projectData[projectId];
+    const lang = currentLang || 'en';
+    
+    document.getElementById('modalTitle').textContent = project.title;
+    document.getElementById('modalImage').src = project.image;
+    document.getElementById('modalDescription').textContent = project.description[lang];
+    
+    // Update tech tags
+    const techContainer = document.getElementById('modalTech');
+    techContainer.innerHTML = '';
+    project.tech.forEach(tech => {
+        const tag = document.createElement('span');
+        tag.className = 'modal-tech-tag';
+        tag.textContent = tech;
+        techContainer.appendChild(tag);
+        
+    });const linkBtn = document.getElementById('modalLink');
+
+if (project.url) {
+    linkBtn.style.display = 'inline-block';
+    linkBtn.textContent = currentLang === 'en'
+        ? '🌐 Visit Website'
+        : '🌐 Visitar Sitio';
+
+    linkBtn.onclick = function () {
+        window.open(project.url, '_blank');
+    closeModal();
+    };
+} else {
+    linkBtn.style.display = 'none';
+}
+
+
+    // Show modal
+    const modal = document.getElementById('projectModal');
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+// Close modal
+function closeModal(event) {
+    if (!event || event.target.id === 'projectModal' || event.target.className === 'modal-close') {
+        const modal = document.getElementById('projectModal');
+        modal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+}
+
+// Close modal with ESC key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeModal();
+    }
+});
+
+const TEXT = {
+    en: {
+        n1: 'Creative Studio', n2: 'Home', n3: 'Services', n4: 'About Us', n5: 'Contact',
+        h1: 'Our Portfolio', h2: 'Successful projects in banking and insurance sectors',
+        s1: 'Featured Projects', s2: 'Technological solutions for Latin American enterprises',
+        s3: 'We have worked on technological solutions for the banking and administrative sectors in Latin America, delivering robust systems that optimize operations and enhance user experience across multiple industries.',
+        p1: 'Project focused on automating internal processes to improve efficiency and reduce operational costs.',
+        p2: 'Project for policy and claims management, aimed at improving customer experience and optimizing internal processes.',
+        p3: 'Scalable project for insurance request submission and evaluation.',
+        p4: 'A tool for talent acquisition focused on recruitment and selection processes.',
+        p5: 'System for managing repairs and maintenance of Honeywell equipment.',
+        p6: 'Internal software for payroll operations and electronic invoicing.',
+        pd1: 'Project Details', pd2: 'Project Details', pd3: 'Project Details', pd4: 'Project Details', pd5: 'Project Details', pd6: 'Project Details',
+        tech1: 'Technologies Used', tech2: 'Technologies Used', tech3: 'Technologies Used', tech4: 'Technologies Used', tech5: 'Technologies Used', tech6: 'Technologies Used',
+        more1: '▸ Click to see details', more2: '▸ Click to see details', more3: '▸ Click to see details', more4: '▸ Click to see details', more5: '▸ Click to see details', more6: '▸ Click to see details',
+        pd1text: 'The project was built with a frontend architecture in Angular, using Angular Material for UI components. The backend was developed with .NET 6, incorporating an independent process manager (such as Hangfire) for background task execution. Data persistence was handled using SQL Server as the database management system.',
+        pd2text: 'We designed and implemented a digital platform focused on managing insurance policies and claims, aiming to enhance the customer experience and streamline internal service and follow-up processes. The frontend was developed using Angular and Material Design, enabling a modern, accessible, and user-centered interface. On the backend, we used Node.js with the NestJS framework, while MongoDB served as the non-relational database to ensure agile and scalable data handling. Additionally, AWS S3 was integrated to provide secure and efficient storage for documents related to policies and claims, ensuring both availability and traceability.',
+        pd3text: 'We developed a technology solution focused on the efficient management of policies and claims, designed to enhance customer experience and optimize internal support and tracking processes. The frontend was built using Angular and the PrimeNG component library, allowing for a modern, intuitive, and fully responsive interface. The backend was developed with .NET 8 and SQL Server as the database engine, ensuring high performance, scalability, and security in handling sensitive information.',
+        pd4text: 'We developed a modern web platform focused on managing recruitment and talent acquisition processes, aimed at improving job vacancy visibility and optimizing the experience for both candidates and the recruitment team. The solution included the creation of a new website using frontend technologies such as React.js, ECMAScript 6, and Bootstrap, enabling a fast, responsive interface adaptable to various devices. On the backend, a Web API was developed in C# connected to a SQL Server database.',
+        pd5text: 'We developed a comprehensive platform for Honeywell focused on contract generation and equipment repair management. The frontend was built using modern technologies such as React.js, ECMAScript, and Bootstrap to deliver a responsive and user-friendly interface. On the backend, we integrated services developed in Node.js and APIs built with C# over SQL Server, providing a robust, efficient, and scalable solution.',
+        pd6text: 'We developed a solution designed for the implementation and compliance with version 3.3 of the electronic invoicing and payroll standard. This project included the creation of a robust Web Service using technologies such as Entity Framework and .NET C#, with a centralized database in SQL Server. The main goal was to automate and optimize the issuance of digital tax receipts (CFDI), ensuring the integrity, validation, and traceability of information in accordance with current regulations.',
+        t1: 'Our Team', t2: 'Expert developers driving innovation',
+        t3c: 'With over 5 years of experience leading web development teams and projects. Specializes in creating comprehensive digital solutions, from initial concept to final deployment. Expert in project management, technical architecture, and client relations. Passionate about building high-performance teams and delivering exceptional results.',
+        t3d: 'Creative visionary specializing in brand identity, visual communication, and digital marketing strategies. Expert in creating compelling visual content that drives engagement and conversions. Combines artistic design with data-driven marketing approaches to deliver measurable results for clients across various industries.',
+        t3a: 'Full-stack software developer with experience building modern web applications using Angular, React, and Tailwind CSS on the frontend, and NestJS and .NET on the backend. Strong command of PostgreSQL and development best practices, integrating APIs, clean architecture, and agile methodologies.',
+        t3b: 'With over 10 years of experience building modern, scalable, and user-focused web applications. Expert in technologies such as .NET, NestJS, React, and Angular. Passionate about innovation and continuous improvement in software development.',
+        t3: 'Specialized in the automotive, insurance, and financial sectors. Proficient in Angular for dynamic frontend development, .Net Core and NodeJS for robust backend solutions. Skilled in designing and implementing both relational and non-relational databases, using SQL Server and MongoDB.',
+        t4: 'Technologies', t4a: 'Technologies', t4b: 'Technologies', t4c: 'Technologies', t4d: 'Specializations',
+        t5: 'Social Networks', t5a: 'Social Networks', t5b: 'Social Networks',
+        st1: 'Technology Stacks', st2: 'Our technology expertise',
+        st3: 'We use Angular and React to build dynamic, responsive, and high-performance user interfaces tailored to the client\'s needs.',
+        st4: 'NestJS and .NET are the core of our server-side applications, providing scalability, security, and a robust architecture.',
+        st5: 'We work with relational and non-relational databases to ensure flexibility, data integrity, and storage efficiency.',
+        f1: 'Creative Studio', f2: 'Your digital ally for web development, marketing and technical support.',
+        f3: 'Services', f4: 'Web Development', f5: 'Digital Marketing',
+        f6: 'Advertising Design', f7: 'Technical Support', f8: 'Contact',
+        f9: '🕐 Mon - Fri: 9:00 AM - 10:00 PM<br>Sat: 10:00 AM - 4:00 PM', f10: 'Creative Studio', f11: 'All rights reserved',
+        p7:'Web interface improvement and bug fixing.',
+p8:'Tourism-focused web design and development.',
+p9:'Travel agency website development.',
+p10:'Corporate website design and optimization.',
+p11:'Internal administrative platform.',
+p12:'Maintenance and internal system improvements.',
+more7:'▸ Click to see details',
+more8:'▸ Click to see details',
+more9:'▸ Click to see details',
+more10:'▸ Click to see details',
+more11:'▸ Click to see details',
+more12:'▸ Click to see details'
+
+    },
+    es: {
+        n1: 'Creative Studio', n2: 'Inicio', n3: 'Servicios', n4: 'Nosotros', n5: 'Contacto',
+        h1: 'Nuestro Portafolio', h2: 'Proyectos exitosos en sectores bancarios y de seguros',
+        s1: 'Proyectos Destacados', s2: 'Soluciones tecnológicas para empresas latinoamericanas',
+        s3: 'Hemos trabajado en soluciones tecnológicas para los sectores bancario y administrativo en América Latina, entregando sistemas robustos que optimizan operaciones y mejoran la experiencia del usuario en múltiples industrias.',
+        p1: 'Proyecto enfocado en automatizar procesos internos para mejorar la eficiencia y reducir costos operacionales.',
+        p2: 'Proyecto de gestión de pólizas y reclamos, orientado a mejorar la experiencia del cliente y optimizar procesos internos.',
+        p3: 'Proyecto escalable para envío y evaluación de solicitudes de seguros.',
+        p4: 'Herramienta para adquisición de talento enfocada en procesos de reclutamiento y selección.',
+        p5: 'Sistema para gestión de reparaciones y mantenimiento de equipos Honeywell.',
+        p6: 'Software interno para operaciones de nómina y facturación electrónica.',
+        pd1: 'Detalles del Proyecto', pd2: 'Detalles del Proyecto', pd3: 'Detalles del Proyecto', pd4: 'Detalles del Proyecto', pd5: 'Detalles del Proyecto', pd6: 'Detalles del Proyecto',
+        tech1: 'Tecnologías Utilizadas', tech2: 'Tecnologías Utilizadas', tech3: 'Tecnologías Utilizadas', tech4: 'Tecnologías Utilizadas', tech5: 'Tecnologías Utilizadas', tech6: 'Tecnologías Utilizadas',
+        more1: '▸ Clic para ver detalles', more2: '▸ Clic para ver detalles', more3: '▸ Clic para ver detalles', more4: '▸ Clic para ver detalles', more5: '▸ Clic para ver detalles', more6: '▸ Clic para ver detalles',
+        pd1text: 'El proyecto fue construido con una arquitectura frontend en Angular, usando Angular Material para componentes UI. El backend fue desarrollado con .NET 6, incorporando un gestor de procesos independiente (como Hangfire) para ejecución de tareas en segundo plano. La persistencia de datos se manejó usando SQL Server como sistema de gestión de base de datos.',
+        pd2text: 'Diseñamos e implementamos una plataforma digital enfocada en la gestión de pólizas de seguros y reclamos, con el objetivo de mejorar la experiencia del cliente y optimizar los procesos internos de servicio y seguimiento. El frontend fue desarrollado usando Angular y Material Design, permitiendo una interfaz moderna, accesible y centrada en el usuario. En el backend, usamos Node.js con el framework NestJS, mientras que MongoDB sirvió como base de datos no relacional para asegurar un manejo de datos ágil y escalable. Además, se integró AWS S3 para proporcionar almacenamiento seguro y eficiente de documentos relacionados con pólizas y reclamos.',
+        pd3text: 'Desarrollamos una solución tecnológica enfocada en la gestión eficiente de pólizas y reclamos, diseñada para mejorar la experiencia del cliente y optimizar los procesos internos de soporte y seguimiento. El frontend fue construido usando Angular y la biblioteca de componentes PrimeNG, permitiendo una interfaz moderna, intuitiva y completamente responsive. El backend fue desarrollado con .NET 8 y SQL Server como motor de base de datos, asegurando alto rendimiento, escalabilidad y seguridad en el manejo de información sensible.',
+        pd4text: 'Desarrollamos una plataforma web moderna enfocada en la gestión de procesos de reclutamiento y adquisición de talento, orientada a mejorar la visibilidad de vacantes laborales y optimizar la experiencia tanto para candidatos como para el equipo de reclutamiento. La solución incluyó la creación de un nuevo sitio web usando tecnologías frontend como React.js, ECMAScript 6 y Bootstrap, permitiendo una interfaz rápida, responsive y adaptable a diversos dispositivos. En el backend, se desarrolló una Web API en C# conectada a una base de datos SQL Server.',
+        pd5text: 'Desarrollamos una plataforma integral para Honeywell enfocada en la generación de contratos y gestión de reparaciones de equipos. El frontend fue construido usando tecnologías modernas como React.js, ECMAScript y Bootstrap para entregar una interfaz responsive y amigable. En el backend, integramos servicios desarrollados en Node.js y APIs construidas con C# sobre SQL Server, proporcionando una solución robusta, eficiente y escalable.',
+        pd6text: 'Desarrollamos una solución diseñada para la implementación y cumplimiento de la versión 3.3 del estándar de facturación electrónica y nómina. Este proyecto incluyó la creación de un Web Service robusto usando tecnologías como Entity Framework y .NET C#, con una base de datos centralizada en SQL Server. El objetivo principal fue automatizar y optimizar la emisión de comprobantes fiscales digitales (CFDI), asegurando la integridad, validación y trazabilidad de la información de acuerdo con las regulaciones actuales.',
+        t1: 'Nuestro Equipo', t2: 'Desarrolladores expertos impulsando la innovación',
+        t3c: 'Con más de 5 años de experiencia liderando equipos y proyectos de desarrollo web. Se especializa en crear soluciones digitales integrales, desde el concepto inicial hasta el despliegue final. Experto en gestión de proyectos, arquitectura técnica y relaciones con clientes. Apasionado por construir equipos de alto rendimiento y entregar resultados excepcionales.',
+        t3d: 'Visionario creativo especializado en identidad de marca, comunicación visual y estrategias de marketing digital. Experto en crear contenido visual atractivo que impulsa el engagement y las conversiones. Combina diseño artístico con enfoques de marketing basados en datos para entregar resultados medibles a clientes de diversas industrias.',
+        t3a: 'Desarrollador full-stack con experiencia construyendo aplicaciones web modernas usando Angular, React y Tailwind CSS en el frontend, y NestJS y .NET en el backend. Sólido dominio de PostgreSQL y mejores prácticas de desarrollo, integrando APIs, arquitectura limpia y metodologías ágiles.',
+        t3b: 'Con más de 10 años de experiencia construyendo aplicaciones web modernas, escalables y enfocadas en el usuario. Experta en tecnologías como .NET, NestJS, React y Angular. Apasionada por la innovación y la mejora continua en el desarrollo de software.',
+        t3: 'Especializado en los sectores automotriz, de seguros y financiero. Experto en Angular para desarrollo frontend dinámico, .Net Core y NodeJS para soluciones backend robustas. Habilidad en diseño e implementación de bases de datos relacionales y no relacionales, usando SQL Server y MongoDB.',
+        t4: 'Tecnologías', t4a: 'Tecnologías', t4b: 'Tecnologías', t4c: 'Tecnologías', t4d: 'Especializaciones',
+        t5: 'Redes Sociales', t5a: 'Redes Sociales', t5b: 'Redes Sociales',
+        st1: 'Tecnologías Stack', st2: 'Nuestra experiencia tecnológica',
+        st3: 'Usamos Angular y React para construir interfaces de usuario dinámicas, responsivas y de alto rendimiento adaptadas a las necesidades del cliente.',
+        st4: 'NestJS y .NET son el núcleo de nuestras aplicaciones del lado del servidor, proporcionando escalabilidad, seguridad y una arquitectura robusta.',
+        st5: 'Trabajamos con bases de datos relacionales y no relacionales para garantizar flexibilidad, integridad de datos y eficiencia de almacenamiento.',
+        f1: 'Creative Studio', f2: 'Tu aliado digital para desarrollo web, marketing y soporte técnico.',
+        f3: 'Servicios', f4: 'Desarrollo Web', f5: 'Marketing Digital',
+        f6: 'Diseño Publicitario', f7: 'Soporte Técnico', f8: 'Contacto',
+        f9: '🕐 Lun - Vie: 9:00 AM - 10:00 PM<br>Sáb: 10:00 AM - 4:00 PM', f10: 'Creative Studio', f11: 'Todos los derechos reservados',
+        p7:'Mejora de interfaz web y corrección de errores.',
+p8:'Diseño y desarrollo web enfocado en turismo.',
+p9:'Desarrollo web para agencia de viajes.',
+p10:'Diseño y optimización de web corporativa.',
+p11:'Plataforma administrativa interna.',
+p12:'Mantenimiento y mejoras de sistemas internos.',
+more7:'▸ Clic para ver detalles',
+more8:'▸ Clic para ver detalles',
+more9:'▸ Clic para ver detalles',
+more10:'▸ Clic para ver detalles',
+more11:'▸ Clic para ver detalles',
+more12:'▸ Clic para ver detalles'
+    }
+};
+
+let currentLang = 'en';
+
+function switchLanguage() {
+    currentLang = currentLang === 'en' ? 'es' : 'en';
+    document.getElementById('langBtn').textContent = currentLang === 'en' ? 'ES' : 'EN';
+    updateText();
+    localStorage.setItem('siteLanguage', currentLang);
+}
+
+function updateText() {
+    Object.keys(TEXT[currentLang]).forEach(key => {
+        const el = document.getElementById(key);
+        if (el) {
+            if (key.startsWith('f9') || key.startsWith('f10') || key.startsWith('f11')) {
+                el.innerHTML = TEXT[currentLang][key];
+            } else {
+                el.textContent = TEXT[currentLang][key];
+            }
+        }
+    });
+}
+
+window.addEventListener('load', () => {
+    const savedLang = localStorage.getItem('siteLanguage');
+    if (savedLang) {
+        currentLang = savedLang;
+        document.getElementById('langBtn').textContent = currentLang === 'en' ? 'ES' : 'EN';
+        updateText();
+    }
+});
+
+function toggleMenu() {
+    document.getElementById('navMenu').classList.toggle('active');
+}
+
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('navMenu').classList.remove('active');
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+});
+    </script>
+</body>
+</html>
