@@ -175,13 +175,14 @@
             width: 100%;
             height: 200px;
             object-fit: cover;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 48px;
             position: relative;
+            overflow: hidden;
+        }
+
+        .tour-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .selection-badge {
@@ -257,7 +258,7 @@
             color: #667eea;
         }
 
-        /* Cart Sidebar (Desktop) */
+        /* Itinerary Sidebar (Desktop) */
         .cart-sidebar {
             width: 350px;
             background: white;
@@ -389,39 +390,21 @@
             transform: none;
         }
 
-        /* Mobile Add Button */
-        .mobile-add-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
+        /* Mobile Button (only one) */
         .mobile-cart-btn {
             position: fixed;
             bottom: 20px;
-            left: 20px;
-            background: #28a745;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 15px 25px;
+            padding: 15px 30px;
             border-radius: 30px;
             border: none;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
             display: none;
             align-items: center;
             gap: 10px;
@@ -430,7 +413,7 @@
 
         .cart-badge {
             background: white;
-            color: #28a745;
+            color: #667eea;
             width: 25px;
             height: 25px;
             border-radius: 50%;
@@ -575,10 +558,6 @@
                 display: none;
             }
 
-            .mobile-add-btn {
-                display: flex;
-            }
-
             .mobile-cart-btn {
                 display: flex;
             }
@@ -699,16 +678,16 @@
                 </div>
             </div>
 
-            <!-- Cart Sidebar (Desktop only) -->
+            <!-- Itinerary Sidebar (Desktop only) -->
             <div class="cart-sidebar" id="cartSidebar">
                 <div class="cart-title">
-                    🛒 Carrito
+                    📋 Mi Itinerario
                     <span class="cart-count" id="cartCount">0</span>
                 </div>
                 <div class="cart-items" id="cartItems">
                     <div class="empty-state">
-                        <div class="empty-state-icon">🛒</div>
-                        <p>Tu carrito está vacío</p>
+                        <div class="empty-state-icon">📋</div>
+                        <p>No hay tours seleccionados</p>
                     </div>
                 </div>
                 <div class="cart-total">
@@ -717,7 +696,7 @@
                         <span class="total-price" id="totalPrice">$0</span>
                     </div>
                     <button class="btn-checkout" id="btnCheckout" disabled onclick="goToCheckout()">
-                        Continuar con la compra
+                        Ver Itinerario Completo
                     </button>
                 </div>
             </div>
@@ -727,8 +706,8 @@
     <!-- Checkout View -->
     <div class="checkout-view" id="checkoutView">
         <div class="checkout-header">
-            <div class="checkout-title">🛍️ Resumen de tu compra</div>
-            <div class="checkout-subtitle">Revisa los tours seleccionados antes de continuar</div>
+            <div class="checkout-title">📋 Tu Itinerario de Viaje</div>
+            <div class="checkout-subtitle">Tours seleccionados en orden de realización</div>
         </div>
         
         <div class="checkout-items" id="checkoutItems">
@@ -747,16 +726,11 @@
         </div>
         
         <button class="btn-back" onclick="backToCatalog()">⬅️ Volver al catálogo</button>
-        <button class="btn-checkout" style="margin-top: 20px;">Proceder al pago</button>
     </div>
 
-    <!-- Mobile Buttons -->
-    <button class="mobile-add-btn" id="mobileAddBtn" onclick="addSelectedToCart()">
-        ➕
-    </button>
-    
+    <!-- Mobile Button -->
     <button class="mobile-cart-btn" id="mobileCartBtn" onclick="goToCheckout()">
-        🛒 Ver Carrito
+        📋 Ver Itinerario
         <span class="cart-badge" id="mobileCartCount">0</span>
     </button>
 
@@ -767,6 +741,7 @@
         let selectedTours = []; // Para modo móvil
         let cart = [];
         let isMobile = window.innerWidth <= 1024;
+        let selectionMode = false; // Nuevo: modo de selección en móvil
         
         // Detectar cambios de tamaño de ventana
         window.addEventListener('resize', () => {
@@ -782,6 +757,8 @@
         window.addEventListener('load', () => {
             const loggedUser = localStorage.getItem('loggedUser');
             if (!loggedUser) {
+                // Si no hay sesión, redirigir al login
+                alert('⚠️ Debes iniciar sesión primero');
                 window.location.href = 'index.html';
                 return;
             }
@@ -833,14 +810,19 @@
             grid.innerHTML = filteredTours.map((tour, index) => {
                 const isSelected = selectedTours.includes(index);
                 const selectionNumber = isSelected ? selectedTours.indexOf(index) + 1 : 0;
+                const imageName = tour.name.toLowerCase()
+                    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Remove accents
+                    .replace(/[^a-z0-9]+/g, '-') // Replace spaces and special chars with dash
+                    .replace(/^-+|-+$/g, ''); // Remove leading/trailing dashes
                 
                 return `
                     <div class="tour-card ${isSelected ? 'selected' : ''}" 
                          data-index="${index}"
-                         ${isMobile ? `ontouchstart="handleTouchStart(event, ${index})" ontouchend="handleTouchEnd()"` : ''}>
+                         ${isMobile ? `onclick="handleMobileClick(${index})"` : ''}>
                         <div class="tour-image">
                             <span class="selection-badge">${selectionNumber}</span>
-                            🏔️
+                            <img src="images/${imageName}.jpg" alt="${tour.name}" 
+                                 onerror="this.src='images/default.jpg'">
                             ${!isMobile ? `
                                 <div class="add-to-cart-overlay" onclick="addToCart(${index})">
                                     <div class="add-icon">➕</div>
@@ -863,22 +845,43 @@
             }).join('');
         }
 
-        // Touch handlers para móvil
-        let touchStartTime = 0;
-        let touchTimeout = null;
+        // Mobile click handler - long press for first selection, then single clicks
+        let longPressTimer = null;
+        let longPressTriggered = false;
 
-        function handleTouchStart(event, index) {
-            touchStartTime = Date.now();
-            touchTimeout = setTimeout(() => {
+        function handleMobileClick(index) {
+            // Si ya estamos en modo selección, toggle con un solo clic
+            if (selectionMode) {
                 toggleSelection(index);
-            }, 500); // 500ms para activar selección
-        }
-
-        function handleTouchEnd() {
-            if (touchTimeout) {
-                clearTimeout(touchTimeout);
+                return;
+            }
+            
+            // Si no estamos en modo selección, iniciar long press
+            if (!longPressTimer) {
+                longPressTriggered = false;
+                longPressTimer = setTimeout(() => {
+                    longPressTriggered = true;
+                    selectionMode = true;
+                    toggleSelection(index);
+                    longPressTimer = null;
+                }, 500); // 500ms para long press
             }
         }
+
+        // Cancelar long press si el usuario mueve el dedo o hace scroll
+        document.addEventListener('touchmove', () => {
+            if (longPressTimer && !longPressTriggered) {
+                clearTimeout(longPressTimer);
+                longPressTimer = null;
+            }
+        });
+
+        document.addEventListener('touchend', () => {
+            if (longPressTimer && !longPressTriggered) {
+                clearTimeout(longPressTimer);
+                longPressTimer = null;
+            }
+        });
 
         // Toggle selección en móvil
         function toggleSelection(index) {
@@ -888,29 +891,14 @@
             } else {
                 selectedTours.push(index);
             }
+            
+            // Si no hay selecciones, salir del modo selección
+            if (selectedTours.length === 0) {
+                selectionMode = false;
+            }
+            
             renderTours();
             updateMobileButtons();
-        }
-
-        // Agregar tours seleccionados al carrito (móvil)
-        function addSelectedToCart() {
-            if (selectedTours.length === 0) return;
-            
-            selectedTours.forEach(index => {
-                const tour = filteredTours[index];
-                const existingIndex = cart.findIndex(item => item.name === tour.name);
-                if (existingIndex === -1) {
-                    cart.push({...tour});
-                }
-            });
-            
-            selectedTours = [];
-            renderTours();
-            updateCart();
-            updateMobileButtons();
-            
-            // Mostrar confirmación
-            alert(`✅ ${cart.length} tour(s) agregado(s) al carrito`);
         }
 
         // Agregar al carrito (desktop)
@@ -930,7 +918,7 @@
             updateCart();
         }
 
-        // Actualizar carrito
+        // Actualizar carrito/itinerario
         function updateCart() {
             const cartItemsEl = document.getElementById('cartItems');
             const cartCount = document.getElementById('cartCount');
@@ -943,8 +931,8 @@
             if (cart.length === 0) {
                 cartItemsEl.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-state-icon">🛒</div>
-                        <p>Tu carrito está vacío</p>
+                        <div class="empty-state-icon">📋</div>
+                        <p>No hay tours seleccionados</p>
                     </div>
                 `;
                 totalPrice.textContent = '$0';
@@ -969,25 +957,38 @@
 
         // Actualizar botones móviles
         function updateMobileButtons() {
-            const mobileAddBtn = document.getElementById('mobileAddBtn');
-            if (selectedTours.length > 0) {
-                mobileAddBtn.style.display = 'flex';
-            } else {
-                mobileAddBtn.style.display = 'none';
+            const mobileCartBtn = document.getElementById('mobileCartBtn');
+            
+            // En móvil, cuando hay tours seleccionados, agregar al itinerario automáticamente
+            if (selectedTours.length > 0 && isMobile) {
+                selectedTours.forEach(index => {
+                    const tour = filteredTours[index];
+                    const existingIndex = cart.findIndex(item => item.name === tour.name);
+                    if (existingIndex === -1) {
+                        cart.push({...tour});
+                    }
+                });
+                updateCart();
+            }
+            
+            // Mostrar botón solo si hay items en el itinerario
+            if (cart.length > 0 && isMobile) {
+                mobileCartBtn.style.display = 'flex';
+            } else if (isMobile) {
+                mobileCartBtn.style.display = 'none';
             }
         }
 
-        // Ir a checkout
+        // Ir a checkout/itinerario
         function goToCheckout() {
             if (cart.length === 0) {
-                alert('⚠️ Tu carrito está vacío');
+                alert('⚠️ No hay tours seleccionados en tu itinerario');
                 return;
             }
             
             document.getElementById('catalogView').style.display = 'none';
             document.getElementById('checkoutView').style.display = 'block';
             document.getElementById('mobileCartBtn').style.display = 'none';
-            document.getElementById('mobileAddBtn').style.display = 'none';
             
             renderCheckout();
             window.scrollTo(0, 0);
@@ -997,7 +998,13 @@
         function backToCatalog() {
             document.getElementById('catalogView').style.display = 'block';
             document.getElementById('checkoutView').style.display = 'none';
-            if (isMobile) {
+            
+            // Resetear selección móvil
+            selectedTours = [];
+            selectionMode = false;
+            renderTours();
+            
+            if (isMobile && cart.length > 0) {
                 document.getElementById('mobileCartBtn').style.display = 'flex';
             }
         }
