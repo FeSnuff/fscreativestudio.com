@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MVP App - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-container h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+        }
+
+        .loading {
+            text-align: center;
+            color: #667eea;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Página principal después del login */
+        .main-container {
+            display: none;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .main-container h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .main-container p {
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .btn-logout {
+            padding: 10px 30px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #c82333;
+        }
+
+        .user-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Formulario de Login -->
+    <div class="login-container" id="loginContainer">
+        <h1>🔐 Iniciar Sesión</h1>
+        <div class="error-message" id="errorMessage"></div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Usuario</label>
+                <input type="text" id="username" name="username" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn-login" id="btnLogin">Iniciar Sesión</button>
+            <div class="loading" id="loading">Verificando credenciales...</div>
+        </form>
+    </div>
+
+    <!-- Página Principal (se muestra después del login) -->
+    <div class="main-container" id="mainContainer">
+        <h1>✅ ¡Bienvenido a la App!</h1>
+        <div class="user-info">
+            <p><strong>Usuario:</strong> <span id="loggedUser"></span></p>
+        </div>
+        <p>🎉 Has iniciado sesión correctamente. Esta es tu página principal.</p>
+        <p>Aquí irá el contenido de tu aplicación...</p>
+        <button class="btn-logout" id="btnLogout">Cerrar Sesión</button>
+    </div>
+
+    <script>
+        // ⚠️ IMPORTANTE: Reemplaza esta URL con la URL de tu Google Apps Script
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzSH1WBgNCmE1SfV3D0GS8_cIQirxMUsT4fIrf8Z7qMknPOVPKBLQZlNps3ttIftg4oQQ/exec';
+
+        // Elementos del DOM
+        const loginContainer = document.getElementById('loginContainer');
+        const mainContainer = document.getElementById('mainContainer');
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const loading = document.getElementById('loading');
+        const btnLogin = document.getElementById('btnLogin');
+        const btnLogout = document.getElementById('btnLogout');
+        const loggedUser = document.getElementById('loggedUser');
+
+        // Verificar si hay sesión guardada al cargar la página
+        window.addEventListener('load', () => {
+            const savedUser = localStorage.getItem('loggedUser');
+            if (savedUser) {
+                showMainPage(savedUser);
+            }
+        });
+
+        // Manejar el envío del formulario
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            // Validación básica
+            if (!username || !password) {
+                showError('Por favor, completa todos los campos');
+                return;
+            }
+
+            // Mostrar loading
+            btnLogin.disabled = true;
+            loading.style.display = 'block';
+            errorMessage.style.display = 'none';
+
+            try {
+                // Llamar al Google Apps Script
+                const response = await fetch(`${SCRIPT_URL}?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    // Guardar sesión en localStorage
+                    localStorage.setItem('loggedUser', username);
+                    showMainPage(username);
+                } else {
+                    showError(data.message || 'Usuario o contraseña incorrectos');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Error al conectar con el servidor. Verifica la configuración.');
+            } finally {
+                btnLogin.disabled = false;
+                loading.style.display = 'none';
+            }
+        });
+
+        // Botón de cerrar sesión
+        btnLogout.addEventListener('click', () => {
+            localStorage.removeItem('loggedUser');
+            showLoginPage();
+        });
+
+        // Función para mostrar la página principal
+        function showMainPage(username) {
+            loginContainer.style.display = 'none';
+            mainContainer.style.display = 'block';
+            loggedUser.textContent = username;
+            
+            // Limpiar el formulario
+            loginForm.reset();
+        }
+
+        // Función para mostrar la página de login
+        function showLoginPage() {
+            loginContainer.style.display = 'block';
+            mainContainer.style.display = 'none';
+        }
+
+        // Función para mostrar errores
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
