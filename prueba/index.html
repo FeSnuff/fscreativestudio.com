@@ -182,7 +182,7 @@
 
     <script>
         // ⚠️ IMPORTANTE: Reemplaza esta URL con la URL de tu Google Apps Script
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzSH1WBgNCmE1SfV3D0GS8_cIQirxMUsT4fIrf8Z7qMknPOVPKBLQZlNps3ttIftg4oQQ/exec';
+        const SCRIPT_URL = 'TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI';
 
         // Elementos del DOM
         const loginContainer = document.getElementById('loginContainer');
@@ -249,12 +249,9 @@
 
         // Función para mostrar la página principal
         function showMainPage(username) {
-            loginContainer.style.display = 'none';
-            mainContainer.style.display = 'block';
-            loggedUser.textContent = username;
-            
-            // Limpiar el formulario
-            loginForm.reset();
+            // Guardar sesión y redirigir a la app
+            localStorage.setItem('loggedUser', username);
+            window.location.href = 'app.html';
         }
 
         // Función para mostrar la página de login

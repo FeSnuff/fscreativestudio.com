@@ -1,0 +1,101 @@
+[
+  {
+    "name": "Tour Machu Picchu Clásico",
+    "duration_days": 3,
+    "summary": "Descubre la maravilla del mundo en una experiencia inolvidable de 3 días. Incluye transporte, alojamiento y guía experto.",
+    "summary_list": [
+      "Visita guiada completa a Machu Picchu",
+      "Transporte en tren panorámico",
+      "Alojamiento en Aguas Calientes",
+      "Desayuno incluido todos los días"
+    ],
+    "extended_list": [
+      "Día 1: Salida desde Cusco en tren panorámico Expedition. Llegada a Aguas Calientes, check-in en hotel 3 estrellas y tarde libre para explorar el pueblo.",
+      "Día 2: Madrugada rumbo a Machu Picchu. Tour guiado de 2.5 horas por la ciudadela inca con guía certificado. Tarde libre para explorar por tu cuenta o subir a Huayna Picchu (boleto adicional).",
+      "Día 3: Desayuno en hotel, check-out y tiempo libre en Aguas Calientes. Retorno a Cusco en tren panorámico por la tarde."
+    ],
+    "includes": [
+      "Transporte ida y vuelta en tren",
+      "2 noches de hotel 3 estrellas",
+      "Entrada a Machu Picchu",
+      "Guía profesional certificado",
+      "Desayunos en el hotel",
+      "Traslados estación - hotel"
+    ],
+    "excludes": [
+      "Almuerzos y cenas",
+      "Propinas",
+      "Gastos personales",
+      "Entrada a Huayna Picchu",
+      "Seguro de viaje"
+    ],
+    "price": 450.0
+  },
+  {
+    "name": "Aventura Camino Inca 4D/3N",
+    "duration_days": 4,
+    "summary": "Sigue los pasos de los incas en el legendario Camino Inca. Trekking de 43km culminando con el amanecer en Machu Picchu.",
+    "summary_list": [
+      "Trekking guiado por el Camino Inca original",
+      "Camping en sitios arqueológicos",
+      "Cocinero y porteadores incluidos",
+      "Llegada a Machu Picchu por la Puerta del Sol"
+    ],
+    "extended_list": [
+      "Día 1: Recojo temprano y viaje al km 82. Inicio del trek con visita a Patallacta. Campamento en Huayllabamba (3,000 msnm).",
+      "Día 2: Día más desafiante. Ascenso al Paso de la Mujer Muerta (4,215 msnm) y descenso al valle de Pacaymayu. Campamento en Chaquicocha.",
+      "Día 3: Visita a complejos arqueológicos de Runkurakay, Sayacmarca y Phuyupatamarca. Descenso a Wiñaywayna. Campamento final.",
+      "Día 4: Salida de madrugada hacia Inti Punku (Puerta del Sol). Primera vista de Machu Picchu al amanecer. Tour guiado y retorno a Cusco."
+    ],
+    "includes": [
+      "Transporte ida y vuelta",
+      "3 noches de camping con equipo completo",
+      "Todas las comidas durante el trek",
+      "Cocinero profesional",
+      "Porteadores para equipo grupal",
+      "Entrada al Camino Inca y Machu Picchu",
+      "Guía certificado bilingüe",
+      "Kit de primeros auxilios",
+      "Tren de retorno"
+    ],
+    "excludes": [
+      "Saco de dormir (alquiler disponible)",
+      "Bastones de trekking (alquiler disponible)",
+      "Porteador personal",
+      "Propinas",
+      "Comidas en Cusco",
+      "Seguro de viaje"
+    ],
+    "price": 650.0
+  },
+  {
+    "name": "City Tour Cusco Medio Día",
+    "duration_days": 1,
+    "summary": "Recorrido por los principales atractivos de Cusco y ruinas cercanas. Perfecto para tu primer día de aclimatación.",
+    "summary_list": [
+      "Visita a la Catedral y Qoricancha",
+      "Ruinas de Sacsayhuaman, Q'enqo, Puca Pucara y Tambomachay",
+      "Guía profesional incluido",
+      "Servicio compartido"
+    ],
+    "extended_list": [
+      "Recojo de hotel entre 1:00-1:30pm. Visita a la Catedral del Cusco y sus pinturas de la escuela cusqueña.",
+      "Qoricancha (Templo del Sol), antiguo templo inca sobre el cual se construyó el convento de Santo Domingo.",
+      "Traslado a ruinas cercanas: Sacsayhuaman (fortaleza ceremonial), Q'enqo (centro ceremonial), Puca Pucara (puesto de control inca) y Tambomachay (fuentes de agua).",
+      "Retorno a Cusco aproximadamente a las 6:30pm con drop-off en Plaza de Armas."
+    ],
+    "includes": [
+      "Transporte turístico compartido",
+      "Guía profesional bilingüe",
+      "Recojo y retorno al hotel"
+    ],
+    "excludes": [
+      "Boleto Turístico General (130 soles)",
+      "Entrada a la Catedral (25 soles)",
+      "Entrada a Qoricancha (15 soles)",
+      "Almuerzos y cenas",
+      "Propinas"
+    ],
+    "price": 35.0
+  }
+]

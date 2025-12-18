@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tours App - Catálogo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-logout {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid white;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Filters and Search Section */
+        .filters-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            transition: border-color 0.3s;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .filters-row {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            background: white;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        /* Desktop Layout */
+        .content-wrapper {
+            display: flex;
+            gap: 20px;
+        }
+
+        /* Tours Grid */
+        .tours-container {
+            flex: 1;
+        }
+
+        .tours-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        /* Tour Card */
+        .tour-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            user-select: none;
+        }
+
+        .tour-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .tour-card.selected {
+            border: 3px solid #667eea;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .tour-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            position: relative;
+        }
+
+        .selection-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #667eea;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            z-index: 10;
+        }
+
+        .tour-card.selected .selection-badge {
+            display: flex;
+        }
+
+        .add-to-cart-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(102, 126, 234, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .tour-card:hover .add-to-cart-overlay {
+            display: flex;
+        }
+
+        .add-icon {
+            color: white;
+            font-size: 48px;
+            font-weight: bold;
+        }
+
+        .tour-content {
+            padding: 20px;
+        }
+
+        .tour-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .tour-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .tour-duration {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .tour-price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        /* Cart Sidebar (Desktop) */
+        .cart-sidebar {
+            width: 350px;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 100px;
+            max-height: calc(100vh - 120px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cart-count {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .cart-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-price {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .cart-item-number {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .btn-remove {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .cart-total {
+            border-top: 2px solid #e0e0e0;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        .total-label {
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .total-price {
+            color: #667eea;
+            font-size: 28px;
+        }
+
+        .btn-checkout {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-checkout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-checkout:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Mobile Add Button */
+        .mobile-add-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .mobile-cart-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #28a745;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 30px;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .cart-badge {
+            background: white;
+            color: #28a745;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+        }
+
+        /* Checkout View */
+        .checkout-view {
+            display: none;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .checkout-header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .checkout-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .checkout-subtitle {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .checkout-items {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .checkout-item {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .checkout-item-number {
+            background: #667eea;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .checkout-item-content {
+            flex: 1;
+        }
+
+        .checkout-item-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .checkout-item-duration {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .checkout-item-price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .checkout-summary {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .btn-back {
+            background: #6c757d;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .btn-back:hover {
+            background: #5a6268;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .cart-sidebar {
+                display: none;
+            }
+
+            .mobile-add-btn {
+                display: flex;
+            }
+
+            .mobile-cart-btn {
+                display: flex;
+            }
+
+            /* En móvil no mostrar el overlay de hover */
+            .tour-card:hover .add-to-cart-overlay {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .tours-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .filters-row {
+                flex-direction: column;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+        }
+
+        /* Loading Spinner */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                <span>🌍</span>
+                <span>Tours & Aventuras</span>
+            </div>
+            <div class="user-info">
+                <span id="userName">Usuario</span>
+                <button class="btn-logout" onclick="logout()">Cerrar Sesión</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Catalog View -->
+    <div class="main-container" id="catalogView">
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <input type="text" class="search-bar" id="searchBar" placeholder="🔍 Buscar tours por nombre...">
+            
+            <div class="filters-row">
+                <div class="filter-group">
+                    <label class="filter-label">Ordenar por</label>
+                    <select class="filter-select" id="sortOrder">
+                        <option value="default">Por defecto</option>
+                        <option value="name-asc">Nombre A-Z</option>
+                        <option value="name-desc">Nombre Z-A</option>
+                        <option value="price-asc">Precio: Menor a Mayor</option>
+                        <option value="price-desc">Precio: Mayor a Menor</option>
+                        <option value="duration-asc">Duración: Menor a Mayor</option>
+                        <option value="duration-desc">Duración: Mayor a Menor</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Duración</label>
+                    <select class="filter-select" id="filterDuration">
+                        <option value="all">Todas las duraciones</option>
+                        <option value="1">1 día</option>
+                        <option value="2-3">2-3 días</option>
+                        <option value="4-7">4-7 días</option>
+                        <option value="8+">8+ días</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Precio</label>
+                    <select class="filter-select" id="filterPrice">
+                        <option value="all">Todos los precios</option>
+                        <option value="0-100">$0 - $100</option>
+                        <option value="100-300">$100 - $300</option>
+                        <option value="300-500">$300 - $500</option>
+                        <option value="500+">$500+</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-wrapper">
+            <!-- Tours Grid -->
+            <div class="tours-container">
+                <div class="tours-grid" id="toursGrid">
+                    <!-- Tours will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Cart Sidebar (Desktop only) -->
+            <div class="cart-sidebar" id="cartSidebar">
+                <div class="cart-title">
+                    🛒 Carrito
+                    <span class="cart-count" id="cartCount">0</span>
+                </div>
+                <div class="cart-items" id="cartItems">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🛒</div>
+                        <p>Tu carrito está vacío</p>
+                    </div>
+                </div>
+                <div class="cart-total">
+                    <div class="total-label">
+                        <span>Total:</span>
+                        <span class="total-price" id="totalPrice">$0</span>
+                    </div>
+                    <button class="btn-checkout" id="btnCheckout" disabled onclick="goToCheckout()">
+                        Continuar con la compra
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout View -->
+    <div class="checkout-view" id="checkoutView">
+        <div class="checkout-header">
+            <div class="checkout-title">🛍️ Resumen de tu compra</div>
+            <div class="checkout-subtitle">Revisa los tours seleccionados antes de continuar</div>
+        </div>
+        
+        <div class="checkout-items" id="checkoutItems">
+            <!-- Checkout items will be loaded here -->
+        </div>
+        
+        <div class="checkout-summary">
+            <div class="summary-row">
+                <span>Subtotal:</span>
+                <span id="checkoutSubtotal">$0</span>
+            </div>
+            <div class="summary-row">
+                <span>Total:</span>
+                <span id="checkoutTotal">$0</span>
+            </div>
+        </div>
+        
+        <button class="btn-back" onclick="backToCatalog()">⬅️ Volver al catálogo</button>
+        <button class="btn-checkout" style="margin-top: 20px;">Proceder al pago</button>
+    </div>
+
+    <!-- Mobile Buttons -->
+    <button class="mobile-add-btn" id="mobileAddBtn" onclick="addSelectedToCart()">
+        ➕
+    </button>
+    
+    <button class="mobile-cart-btn" id="mobileCartBtn" onclick="goToCheckout()">
+        🛒 Ver Carrito
+        <span class="cart-badge" id="mobileCartCount">0</span>
+    </button>
+
+    <script>
+        // Variables globales
+        let allTours = [];
+        let filteredTours = [];
+        let selectedTours = []; // Para modo móvil
+        let cart = [];
+        let isMobile = window.innerWidth <= 1024;
+        
+        // Detectar cambios de tamaño de ventana
+        window.addEventListener('resize', () => {
+            const wasMobile = isMobile;
+            isMobile = window.innerWidth <= 1024;
+            if (wasMobile !== isMobile) {
+                renderTours();
+                updateCart();
+            }
+        });
+
+        // Cargar usuario
+        window.addEventListener('load', () => {
+            const loggedUser = localStorage.getItem('loggedUser');
+            if (!loggedUser) {
+                window.location.href = 'index.html';
+                return;
+            }
+            document.getElementById('userName').textContent = loggedUser;
+            loadTours();
+        });
+
+        // Cerrar sesión
+        function logout() {
+            localStorage.removeItem('loggedUser');
+            window.location.href = 'index.html';
+        }
+
+        // Cargar tours desde el JSON
+        async function loadTours() {
+            try {
+                const response = await fetch('tours.json');
+                if (!response.ok) {
+                    throw new Error('No se pudo cargar el archivo tours.json');
+                }
+                allTours = await response.json();
+                filteredTours = [...allTours];
+                renderTours();
+            } catch (error) {
+                console.error('Error cargando tours:', error);
+                document.getElementById('toursGrid').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">❌</div>
+                        <p>Error al cargar los tours. Asegúrate de que el archivo tours.json esté en la misma carpeta.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Renderizar tours
+        function renderTours() {
+            const grid = document.getElementById('toursGrid');
+            
+            if (filteredTours.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔍</div>
+                        <p>No se encontraron tours con los filtros seleccionados</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = filteredTours.map((tour, index) => {
+                const isSelected = selectedTours.includes(index);
+                const selectionNumber = isSelected ? selectedTours.indexOf(index) + 1 : 0;
+                
+                return `
+                    <div class="tour-card ${isSelected ? 'selected' : ''}" 
+                         data-index="${index}"
+                         ${isMobile ? `ontouchstart="handleTouchStart(event, ${index})" ontouchend="handleTouchEnd()"` : ''}>
+                        <div class="tour-image">
+                            <span class="selection-badge">${selectionNumber}</span>
+                            🏔️
+                            ${!isMobile ? `
+                                <div class="add-to-cart-overlay" onclick="addToCart(${index})">
+                                    <div class="add-icon">➕</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="tour-content">
+                            <div class="tour-name">${tour.name}</div>
+                            <div class="tour-details">
+                                <div class="tour-duration">
+                                    📅 ${tour.duration_days} día${tour.duration_days > 1 ? 's' : ''}
+                                </div>
+                                <div class="tour-price">
+                                    $${tour.price.toFixed(2)}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Touch handlers para móvil
+        let touchStartTime = 0;
+        let touchTimeout = null;
+
+        function handleTouchStart(event, index) {
+            touchStartTime = Date.now();
+            touchTimeout = setTimeout(() => {
+                toggleSelection(index);
+            }, 500); // 500ms para activar selección
+        }
+
+        function handleTouchEnd() {
+            if (touchTimeout) {
+                clearTimeout(touchTimeout);
+            }
+        }
+
+        // Toggle selección en móvil
+        function toggleSelection(index) {
+            const position = selectedTours.indexOf(index);
+            if (position > -1) {
+                selectedTours.splice(position, 1);
+            } else {
+                selectedTours.push(index);
+            }
+            renderTours();
+            updateMobileButtons();
+        }
+
+        // Agregar tours seleccionados al carrito (móvil)
+        function addSelectedToCart() {
+            if (selectedTours.length === 0) return;
+            
+            selectedTours.forEach(index => {
+                const tour = filteredTours[index];
+                const existingIndex = cart.findIndex(item => item.name === tour.name);
+                if (existingIndex === -1) {
+                    cart.push({...tour});
+                }
+            });
+            
+            selectedTours = [];
+            renderTours();
+            updateCart();
+            updateMobileButtons();
+            
+            // Mostrar confirmación
+            alert(`✅ ${cart.length} tour(s) agregado(s) al carrito`);
+        }
+
+        // Agregar al carrito (desktop)
+        function addToCart(index) {
+            const tour = filteredTours[index];
+            const existingIndex = cart.findIndex(item => item.name === tour.name);
+            
+            if (existingIndex === -1) {
+                cart.push({...tour});
+                updateCart();
+            }
+        }
+
+        // Remover del carrito
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+
+        // Actualizar carrito
+        function updateCart() {
+            const cartItemsEl = document.getElementById('cartItems');
+            const cartCount = document.getElementById('cartCount');
+            const totalPrice = document.getElementById('totalPrice');
+            const btnCheckout = document.getElementById('btnCheckout');
+            
+            cartCount.textContent = cart.length;
+            document.getElementById('mobileCartCount').textContent = cart.length;
+            
+            if (cart.length === 0) {
+                cartItemsEl.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🛒</div>
+                        <p>Tu carrito está vacío</p>
+                    </div>
+                `;
+                totalPrice.textContent = '$0';
+                btnCheckout.disabled = true;
+            } else {
+                const total = cart.reduce((sum, tour) => sum + tour.price, 0);
+                totalPrice.textContent = `$${total.toFixed(2)}`;
+                btnCheckout.disabled = false;
+                
+                cartItemsEl.innerHTML = cart.map((tour, index) => `
+                    <div class="cart-item">
+                        <div class="cart-item-number">${index + 1}</div>
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${tour.name}</div>
+                            <div class="cart-item-price">$${tour.price.toFixed(2)}</div>
+                        </div>
+                        <button class="btn-remove" onclick="removeFromCart(${index})">✕</button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Actualizar botones móviles
+        function updateMobileButtons() {
+            const mobileAddBtn = document.getElementById('mobileAddBtn');
+            if (selectedTours.length > 0) {
+                mobileAddBtn.style.display = 'flex';
+            } else {
+                mobileAddBtn.style.display = 'none';
+            }
+        }
+
+        // Ir a checkout
+        function goToCheckout() {
+            if (cart.length === 0) {
+                alert('⚠️ Tu carrito está vacío');
+                return;
+            }
+            
+            document.getElementById('catalogView').style.display = 'none';
+            document.getElementById('checkoutView').style.display = 'block';
+            document.getElementById('mobileCartBtn').style.display = 'none';
+            document.getElementById('mobileAddBtn').style.display = 'none';
+            
+            renderCheckout();
+            window.scrollTo(0, 0);
+        }
+
+        // Volver al catálogo
+        function backToCatalog() {
+            document.getElementById('catalogView').style.display = 'block';
+            document.getElementById('checkoutView').style.display = 'none';
+            if (isMobile) {
+                document.getElementById('mobileCartBtn').style.display = 'flex';
+            }
+        }
+
+        // Renderizar checkout
+        function renderCheckout() {
+            const checkoutItems = document.getElementById('checkoutItems');
+            const subtotal = cart.reduce((sum, tour) => sum + tour.price, 0);
+            
+            checkoutItems.innerHTML = cart.map((tour, index) => `
+                <div class="checkout-item">
+                    <div class="checkout-item-number">${index + 1}</div>
+                    <div class="checkout-item-content">
+                        <div class="checkout-item-name">${tour.name}</div>
+                        <div class="checkout-item-duration">📅 ${tour.duration_days} día${tour.duration_days > 1 ? 's' : ''}</div>
+                        <div class="checkout-item-price">$${tour.price.toFixed(2)}</div>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('checkoutSubtotal').textContent = `$${subtotal.toFixed(2)}`;
+            document.getElementById('checkoutTotal').textContent = `$${subtotal.toFixed(2)}`;
+        }
+
+        // Búsqueda
+        document.getElementById('searchBar').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            applyFilters();
+        });
+
+        // Filtros
+        document.getElementById('sortOrder').addEventListener('change', applyFilters);
+        document.getElementById('filterDuration').addEventListener('change', applyFilters);
+        document.getElementById('filterPrice').addEventListener('change', applyFilters);
+
+        // Aplicar filtros
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchBar').value.toLowerCase();
+            const sortOrder = document.getElementById('sortOrder').value;
+            const filterDuration = document.getElementById('filterDuration').value;
+            const filterPrice = document.getElementById('filterPrice').value;
+            
+            // Filtrar
+            filteredTours = allTours.filter(tour => {
+                // Búsqueda por nombre
+                if (searchTerm && !tour.name.toLowerCase().includes(searchTerm)) {
+                    return false;
+                }
+                
+                // Filtro de duración
+                if (filterDuration !== 'all') {
+                    if (filterDuration === '1' && tour.duration_days !== 1) return false;
+                    if (filterDuration === '2-3' && (tour.duration_days < 2 || tour.duration_days > 3)) return false;
+                    if (filterDuration === '4-7' && (tour.duration_days < 4 || tour.duration_days > 7)) return false;
+                    if (filterDuration === '8+' && tour.duration_days < 8) return false;
+                }
+                
+                // Filtro de precio
+                if (filterPrice !== 'all') {
+                    if (filterPrice === '0-100' && (tour.price < 0 || tour.price > 100)) return false;
+                    if (filterPrice === '100-300' && (tour.price < 100 || tour.price > 300)) return false;
+                    if (filterPrice === '300-500' && (tour.price < 300 || tour.price > 500)) return false;
+                    if (filterPrice === '500+' && tour.price < 500) return false;
+                }
+                
+                return true;
+            });
+            
+            // Ordenar
+            switch(sortOrder) {
+                case 'name-asc':
+                    filteredTours.sort((a, b) => a.name.localeCompare(b.name));
+                    break;
+                case 'name-desc':
+                    filteredTours.sort((a, b) => b.name.localeCompare(a.name));
+                    break;
+                case 'price-asc':
+                    filteredTours.sort((a, b) => a.price - b.price);
+                    break;
+                case 'price-desc':
+                    filteredTours.sort((a, b) => b.price - a.price);
+                    break;
+                case 'duration-asc':
+                    filteredTours.sort((a, b) => a.duration_days - b.duration_days);
+                    break;
+                case 'duration-desc':
+                    filteredTours.sort((a, b) => b.duration_days - a.duration_days);
+                    break;
+            }
+            
+            selectedTours = []; // Limpiar selección al filtrar
+            renderTours();
+        }
+    </script>
+</body>
+</html>
