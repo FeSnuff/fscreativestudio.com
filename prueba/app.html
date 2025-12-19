@@ -984,7 +984,20 @@
                 btnCheckout.disabled = true;
             } else {
                 const total = cart.reduce((sum, tour) => sum + tour.price, 0);
-                totalPrice.textContent = `S/ ${total.toFixed(2)}`;
+                const totalDays = cart.reduce((sum, tour) => sum + tour.duration_days, 0);
+                const totalNights = totalDays - cart.length; // Cada tour tiene 1 noche menos que días
+                
+                // Mostrar total con días/noches
+                let durationSummary = '';
+                if (totalDays === 1) {
+                    durationSummary = '1D';
+                } else if (totalNights === 0) {
+                    durationSummary = `${totalDays}D`;
+                } else {
+                    durationSummary = `${totalDays}D/${totalNights}N`;
+                }
+                
+                totalPrice.innerHTML = `S/ ${total.toFixed(2)}<br><span style="font-size: 14px; color: #888;">📅 ${durationSummary}</span>`;
                 btnCheckout.disabled = false;
                 
                 cartItemsEl.innerHTML = cart.map((tour, index) => {
