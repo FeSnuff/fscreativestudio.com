@@ -814,8 +814,8 @@
                 // Generar nombre de carpeta de imagen
                 const imageFolderName = tour.name.toLowerCase()
                     .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Remove accents
-                    .replace(/[^a-z0-9]+/g, '-') // Replace spaces and special chars with dash
-                    .replace(/^-+|-+$/g, ''); // Remove leading/trailing dashes
+                    .replace(/[^a-z0-9]+/g, '_') // Replace spaces and special chars with underscore
+                    .replace(/^_+|_+$/g, ''); // Remove leading/trailing underscores
                 
                 // Calcular noches
                 let durationText = '';
