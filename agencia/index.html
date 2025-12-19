@@ -3,107 +3,282 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tours App</title>
+    <title>Tours App - Login</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-container h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+        }
+
+        .loading {
+            text-align: center;
+            color: #667eea;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Página principal después del login */
+        .main-container {
+            display: none;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .main-container h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .main-container p {
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .btn-logout {
+            padding: 10px 30px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #c82333;
+        }
+
+        .user-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
-    <div id="navbar"></div>
-    <div id="main"></div>
-    <div id="footer"></div>
+    <!-- Formulario de Login -->
+    <div class="login-container" id="loginContainer">
+        <h1>🔐 Iniciar Sesión</h1>
+        <div class="error-message" id="errorMessage"></div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Usuario</label>
+                <input type="text" id="username" name="username" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn-login" id="btnLogin">Iniciar Sesión</button>
+            <div class="loading" id="loading">Verificando credenciales...</div>
+        </form>
+    </div>
+
+    <!-- Página Principal (se muestra después del login) -->
+    <div class="main-container" id="mainContainer">
+        <h1>✅ ¡Bienvenido a la App!</h1>
+        <div class="user-info">
+            <p><strong>Usuario:</strong> <span id="loggedUser"></span></p>
+        </div>
+        <p>🎉 Has iniciado sesión correctamente. Esta es tu página principal.</p>
+        <p>Aquí irá el contenido de tu aplicación...</p>
+        <button class="btn-logout" id="btnLogout">Cerrar Sesión</button>
+    </div>
 
     <script>
-        let CONFIG = null;
-        let USER = null;
+        // URL del Google Apps Script
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwAOTSKw3rxOu_VyCPmpnXurDApQEiYjwfynkyyOeo8k6g1INY5aRsFruYVXzAsidBB9A/exec';
 
-        async function loadConfig() {
-            const res = await fetch('config.json');
-            CONFIG = await res.json();
-            console.log('Config:', CONFIG);
-        }
+        // Elementos del DOM
+        const loginContainer = document.getElementById('loginContainer');
+        const mainContainer = document.getElementById('mainContainer');
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const loading = document.getElementById('loading');
+        const btnLogin = document.getElementById('btnLogin');
+        const btnLogout = document.getElementById('btnLogout');
+        const loggedUser = document.getElementById('loggedUser');
 
-        async function loadHTML(file, containerId) {
-            const res = await fetch(`components/${file}.html`);
-            const html = await res.text();
-            document.getElementById(containerId).innerHTML = html;
-            
-            // Execute scripts
-            const scripts = document.getElementById(containerId).querySelectorAll('script');
-            scripts.forEach(oldScript => {
-                const newScript = document.createElement('script');
-                newScript.textContent = oldScript.textContent;
-                oldScript.replaceWith(newScript);
-            });
-        }
-
-        async function checkLogin() {
-            USER = localStorage.getItem('user');
-            console.log('Usuario guardado:', USER);
-            
-            if (USER) {
-                updateNavbar();
-                await loadHTML('tours', 'main');
-            } else {
-                await loadHTML('login', 'main');
+        // Verificar si hay sesión guardada al cargar la página
+        window.addEventListener('load', () => {
+            const savedUser = localStorage.getItem('loggedUser');
+            if (savedUser) {
+                showMainPage(savedUser);
             }
-        }
+        });
 
-        async function verifyUser(username, password) {
-            console.log('Verificando:', username);
+        // Manejar el envío del formulario
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
             
-            const url = `${CONFIG.SHEETS_URL}?user=${username}&pass=${password}`;
-            console.log('URL:', url);
-            
-            const res = await fetch(url);
-            const data = await res.json();
-            console.log('Respuesta:', data);
-            
-            return data;
-        }
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
 
-        async function login(username, password) {
-            const result = await verifyUser(username, password);
-            
-            if (result.success) {
-                USER = result.name || username;
-                localStorage.setItem('user', USER);
-                updateNavbar();
-                await loadHTML('tours', 'main');
-            } else {
-                alert('Usuario o contraseña incorrectos');
+            // Validación básica
+            if (!username || !password) {
+                showError('Por favor, completa todos los campos');
+                return;
             }
-        }
 
-        function updateNavbar() {
-            const name = document.getElementById('userName');
-            const initial = document.getElementById('userInitial');
-            const btn = document.getElementById('btnLogout');
+            // Mostrar loading
+            btnLogin.disabled = true;
+            loading.style.display = 'block';
+            errorMessage.style.display = 'none';
+
+            try {
+                console.log('Llamando a:', SCRIPT_URL);
+                console.log('Usuario:', username);
+                
+                // Llamar al Google Apps Script
+                const response = await fetch(`${SCRIPT_URL}?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
+                
+                console.log('Response status:', response.status);
+                
+                const data = await response.json();
+                console.log('Response data:', data);
+
+                if (data.success) {
+                    // Guardar sesión en localStorage (usar el username de la respuesta)
+                    const userName = data.username || username;
+                    localStorage.setItem('loggedUser', userName);
+                    showMainPage(userName);
+                } else {
+                    showError(data.message || 'Usuario o contraseña incorrectos');
+                }
+            } catch (error) {
+                console.error('Error completo:', error);
+                showError('Error al conectar con el servidor: ' + error.message);
+            } finally {
+                btnLogin.disabled = false;
+                loading.style.display = 'none';
+            }
+        });
+
+        // Botón de cerrar sesión
+        btnLogout.addEventListener('click', () => {
+            localStorage.removeItem('loggedUser');
+            showLoginPage();
+        });
+
+        // Función para mostrar la página principal
+        function showMainPage(username) {
+            loginContainer.style.display = 'none';
+            mainContainer.style.display = 'block';
+            loggedUser.textContent = username;
             
-            if (name) name.textContent = USER;
-            if (initial) initial.textContent = USER.charAt(0).toUpperCase();
-            if (btn) btn.style.display = 'block';
+            // Limpiar el formulario
+            loginForm.reset();
         }
 
-        function logout() {
-            localStorage.removeItem('user');
-            location.reload();
+        // Función para mostrar la página de login
+        function showLoginPage() {
+            loginContainer.style.display = 'block';
+            mainContainer.style.display = 'none';
         }
 
-        async function init() {
-            console.log('Iniciando...');
-            await loadConfig();
-            await loadHTML('navbar', 'navbar');
-            await loadHTML('footer', 'footer');
-            await checkLogin();
+        // Función para mostrar errores
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
         }
-
-        window.onload = init;
     </script>
 </body>
 </html>
