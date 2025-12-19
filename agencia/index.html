@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tours App</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar"></div>
+    <div id="main"></div>
+    <div id="footer"></div>
+
+    <script>
+        let CONFIG = null;
+        let USER = null;
+
+        async function loadConfig() {
+            const res = await fetch('config.json');
+            CONFIG = await res.json();
+            console.log('Config:', CONFIG);
+        }
+
+        async function loadHTML(file, containerId) {
+            const res = await fetch(`components/${file}.html`);
+            const html = await res.text();
+            document.getElementById(containerId).innerHTML = html;
+            
+            // Execute scripts
+            const scripts = document.getElementById(containerId).querySelectorAll('script');
+            scripts.forEach(oldScript => {
+                const newScript = document.createElement('script');
+                newScript.textContent = oldScript.textContent;
+                oldScript.replaceWith(newScript);
+            });
+        }
+
+        async function checkLogin() {
+            USER = localStorage.getItem('user');
+            console.log('Usuario guardado:', USER);
+            
+            if (USER) {
+                updateNavbar();
+                await loadHTML('tours', 'main');
+            } else {
+                await loadHTML('login', 'main');
+            }
+        }
+
+        async function verifyUser(username, password) {
+            console.log('Verificando:', username);
+            
+            const url = `${CONFIG.SHEETS_URL}?user=${username}&pass=${password}`;
+            console.log('URL:', url);
+            
+            const res = await fetch(url);
+            const data = await res.json();
+            console.log('Respuesta:', data);
+            
+            return data;
+        }
+
+        async function login(username, password) {
+            const result = await verifyUser(username, password);
+            
+            if (result.success) {
+                USER = result.name || username;
+                localStorage.setItem('user', USER);
+                updateNavbar();
+                await loadHTML('tours', 'main');
+            } else {
+                alert('Usuario o contraseña incorrectos');
+            }
+        }
+
+        function updateNavbar() {
+            const name = document.getElementById('userName');
+            const initial = document.getElementById('userInitial');
+            const btn = document.getElementById('btnLogout');
+            
+            if (name) name.textContent = USER;
+            if (initial) initial.textContent = USER.charAt(0).toUpperCase();
+            if (btn) btn.style.display = 'block';
+        }
+
+        function logout() {
+            localStorage.removeItem('user');
+            location.reload();
+        }
+
+        async function init() {
+            console.log('Iniciando...');
+            await loadConfig();
+            await loadHTML('navbar', 'navbar');
+            await loadHTML('footer', 'footer');
+            await checkLogin();
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
