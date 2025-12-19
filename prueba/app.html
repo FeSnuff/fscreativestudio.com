@@ -1045,8 +1045,12 @@
             display: none;
             max-width: 210mm;
             margin: 0 auto;
-            padding: 20px 0;
-            background: #e0e0e0;
+            padding: 30px 0;
+            background: linear-gradient(to bottom, #e0e0e0 0%, #d0d0d0 100%);
+        }
+
+        .document-wrapper {
+            background: transparent;
         }
 
         .view3-controls {
@@ -1068,14 +1072,11 @@
             color: #555;
         }
 
-        .document-wrapper {
-            background: transparent;
-        }
-
         .a4-page {
             width: 210mm;
-            height: 297mm;
+            min-height: 297mm;
             padding: 15mm;
+            padding-bottom: 20mm;
             background: white;
             box-shadow: 0 0 15px rgba(0,0,0,0.2);
             margin-bottom: 20px;
@@ -1083,6 +1084,8 @@
             page-break-after: always;
             overflow: visible;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
         }
 
         .a4-page::before {
@@ -3080,7 +3083,7 @@
                     <!-- Header -->
                     <div class="doc-header">
                         <div class="doc-logo">
-                            <img src="images/logo.png" alt="Logo" class="doc-logo-img" onerror="this.style.display='none'">
+                            <img src="images/logo.jpg" alt="Logo" class="doc-logo-img" onerror="this.style.display='none'">
                             <div class="doc-company-info">
                                 <h2>Qori Wayra - Travel</h2>
                                 <p>Experiencias únicas en Cusco y Perú</p>
