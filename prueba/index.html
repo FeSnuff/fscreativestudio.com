@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tours & Aventuras</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        #app { min-height: 100vh; display: flex; flex-direction: column; }
+        #main-content { flex: 1; padding: 20px; }
+        .loader {
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; min-height: 400px; color: white;
+        }
+        .loader-spinner {
+            width: 60px; height: 60px; border: 4px solid rgba(255,255,255,0.3);
+            border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .error-box {
+            background: white; border-radius: 15px; padding: 40px;
+            text-align: center; max-width: 500px; margin: 100px auto;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+        .error-icon { font-size: 80px; margin-bottom: 20px; }
+        .error-title { font-size: 24px; color: #dc3545; margin-bottom: 10px; }
+        .error-msg { color: #666; line-height: 1.6; }
+        .btn-retry {
+            margin-top: 20px; padding: 12px 24px; border: none; border-radius: 8px;
+            background: linear-gradient(135deg, #667eea, #764ba2); color: white;
+            font-weight: 600; cursor: pointer; font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div id="navbar-container"></div>
+        <main id="main-content">
+            <div class="loader">
+                <div class="loader-spinner"></div>
+                <p style="margin-top: 20px; font-size: 18px; font-weight: 600;">Cargando...</p>
+            </div>
+        </main>
+        <div id="footer-container"></div>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        class ToursApp {
+            constructor() {
+                this.user = null;
+                this.tours = [];
+                this.cart = [];
+                this.init();
+            }
+            
+            async init() {
+                try {
+                    await this.loadTours();
+                    await this.loadComponent('navbar', 'navbar-container');
+                    await this.loadComponent('footer', 'footer-container');
+                    
+                    this.user = localStorage.getItem('user');
+                    if (this.user) {
+                        this.updateNavbar();
+                        await this.loadComponent('catalog', 'main-content');
+                    } else {
+                        await this.loadComponent('login', 'main-content');
+                    }
+                } catch (error) {
+                    this.showError(error.message);
+                }
+            }
+            
+            async loadTours() {
+                const response = await fetch(CONFIG.API_URL);
+                if (!response.ok) throw new Error('Error al cargar datos');
+                this.tours = await response.json();
+                if (!Array.isArray(this.tours) || this.tours.length === 0) {
+                    throw new Error('Datos vacíos o incorrectos');
+                }
+            }
+            
+            async loadComponent(name, id) {
+                const response = await fetch(`components/${name}.html`);
+                if (!response.ok) throw new Error(`Error cargando ${name}`);
+                document.getElementById(id).innerHTML = await response.text();
+                this.executeScripts(document.getElementById(id));
+            }
+            
+            executeScripts(container) {
+                container.querySelectorAll('script').forEach(old => {
+                    const script = document.createElement('script');
+                    Array.from(old.attributes).forEach(attr => 
+                        script.setAttribute(attr.name, attr.value)
+                    );
+                    script.textContent = old.textContent;
+                    old.replaceWith(script);
+                });
+            }
+            
+            updateNavbar() {
+                const name = document.getElementById('userName');
+                const initial = document.getElementById('userInitial');
+                const btn = document.getElementById('btnLogout');
+                if (name) name.textContent = this.user;
+                if (initial) initial.textContent = this.user.charAt(0).toUpperCase();
+                if (btn) btn.style.display = 'flex';
+            }
+            
+            async login(userName) {
+                this.user = userName;
+                localStorage.setItem('user', userName);
+                this.updateNavbar();
+                await this.loadComponent('catalog', 'main-content');
+            }
+            
+            logout() {
+                if (confirm('¿Cerrar sesión?')) {
+                    this.user = null;
+                    this.cart = [];
+                    localStorage.clear();
+                    this.loadComponent('login', 'main-content');
+                    this.updateNavbar();
+                }
+            }
+            
+            showError(msg) {
+                document.getElementById('main-content').innerHTML = `
+                    <div class="error-box">
+                        <div class="error-icon">⚠️</div>
+                        <h2 class="error-title">Error</h2>
+                        <p class="error-msg">${msg}</p>
+                        <button class="btn-retry" onclick="location.reload()">🔄 Reintentar</button>
+                    </div>
+                `;
+            }
+        }
+
+        let app;
+        window.addEventListener('load', () => app = new ToursApp());
+    </script>
+</body>
+</html>
