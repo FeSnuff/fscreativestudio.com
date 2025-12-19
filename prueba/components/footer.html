@@ -1,0 +1,112 @@
+<style>
+    .footer {
+        background: white;
+        margin-top: auto;
+        box-shadow: 0 -4px 16px rgba(0,0,0,0.1);
+        animation: slideUp 0.5s ease;
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .footer-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 30px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+    }
+
+    .footer-section h3 {
+        color: #667eea;
+        margin-bottom: 15px;
+        font-size: 18px;
+    }
+
+    .footer-section h4 {
+        color: #333;
+        margin-bottom: 10px;
+        font-size: 16px;
+    }
+
+    .footer-section p {
+        color: #6c757d;
+        margin: 5px 0;
+        font-size: 14px;
+    }
+
+    .social-links {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .social-link {
+        color: #6c757d;
+        text-decoration: none;
+        transition: all 0.3s;
+        font-size: 14px;
+    }
+
+    .social-link:hover {
+        color: #667eea;
+        transform: translateX(5px);
+    }
+
+    .footer-bottom {
+        text-align: center;
+        padding: 20px;
+        border-top: 1px solid #e0e0e0;
+        color: #6c757d;
+        font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+        .footer-container {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+    }
+</style>
+
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-section">
+            <h3>🌍 Qori Wayra Travel</h3>
+            <p>Experiencias únicas en Cusco y todo el Perú</p>
+        </div>
+        
+        <div class="footer-section">
+            <h4>Contacto</h4>
+            <p>📞 +51 924 377 454</p>
+            <p>✉️ qoriwayra.cuscotravel@gmail.com</p>
+            <p>🌐 qoriwayra-travel.com</p>
+        </div>
+        
+        <div class="footer-section">
+            <h4>Síguenos</h4>
+            <div class="social-links">
+                <a href="#" class="social-link">📱 Instagram: @qoriwayratravel</a>
+                <a href="#" class="social-link">📘 Facebook</a>
+                <a href="#" class="social-link">📧 Email</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <p>&copy; 2024 Qori Wayra Travel. Todos los derechos reservados.</p>
+    </div>
+</footer>
+
+<script>
+    console.log('✅ Footer cargado');
+</script>
