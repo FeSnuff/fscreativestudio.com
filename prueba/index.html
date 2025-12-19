@@ -3,147 +3,316 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tours & Aventuras</title>
+    <title>Tours & Aventuras - Qori Wayra Travel</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
         }
-        #app { min-height: 100vh; display: flex; flex-direction: column; }
-        #main-content { flex: 1; padding: 20px; }
+
+        #app {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #navbar-container,
+        #footer-container {
+            animation: fadeIn 0.5s ease;
+        }
+
+        #main-content {
+            flex: 1;
+            padding: 20px;
+        }
+
         .loader {
-            display: flex; flex-direction: column; align-items: center;
-            justify-content: center; min-height: 400px; color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            color: white;
         }
+
         .loader-spinner {
-            width: 60px; height: 60px; border: 4px solid rgba(255,255,255,0.3);
-            border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite;
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .error-box {
-            background: white; border-radius: 15px; padding: 40px;
-            text-align: center; max-width: 500px; margin: 100px auto;
+
+        .loader p {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .error-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
             box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            max-width: 500px;
+            margin: 100px auto;
         }
-        .error-icon { font-size: 80px; margin-bottom: 20px; }
-        .error-title { font-size: 24px; color: #dc3545; margin-bottom: 10px; }
-        .error-msg { color: #666; line-height: 1.6; }
+
+        .error-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .error-title {
+            font-size: 24px;
+            color: #dc3545;
+            margin-bottom: 10px;
+        }
+
+        .error-message {
+            color: #666;
+            line-height: 1.6;
+        }
+
         .btn-retry {
-            margin-top: 20px; padding: 12px 24px; border: none; border-radius: 8px;
-            background: linear-gradient(135deg, #667eea, #764ba2); color: white;
-            font-weight: 600; cursor: pointer; font-size: 16px;
+            margin-top: 20px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-retry:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
         }
     </style>
 </head>
 <body>
     <div id="app">
+        <!-- Navbar -->
         <div id="navbar-container"></div>
+        
+        <!-- Main Content -->
         <main id="main-content">
             <div class="loader">
                 <div class="loader-spinner"></div>
-                <p style="margin-top: 20px; font-size: 18px; font-weight: 600;">Cargando...</p>
+                <p>Cargando aplicación...</p>
             </div>
         </main>
+        
+        <!-- Footer -->
         <div id="footer-container"></div>
     </div>
 
-    <script src="config.js"></script>
     <script>
+        // ===== APP CONSTRUCTOR =====
         class ToursApp {
             constructor() {
+                this.currentView = 'login';
                 this.user = null;
-                this.tours = [];
-                this.cart = [];
+                this.tours = [];      // Tours data from Google Sheets
+                this.cart = [];       // Selected tours
+                this.sheetsUrl = 'TU_URL_DE_GOOGLE_SHEETS_AQUI'; // ← CAMBIA ESTO
                 this.init();
             }
             
             async init() {
+                console.log('🚀 Iniciando aplicación...');
+                
                 try {
-                    await this.loadTours();
+                    // 1. Load tours data FIRST (from Google Sheets)
+                    await this.loadToursData();
+                    
+                    // 2. Load navbar and footer
                     await this.loadComponent('navbar', 'navbar-container');
                     await this.loadComponent('footer', 'footer-container');
                     
-                    this.user = localStorage.getItem('user');
+                    // 3. Check if user is logged in
+                    this.user = localStorage.getItem('toursAppUser');
+                    
                     if (this.user) {
+                        console.log('✅ Usuario encontrado:', this.user);
                         this.updateNavbar();
                         await this.loadComponent('catalog', 'main-content');
                     } else {
+                        console.log('ℹ️ No hay usuario, cargando login...');
                         await this.loadComponent('login', 'main-content');
                     }
+                    
+                    console.log('✅ Aplicación cargada correctamente');
                 } catch (error) {
-                    this.showError(error.message);
+                    console.error('❌ Error al iniciar aplicación:', error);
+                    this.showError('Error al cargar la aplicación', error.message);
                 }
             }
             
-            async loadTours() {
-                const response = await fetch(CONFIG.API_URL);
-                if (!response.ok) throw new Error('Error al cargar datos');
-                this.tours = await response.json();
-                if (!Array.isArray(this.tours) || this.tours.length === 0) {
-                    throw new Error('Datos vacíos o incorrectos');
+            async loadToursData() {
+                try {
+                    console.log('📦 Cargando tours desde Google Sheets...');
+                    
+                    const response = await fetch(this.sheetsUrl);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    this.tours = await response.json();
+                    console.log(`✅ ${this.tours.length} tours cargados globalmente`);
+                    
+                    // Validate data structure
+                    if (!Array.isArray(this.tours) || this.tours.length === 0) {
+                        throw new Error('Los datos no tienen el formato correcto o están vacíos');
+                    }
+                    
+                } catch (error) {
+                    console.error('❌ Error cargando tours:', error);
+                    
+                    // Show error with retry option
+                    const mainContent = document.getElementById('main-content');
+                    mainContent.innerHTML = `
+                        <div class="error-container">
+                            <div class="error-icon">⚠️</div>
+                            <h2 class="error-title">Error al cargar tours</h2>
+                            <p class="error-message">${error.message}</p>
+                            <p class="error-message" style="margin-top: 15px; font-size: 13px;">
+                                Verifica que la URL de Google Sheets esté correcta en index.html
+                            </p>
+                            <button class="btn-retry" onclick="location.reload()">
+                                🔄 Reintentar
+                            </button>
+                        </div>
+                    `;
+                    
+                    throw error; // Stop initialization
                 }
             }
             
-            async loadComponent(name, id) {
-                const response = await fetch(`components/${name}.html`);
-                if (!response.ok) throw new Error(`Error cargando ${name}`);
-                document.getElementById(id).innerHTML = await response.text();
-                this.executeScripts(document.getElementById(id));
+            async loadComponent(componentName, containerId) {
+                try {
+                    console.log(`📦 Cargando componente: ${componentName}...`);
+                    
+                    const response = await fetch(`components/${componentName}.html`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const html = await response.text();
+                    const container = document.getElementById(containerId);
+                    
+                    if (!container) {
+                        throw new Error(`Contenedor no encontrado: ${containerId}`);
+                    }
+                    
+                    container.innerHTML = html;
+                    
+                    // Execute scripts in the loaded component
+                    this.executeScripts(container);
+                    
+                    console.log(`✅ Componente ${componentName} cargado`);
+                    
+                } catch (error) {
+                    console.error(`❌ Error cargando ${componentName}:`, error);
+                    throw error;
+                }
             }
             
             executeScripts(container) {
-                container.querySelectorAll('script').forEach(old => {
-                    const script = document.createElement('script');
-                    Array.from(old.attributes).forEach(attr => 
-                        script.setAttribute(attr.name, attr.value)
-                    );
-                    script.textContent = old.textContent;
-                    old.replaceWith(script);
+                const scripts = container.querySelectorAll('script');
+                scripts.forEach(oldScript => {
+                    const newScript = document.createElement('script');
+                    Array.from(oldScript.attributes).forEach(attr => {
+                        newScript.setAttribute(attr.name, attr.value);
+                    });
+                    newScript.textContent = oldScript.textContent;
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
                 });
             }
             
             updateNavbar() {
-                const name = document.getElementById('userName');
-                const initial = document.getElementById('userInitial');
-                const btn = document.getElementById('btnLogout');
-                if (name) name.textContent = this.user;
-                if (initial) initial.textContent = this.user.charAt(0).toUpperCase();
-                if (btn) btn.style.display = 'flex';
+                const userName = document.getElementById('userName');
+                const userInitial = document.getElementById('userInitial');
+                const btnLogout = document.getElementById('btnLogout');
+                
+                if (this.user) {
+                    if (userName) userName.textContent = this.user;
+                    if (userInitial) userInitial.textContent = this.user.charAt(0).toUpperCase();
+                    if (btnLogout) btnLogout.style.display = 'flex';
+                } else {
+                    if (userName) userName.textContent = 'Invitado';
+                    if (userInitial) userInitial.textContent = '?';
+                    if (btnLogout) btnLogout.style.display = 'none';
+                }
             }
             
-            async login(userName) {
+            async login(userName, userEmail) {
                 this.user = userName;
-                localStorage.setItem('user', userName);
+                localStorage.setItem('toursAppUser', userName);
+                if (userEmail) {
+                    localStorage.setItem('toursAppEmail', userEmail);
+                }
+                
                 this.updateNavbar();
                 await this.loadComponent('catalog', 'main-content');
             }
             
             logout() {
-                if (confirm('¿Cerrar sesión?')) {
+                if (confirm('¿Estás seguro de cerrar sesión?')) {
                     this.user = null;
                     this.cart = [];
-                    localStorage.clear();
-                    this.loadComponent('login', 'main-content');
+                    localStorage.removeItem('toursAppUser');
+                    localStorage.removeItem('toursAppEmail');
+                    
                     this.updateNavbar();
+                    this.loadComponent('login', 'main-content');
                 }
             }
             
-            showError(msg) {
-                document.getElementById('main-content').innerHTML = `
-                    <div class="error-box">
+            showError(title, message) {
+                const mainContent = document.getElementById('main-content');
+                mainContent.innerHTML = `
+                    <div class="error-container">
                         <div class="error-icon">⚠️</div>
-                        <h2 class="error-title">Error</h2>
-                        <p class="error-msg">${msg}</p>
-                        <button class="btn-retry" onclick="location.reload()">🔄 Reintentar</button>
+                        <h2 class="error-title">${title}</h2>
+                        <p class="error-message">${message}</p>
+                        <button class="btn-retry" onclick="location.reload()">
+                            🔄 Reintentar
+                        </button>
                     </div>
                 `;
             }
         }
 
+        // Initialize app globally
         let app;
-        window.addEventListener('load', () => app = new ToursApp());
+        window.addEventListener('load', () => {
+            app = new ToursApp();
+        });
+
+        console.log('📱 Index.html cargado');
     </script>
 </body>
 </html>
