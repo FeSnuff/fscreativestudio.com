@@ -743,6 +743,38 @@
         let isMobile = window.innerWidth <= 1024;
         let selectionMode = false; // Nuevo: modo de selección en móvil
         
+        // Función para manejar errores de carga de imágenes con múltiples formatos
+        function handleImageError(img, folderName) {
+            const extensions = ['webp', 'jpg', 'png', 'jpeg', 'gif'];
+            const currentSrc = img.src;
+            
+            // Encontrar la extensión actual
+            for (let i = 0; i < extensions.length; i++) {
+                if (currentSrc.includes(`Principal.${extensions[i]}`)) {
+                    // Intentar con la siguiente extensión
+                    if (i < extensions.length - 1) {
+                        img.src = `images/${folderName}/Principal.${extensions[i + 1]}`;
+                        return;
+                    } else {
+                        // Si ya probamos todas, ir a default
+                        img.src = `images/default/Principal.webp`;
+                        img.onerror = function() {
+                            this.onerror = null;
+                            this.src = `images/default/Principal.jpg`;
+                        };
+                        return;
+                    }
+                }
+            }
+            
+            // Si no coincide con ninguna, usar default
+            img.src = `images/default/Principal.webp`;
+            img.onerror = function() {
+                this.onerror = null;
+                this.src = `images/default/Principal.jpg`;
+            };
+        }
+        
         // Detectar cambios de tamaño de ventana
         window.addEventListener('resize', () => {
             const wasMobile = isMobile;
@@ -833,7 +865,7 @@
                         <div class="tour-image">
                             <span class="selection-badge">${selectionNumber}</span>
                             <img src="images/${imageFolderName}/Principal.webp" alt="${tour.name}" 
-                                 onerror="this.src='images/default/Principal.webp'">
+                                 onerror="handleImageError(this, '${imageFolderName}')">
                             ${!isMobile ? `
                                 <div class="add-to-cart-overlay" onclick="addToCart(${index})">
                                     <div class="add-icon">➕</div>
