@@ -547,27 +547,33 @@
     let filteredTours = [];
     let cart = [];
     
-    // Load tours
-    async function loadTours() {
-        try {
-            const response = await fetch('tours.json');
-            if (!response.ok) throw new Error('No se pudo cargar tours.json');
-            
-            allTours = await response.json();
-            filteredTours = [...allTours];
-            renderTours();
-            
-            console.log(`✅ ${allTours.length} tours cargados`);
-        } catch (error) {
-            console.error('❌ Error:', error);
+    // Load tours from global app data (loaded in index.html)
+    function loadTours() {
+        if (!window.app || !window.app.tours) {
+            console.error('❌ No se encontraron tours en app global');
             document.getElementById('toursGrid').innerHTML = `
                 <div style="grid-column: 1/-1; text-align: center; padding: 40px; background: white; border-radius: 15px;">
                     <div style="font-size: 60px; margin-bottom: 20px;">❌</div>
                     <h3 style="color: #dc3545; margin-bottom: 10px;">Error al cargar tours</h3>
-                    <p style="color: #6c757d;">Asegúrate de que tours.json esté en la carpeta raíz</p>
+                    <p style="color: #6c757d;">Los datos no están disponibles. Verifica la consola.</p>
                 </div>
             `;
+            return;
         }
+        
+        // Get tours from global app instance
+        allTours = [...window.app.tours];
+        filteredTours = [...allTours];
+        
+        // Load cart from app if exists
+        if (window.app.cart) {
+            cart = [...window.app.cart];
+        }
+        
+        renderTours();
+        updateCart();
+        
+        console.log(`✅ Catálogo inicializado con ${allTours.length} tours`);
     }
     
     // Render tours
@@ -633,6 +639,11 @@
         } else {
             cart.push({ id: index, ...tour });
             showNotif('✅ Tour agregado', 'success');
+        }
+        
+        // Sync with global app
+        if (window.app) {
+            window.app.cart = [...cart];
         }
         
         updateCart();
@@ -741,7 +752,7 @@
         alert('🚧 Vista 1 próximamente...');
     });
     
-    // Init
+    // Init - Load tours from global app
     loadTours();
     console.log('✅ Catalog component cargado');
 </script>
