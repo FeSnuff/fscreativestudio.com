@@ -985,14 +985,12 @@
             } else {
                 const total = cart.reduce((sum, tour) => sum + tour.price, 0);
                 const totalDays = cart.reduce((sum, tour) => sum + tour.duration_days, 0);
-                const totalNights = totalDays - cart.length; // Cada tour tiene 1 noche menos que días
+                const totalNights = totalDays - 1; // Total de días menos 1 = total de noches
                 
                 // Mostrar total con días/noches
                 let durationSummary = '';
                 if (totalDays === 1) {
                     durationSummary = '1D';
-                } else if (totalNights === 0) {
-                    durationSummary = `${totalDays}D`;
                 } else {
                     durationSummary = `${totalDays}D/${totalNights}N`;
                 }
