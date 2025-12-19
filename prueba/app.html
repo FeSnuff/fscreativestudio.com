@@ -1040,11 +1040,13 @@
         }
 
         /* ===== VIEW 3 STYLES - DOCUMENT ===== */
+        /* ===== VIEW 3 STYLES - DOCUMENT ===== */
         .view3-container {
             display: none;
-            max-width: 210mm; /* A4 width */
+            max-width: 210mm;
             margin: 0 auto;
             padding: 20px 0;
+            background: #e0e0e0;
         }
 
         .view3-controls {
@@ -1059,7 +1061,6 @@
             display: flex;
             gap: 20px;
             align-items: center;
-            margin-bottom: 15px;
         }
 
         .itinerary-type-selector label {
@@ -1068,20 +1069,20 @@
         }
 
         .document-wrapper {
-            background: white;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            background: transparent;
         }
 
-        /* A4 Page */
         .a4-page {
             width: 210mm;
-            min-height: 297mm;
-            padding: 20mm;
+            height: 297mm;
+            padding: 15mm;
             background: white;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            margin-bottom: 10mm;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
             position: relative;
             page-break-after: always;
+            overflow: visible;
+            box-sizing: border-box;
         }
 
         .a4-page::before {
@@ -1104,14 +1105,13 @@
             z-index: 1;
         }
 
-        /* Header - más formal */
         .doc-header {
             display: flex;
             justify-content: space-between;
             align-items: start;
             padding-bottom: 20px;
-            border-bottom: 2px solid #333;
-            margin-bottom: 30px;
+            border-bottom: 3px solid #667eea;
+            margin-bottom: 25px;
         }
 
         .doc-logo {
@@ -1121,68 +1121,65 @@
         }
 
         .doc-logo-img {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             object-fit: contain;
         }
 
         .doc-company-info h2 {
-            color: #333;
-            font-size: 18px;
+            color: #667eea;
+            font-size: 20px;
             font-weight: bold;
             margin-bottom: 3px;
-            font-family: 'Times New Roman', serif;
         }
 
         .doc-company-info p {
             color: #666;
-            font-size: 10px;
+            font-size: 11px;
             margin: 1px 0;
         }
 
         .doc-contact-info {
             text-align: right;
-            font-size: 9px;
+            font-size: 10px;
             color: #666;
-            line-height: 1.4;
+            line-height: 1.5;
         }
 
         .doc-contact-info p {
             margin: 2px 0;
         }
 
-        /* Title - más profesional */
         .doc-title {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .doc-title h1 {
             color: #333;
-            font-size: 24px;
+            font-size: 28px;
             margin-bottom: 8px;
-            font-family: 'Times New Roman', serif;
-            letter-spacing: 2px;
             font-weight: bold;
+            letter-spacing: 1px;
         }
 
         .doc-subtitle {
-            color: #666;
-            font-size: 14px;
-            font-weight: normal;
+            color: #667eea;
+            font-size: 16px;
+            font-weight: 600;
         }
 
-        /* Client Info - más limpio */
         .doc-client-info {
-            border: 1px solid #ddd;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-left: 4px solid #667eea;
             padding: 15px;
-            margin-bottom: 25px;
-            background: #fafafa;
+            margin-bottom: 20px;
+            border-radius: 5px;
         }
 
         .doc-client-info h3 {
-            color: #333;
-            font-size: 12px;
+            color: #667eea;
+            font-size: 13px;
             margin-bottom: 10px;
             font-weight: bold;
             text-transform: uppercase;
@@ -1203,31 +1200,31 @@
 
         .client-info-item strong {
             color: #555;
-            min-width: 80px;
+            min-width: 70px;
         }
 
-        /* Section - más formal */
         .doc-section {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .doc-section-title {
-            color: #333;
-            font-size: 14px;
+            color: #667eea;
+            font-size: 16px;
             font-weight: bold;
             margin-bottom: 15px;
             padding-bottom: 8px;
-            border-bottom: 1px solid #333;
+            border-bottom: 2px solid #667eea;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        /* Day Block - más empresarial */
         .day-block {
-            border: 1px solid #ddd;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-left: 4px solid #667eea;
             padding: 15px;
             margin-bottom: 20px;
-            background: #fafafa;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             page-break-inside: avoid;
         }
 
@@ -1236,37 +1233,63 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
         }
 
         .day-block-title {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: bold;
             color: #333;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .day-block-duration {
-            background: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 3px 12px;
-            font-size: 10px;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 11px;
             font-weight: bold;
+        }
+
+        .tour-content-wrapper {
+            display: flex;
+            gap: 15px;
+        }
+
+        .tour-content-main {
+            flex: 1;
+        }
+
+        .tour-image-side {
+            width: 120px;
+            flex-shrink: 0;
         }
 
         .tour-image-preview {
             width: 100%;
-            height: 180px;
+            height: auto;
             object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .tour-image-preview.full-width {
+            width: 100%;
+            height: 180px;
             margin-bottom: 12px;
-            border: 1px solid #ddd;
+        }
+
+        .tour-image-preview.small-side {
+            height: 120px;
         }
 
         .tour-name-title {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: bold;
-            color: #333;
+            color: #667eea;
             margin-bottom: 10px;
         }
 
@@ -1293,45 +1316,53 @@
         }
 
         .tour-summary-list li::before {
-            content: '•';
+            content: '✓';
             position: absolute;
             left: 0;
-            color: #333;
+            color: #667eea;
             font-weight: bold;
         }
 
-        /* Includes/Excludes per day */
         .day-includes-excludes {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-top: 12px;
-            border-top: 1px solid #ddd;
-            padding-top: 12px;
+            gap: 12px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #e0e0e0;
         }
 
         .day-includes, .day-excludes {
             font-size: 10px;
-        }
-
-        .day-includes h4, .day-excludes h4 {
-            font-size: 11px;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #333;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
         }
 
         .day-includes h4 {
+            font-size: 11px;
+            margin-bottom: 8px;
+            font-weight: bold;
             color: #28a745;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .day-excludes h4 {
+            font-size: 11px;
+            margin-bottom: 8px;
+            font-weight: bold;
             color: #dc3545;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .day-includes ul, .day-excludes ul {
             list-style: none;
             padding: 0;
+            margin: 0;
         }
 
         .day-includes li, .day-excludes li {
@@ -1340,12 +1371,13 @@
             line-height: 1.4;
         }
 
-        /* Totals - más profesional */
         .doc-totals {
-            border: 2px solid #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             padding: 20px;
+            border-radius: 10px;
             margin-bottom: 20px;
-            background: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
         .totals-grid {
@@ -1355,52 +1387,51 @@
         }
 
         .total-item {
-            padding: 12px;
-            border: 1px solid #ddd;
-            background: #fafafa;
+            padding: 15px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
         }
 
         .total-label {
             font-size: 11px;
-            color: #666;
+            opacity: 0.9;
             margin-bottom: 5px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .total-value {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: bold;
-            color: #333;
         }
 
-        /* Validity */
         .doc-validity {
             background: #fff3cd;
-            border: 1px solid #ffc107;
+            border-left: 4px solid #ffc107;
             padding: 12px;
             margin-bottom: 20px;
+            border-radius: 5px;
             font-size: 11px;
             text-align: center;
         }
 
         .doc-validity strong {
-            color: #333;
+            color: #856404;
         }
 
-        /* Payment Methods */
         .payment-methods {
             text-align: center;
             padding: 15px;
-            border: 1px solid #ddd;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 10px;
             margin-bottom: 20px;
-            background: #fafafa;
         }
 
         .payment-methods h4 {
             color: #333;
             margin-bottom: 12px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: bold;
             text-transform: uppercase;
         }
@@ -1408,34 +1439,33 @@
         .payment-icons {
             display: flex;
             justify-content: center;
-            gap: 12px;
+            gap: 15px;
             flex-wrap: wrap;
         }
 
         .payment-icon {
-            font-size: 24px;
+            font-size: 28px;
         }
 
-        /* Footer */
         .doc-footer {
             text-align: center;
             padding-top: 20px;
-            border-top: 1px solid #ddd;
+            border-top: 2px solid #e0e0e0;
             color: #999;
             font-size: 9px;
-            margin-top: 30px;
+            margin-top: auto;
         }
 
         .doc-footer p {
             margin: 3px 0;
         }
 
-        /* Actions */
         .view3-actions {
             display: flex;
             gap: 15px;
             justify-content: space-between;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
 
         .btn-view3 {
@@ -1455,6 +1485,7 @@
 
         .btn-view3-edit:hover {
             background: #ffca28;
+            transform: translateY(-2px);
         }
 
         .btn-view3-pdf {
@@ -1464,6 +1495,7 @@
 
         .btn-view3-pdf:hover {
             background: #2ecc71;
+            transform: translateY(-2px);
         }
 
         .btn-view3-cancel {
@@ -1495,28 +1527,32 @@
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
-        /* Edit mode */
         .a4-page.edit-mode {
             outline: 3px dashed #ffc107;
+            outline-offset: -3px;
         }
 
         [contenteditable="true"] {
             outline: 1px solid #ffc107;
             padding: 2px;
             min-height: 15px;
+            border-radius: 3px;
         }
 
         [contenteditable="true"]:focus {
             background: #fffbf0;
+            outline: 2px solid #ffc107;
         }
 
         @media print {
+            .view3-container {
+                background: white;
+            }
             .a4-page {
                 margin: 0;
                 box-shadow: none;
                 page-break-after: always;
             }
-            
             .view3-actions, .view3-controls {
                 display: none;
             }
@@ -1526,27 +1562,31 @@
             .view3-container {
                 max-width: 100%;
                 padding: 10px;
+                background: #f5f5f5;
             }
-
             .a4-page {
                 width: 100%;
-                padding: 15mm;
-                min-height: auto;
+                height: auto;
+                padding: 15px;
             }
-
             .day-includes-excludes {
                 grid-template-columns: 1fr;
             }
-
             .totals-grid {
                 grid-template-columns: 1fr;
             }
-
             .client-info-grid {
                 grid-template-columns: 1fr;
             }
+            .tour-content-wrapper {
+                flex-direction: column;
+            }
+            .tour-image-side {
+                width: 100%;
+            }
         }
 
+        /* Checkout View */
         /* Checkout View */
         .checkout-view {
             display: none;
@@ -3118,23 +3158,35 @@
                         </div>
                         
                         ${itineraryType === 'detailed' ? `
-                        <img src="images/${imageFolderName}/Principal.webp" 
-                             class="tour-image-preview" 
-                             alt="${tour.name}"
-                             onerror="handleImageError(this, '${imageFolderName}')">
-                        ` : ''}
-                        
-                        <div class="tour-name-title">${tour.name}</div>
-                        
-                        ${itineraryType === 'detailed' && tour.summary ? `
-                        <div class="tour-description">${tour.summary}</div>
-                        ` : ''}
-                        
-                        ${tour.summary_list && tour.summary_list.length > 0 ? `
-                            <ul class="tour-summary-list">
-                                ${tour.summary_list.slice(0, 5).map(item => `<li>${item}</li>`).join('')}
-                            </ul>
-                        ` : ''}
+                            <img src="images/${imageFolderName}/Principal.webp" 
+                                 class="tour-image-preview full-width" 
+                                 alt="${tour.name}"
+                                 onerror="handleImageError(this, '${imageFolderName}')">
+                            <div class="tour-name-title">${tour.name}</div>
+                            ${tour.summary ? `<div class="tour-description">${tour.summary}</div>` : ''}
+                            ${tour.summary_list && tour.summary_list.length > 0 ? `
+                                <ul class="tour-summary-list">
+                                    ${tour.summary_list.slice(0, 5).map(item => `<li>${item}</li>`).join('')}
+                                </ul>
+                            ` : ''}
+                        ` : `
+                            <div class="tour-content-wrapper">
+                                <div class="tour-content-main">
+                                    <div class="tour-name-title">${tour.name}</div>
+                                    ${tour.summary_list && tour.summary_list.length > 0 ? `
+                                        <ul class="tour-summary-list">
+                                            ${tour.summary_list.slice(0, 5).map(item => `<li>${item}</li>`).join('')}
+                                        </ul>
+                                    ` : ''}
+                                </div>
+                                <div class="tour-image-side">
+                                    <img src="images/${imageFolderName}/Principal.webp" 
+                                         class="tour-image-preview small-side" 
+                                         alt="${tour.name}"
+                                         onerror="handleImageError(this, '${imageFolderName}')">
+                                </div>
+                            </div>
+                        `}
                         
                         <!-- Includes/Excludes per tour -->
                         <div class="day-includes-excludes">
