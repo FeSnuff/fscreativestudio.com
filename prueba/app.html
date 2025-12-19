@@ -1039,6 +1039,430 @@
             }
         }
 
+        /* ===== VIEW 3 STYLES - DOCUMENT ===== */
+        .view3-container {
+            display: none;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .document-wrapper {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .document-content {
+            position: relative;
+            padding: 60px;
+            background: white;
+            min-height: 800px;
+        }
+
+        .document-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('images/fondo.jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .document-content > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .doc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            padding-bottom: 30px;
+            border-bottom: 3px solid #667eea;
+            margin-bottom: 40px;
+        }
+
+        .doc-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .doc-logo-img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+        }
+
+        .doc-company-info h2 {
+            color: #667eea;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .doc-company-info p {
+            color: #666;
+            font-size: 12px;
+            margin: 2px 0;
+        }
+
+        .doc-contact-info {
+            text-align: right;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .doc-contact-info p {
+            margin: 3px 0;
+        }
+
+        .doc-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .doc-title h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .doc-subtitle {
+            color: #667eea;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .doc-validity {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+
+        .doc-validity strong {
+            color: #856404;
+        }
+
+        .doc-client-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .doc-client-info h3 {
+            color: #667eea;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .client-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .client-info-item {
+            display: flex;
+            gap: 10px;
+        }
+
+        .client-info-item strong {
+            color: #555;
+            min-width: 100px;
+        }
+
+        .doc-section {
+            margin-bottom: 40px;
+        }
+
+        .doc-section-title {
+            color: #667eea;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .day-block {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .day-block-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .day-block-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .day-block-duration {
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .tour-image-preview {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .tour-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .tour-summary-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .tour-summary-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #555;
+        }
+
+        .tour-summary-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .includes-excludes {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .includes-box, .excludes-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .includes-box {
+            border-left: 4px solid #28a745;
+        }
+
+        .excludes-box {
+            border-left: 4px solid #dc3545;
+        }
+
+        .includes-box h3 {
+            color: #28a745;
+            margin-bottom: 15px;
+        }
+
+        .excludes-box h3 {
+            color: #dc3545;
+            margin-bottom: 15px;
+        }
+
+        .includes-list, .excludes-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .includes-list li, .excludes-list li {
+            padding: 8px 0;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .doc-totals {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .totals-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .total-item {
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+
+        .total-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .total-value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .payment-methods {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .payment-methods h4 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .payment-icons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .payment-icon {
+            font-size: 32px;
+        }
+
+        .doc-footer {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+            color: #999;
+            font-size: 12px;
+        }
+
+        .view3-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .btn-view3 {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-view3-edit {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .btn-view3-edit:hover {
+            background: #ffca28;
+        }
+
+        .btn-view3-pdf {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-view3-pdf:hover {
+            background: #2ecc71;
+        }
+
+        .btn-view3-cancel {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-view3-cancel:hover {
+            background: #c82333;
+        }
+
+        .btn-view3-prev {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-view3-prev:hover {
+            background: #5a6268;
+        }
+
+        .btn-view3-save {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-view3-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Edit mode */
+        .document-content.edit-mode {
+            border: 3px dashed #ffc107;
+        }
+
+        [contenteditable="true"] {
+            outline: 2px solid #ffc107;
+            padding: 5px;
+            border-radius: 3px;
+            min-height: 20px;
+        }
+
+        [contenteditable="true"]:focus {
+            background: #fffbf0;
+        }
+
+        @media (max-width: 1024px) {
+            .document-content {
+                padding: 30px 20px;
+            }
+
+            .includes-excludes {
+                grid-template-columns: 1fr;
+            }
+
+            .totals-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .client-info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         /* Checkout View */
         .checkout-view {
             display: none;
@@ -1488,6 +1912,116 @@
             <button class="btn-view2 btn-view2-cancel" onclick="cancelView2()">✕ Cancelar</button>
             <button class="btn-view2 btn-view2-prev" onclick="goBackToView1()">⬅️ Anterior</button>
             <button class="btn-view2 btn-view2-next" onclick="goToView3()">Siguiente ➡️</button>
+        </div>
+    </div>
+
+    <!-- View 3: Document/Quotation -->
+    <div class="view3-container" id="view3Container">
+        <div class="document-wrapper">
+            <div class="document-content" id="documentContent">
+                <!-- Header -->
+                <div class="doc-header">
+                    <div class="doc-logo">
+                        <img src="images/logo.jpg" alt="Logo" class="doc-logo-img" onerror="this.style.display='none'">
+                        <div class="doc-company-info">
+                            <h2>Qori Wayra - Travel</h2>
+                            <p>🌍 Experiencias únicas en Cusco</p>
+                        </div>
+                    </div>
+                    <div class="doc-contact-info">
+                        <p>📞 +51 924 377 454</p>
+                        <p>🌐 qoriwayra-travel.com</p>
+                        <p>✉️ qoriwayra.cuscotravel@gmail.com</p>
+                        <p>📱 @qoriwayratravel</p>
+                    </div>
+                </div>
+
+                <!-- Title -->
+                <div class="doc-title">
+                    <h1>ITINERARIO DE VIAJE</h1>
+                    <div class="doc-subtitle" id="docSubtitle">0 Días / 0 Noches</div>
+                </div>
+
+                <!-- Validity -->
+                <div class="doc-validity">
+                    <strong>⏰ Validez del Presupuesto:</strong> 2 días a partir de la fecha de emisión
+                </div>
+
+                <!-- Client Info (if enabled) -->
+                <div class="doc-client-info" id="docClientInfo" style="display: none;">
+                    <h3>👤 Datos del Cliente</h3>
+                    <div class="client-info-grid">
+                        <div class="client-info-item">
+                            <strong>Nombre:</strong>
+                            <span id="docClientName">-</span>
+                        </div>
+                        <div class="client-info-item">
+                            <strong>Teléfono:</strong>
+                            <span id="docClientPhone">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tour Days -->
+                <div class="doc-section">
+                    <div class="doc-section-title">📅 Itinerario Detallado</div>
+                    <div id="docTourDays">
+                        <!-- Days will be generated here -->
+                    </div>
+                </div>
+
+                <!-- Includes/Excludes -->
+                <div class="doc-section">
+                    <div class="includes-excludes">
+                        <div class="includes-box">
+                            <h3>✅ Incluye</h3>
+                            <ul class="includes-list" id="docIncludes">
+                                <!-- Generated dynamically -->
+                            </ul>
+                        </div>
+                        <div class="excludes-box">
+                            <h3>❌ No Incluye</h3>
+                            <ul class="excludes-list" id="docExcludes">
+                                <!-- Generated dynamically -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Totals -->
+                <div class="doc-totals">
+                    <div class="totals-grid" id="docTotalsGrid">
+                        <!-- Totals generated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Payment Methods -->
+                <div class="payment-methods">
+                    <h4>💳 Aceptamos todos los medios de pago</h4>
+                    <div class="payment-icons">
+                        <span class="payment-icon">💵</span>
+                        <span class="payment-icon">💳</span>
+                        <span class="payment-icon">🏦</span>
+                        <span class="payment-icon">📱</span>
+                        <span class="payment-icon">💰</span>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="doc-footer">
+                    <p>Documento generado por Qori Wayra - Travel</p>
+                    <p>Todos los tours están sujetos a disponibilidad</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="view3-actions">
+            <button class="btn-view3 btn-view3-cancel" onclick="cancelView3()">✕ Cancelar</button>
+            <button class="btn-view3 btn-view3-prev" onclick="goBackToView2()">⬅️ Anterior</button>
+            <button class="btn-view3 btn-view3-edit" id="btnEditDoc" onclick="toggleEditMode()">✏️ Editar</button>
+            <button class="btn-view3 btn-view3-pdf" onclick="generatePDF()">📄 Generar PDF</button>
+            <button class="btn-view3 btn-view3-save" id="btnSaveDoc" style="display: none;" onclick="saveDocument()">💾 Guardar</button>
         </div>
     </div>
 
@@ -2446,7 +2980,264 @@
         // Ir a Vista 3
         function goToView3() {
             saveView2Data();
-            alert('✅ Vista 3 próximamente...');
+            
+            // Cambiar a vista 3
+            document.getElementById('view2Container').style.display = 'none';
+            document.getElementById('view3Container').style.display = 'block';
+            
+            renderView3Document();
+            window.scrollTo(0, 0);
+        }
+
+        // ===== VIEW 3 FUNCTIONS - DOCUMENT =====
+        
+        let isEditMode = false;
+
+        // Mapa de emojis para incluye/no incluye
+        const emojiMap = {
+            // Comidas
+            'almuerzo': '🍽️',
+            'desayuno': '🥐',
+            'cena': '🍴',
+            'alimentación': '🍽️',
+            
+            // Transporte
+            'bus': '🚌',
+            'transporte': '🚗',
+            'ticket de bus': '🎫',
+            'ticket de tren': '🚂',
+            'cuatrimoto': '🏍️',
+            
+            // Seguridad y equipo
+            'casco': '⛑️',
+            'balón de oxigeno': '🫁',
+            'botiquín': '💊',
+            'bastones': '🥾',
+            'equipo de seguridad': '🦺',
+            
+            // Servicios
+            'guía': '👨‍🏫',
+            'asistencia': '🤝',
+            'recojo': '🚐',
+            'hospedaje': '🏨',
+            'caballo': '🐴',
+            
+            // Entradas
+            'ticket': '🎫',
+            'tikeck': '🎫',
+            'tiket': '🎫',
+            'ingreso': '🎟️',
+            'entrada': '🎟️',
+            'boleto': '🎟️',
+            'machupicchu': '🏛️',
+            'machu picchu': '🏛️',
+            
+            // Otros
+            'seguro': '🛡️',
+            'igv': '💰',
+            'btp': '📋',
+            'termales': '♨️',
+            'salineras': '⛰️',
+            'lagunas': '🏞️',
+            'capilla': '⛪',
+            'práctica': '📚'
+        };
+
+        // Función para obtener emoji
+        function getEmoji(text) {
+            const lowerText = text.toLowerCase();
+            for (const [key, emoji] of Object.entries(emojiMap)) {
+                if (lowerText.includes(key)) {
+                    return emoji;
+                }
+            }
+            return '•';
+        }
+
+        // Renderizar documento Vista 3
+        function renderView3Document() {
+            // Días y noches
+            const totalDays = cart.reduce((sum, tour) => sum + tour.duration_days, 0);
+            const totalNights = totalDays > 0 ? totalDays - 1 : 0;
+            document.getElementById('docSubtitle').textContent = `${totalDays} Día${totalDays > 1 ? 's' : ''} / ${totalNights} Noche${totalNights > 1 ? 's' : ''}`;
+            
+            // Cliente info
+            if (view2Data.clientDataEnabled) {
+                document.getElementById('docClientInfo').style.display = 'block';
+                document.getElementById('docClientName').textContent = view2Data.clientName || '-';
+                document.getElementById('docClientPhone').textContent = `${view2Data.clientNationality} ${view2Data.clientPhone}` || '-';
+            } else {
+                document.getElementById('docClientInfo').style.display = 'none';
+            }
+            
+            // Tour days
+            renderDocumentTourDays();
+            
+            // Includes/Excludes
+            renderDocumentIncludesExcludes();
+            
+            // Totals
+            renderDocumentTotals();
+        }
+
+        // Renderizar días del tour en documento
+        function renderDocumentTourDays() {
+            const container = document.getElementById('docTourDays');
+            const symbol = view2Data.currency === 'PEN' ? 'S/' : '$';
+            const rate = view2Data.currency === 'USD' ? 3.75 : 1;
+            
+            let currentDay = 1;
+            let html = '';
+            
+            cart.forEach((tour, index) => {
+                const tourDays = tour.duration_days;
+                const nights = tourDays > 1 ? tourDays - 1 : 0;
+                const durationText = nights > 0 ? `${tourDays} días / ${nights} noche${nights > 1 ? 's' : ''}` : `${tourDays} día`;
+                
+                // Nombre de carpeta de imagen
+                const imageFolderName = tour.name.toLowerCase()
+                    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                    .replace(/[^a-z0-9]+/g, '_')
+                    .replace(/^_+|_+$/g, '');
+                
+                const dayLabel = tourDays === 1 ? `Día ${currentDay}` : `Días ${currentDay} al ${currentDay + tourDays - 1}`;
+                
+                html += `
+                    <div class="day-block">
+                        <div class="day-block-header">
+                            <div class="day-block-title">${dayLabel}</div>
+                            <div class="day-block-duration">${durationText}</div>
+                        </div>
+                        
+                        <img src="images/${imageFolderName}/Principal.webp" 
+                             class="tour-image-preview" 
+                             alt="${tour.name}"
+                             onerror="handleImageError(this, '${imageFolderName}')">
+                        
+                        <h3 style="color: #667eea; font-size: 20px; margin-bottom: 10px;">${tour.name}</h3>
+                        
+                        <div class="tour-description">
+                            ${tour.summary || 'Tour inolvidable por los lugares más emblemáticos de la región.'}
+                        </div>
+                        
+                        ${tour.summary_list && tour.summary_list.length > 0 ? `
+                            <ul class="tour-summary-list">
+                                ${tour.summary_list.slice(0, 5).map(item => `<li>${item}</li>`).join('')}
+                            </ul>
+                        ` : ''}
+                    </div>
+                `;
+                
+                currentDay += tourDays;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Renderizar incluye/no incluye
+        function renderDocumentIncludesExcludes() {
+            const includesContainer = document.getElementById('docIncludes');
+            const excludesContainer = document.getElementById('docExcludes');
+            
+            // Procesar includes
+            const includesText = "Almuerzo, Asistencia permanente, Balón de oxigeno, Bastones artesanales, Botiquín de primeros auxilios, Breve práctica antes del tour, Bus turístico, Casco y equipo de seguridad, Cuatrimoto doble, Cuatrimoto individual, Desayuno, Guía profesional, Recojo de su hotel en Cusco, Recojo desde hotel, Ticket de bus de subida y bajada MACHUPICCHU., Ticket de tren ida y retorno., Tikeck de ingreso a Machupicchu, Transporte ida y vuelta desde Cusco, Transporte turístico";
+            const includesList = includesText.split(',').map(item => item.trim()).filter(item => item);
+            
+            includesContainer.innerHTML = includesList.map(item => {
+                const emoji = getEmoji(item);
+                return `<li>${emoji} ${item}</li>`;
+            }).join('');
+            
+            // Procesar excludes
+            const excludesText = "Alimentación,BTP,Boleto turístico parcial,Caballo,Cena,Entrada a Salineras,Hospedaje en Cusco,Hospedaje en Machupicchu,IGV,Ingreso a Waqrapukara S/.20,Ingreso a la Capilla,Ingreso a las 7 Lagunas S/20,Ingreso a los Termales. S/5,Pitumarca,Seguro personal,Ticket de ingreso S/20,Tiket de ingreso";
+            const excludesList = excludesText.split(',').map(item => item.trim()).filter(item => item);
+            
+            excludesContainer.innerHTML = excludesList.map(item => {
+                const emoji = getEmoji(item);
+                return `<li>${emoji} ${item}</li>`;
+            }).join('');
+        }
+
+        // Renderizar totales
+        function renderDocumentTotals() {
+            const container = document.getElementById('docTotalsGrid');
+            const symbol = view2Data.currency === 'PEN' ? 'S/' : '$';
+            
+            let html = `
+                <div class="total-item">
+                    <div class="total-label">Total por Adulto</div>
+                    <div class="total-value">${symbol} ${view2Data.totalAdult.toFixed(2)}</div>
+                </div>
+            `;
+            
+            if (view2Data.childBudgetEnabled) {
+                html += `
+                    <div class="total-item">
+                        <div class="total-label">Total por Niño</div>
+                        <div class="total-value">${symbol} ${view2Data.totalChild.toFixed(2)}</div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+
+        // Toggle edit mode
+        function toggleEditMode() {
+            isEditMode = !isEditMode;
+            const doc = document.getElementById('documentContent');
+            const btnEdit = document.getElementById('btnEditDoc');
+            const btnSave = document.getElementById('btnSaveDoc');
+            
+            if (isEditMode) {
+                doc.classList.add('edit-mode');
+                
+                // Hacer editable
+                doc.querySelectorAll('.day-block-title, .day-block h3, .tour-description, .tour-summary-list li, .includes-list li, .excludes-list li, .total-value, .doc-subtitle, .doc-validity, .client-info-item span').forEach(el => {
+                    el.contentEditable = true;
+                });
+                
+                btnEdit.style.display = 'none';
+                btnSave.style.display = 'block';
+            } else {
+                doc.classList.remove('edit-mode');
+                
+                doc.querySelectorAll('[contenteditable="true"]').forEach(el => {
+                    el.contentEditable = false;
+                });
+                
+                btnEdit.style.display = 'block';
+                btnSave.style.display = 'none';
+            }
+        }
+
+        // Save document
+        function saveDocument() {
+            toggleEditMode();
+            alert('✅ Documento guardado correctamente');
+        }
+
+        // Generate PDF
+        function generatePDF() {
+            alert('✅ PDF generado correctamente!\n\nFuncionalidad de generación de PDF próximamente...');
+        }
+
+        // Cancel View 3
+        function cancelView3() {
+            if (confirm('¿Estás seguro de cancelar? Los cambios no guardados se perderán.')) {
+                document.getElementById('view3Container').style.display = 'none';
+                document.getElementById('catalogView').style.display = 'block';
+                
+                if (isMobile) {
+                    document.getElementById('mobileCartBtn').style.display = 'none';
+                }
+            }
+        }
+
+        // Go back to View 2
+        function goBackToView2() {
+            document.getElementById('view3Container').style.display = 'none';
+            document.getElementById('view2Container').style.display = 'block';
         }
     </script>
 </body>
