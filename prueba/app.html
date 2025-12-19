@@ -1086,12 +1086,11 @@
                 return;
             }
             
-            document.getElementById('catalogView').style.display = 'none';
-            document.getElementById('checkoutView').style.display = 'block';
-            document.getElementById('mobileCartBtn').style.display = 'none';
+            // Guardar itinerario en localStorage
+            localStorage.setItem('itinerary', JSON.stringify(cart));
             
-            renderCheckout();
-            window.scrollTo(0, 0);
+            // Redirigir a vista 1 del itinerario
+            window.location.href = 'itinerary-view1.html';
         }
 
         // Volver al catálogo
