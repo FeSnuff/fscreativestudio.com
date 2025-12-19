@@ -2093,7 +2093,6 @@
     </button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         // Variables globales
         let allTours = [];
@@ -3327,13 +3326,10 @@
                 const pageHeight = 297;
                 const margin = 15;
                 const contentWidth = pageWidth - (margin * 2);
-                
-                // Get all pages
-                const pages = document.querySelectorAll('.a4-page');
+                let currentPage = 0;
                 
                 // Function to add header
-                const addHeader = (pageNum) => {
-                    // Logo area (if exists)
+                const addHeader = () => {
                     pdf.setFillColor(102, 126, 234);
                     pdf.rect(0, 0, pageWidth, 8, 'F');
                     
@@ -3358,61 +3354,189 @@
                     pdf.text('Qori Wayra Travel - Todos los derechos reservados', pageWidth - margin, pageHeight - 5, { align: 'right' });
                 };
                 
-                let currentPage = 1;
-                const totalPages = pages.length + 1; // +1 for terms page
-                
-                // Process each page
-                for (let i = 0; i < pages.length; i++) {
-                    const page = pages[i];
-                    
-                    if (i > 0) {
-                        pdf.addPage();
+                // Function to check if need new page
+                const checkNewPage = (yPos, spaceNeeded) => {
+                    if (yPos + spaceNeeded > pageHeight - 20) {
                         currentPage++;
+                        pdf.addPage();
+                        addHeader();
+                        return 15; // Reset Y position after header
                     }
+                    return yPos;
+                };
+                
+                // === PAGE 1: Title and Client Info ===
+                currentPage = 1;
+                addHeader();
+                
+                let yPos = 20;
+                
+                // Title
+                pdf.setTextColor(51, 51, 51);
+                pdf.setFontSize(24);
+                pdf.setFont(undefined, 'bold');
+                pdf.text('ITINERARIO DE VIAJE', pageWidth / 2, yPos, { align: 'center' });
+                
+                yPos += 10;
+                const totalDays = cart.reduce((sum, tour) => sum + tour.duration_days, 0);
+                const totalNights = totalDays > 0 ? totalDays - 1 : 0;
+                
+                pdf.setTextColor(102, 126, 234);
+                pdf.setFontSize(16);
+                pdf.setFont(undefined, '600');
+                pdf.text(`${totalDays} Día${totalDays > 1 ? 's' : ''} / ${totalNights} Noche${totalNights > 1 ? 's' : ''}`, pageWidth / 2, yPos, { align: 'center' });
+                
+                yPos += 15;
+                
+                // Client info if enabled
+                if (view2Data.clientDataEnabled) {
+                    pdf.setFillColor(248, 249, 250);
+                    pdf.rect(margin, yPos, contentWidth, 20, 'F');
+                    pdf.setDrawColor(102, 126, 234);
+                    pdf.setLineWidth(1);
+                    pdf.line(margin, yPos, margin, yPos + 20);
                     
-                    // Add header and footer
-                    addHeader(currentPage);
-                    addFooter(currentPage, totalPages);
+                    yPos += 8;
+                    pdf.setTextColor(102, 126, 234);
+                    pdf.setFontSize(11);
+                    pdf.setFont(undefined, 'bold');
+                    pdf.text('INFORMACIÓN DEL CLIENTE', margin + 5, yPos);
                     
-                    // Capture page content
-                    const canvas = await html2canvas(page, {
-                        scale: 2,
-                        useCORS: true,
-                        logging: false,
-                        backgroundColor: '#ffffff',
-                        windowWidth: page.scrollWidth,
-                        windowHeight: page.scrollHeight
-                    });
+                    yPos += 7;
+                    pdf.setTextColor(60, 60, 60);
+                    pdf.setFontSize(10);
+                    pdf.setFont(undefined, 'normal');
+                    pdf.text(`Nombre: ${view2Data.clientName || '-'}`, margin + 5, yPos);
+                    pdf.text(`Teléfono: ${view2Data.clientNationality} ${view2Data.clientPhone || '-'}`, pageWidth / 2, yPos);
                     
-                    const imgData = canvas.toDataURL('image/jpeg', 0.95);
-                    
-                    // Calculate dimensions
-                    const imgWidth = contentWidth;
-                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                    
-                    // Add image to PDF (with margin for header/footer)
-                    const yPosition = 12; // After header
-                    const maxHeight = pageHeight - 25; // Account for header and footer
-                    
-                    if (imgHeight <= maxHeight) {
-                        pdf.addImage(imgData, 'JPEG', margin, yPosition, imgWidth, imgHeight);
-                    } else {
-                        // Scale down if too tall
-                        const scaledHeight = maxHeight;
-                        const scaledWidth = (canvas.width * scaledHeight) / canvas.height;
-                        pdf.addImage(imgData, 'JPEG', margin, yPosition, scaledWidth, scaledHeight);
-                    }
+                    yPos += 15;
                 }
                 
-                // Add final page with terms and conditions
-                pdf.addPage();
+                // Tours section title
+                pdf.setTextColor(102, 126, 234);
+                pdf.setFontSize(14);
+                pdf.setFont(undefined, 'bold');
+                pdf.text(`ITINERARIO ${itineraryType === 'detailed' ? 'DETALLADO' : 'RESUMIDO'}`, margin, yPos);
+                
+                yPos += 3;
+                pdf.setDrawColor(102, 126, 234);
+                pdf.setLineWidth(0.5);
+                pdf.line(margin, yPos, pageWidth - margin, yPos);
+                
+                yPos += 10;
+                
+                // === TOURS ===
+                let currentDay = 1;
+                const includesText = "Almuerzo, Asistencia permanente, Balón de oxigeno, Bastones artesanales, Botiquín de primeros auxilios, Breve práctica antes del tour, Bus turístico, Casco y equipo de seguridad";
+                const excludesText = "Alimentación, BTP, Boleto turístico parcial, Caballo, Cena, Entrada a Salineras, Hospedaje en Cusco, Hospedaje en Machupicchu";
+                const includesList = includesText.split(',').map(i => i.trim()).slice(0, 6);
+                const excludesList = excludesText.split(',').map(i => i.trim()).slice(0, 6);
+                
+                for (let i = 0; i < cart.length; i++) {
+                    const tour = cart[i];
+                    const tourDays = tour.duration_days;
+                    const nights = tourDays > 1 ? tourDays - 1 : 0;
+                    const durationText = nights > 0 ? `${tourDays}D/${nights}N` : `${tourDays}D`;
+                    const dayLabel = tourDays === 1 ? `DÍA ${currentDay}` : `DÍAS ${currentDay}-${currentDay + tourDays - 1}`;
+                    
+                    // Check space for day block
+                    yPos = checkNewPage(yPos, 80);
+                    
+                    // Day block
+                    pdf.setFillColor(248, 249, 250);
+                    const blockStart = yPos;
+                    
+                    // Day header
+                    pdf.setFillColor(102, 126, 234);
+                    pdf.rect(margin, yPos, contentWidth, 8, 'F');
+                    
+                    pdf.setTextColor(255, 255, 255);
+                    pdf.setFontSize(11);
+                    pdf.setFont(undefined, 'bold');
+                    pdf.text(dayLabel, margin + 3, yPos + 6);
+                    
+                    pdf.setFillColor(118, 75, 162);
+                    pdf.roundedRect(pageWidth - margin - 25, yPos + 1, 25, 6, 2, 2, 'F');
+                    pdf.setFontSize(9);
+                    pdf.text(durationText, pageWidth - margin - 12.5, yPos + 5, { align: 'center' });
+                    
+                    yPos += 12;
+                    
+                    // Tour name
+                    pdf.setTextColor(102, 126, 234);
+                    pdf.setFontSize(12);
+                    pdf.setFont(undefined, 'bold');
+                    pdf.text(tour.name, margin + 3, yPos);
+                    
+                    yPos += 7;
+                    
+                    // Summary list (if exists)
+                    if (tour.summary_list && tour.summary_list.length > 0) {
+                        pdf.setTextColor(85, 85, 85);
+                        pdf.setFontSize(9);
+                        pdf.setFont(undefined, 'normal');
+                        
+                        tour.summary_list.slice(0, 3).forEach(item => {
+                            yPos = checkNewPage(yPos, 5);
+                            pdf.text('✓', margin + 5, yPos);
+                            pdf.text(item.substring(0, 70), margin + 10, yPos);
+                            yPos += 5;
+                        });
+                    }
+                    
+                    yPos += 3;
+                    
+                    // Includes/Excludes in two columns
+                    const incExcStart = yPos;
+                    
+                    // Includes (left)
+                    pdf.setTextColor(40, 167, 69);
+                    pdf.setFontSize(9);
+                    pdf.setFont(undefined, 'bold');
+                    pdf.text('✓ Incluye', margin + 3, yPos);
+                    
+                    yPos += 5;
+                    pdf.setTextColor(85, 85, 85);
+                    pdf.setFontSize(8);
+                    pdf.setFont(undefined, 'normal');
+                    
+                    includesList.slice(0, 4).forEach(item => {
+                        const emoji = getEmoji(item);
+                        pdf.text(`${emoji} ${item.substring(0, 25)}`, margin + 5, yPos);
+                        yPos += 4;
+                    });
+                    
+                    // Excludes (right)
+                    let yPosRight = incExcStart;
+                    pdf.setTextColor(220, 53, 69);
+                    pdf.setFontSize(9);
+                    pdf.setFont(undefined, 'bold');
+                    pdf.text('✗ No Incluye', pageWidth / 2 + 5, yPosRight);
+                    
+                    yPosRight += 5;
+                    pdf.setTextColor(85, 85, 85);
+                    pdf.setFontSize(8);
+                    pdf.setFont(undefined, 'normal');
+                    
+                    excludesList.slice(0, 4).forEach(item => {
+                        const emoji = getEmoji(item);
+                        pdf.text(`${emoji} ${item.substring(0, 25)}`, pageWidth / 2 + 7, yPosRight);
+                        yPosRight += 4;
+                    });
+                    
+                    yPos = Math.max(yPos, yPosRight) + 5;
+                    
+                    currentDay += tourDays;
+                }
+                
+                // === FINAL PAGE: Summary + Terms ===
                 currentPage++;
-                addHeader(currentPage);
-                addFooter(currentPage, totalPages);
+                pdf.addPage();
+                addHeader();
                 
-                // Resumen de Costos
-                let yPos = 25;
+                yPos = 20;
                 
+                // Title
                 pdf.setFillColor(102, 126, 234);
                 pdf.rect(margin, yPos, contentWidth, 10, 'F');
                 pdf.setTextColor(255, 255, 255);
@@ -3422,110 +3546,102 @@
                 
                 yPos += 20;
                 
-                // Totals box
+                // Total Adult
                 const symbol = view2Data.currency === 'PEN' ? 'S/' : '$';
                 
                 pdf.setFillColor(102, 126, 234);
-                pdf.roundedRect(margin, yPos, contentWidth, 25, 3, 3, 'F');
+                pdf.roundedRect(margin, yPos, contentWidth, 20, 3, 3, 'F');
                 
                 pdf.setTextColor(255, 255, 255);
-                pdf.setFontSize(11);
+                pdf.setFontSize(10);
                 pdf.setFont(undefined, 'normal');
-                pdf.text('TOTAL POR ADULTO', margin + 10, yPos + 10);
+                pdf.text('TOTAL POR ADULTO', margin + 10, yPos + 8);
                 
-                pdf.setFontSize(20);
+                pdf.setFontSize(18);
                 pdf.setFont(undefined, 'bold');
-                pdf.text(`${symbol} ${view2Data.totalAdult.toFixed(2)}`, margin + 10, yPos + 20);
+                pdf.text(`${symbol} ${view2Data.totalAdult.toFixed(2)}`, margin + 10, yPos + 16);
                 
+                yPos += 25;
+                
+                // Total Child (if enabled)
                 if (view2Data.childBudgetEnabled) {
-                    yPos += 30;
                     pdf.setFillColor(118, 75, 162);
-                    pdf.roundedRect(margin, yPos, contentWidth, 25, 3, 3, 'F');
+                    pdf.roundedRect(margin, yPos, contentWidth, 20, 3, 3, 'F');
                     
-                    pdf.setFontSize(11);
+                    pdf.setTextColor(255, 255, 255);
+                    pdf.setFontSize(10);
                     pdf.setFont(undefined, 'normal');
-                    pdf.text('TOTAL POR NIÑO', margin + 10, yPos + 10);
+                    pdf.text('TOTAL POR NIÑO', margin + 10, yPos + 8);
                     
-                    pdf.setFontSize(20);
+                    pdf.setFontSize(18);
                     pdf.setFont(undefined, 'bold');
-                    pdf.text(`${symbol} ${view2Data.totalChild.toFixed(2)}`, margin + 10, yPos + 20);
+                    pdf.text(`${symbol} ${view2Data.totalChild.toFixed(2)}`, margin + 10, yPos + 16);
+                    
+                    yPos += 25;
                 }
                 
-                yPos += 40;
-                
-                // Validez
+                // Validity
                 pdf.setFillColor(255, 243, 205);
-                pdf.rect(margin, yPos, contentWidth, 12, 'F');
+                pdf.rect(margin, yPos, contentWidth, 10, 'F');
                 pdf.setTextColor(133, 100, 4);
                 pdf.setFontSize(9);
                 pdf.setFont(undefined, 'bold');
-                pdf.text('Validez del Presupuesto: ', margin + 5, yPos + 8);
+                pdf.text('Validez del Presupuesto:', margin + 3, yPos + 7);
                 pdf.setFont(undefined, 'normal');
-                pdf.text('2 días a partir de la fecha de emisión', margin + 45, yPos + 8);
+                pdf.text('2 días a partir de la fecha de emisión', margin + 45, yPos + 7);
                 
-                yPos += 20;
+                yPos += 18;
                 
-                // Términos y Condiciones
+                // Terms
                 pdf.setTextColor(102, 126, 234);
                 pdf.setFontSize(12);
                 pdf.setFont(undefined, 'bold');
                 pdf.text('TÉRMINOS Y CONDICIONES', margin, yPos);
                 
-                yPos += 8;
+                yPos += 2;
                 pdf.setDrawColor(102, 126, 234);
-                pdf.setLineWidth(0.5);
                 pdf.line(margin, yPos, pageWidth - margin, yPos);
                 
-                yPos += 8;
+                yPos += 7;
                 pdf.setTextColor(60, 60, 60);
                 pdf.setFontSize(9);
-                pdf.setFont(undefined, 'normal');
                 
                 const terms = [
-                    '1. RESERVA Y PAGO',
-                    '   • Se requiere el 50% del costo total para confirmar la reserva.',
-                    '   • El saldo restante debe ser pagado 7 días antes del inicio del tour.',
-                    '',
-                    '2. COMISIONES ADICIONALES',
-                    '   • Pagos con tarjetas extranjeras: 5% de comisión adicional.',
-                    '   • Pagos con Yape: Sin comisión adicional.',
-                    '   • Otros métodos de pago (PayPal, Western Union): 3-5% de comisión.',
-                    '',
-                    '3. CANCELACIONES',
-                    '   • Con más de 15 días: Reembolso del 80%.',
-                    '   • Con 7-15 días: Reembolso del 50%.',
-                    '   • Con menos de 7 días: Sin reembolso.',
-                    '',
-                    '4. CONDICIONES GENERALES',
-                    '   • Todos los tours están sujetos a disponibilidad.',
-                    '   • Los precios pueden variar según temporada alta/baja.',
-                    '   • Se requiere documento de identidad vigente.',
-                    '   • Incluye seguro de viaje básico.'
+                    ['1. RESERVA Y PAGO', true],
+                    ['   • Se requiere el 50% del costo total para confirmar la reserva.', false],
+                    ['   • El saldo restante debe ser pagado 7 días antes del inicio del tour.', false],
+                    ['', false],
+                    ['2. COMISIONES ADICIONALES', true],
+                    ['   • Pagos con tarjetas extranjeras: 5% de comisión adicional.', false],
+                    ['   • Pagos con Yape: Sin comisión adicional.', false],
+                    ['   • Otros métodos (PayPal, Western Union): 3-5% de comisión.', false],
+                    ['', false],
+                    ['3. CANCELACIONES', true],
+                    ['   • Con más de 15 días: Reembolso del 80%.', false],
+                    ['   • Con 7-15 días: Reembolso del 50%.', false],
+                    ['   • Con menos de 7 días: Sin reembolso.', false],
+                    ['', false],
+                    ['4. CONDICIONES GENERALES', true],
+                    ['   • Todos los tours están sujetos a disponibilidad.', false],
+                    ['   • Los precios pueden variar según temporada alta/baja.', false],
+                    ['   • Se requiere documento de identidad vigente.', false],
+                    ['   • Incluye seguro de viaje básico.', false]
                 ];
                 
-                terms.forEach(line => {
-                    if (yPos > pageHeight - 30) {
-                        pdf.addPage();
-                        currentPage++;
-                        addHeader(currentPage);
-                        addFooter(currentPage, totalPages);
-                        yPos = 25;
+                terms.forEach(([line, isBold]) => {
+                    if (line === '') {
+                        yPos += 2;
+                        return;
                     }
                     
-                    if (line.startsWith('   •')) {
-                        pdf.text(line, margin + 5, yPos);
-                    } else if (line === '') {
-                        yPos += 2;
-                    } else {
-                        pdf.setFont(undefined, 'bold');
-                        pdf.text(line, margin, yPos);
-                        pdf.setFont(undefined, 'normal');
-                    }
+                    pdf.setFont(undefined, isBold ? 'bold' : 'normal');
+                    pdf.text(line, margin + (line.startsWith('   •') ? 3 : 0), yPos);
                     yPos += 5;
                 });
                 
-                // Payment methods
                 yPos += 5;
+                
+                // Payment methods with logos description
                 pdf.setTextColor(102, 126, 234);
                 pdf.setFontSize(10);
                 pdf.setFont(undefined, 'bold');
@@ -3535,26 +3651,58 @@
                 pdf.setTextColor(60, 60, 60);
                 pdf.setFontSize(9);
                 pdf.setFont(undefined, 'normal');
-                pdf.text('Visa • Mastercard • PayPal • Western Union • Yape • Efectivo', margin, yPos);
+                pdf.text('💳 Visa  •  💳 Mastercard  •  💰 PayPal  •  🏦 Western Union  •  📱 Yape  •  💵 Efectivo', margin, yPos);
+                
+                // Add footers to all pages
+                const totalPages = currentPage;
+                for (let i = 1; i <= totalPages; i++) {
+                    pdf.setPage(i);
+                    addFooter(i, totalPages);
+                }
                 
                 // Generate filename
-                const totalDays = cart.reduce((sum, tour) => sum + tour.duration_days, 0);
-                const totalNights = totalDays > 0 ? totalDays - 1 : 0;
                 const filename = `Itinerario_${totalDays}D${totalNights}N_${Date.now()}.pdf`;
                 
-                // Save PDF
+                // Check if mobile (Android)
+                const isMobileDevice = /Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent);
+                
+                if (isMobileDevice) {
+                    // On mobile: create blob and use native share
+                    const pdfBlob = pdf.output('blob');
+                    const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
+                    
+                    if (navigator.share && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+                        try {
+                            await navigator.share({
+                                title: 'Itinerario de Viaje',
+                                text: `Itinerario ${totalDays}D/${totalNights}N - Qori Wayra Travel`,
+                                files: [pdfFile]
+                            });
+                            
+                            btnPdf.textContent = originalText;
+                            btnPdf.disabled = false;
+                            return;
+                        } catch (err) {
+                            console.log('Share cancelled or failed:', err);
+                        }
+                    }
+                }
+                
+                // Fallback: download PDF
                 pdf.save(filename);
                 
                 // Restore button
                 btnPdf.textContent = originalText;
                 btnPdf.disabled = false;
                 
-                // Show WhatsApp share option
-                setTimeout(() => {
-                    if (confirm('✅ PDF generado correctamente!\n\n¿Deseas compartir el itinerario por WhatsApp?')) {
-                        shareViaWhatsApp();
-                    }
-                }, 500);
+                // Show WhatsApp share option (only if not already shared)
+                if (!isMobileDevice) {
+                    setTimeout(() => {
+                        if (confirm('✅ PDF generado correctamente!\n\n¿Deseas compartir el itinerario por WhatsApp?')) {
+                            shareViaWhatsApp();
+                        }
+                    }, 500);
+                }
                 
             } catch (error) {
                 console.error('Error generando PDF:', error);
