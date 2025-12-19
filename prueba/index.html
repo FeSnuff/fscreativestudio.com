@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tours & Aventuras - Qori Wayra Travel</title>
+    <title>MVP App - Login</title>
     <style>
         * {
             margin: 0;
@@ -15,304 +15,259 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-        }
-
-        #app {
-            min-height: 100vh;
             display: flex;
-            flex-direction: column;
-        }
-
-        #navbar-container,
-        #footer-container {
-            animation: fadeIn 0.5s ease;
-        }
-
-        #main-content {
-            flex: 1;
-            padding: 20px;
-        }
-
-        .loader {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
-            min-height: 400px;
-            color: white;
+            align-items: center;
         }
 
-        .loader-spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(255,255,255,0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        .loader p {
-            margin-top: 20px;
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .error-container {
+        .login-container {
             background: white;
-            border-radius: 15px;
             padding: 40px;
-            text-align: center;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-            max-width: 500px;
-            margin: 100px auto;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
         }
 
-        .error-icon {
-            font-size: 80px;
+        .login-container h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .form-group {
             margin-bottom: 20px;
         }
 
-        .error-title {
-            font-size: 24px;
-            color: #dc3545;
-            margin-bottom: 10px;
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+        }
+
+        .loading {
+            text-align: center;
+            color: #667eea;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Página principal después del login */
+        .main-container {
+            display: none;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .main-container h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .main-container p {
             color: #666;
-            line-height: 1.6;
+            font-size: 18px;
+            margin-bottom: 30px;
         }
 
-        .btn-retry {
-            margin-top: 20px;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+        .btn-logout {
+            padding: 10px 30px;
+            background: #dc3545;
             color: white;
-            font-weight: 600;
-            cursor: pointer;
+            border: none;
+            border-radius: 5px;
             font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
         }
 
-        .btn-retry:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        .btn-logout:hover {
+            background: #c82333;
+        }
+
+        .user-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
-    <div id="app">
-        <!-- Navbar -->
-        <div id="navbar-container"></div>
-        
-        <!-- Main Content -->
-        <main id="main-content">
-            <div class="loader">
-                <div class="loader-spinner"></div>
-                <p>Cargando aplicación...</p>
+    <!-- Formulario de Login -->
+    <div class="login-container" id="loginContainer">
+        <h1>🔐 Iniciar Sesión</h1>
+        <div class="error-message" id="errorMessage"></div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Usuario</label>
+                <input type="text" id="username" name="username" required autocomplete="username">
             </div>
-        </main>
-        
-        <!-- Footer -->
-        <div id="footer-container"></div>
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn-login" id="btnLogin">Iniciar Sesión</button>
+            <div class="loading" id="loading">Verificando credenciales...</div>
+        </form>
+    </div>
+
+    <!-- Página Principal (se muestra después del login) -->
+    <div class="main-container" id="mainContainer">
+        <h1>✅ ¡Bienvenido a la App!</h1>
+        <div class="user-info">
+            <p><strong>Usuario:</strong> <span id="loggedUser"></span></p>
+        </div>
+        <p>🎉 Has iniciado sesión correctamente. Esta es tu página principal.</p>
+        <p>Aquí irá el contenido de tu aplicación...</p>
+        <button class="btn-logout" id="btnLogout">Cerrar Sesión</button>
     </div>
 
     <script>
-        // ===== APP CONSTRUCTOR =====
-        class ToursApp {
-            constructor() {
-                this.currentView = 'login';
-                this.user = null;
-                this.tours = [];      // Tours data from Google Sheets
-                this.cart = [];       // Selected tours
-                this.sheetsUrl = 'TU_URL_DE_GOOGLE_SHEETS_AQUI'; // ← CAMBIA ESTO
-                this.init();
-            }
-            
-            async init() {
-                console.log('🚀 Iniciando aplicación...');
-                
-                try {
-                    // 1. Load tours data FIRST (from Google Sheets)
-                    await this.loadToursData();
-                    
-                    // 2. Load navbar and footer
-                    await this.loadComponent('navbar', 'navbar-container');
-                    await this.loadComponent('footer', 'footer-container');
-                    
-                    // 3. Check if user is logged in
-                    this.user = localStorage.getItem('toursAppUser');
-                    
-                    if (this.user) {
-                        console.log('✅ Usuario encontrado:', this.user);
-                        this.updateNavbar();
-                        await this.loadComponent('catalog', 'main-content');
-                    } else {
-                        console.log('ℹ️ No hay usuario, cargando login...');
-                        await this.loadComponent('login', 'main-content');
-                    }
-                    
-                    console.log('✅ Aplicación cargada correctamente');
-                } catch (error) {
-                    console.error('❌ Error al iniciar aplicación:', error);
-                    this.showError('Error al cargar la aplicación', error.message);
-                }
-            }
-            
-            async loadToursData() {
-                try {
-                    console.log('📦 Cargando tours desde Google Sheets...');
-                    
-                    const response = await fetch(this.sheetsUrl);
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
-                    
-                    this.tours = await response.json();
-                    console.log(`✅ ${this.tours.length} tours cargados globalmente`);
-                    
-                    // Validate data structure
-                    if (!Array.isArray(this.tours) || this.tours.length === 0) {
-                        throw new Error('Los datos no tienen el formato correcto o están vacíos');
-                    }
-                    
-                } catch (error) {
-                    console.error('❌ Error cargando tours:', error);
-                    
-                    // Show error with retry option
-                    const mainContent = document.getElementById('main-content');
-                    mainContent.innerHTML = `
-                        <div class="error-container">
-                            <div class="error-icon">⚠️</div>
-                            <h2 class="error-title">Error al cargar tours</h2>
-                            <p class="error-message">${error.message}</p>
-                            <p class="error-message" style="margin-top: 15px; font-size: 13px;">
-                                Verifica que la URL de Google Sheets esté correcta en index.html
-                            </p>
-                            <button class="btn-retry" onclick="location.reload()">
-                                🔄 Reintentar
-                            </button>
-                        </div>
-                    `;
-                    
-                    throw error; // Stop initialization
-                }
-            }
-            
-            async loadComponent(componentName, containerId) {
-                try {
-                    console.log(`📦 Cargando componente: ${componentName}...`);
-                    
-                    const response = await fetch(`components/${componentName}.html`);
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
-                    
-                    const html = await response.text();
-                    const container = document.getElementById(containerId);
-                    
-                    if (!container) {
-                        throw new Error(`Contenedor no encontrado: ${containerId}`);
-                    }
-                    
-                    container.innerHTML = html;
-                    
-                    // Execute scripts in the loaded component
-                    this.executeScripts(container);
-                    
-                    console.log(`✅ Componente ${componentName} cargado`);
-                    
-                } catch (error) {
-                    console.error(`❌ Error cargando ${componentName}:`, error);
-                    throw error;
-                }
-            }
-            
-            executeScripts(container) {
-                const scripts = container.querySelectorAll('script');
-                scripts.forEach(oldScript => {
-                    const newScript = document.createElement('script');
-                    Array.from(oldScript.attributes).forEach(attr => {
-                        newScript.setAttribute(attr.name, attr.value);
-                    });
-                    newScript.textContent = oldScript.textContent;
-                    oldScript.parentNode.replaceChild(newScript, oldScript);
-                });
-            }
-            
-            updateNavbar() {
-                const userName = document.getElementById('userName');
-                const userInitial = document.getElementById('userInitial');
-                const btnLogout = document.getElementById('btnLogout');
-                
-                if (this.user) {
-                    if (userName) userName.textContent = this.user;
-                    if (userInitial) userInitial.textContent = this.user.charAt(0).toUpperCase();
-                    if (btnLogout) btnLogout.style.display = 'flex';
-                } else {
-                    if (userName) userName.textContent = 'Invitado';
-                    if (userInitial) userInitial.textContent = '?';
-                    if (btnLogout) btnLogout.style.display = 'none';
-                }
-            }
-            
-            async login(userName, userEmail) {
-                this.user = userName;
-                localStorage.setItem('toursAppUser', userName);
-                if (userEmail) {
-                    localStorage.setItem('toursAppEmail', userEmail);
-                }
-                
-                this.updateNavbar();
-                await this.loadComponent('catalog', 'main-content');
-            }
-            
-            logout() {
-                if (confirm('¿Estás seguro de cerrar sesión?')) {
-                    this.user = null;
-                    this.cart = [];
-                    localStorage.removeItem('toursAppUser');
-                    localStorage.removeItem('toursAppEmail');
-                    
-                    this.updateNavbar();
-                    this.loadComponent('login', 'main-content');
-                }
-            }
-            
-            showError(title, message) {
-                const mainContent = document.getElementById('main-content');
-                mainContent.innerHTML = `
-                    <div class="error-container">
-                        <div class="error-icon">⚠️</div>
-                        <h2 class="error-title">${title}</h2>
-                        <p class="error-message">${message}</p>
-                        <button class="btn-retry" onclick="location.reload()">
-                            🔄 Reintentar
-                        </button>
-                    </div>
-                `;
-            }
-        }
+        // ⚠️ IMPORTANTE: Reemplaza esta URL con la URL de tu Google Apps Script
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwAOTSKw3rxOu_VyCPmpnXurDApQEiYjwfynkyyOeo8k6g1INY5aRsFruYVXzAsidBB9A/exec';
 
-        // Initialize app globally
-        let app;
+        // Elementos del DOM
+        const loginContainer = document.getElementById('loginContainer');
+        const mainContainer = document.getElementById('mainContainer');
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const loading = document.getElementById('loading');
+        const btnLogin = document.getElementById('btnLogin');
+        const btnLogout = document.getElementById('btnLogout');
+        const loggedUser = document.getElementById('loggedUser');
+
+        // Verificar si hay sesión guardada al cargar la página
         window.addEventListener('load', () => {
-            app = new ToursApp();
+            const savedUser = localStorage.getItem('loggedUser');
+            if (savedUser) {
+                showMainPage(savedUser);
+            }
         });
 
-        console.log('📱 Index.html cargado');
+        // Manejar el envío del formulario
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            // Validación básica
+            if (!username || !password) {
+                showError('Por favor, completa todos los campos');
+                return;
+            }
+
+            // Mostrar loading
+            btnLogin.disabled = true;
+            loading.style.display = 'block';
+            errorMessage.style.display = 'none';
+
+            try {
+                // Llamar al Google Apps Script
+                const response = await fetch(`${SCRIPT_URL}?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    // Guardar sesión en localStorage
+                    localStorage.setItem('loggedUser', username);
+                    showMainPage(username);
+                } else {
+                    showError(data.message || 'Usuario o contraseña incorrectos');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Error al conectar con el servidor. Verifica la configuración.');
+            } finally {
+                btnLogin.disabled = false;
+                loading.style.display = 'none';
+            }
+        });
+
+        // Botón de cerrar sesión
+        btnLogout.addEventListener('click', () => {
+            localStorage.removeItem('loggedUser');
+            showLoginPage();
+        });
+
+        // Función para mostrar la página principal
+        function showMainPage(username) {
+            // Guardar sesión y redirigir a la app
+            localStorage.setItem('loggedUser', username);
+            window.location.href = 'app.html';
+        }
+
+        // Función para mostrar la página de login
+        function showLoginPage() {
+            loginContainer.style.display = 'block';
+            mainContainer.style.display = 'none';
+        }
+
+        // Función para mostrar errores
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
     </script>
 </body>
 </html>
