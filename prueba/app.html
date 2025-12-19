@@ -988,7 +988,7 @@
                 btnCheckout.disabled = false;
                 
                 cartItemsEl.innerHTML = cart.map((tour, index) => {
-                    // Calcular noches
+                    // Calcular noches para mostrar en el cart
                     let durationText = '';
                     if (tour.duration_days === 1) {
                         durationText = '1 día';
@@ -1018,12 +1018,12 @@
             
             // En móvil, cuando hay tours seleccionados, agregar al itinerario automáticamente
             if (selectedTours.length > 0 && isMobile) {
+                // Limpiar cart primero para evitar duplicados
+                cart = [];
+                
                 selectedTours.forEach(index => {
                     const tour = filteredTours[index];
-                    const existingIndex = cart.findIndex(item => item.name === tour.name);
-                    if (existingIndex === -1) {
-                        cart.push({...tour});
-                    }
+                    cart.push({...tour});
                 });
                 updateCart();
             }
@@ -1034,6 +1034,38 @@
             } else if (isMobile) {
                 mobileCartBtn.style.display = 'none';
             }
+        }
+
+        // Remover del carrito
+        function removeFromCart(index) {
+            // Guardar referencia al tour ANTES de eliminarlo
+            const removedTour = cart[index];
+            
+            // Eliminar del cart
+            cart.splice(index, 1);
+            
+            // Si estamos en móvil, también remover de selectedTours
+            if (isMobile && removedTour) {
+                // Buscar el índice del tour en filteredTours
+                const tourIndex = filteredTours.findIndex(t => t.name === removedTour.name);
+                if (tourIndex !== -1) {
+                    const selPos = selectedTours.indexOf(tourIndex);
+                    if (selPos > -1) {
+                        selectedTours.splice(selPos, 1);
+                    }
+                }
+                
+                // Si no quedan tours, salir del modo selección
+                if (cart.length === 0) {
+                    selectedTours = [];
+                    selectionMode = false;
+                }
+                
+                renderTours();
+            }
+            
+            updateCart();
+            updateMobileButtons();
         }
 
         // Ir a checkout/itinerario
