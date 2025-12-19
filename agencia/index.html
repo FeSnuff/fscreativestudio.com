@@ -148,6 +148,39 @@
             border-radius: 5px;
             margin-bottom: 20px;
         }
+
+        /* TOURS VIEW */
+        #toursView { padding: 20px; max-width: 1600px; margin: 0 auto; }
+        .tours-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .tours-header h2 { color: #333; font-size: 28px; }
+        .cart-btn { padding: 12px 24px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .filters { background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 15px; }
+        .filter-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; }
+        .filter-group input, .filter-group select { width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; }
+        .tours-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .tour-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; transition: all 0.3s; position: relative; }
+        .tour-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+        .tour-card.selected { border: 3px solid #667eea; }
+        .tour-img { height: 180px; background: linear-gradient(135deg, #667eea, #764ba2); position: relative; }
+        .tour-overlay { position: absolute; inset: 0; background: rgba(102,126,234,0.9); display: flex; align-items: center; justify-content: center; font-size: 48px; color: white; opacity: 0; transition: opacity 0.3s; }
+        .tour-card:hover .tour-overlay { opacity: 1; }
+        .selection-num { position: absolute; top: 10px; left: 10px; width: 30px; height: 30px; border-radius: 50%; background: #667eea; color: white; display: none; align-items: center; justify-content: center; font-weight: bold; }
+        .tour-card.selected .selection-num { display: flex; }
+        .tour-info { padding: 15px; }
+        .tour-info h3 { font-size: 16px; margin-bottom: 10px; color: #333; min-height: 40px; }
+        .tour-info p { color: #666; font-size: 14px; margin: 5px 0; }
+        .tour-price { color: #667eea; font-weight: bold; font-size: 20px; margin-top: 8px; }
+        .cart-sidebar { position: fixed; right: 20px; top: 100px; width: 350px; background: white; border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.2); max-height: calc(100vh - 120px); display: flex; flex-direction: column; }
+        .cart-header { padding: 20px; border-bottom: 2px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; }
+        .cart-badge { width: 30px; height: 30px; border-radius: 50%; background: #667eea; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .cart-content { flex: 1; overflow-y: auto; padding: 20px; }
+        .cart-item { background: #f8f9fa; padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .cart-item-num { width: 28px; height: 28px; border-radius: 50%; background: #667eea; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
+        .cart-footer { padding: 20px; border-top: 2px solid #e0e0e0; }
+        .cart-total { display: flex; justify-content: space-between; font-size: 20px; font-weight: bold; margin-bottom: 15px; }
+        .btn-continue { width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; }
+        .btn-logout-top { position: absolute; top: 20px; right: 20px; padding: 10px 20px; background: #dc3545; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        @media (max-width: 1024px) { .filters { grid-template-columns: 1fr; } .cart-sidebar { display: none; } }
     </style>
 </head>
 <body>
@@ -171,13 +204,7 @@
 
     <!-- Página Principal (se muestra después del login) -->
     <div class="main-container" id="mainContainer">
-        <h1>✅ ¡Bienvenido a la App!</h1>
-        <div class="user-info">
-            <p><strong>Usuario:</strong> <span id="loggedUser"></span></p>
-        </div>
-        <p>🎉 Has iniciado sesión correctamente. Esta es tu página principal.</p>
-        <p>Aquí irá el contenido de tu aplicación...</p>
-        <button class="btn-logout" id="btnLogout">Cerrar Sesión</button>
+        <div id="toursView"></div>
     </div>
 
     <script>
@@ -259,10 +286,11 @@
         function showMainPage(username) {
             loginContainer.style.display = 'none';
             mainContainer.style.display = 'block';
-            loggedUser.textContent = username;
             
             // Limpiar el formulario
             loginForm.reset();
+            
+            loadToursView(username);
         }
 
         // Función para mostrar la página de login
@@ -278,6 +306,200 @@
             setTimeout(() => {
                 errorMessage.style.display = 'none';
             }, 5000);
+        }
+
+        // TOURS FUNCTIONALITY
+        let allTours = [];
+        let cart = [];
+
+        async function loadToursView(username) {
+            const view = document.getElementById('toursView');
+            
+            // Load tours.json
+            try {
+                const res = await fetch('tours.json');
+                allTours = await res.json();
+            } catch (e) {
+                allTours = [];
+            }
+            
+            view.innerHTML = `
+                <button class="btn-logout-top" onclick="logout()">Cerrar Sesión</button>
+                <div class="tours-header">
+                    <h2>🗺️ Tours Disponibles</h2>
+                    <div style="color:#667eea;font-weight:600">Hola, ${username}</div>
+                </div>
+                
+                <div class="filters">
+                    <div class="filter-group">
+                        <label>🔍 Buscar</label>
+                        <input type="text" id="searchInput" placeholder="Buscar tours...">
+                    </div>
+                    <div class="filter-group">
+                        <label>Ordenar</label>
+                        <select id="sortFilter">
+                            <option value="name">Nombre A-Z</option>
+                            <option value="price-low">Precio: Menor</option>
+                            <option value="price-high">Precio: Mayor</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Duración</label>
+                        <select id="durationFilter">
+                            <option value="all">Todas</option>
+                            <option value="1">1 día</option>
+                            <option value="2">2 días</option>
+                            <option value="3">3 días</option>
+                            <option value="4+">4+ días</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Precio</label>
+                        <select id="priceFilter">
+                            <option value="all">Todos</option>
+                            <option value="0-100">S/ 0-100</option>
+                            <option value="100-200">S/ 100-200</option>
+                            <option value="200+">S/ 200+</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="tours-grid" id="toursGrid"></div>
+                
+                <div class="cart-sidebar">
+                    <div class="cart-header">
+                        <h3>🛒 Mi Itinerario</h3>
+                        <div class="cart-badge" id="cartBadge">0</div>
+                    </div>
+                    <div class="cart-content" id="cartContent">
+                        <div style="text-align:center;padding:40px 20px;color:#999">
+                            <div style="font-size:50px">📋</div>
+                            <p>No hay tours seleccionados</p>
+                        </div>
+                    </div>
+                    <div class="cart-footer">
+                        <div class="cart-total">
+                            <span>TOTAL:</span>
+                            <span id="cartTotal" style="color:#667eea">S/ 0.00</span>
+                        </div>
+                        <button class="btn-continue" id="btnContinue" disabled>Ver Itinerario →</button>
+                    </div>
+                </div>
+            `;
+            
+            renderTours();
+            
+            document.getElementById('searchInput').addEventListener('input', filterTours);
+            document.getElementById('sortFilter').addEventListener('change', filterTours);
+            document.getElementById('durationFilter').addEventListener('change', filterTours);
+            document.getElementById('priceFilter').addEventListener('change', filterTours);
+        }
+
+        function renderTours() {
+            const grid = document.getElementById('toursGrid');
+            if (!grid) return;
+            
+            grid.innerHTML = allTours.map((tour, i) => {
+                const selected = cart.some(c => c.index === i);
+                const cartIndex = selected ? cart.findIndex(c => c.index === i) + 1 : '';
+                return `
+                    <div class="tour-card ${selected ? 'selected' : ''}" onclick="toggleCart(${i})">
+                        <div class="tour-img">
+                            <div class="selection-num">${cartIndex}</div>
+                            <div class="tour-overlay">+</div>
+                        </div>
+                        <div class="tour-info">
+                            <h3>${tour.name}</h3>
+                            <p>📅 ${tour.duration_days} día${tour.duration_days > 1 ? 's' : ''}</p>
+                            <p class="tour-price">S/ ${tour.price.toFixed(2)}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleCart(index) {
+            const exists = cart.findIndex(c => c.index === index);
+            if (exists >= 0) {
+                cart.splice(exists, 1);
+            } else {
+                cart.push({ index, ...allTours[index] });
+            }
+            renderTours();
+            updateCart();
+        }
+
+        function updateCart() {
+            const badge = document.getElementById('cartBadge');
+            const total = document.getElementById('cartTotal');
+            const content = document.getElementById('cartContent');
+            const btn = document.getElementById('btnContinue');
+            
+            if (badge) badge.textContent = cart.length;
+            if (btn) btn.disabled = cart.length === 0;
+            
+            const sum = cart.reduce((acc, t) => acc + t.price, 0);
+            if (total) total.textContent = `S/ ${sum.toFixed(2)}`;
+            
+            if (content) {
+                if (cart.length === 0) {
+                    content.innerHTML = `
+                        <div style="text-align:center;padding:40px 20px;color:#999">
+                            <div style="font-size:50px">📋</div>
+                            <p>No hay tours seleccionados</p>
+                        </div>
+                    `;
+                } else {
+                    content.innerHTML = cart.map((t, i) => `
+                        <div class="cart-item">
+                            <div style="display:flex;align-items:center;gap:10px">
+                                <div class="cart-item-num">${i + 1}</div>
+                                <div>
+                                    <div style="font-weight:600;font-size:14px">${t.name}</div>
+                                    <div style="color:#667eea;font-weight:600">S/ ${t.price.toFixed(2)}</div>
+                                </div>
+                            </div>
+                            <button onclick="toggleCart(${t.index})" style="border:none;background:#dc3545;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer">×</button>
+                        </div>
+                    `).join('');
+                }
+            }
+        }
+
+        function filterTours() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const sort = document.getElementById('sortFilter').value;
+            const duration = document.getElementById('durationFilter').value;
+            const price = document.getElementById('priceFilter').value;
+            
+            let filtered = [...allTours];
+            
+            if (search) filtered = filtered.filter(t => t.name.toLowerCase().includes(search));
+            
+            if (duration !== 'all') {
+                const d = parseInt(duration);
+                filtered = filtered.filter(t => duration === '4+' ? t.duration_days >= 4 : t.duration_days === d);
+            }
+            
+            if (price !== 'all') {
+                const [min, max] = price.split('-');
+                filtered = filtered.filter(t => {
+                    if (max === '+') return t.price >= parseInt(min);
+                    return t.price >= parseInt(min) && t.price <= parseInt(max);
+                });
+            }
+            
+            if (sort === 'price-low') filtered.sort((a, b) => a.price - b.price);
+            if (sort === 'price-high') filtered.sort((a, b) => b.price - a.price);
+            if (sort === 'name') filtered.sort((a, b) => a.name.localeCompare(b.name));
+            
+            allTours = filtered;
+            renderTours();
+        }
+
+        function logout() {
+            localStorage.removeItem('loggedUser');
+            location.reload();
         }
     </script>
 </body>
