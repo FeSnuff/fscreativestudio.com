@@ -91,6 +91,23 @@
             color: #666;
             line-height: 1.6;
         }
+
+        .btn-retry {
+            margin-top: 20px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-retry:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 <body>
@@ -116,6 +133,9 @@
             constructor() {
                 this.currentView = 'login';
                 this.user = null;
+                this.tours = [];      // Tours data from Google Sheets
+                this.cart = [];       // Selected tours
+                this.sheetsUrl = 'TU_URL_DE_GOOGLE_SHEETS_AQUI'; // ← CAMBIA ESTO
                 this.init();
             }
             
@@ -123,11 +143,14 @@
                 console.log('🚀 Iniciando aplicación...');
                 
                 try {
-                    // Load navbar and footer
+                    // 1. Load tours data FIRST (from Google Sheets)
+                    await this.loadToursData();
+                    
+                    // 2. Load navbar and footer
                     await this.loadComponent('navbar', 'navbar-container');
                     await this.loadComponent('footer', 'footer-container');
                     
-                    // Check if user is logged in
+                    // 3. Check if user is logged in
                     this.user = localStorage.getItem('toursAppUser');
                     
                     if (this.user) {
@@ -143,6 +166,47 @@
                 } catch (error) {
                     console.error('❌ Error al iniciar aplicación:', error);
                     this.showError('Error al cargar la aplicación', error.message);
+                }
+            }
+            
+            async loadToursData() {
+                try {
+                    console.log('📦 Cargando tours desde Google Sheets...');
+                    
+                    const response = await fetch(this.sheetsUrl);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    this.tours = await response.json();
+                    console.log(`✅ ${this.tours.length} tours cargados globalmente`);
+                    
+                    // Validate data structure
+                    if (!Array.isArray(this.tours) || this.tours.length === 0) {
+                        throw new Error('Los datos no tienen el formato correcto o están vacíos');
+                    }
+                    
+                } catch (error) {
+                    console.error('❌ Error cargando tours:', error);
+                    
+                    // Show error with retry option
+                    const mainContent = document.getElementById('main-content');
+                    mainContent.innerHTML = `
+                        <div class="error-container">
+                            <div class="error-icon">⚠️</div>
+                            <h2 class="error-title">Error al cargar tours</h2>
+                            <p class="error-message">${error.message}</p>
+                            <p class="error-message" style="margin-top: 15px; font-size: 13px;">
+                                Verifica que la URL de Google Sheets esté correcta en index.html
+                            </p>
+                            <button class="btn-retry" onclick="location.reload()">
+                                🔄 Reintentar
+                            </button>
+                        </div>
+                    `;
+                    
+                    throw error; // Stop initialization
                 }
             }
             
@@ -218,6 +282,7 @@
             logout() {
                 if (confirm('¿Estás seguro de cerrar sesión?')) {
                     this.user = null;
+                    this.cart = [];
                     localStorage.removeItem('toursAppUser');
                     localStorage.removeItem('toursAppEmail');
                     
@@ -233,6 +298,9 @@
                         <div class="error-icon">⚠️</div>
                         <h2 class="error-title">${title}</h2>
                         <p class="error-message">${message}</p>
+                        <button class="btn-retry" onclick="location.reload()">
+                            🔄 Reintentar
+                        </button>
                     </div>
                 `;
             }
