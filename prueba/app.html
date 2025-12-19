@@ -956,6 +956,30 @@
         .price-value {
             font-size: 18px;
             font-weight: 600;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .price-value:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .price-value-input {
+            background: white;
+            color: #333;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: 600;
+            width: 150px;
+            text-align: right;
+        }
+
+        .price-value-input:focus {
+            outline: 2px solid #ffc107;
         }
 
         .view2-actions {
@@ -1388,14 +1412,6 @@
                     </div>
                 </div>
 
-                <!-- Modificar Precio -->
-                <div class="option-section">
-                    <div class="checkbox-option">
-                        <input type="checkbox" id="enablePriceEdit" checked onchange="togglePriceEdit()">
-                        <label for="enablePriceEdit">💰 Modificar Precio Total</label>
-                    </div>
-                </div>
-
                 <!-- Presupuesto Niño -->
                 <div class="option-section">
                     <div class="checkbox-option">
@@ -1419,21 +1435,27 @@
                         
                         <div class="form-group-view2">
                             <label>Nacionalidad</label>
-                            <select id="clientNationality" onchange="updateCountryCode()">
-                                <option value="+51">🇵🇪 Perú</option>
-                                <option value="+1">🇺🇸 Estados Unidos</option>
-                                <option value="+52">🇲🇽 México</option>
-                                <option value="+54">🇦🇷 Argentina</option>
-                                <option value="+55">🇧🇷 Brasil</option>
-                                <option value="+56">🇨🇱 Chile</option>
-                                <option value="+57">🇨🇴 Colombia</option>
-                                <option value="+34">🇪🇸 España</option>
-                                <option value="+33">🇫🇷 Francia</option>
-                                <option value="+49">🇩🇪 Alemania</option>
-                                <option value="+44">🇬🇧 Reino Unido</option>
-                                <option value="+39">🇮🇹 Italia</option>
-                                <option value="+81">🇯🇵 Japón</option>
-                                <option value="+86">🇨🇳 China</option>
+                            <select id="clientNationality" onchange="updateCountryCode()" style="font-size: 20px;">
+                                <option value="+51">🇵🇪</option>
+                                <option value="+1">🇺🇸</option>
+                                <option value="+52">🇲🇽</option>
+                                <option value="+54">🇦🇷</option>
+                                <option value="+55">🇧🇷</option>
+                                <option value="+56">🇨🇱</option>
+                                <option value="+57">🇨🇴</option>
+                                <option value="+593">🇪🇨</option>
+                                <option value="+591">🇧🇴</option>
+                                <option value="+34">🇪🇸</option>
+                                <option value="+33">🇫🇷</option>
+                                <option value="+49">🇩🇪</option>
+                                <option value="+44">🇬🇧</option>
+                                <option value="+39">🇮🇹</option>
+                                <option value="+351">🇵🇹</option>
+                                <option value="+81">🇯🇵</option>
+                                <option value="+86">🇨🇳</option>
+                                <option value="+82">🇰🇷</option>
+                                <option value="+61">🇦🇺</option>
+                                <option value="+64">🇳🇿</option>
                             </select>
                         </div>
                         
@@ -1451,11 +1473,11 @@
                 <div class="price-totals">
                     <div class="price-row">
                         <span class="price-label">Total por Adulto:</span>
-                        <span class="price-value" id="totalAdult">S/ 0</span>
+                        <span class="price-value" id="totalAdult" onclick="editPrice('adult')">S/ 0</span>
                     </div>
                     <div class="price-row" id="childPriceRow" style="display: none;">
                         <span class="price-label">Total por Niño:</span>
-                        <span class="price-value" id="totalChild">S/ 0</span>
+                        <span class="price-value" id="totalChild" onclick="editPrice('child')">S/ 0</span>
                     </div>
                 </div>
             </div>
@@ -2253,19 +2275,23 @@
         // Renderizar tours en Vista 2
         function renderView2Tours() {
             const container = document.getElementById('view2ToursList');
+            const symbol = view2Data.currency === 'PEN' ? 'S/' : '$';
+            const rate = view2Data.currency === 'USD' ? 3.75 : 1;
             
             container.innerHTML = cart.map((tour, index) => {
                 const nights = tour.duration_days > 1 ? tour.duration_days - 1 : 0;
                 const durationText = nights > 0 ? `${tour.duration_days} días / ${nights} noche${nights > 1 ? 's' : ''}` : `${tour.duration_days} día`;
+                const convertedPrice = (tour.price / rate).toFixed(2);
                 
                 return `
                     <div class="view2-tour-card">
                         <div class="view2-tour-header">
                             <div class="view2-tour-name">${tour.name}</div>
-                            <div class="view2-tour-price">S/ ${tour.price.toFixed(2)}</div>
+                            <div class="view2-tour-price">${symbol} ${convertedPrice}</div>
                         </div>
                         <div class="view2-tour-info">
                             <span>📅 ${durationText}</span>
+                            <span style="color: #999; font-size: 12px;">Precio sugerido</span>
                         </div>
                     </div>
                 `;
@@ -2276,12 +2302,58 @@
         function updateView2Currency() {
             const currency = document.querySelector('input[name="currency"]:checked').value;
             view2Data.currency = currency;
+            renderView2Tours(); // Re-renderizar tours con nuevos precios
             updateView2Totals();
         }
 
-        // Toggle edición de precio
+        // Toggle edición de precio (removido - siempre editable)
         function togglePriceEdit() {
-            view2Data.priceEditEnabled = document.getElementById('enablePriceEdit').checked;
+            // Función removida, precios siempre editables por click
+        }
+
+        // Editar precio al hacer click
+        function editPrice(type) {
+            const elementId = type === 'adult' ? 'totalAdult' : 'totalChild';
+            const element = document.getElementById(elementId);
+            const currentValue = type === 'adult' ? view2Data.totalAdult : view2Data.totalChild;
+            const symbol = view2Data.currency === 'PEN' ? 'S/' : '$';
+            
+            // Crear input
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.className = 'price-value-input';
+            input.value = currentValue.toFixed(2);
+            input.step = '0.01';
+            
+            // Reemplazar elemento
+            element.replaceWith(input);
+            input.focus();
+            input.select();
+            
+            // Al perder foco o presionar Enter
+            const savePrice = () => {
+                const newValue = parseFloat(input.value) || 0;
+                if (type === 'adult') {
+                    view2Data.totalAdult = newValue;
+                } else {
+                    view2Data.totalChild = newValue;
+                }
+                
+                // Restaurar span
+                const span = document.createElement('span');
+                span.className = 'price-value';
+                span.id = elementId;
+                span.textContent = `${symbol} ${newValue.toFixed(2)}`;
+                span.onclick = () => editPrice(type);
+                input.replaceWith(span);
+            };
+            
+            input.addEventListener('blur', savePrice);
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    savePrice();
+                }
+            });
         }
 
         // Toggle presupuesto niño
@@ -2323,13 +2395,34 @@
 
         // Cancelar Vista 2
         function cancelView2() {
-            if (confirm('¿Estás seguro de cancelar? Los cambios no guardados se perderán.')) {
+            if (confirm('¿Estás seguro de cancelar? Se perderán todos los tours seleccionados y los datos ingresados.')) {
+                // Limpiar carrito y datos
+                cart = [];
+                selectedTours = [];
+                selectionMode = false;
+                
+                // Resetear datos de vista 2
+                view2Data = {
+                    currency: 'PEN',
+                    priceEditEnabled: true,
+                    childBudgetEnabled: false,
+                    clientDataEnabled: false,
+                    clientName: '',
+                    clientNationality: '+51',
+                    clientPhone: '',
+                    totalAdult: 0,
+                    totalChild: 0
+                };
+                
+                // Actualizar UI
+                updateCart();
+                
                 // Volver al catálogo
                 document.getElementById('view2Container').style.display = 'none';
                 document.getElementById('catalogView').style.display = 'block';
                 
-                if (isMobile && cart.length > 0) {
-                    document.getElementById('mobileCartBtn').style.display = 'flex';
+                if (isMobile) {
+                    document.getElementById('mobileCartBtn').style.display = 'none';
                 }
             }
         }
