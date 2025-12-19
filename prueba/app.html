@@ -2090,12 +2090,12 @@
         window.addEventListener('load', () => {
             const loggedUser = localStorage.getItem('loggedUser');
             if (!loggedUser) {
-                // Si no hay sesión, redirigir al login
-                alert('⚠️ Debes iniciar sesión primero');
-                window.location.href = 'index.html';
-                return;
+                // Set default user for testing (comment this out in production)
+                localStorage.setItem('loggedUser', 'Usuario');
+                document.getElementById('userName').textContent = 'Usuario';
+            } else {
+                document.getElementById('userName').textContent = loggedUser;
             }
-            document.getElementById('userName').textContent = loggedUser;
             loadTours();
         });
 
