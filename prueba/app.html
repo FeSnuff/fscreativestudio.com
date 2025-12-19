@@ -626,6 +626,43 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
+        .btn-add-tours {
+            width: 100%;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-add-tours:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .available-tours-panel {
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .add-tour-title {
             font-size: 18px;
             font-weight: bold;
@@ -1033,9 +1070,14 @@
         </div>
 
         <div class="add-tour-section">
-            <div class="add-tour-title">➕ Agregar tours disponibles</div>
-            <div class="available-tours-grid" id="itineraryAvailableTours">
-                <!-- Tours disponibles -->
+            <button class="btn-add-tours" id="btnShowAvailableTours" onclick="toggleAvailableTours()">
+                ➕ Agregar Tours
+            </button>
+            <div class="available-tours-panel" id="availableToursPanel" style="display: none;">
+                <div class="add-tour-title" style="margin-top: 15px;">Selecciona un tour para agregar</div>
+                <div class="available-tours-grid" id="itineraryAvailableTours">
+                    <!-- Tours disponibles -->
+                </div>
             </div>
         </div>
 
@@ -1558,8 +1600,11 @@
         // Renderizar vista de itinerario
         function renderItineraryView() {
             renderItineraryTimeline();
-            renderItineraryAvailableTours();
             updateItinerarySummary();
+            
+            // Asegurarse de que el botón esté visible y el panel oculto
+            document.getElementById('btnShowAvailableTours').style.display = 'block';
+            document.getElementById('availableToursPanel').style.display = 'none';
         }
 
         // Renderizar timeline del itinerario
@@ -1746,6 +1791,25 @@
                 cart.push({...tour});
                 updateCart();
                 renderItineraryView();
+                
+                // Cerrar panel de tours disponibles
+                document.getElementById('availableToursPanel').style.display = 'none';
+                document.getElementById('btnShowAvailableTours').style.display = 'block';
+            }
+        }
+
+        // Toggle panel de tours disponibles
+        function toggleAvailableTours() {
+            const panel = document.getElementById('availableToursPanel');
+            const button = document.getElementById('btnShowAvailableTours');
+            
+            if (panel.style.display === 'none') {
+                panel.style.display = 'block';
+                button.style.display = 'none';
+                renderItineraryAvailableTours();
+            } else {
+                panel.style.display = 'none';
+                button.style.display = 'block';
             }
         }
 
