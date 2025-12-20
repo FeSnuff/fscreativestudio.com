@@ -407,32 +407,25 @@ async function saveItinerary() {
         console.log('Enviando POST request...');
         const response = await fetch(SCRIPT_URL, {
             method: 'POST',
+            mode: 'no-cors',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(payload)
         });
         
-        console.log('Respuesta recibida:', response);
+        console.log('Respuesta recibida (no-cors):', response);
         console.log('Status:', response.status);
-        console.log('OK:', response.ok);
+        console.log('Type:', response.type);
         
-        console.log('Parseando respuesta JSON...');
-        const result = await response.json();
-        console.log('Resultado del servidor:', result);
-        console.log('Version del servidor:', result.version);
+        // Con no-cors no podemos leer la respuesta, pero si llegó aquí se envió
+        console.log('✅ Petición POST enviada');
+        console.log('📋 Verifica tu Google Sheet para confirmar');
         
         btnSave.disabled = false;
         btnSave.textContent = '💾 Guardar Itinerario';
         
-        if (result.success) {
-            console.log('✅ Itinerario guardado exitosamente');
-            console.log('Fila en Sheet:', result.row);
-            alert(`✅ Itinerario guardado exitosamente\n\nCódigo: ${encodedItinerary}\n\nGuardado en la fila ${result.row} del Sheet.\n\nVersion: ${result.version}`);
-        } else {
-            console.error('❌ Error del servidor:', result.message);
-            alert(`❌ Error al guardar: ${result.message}`);
-        }
+        alert(`✅ Itinerario enviado al servidor\n\nCódigo: ${encodedItinerary}\n\nRevisa la hoja "Itinerarios" en tu Google Sheet para confirmar.`);
         
     } catch (error) {
         console.error('❌ ERROR AL GUARDAR:', error);
