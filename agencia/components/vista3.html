@@ -1,0 +1,281 @@
+<style>
+body { background: #f5f5f5; min-height: 100vh; margin: 0; font-family: Arial, sans-serif; }
+.vista3-container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+.vista3-header { background: #fff; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.header-controls { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; }
+.view-options { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
+.radio-view { display: flex; align-items: center; gap: 10px; padding: 10px 20px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; background: #fff; }
+.radio-view input { width: 18px; height: 18px; cursor: pointer; }
+.radio-view.selected { border-color: #667eea; background: #f0f4ff; }
+.color-picker-group { display: flex; align-items: center; gap: 10px; }
+.color-picker-group label { font-weight: 600; color: #333; }
+.color-picker-group input[type="color"] { width: 50px; height: 40px; border: 2px solid #e0e0e0; border-radius: 5px; cursor: pointer; }
+.action-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn { padding: 10px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+.btn-back { background: #6c757d; color: white; }
+.btn-edit { background: #ffc107; color: #333; }
+.btn-pdf { background: #28a745; color: white; }
+.btn-cancel { background: #dc3545; color: white; }
+.btn-logout { background: #343a40; color: white; }
+.document { background: #fff; padding: 40px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.doc-header { border-bottom: 3px solid var(--primary-color, #667eea); padding-bottom: 20px; margin-bottom: 30px; }
+.doc-logo { font-size: 28px; font-weight: bold; color: var(--primary-color, #667eea); margin-bottom: 10px; }
+.doc-info { color: #666; font-size: 14px; line-height: 1.8; }
+.doc-title { font-size: 24px; font-weight: bold; color: #333; text-align: center; margin-bottom: 30px; }
+.itinerary-section { margin-bottom: 30px; }
+.section-title { font-size: 20px; font-weight: bold; color: var(--primary-color, #667eea); margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid var(--primary-color, #667eea); }
+.day-item { margin-bottom: 25px; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid var(--primary-color, #667eea); }
+.day-title { font-size: 18px; font-weight: bold; color: var(--primary-color, #667eea); margin-bottom: 10px; }
+.tour-name-day { font-size: 16px; font-weight: 600; color: #333; margin-bottom: 10px; }
+.tour-image-detail { width: 100%; height: 200px; border-radius: 8px; object-fit: cover; margin-bottom: 15px; background: linear-gradient(135deg, #667eea, #764ba2); }
+.tour-summary { color: #666; line-height: 1.6; margin-bottom: 15px; }
+.includes-section { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px; }
+.includes-list { background: #fff; padding: 15px; border-radius: 8px; }
+.includes-list h4 { color: #28a745; margin-bottom: 10px; font-size: 14px; }
+.not-includes-list h4 { color: #dc3545; margin-bottom: 10px; font-size: 14px; }
+.includes-list ul { list-style: none; padding: 0; margin: 0; }
+.includes-list li { padding: 5px 0; font-size: 13px; color: #666; }
+.includes-list li:before { content: "✓ "; color: #28a745; font-weight: bold; }
+.not-includes-list { background: #fff; padding: 15px; border-radius: 8px; }
+.not-includes-list ul { list-style: none; padding: 0; margin: 0; }
+.not-includes-list li { padding: 5px 0; font-size: 13px; color: #666; }
+.not-includes-list li:before { content: "✗ "; color: #dc3545; font-weight: bold; }
+.cost-summary { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+.cost-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e0e0e0; }
+.cost-total { display: flex; justify-content: space-between; padding: 15px 0; font-size: 20px; font-weight: bold; color: var(--primary-color, #667eea); margin-top: 10px; }
+.validity { background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107; margin-bottom: 20px; color: #856404; }
+.payment-methods { margin-bottom: 20px; }
+.payment-images { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+.payment-images img { height: 40px; border-radius: 5px; }
+.terms { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+.terms h3 { color: #333; margin-bottom: 15px; font-size: 18px; }
+.terms ul { color: #666; line-height: 1.8; }
+.doc-footer { border-top: 2px solid var(--primary-color, #667eea); padding-top: 20px; margin-top: 30px; text-align: center; color: #666; font-size: 12px; line-height: 1.6; }
+@media (max-width: 768px) {
+    .includes-section { grid-template-columns: 1fr; }
+    .document { padding: 20px; }
+    .action-buttons { width: 100%; }
+    .btn { flex: 1; }
+}
+</style>
+
+<div class="vista3-container">
+    <div class="vista3-header">
+        <div class="header-controls">
+            <div class="view-options">
+                <div class="radio-view selected" id="viewResumen" onclick="selectView('resumen')">
+                    <input type="radio" name="viewType" value="resumen" checked>
+                    <span>📄 Resumen</span>
+                </div>
+                <div class="radio-view" id="viewDetallado" onclick="selectView('detallado')">
+                    <input type="radio" name="viewType" value="detallado">
+                    <span>📋 Detallado</span>
+                </div>
+                <div class="color-picker-group">
+                    <label>Color:</label>
+                    <input type="color" id="primaryColor" value="#667eea" onchange="updatePrimaryColor()">
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-back" onclick="loadView('vista2')">← Anterior</button>
+                <button class="btn btn-edit" onclick="loadView('vista1')">✏️ Editar</button>
+                <button class="btn btn-pdf" onclick="alert('Función de PDF próximamente')">📥 Generar PDF</button>
+                <button class="btn btn-cancel" onclick="confirmCancel()">❌ Cancelar</button>
+                <button class="btn btn-logout" onclick="logout()">🚪 Salir</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="document" id="documentContent"></div>
+</div>
+
+<script>
+let currentView = 'resumen';
+let primaryColor = '#667eea';
+
+function selectView(view) {
+    currentView = view;
+    document.getElementById('viewResumen').classList.toggle('selected', view === 'resumen');
+    document.getElementById('viewDetallado').classList.toggle('selected', view === 'detallado');
+    document.querySelectorAll('input[name="viewType"]').forEach(radio => {
+        radio.checked = radio.value === view;
+    });
+    renderDocument();
+}
+
+function updatePrimaryColor() {
+    primaryColor = document.getElementById('primaryColor').value;
+    document.documentElement.style.setProperty('--primary-color', primaryColor);
+}
+
+function renderDocument() {
+    const vista2 = VISTA2_DATA || {};
+    const currency = vista2.currency === 'USD' ? '$' : 'S/';
+    const total = vista2.totalAmount || CART.reduce((acc, t) => acc + t.price, 0);
+    
+    let currentDay = 1;
+    let daysHTML = '';
+    
+    CART.forEach((tour, index) => {
+        const days = tour.duration_days;
+        const dayLabel = days === 1 ? `Día ${currentDay}` : `Días ${currentDay} - ${currentDay + days - 1}`;
+        
+        if (currentView === 'resumen') {
+            daysHTML += `
+                <div class="day-item">
+                    <div class="day-title">${dayLabel}</div>
+                    <div class="tour-name-day">${tour.name}</div>
+                    ${renderIncludes(tour)}
+                </div>
+            `;
+        } else {
+            const imageName = tour.name.toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .replace(/ñ/g, 'n')
+                .replace(/[\s\-–—]+/g, '_');
+            const imageUrl = IMAGE_CACHE[tour.name] || `images/${imageName}/Principal.jpg`;
+            
+            daysHTML += `
+                <div class="day-item">
+                    <div class="day-title">${dayLabel}</div>
+                    <div class="tour-name-day">${tour.name}</div>
+                    <img src="${imageUrl}" class="tour-image-detail" alt="${tour.name}" onerror="this.style.background='linear-gradient(135deg, #667eea, #764ba2)'; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3C/svg%3E'">
+                    <div class="tour-summary">${tour.summary || 'Disfruta de una experiencia única en este tour.'}</div>
+                    ${renderIncludes(tour)}
+                </div>
+            `;
+        }
+        
+        currentDay += days;
+    });
+    
+    document.getElementById('documentContent').innerHTML = `
+        <div class="doc-header">
+            <div class="doc-logo">🗺️ Qori Wayra - Travel</div>
+            <div class="doc-info">
+                Experiencias únicas en Cusco y Perú<br>
+                📞 Tel: +51 924 377 454<br>
+                🌐 Web: qoriwayra-travel.com<br>
+                ✉️ Email: qoriwayra.cuscotravel@gmail.com<br>
+                📱 Instagram: @qoriwayratravel
+            </div>
+        </div>
+        
+        <div class="doc-title">ITINERARIO DE VIAJE - ${currentView === 'resumen' ? 'RESUMEN' : 'DETALLADO'}</div>
+        
+        <div class="itinerary-section">
+            <div class="section-title">📅 Cronograma</div>
+            ${daysHTML}
+        </div>
+        
+        <div class="section-title">💰 Resumen de Costos</div>
+        <div class="cost-summary">
+            <div class="cost-row">
+                <span>Cantidad de Tours:</span>
+                <span>${CART.length}</span>
+            </div>
+            <div class="cost-row">
+                <span>Moneda:</span>
+                <span>${vista2.currency === 'USD' ? 'Dólares (USD)' : 'Soles (PEN)'}</span>
+            </div>
+            ${vista2.includeBudgetChild ? `
+            <div class="cost-row">
+                <span>Incluye presupuesto para niño:</span>
+                <span>Sí</span>
+            </div>
+            ` : ''}
+            ${vista2.includeClientData ? `
+            <div class="cost-row">
+                <span>Cliente:</span>
+                <span>${vista2.clientName}</span>
+            </div>
+            <div class="cost-row">
+                <span>Contacto:</span>
+                <span>${vista2.phonePrefix}${vista2.phoneNumber}</span>
+            </div>
+            ` : ''}
+            <div class="cost-total">
+                <span>TOTAL A PAGAR:</span>
+                <span>${currency} ${total.toFixed(2)}</span>
+            </div>
+        </div>
+        
+        <div class="validity">
+            ⏰ <strong>Validez:</strong> Este presupuesto tiene una validez de 2 días desde su emisión.
+        </div>
+        
+        <div class="payment-methods">
+            <div class="section-title">💳 Métodos de Pago</div>
+            <div class="payment-images">
+                <img src="images/metodos/yape.png" alt="Yape" onerror="this.style.display='none'">
+                <img src="images/metodos/plin.png" alt="Plin" onerror="this.style.display='none'">
+                <img src="images/metodos/visa.png" alt="Visa" onerror="this.style.display='none'">
+                <img src="images/metodos/mastercard.png" alt="Mastercard" onerror="this.style.display='none'">
+                <img src="images/metodos/paypal.png" alt="PayPal" onerror="this.style.display='none'">
+            </div>
+        </div>
+        
+        <div class="terms">
+            <h3>📋 Términos y Condiciones</h3>
+            <ul>
+                <li><strong>Adelanto:</strong> Se requiere el 50% del monto total como adelanto para confirmar la reserva.</li>
+                <li><strong>Pagos internacionales:</strong> Los pagos con tarjetas extranjeras mediante PayPal u otros medios internacionales tienen un recargo del 5% al 10% según el método.</li>
+                <li><strong>Reembolsos:</strong> Las cancelaciones con más de 7 días de anticipación tienen derecho a reembolso del 80% del adelanto. Cancelaciones con menos de 7 días no son reembolsables.</li>
+                <li><strong>Cambios climáticos:</strong> En caso de condiciones climáticas adversas, se reprogramará el tour sin costo adicional o se procederá al reembolso completo.</li>
+                <li><strong>Disponibilidad:</strong> Todos los tours están sujetos a disponibilidad y confirmación.</li>
+                <li><strong>Documentación:</strong> Es responsabilidad del cliente contar con la documentación necesaria (pasaporte, visas, etc.).</li>
+            </ul>
+        </div>
+        
+        <div class="doc-footer">
+            <strong>Documento generado por Qori Wayra - Travel</strong><br>
+            Todos los tours están sujetos a disponibilidad y condiciones climáticas<br>
+            Para más información, contáctenos a través de nuestros canales oficiales
+        </div>
+    `;
+}
+
+function renderIncludes(tour) {
+    const includes = tour.includes || ['Transporte', 'Guía profesional', 'Entradas'];
+    const notIncludes = tour.not_includes || ['Alimentación adicional', 'Propinas', 'Gastos personales'];
+    
+    return `
+        <div class="includes-section">
+            <div class="includes-list">
+                <h4>✓ Incluye:</h4>
+                <ul>
+                    ${includes.map(item => `<li>${item}</li>`).join('')}
+                </ul>
+            </div>
+            <div class="not-includes-list">
+                <h4>✗ No Incluye:</h4>
+                <ul>
+                    ${notIncludes.map(item => `<li>${item}</li>`).join('')}
+                </ul>
+            </div>
+        </div>
+    `;
+}
+
+function confirmCancel() {
+    if (confirm('¿Estás seguro de que deseas cancelar? Se perderán todos los datos.')) {
+        clearAllData();
+        loadView('vistatours');
+    }
+}
+
+// Initialize
+updatePrimaryColor();
+renderDocument();
+
+// Click handlers for radio views
+document.querySelectorAll('.radio-view').forEach(view => {
+    view.addEventListener('click', function() {
+        const input = this.querySelector('input[type="radio"]');
+        if (input) {
+            input.checked = true;
+            selectView(input.value);
+        }
+    });
+});
+</script>
