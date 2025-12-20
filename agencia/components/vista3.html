@@ -439,30 +439,37 @@ async function generatePDF() {
             throw new Error('Canvas vacío - no se pudo capturar el contenido');
         }
         
-        // Create PDF
+        // Create PDF with better page handling
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'mm', 'a4');
         
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = pdf.internal.pageSize.getHeight();
-        const imgWidth = pdfWidth - 20; // margins
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const margin = 10;
+        const contentWidth = pageWidth - (2 * margin);
+        const contentHeight = pageHeight - (2 * margin);
+        
+        // Calculate scaling
+        const imgWidth = contentWidth;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
         
-        const imgData = canvas.toDataURL('image/png');
+        const imgData = canvas.toDataURL('image/png', 1.0);
         
-        let heightLeft = imgHeight;
-        let position = 10;
-        
-        // First page
-        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-        heightLeft -= (pdfHeight - 20);
-        
-        // Additional pages
-        while (heightLeft > 0) {
-            position = heightLeft - imgHeight + 10;
-            pdf.addPage();
-            pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-            heightLeft -= (pdfHeight - 20);
+        // If content fits in one page
+        if (imgHeight <= contentHeight) {
+            pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight);
+        } else {
+            // Multiple pages needed
+            const totalPages = Math.ceil(imgHeight / contentHeight);
+            
+            for (let page = 0; page < totalPages; page++) {
+                if (page > 0) {
+                    pdf.addPage();
+                }
+                
+                const yOffset = -(page * contentHeight);
+                pdf.addImage(imgData, 'PNG', margin, yOffset + margin, imgWidth, imgHeight);
+            }
         }
         
         // Save
