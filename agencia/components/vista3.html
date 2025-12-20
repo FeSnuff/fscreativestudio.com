@@ -351,6 +351,8 @@ async function saveItinerary() {
     btnSave.textContent = '⏳ Guardando...';
     
     try {
+        console.log('=== INICIANDO GUARDADO DE ITINERARIO ===');
+        
         const vista2 = VISTA2_DATA || {};
         const totalDays = CART.reduce((acc, t) => acc + t.duration_days, 0);
         const currency = vista2.currency === 'USD' ? '$' : 'S/';
@@ -358,8 +360,20 @@ async function saveItinerary() {
         const childTotal = vista2.childTotal || 0;
         const total = adultTotal + childTotal;
         
+        console.log('Datos del cliente:', {
+            nombre: vista2.clientName,
+            nacionalidad: vista2.clientNationality,
+            telefono: `${vista2.phonePrefix}${vista2.phoneNumber}`
+        });
+        
+        console.log('Tours en el carrito:', CART.map(t => t.name));
+        console.log('Total días:', totalDays);
+        console.log('Total a pagar:', `${currency} ${total.toFixed(2)}`);
+        
         // Generate encoded itinerary
+        console.log('Generando código cifrado...');
         const encodedItinerary = window.encodeItinerary();
+        console.log('Código generado:', encodedItinerary);
         
         // Prepare data for Google Sheets
         const itineraryData = {
@@ -375,8 +389,20 @@ async function saveItinerary() {
             usuario: USER || 'Anónimo'
         };
         
+        console.log('Datos a enviar al servidor:', itineraryData);
+        
         // Send to Google Apps Script
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxgnj4XWyRHZewUrmUKWeDsyJ_6HrlUwivjVAeTUjzGGoz-wwanibcNDUL7XrWDDUDm8A/exec';
+        
+        console.log('Enviando a Google Apps Script...');
+        console.log('URL:', SCRIPT_URL);
+        
+        const payload = {
+            action: 'saveItinerary',
+            data: itineraryData
+        };
+        
+        console.log('Payload completo:', JSON.stringify(payload, null, 2));
         
         const response = await fetch(SCRIPT_URL, {
             method: 'POST',
@@ -384,19 +410,27 @@ async function saveItinerary() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                action: 'saveItinerary',
-                data: itineraryData
-            })
+            body: JSON.stringify(payload)
         });
+        
+        console.log('Respuesta recibida:', response);
+        console.log('Status:', response.status);
+        console.log('Type:', response.type);
+        
+        // Con mode: 'no-cors' no podemos leer la respuesta, pero si llegó aquí es que se envió
+        console.log('✅ Petición enviada exitosamente');
+        console.log('⚠️ Nota: Con mode no-cors no podemos ver la respuesta del servidor');
+        console.log('📋 Revisa tu Google Sheet para verificar si se guardó');
         
         btnSave.disabled = false;
         btnSave.textContent = '💾 Guardar Itinerario';
         
-        alert(`✅ Itinerario guardado exitosamente\n\nCódigo: ${encodedItinerary}\n\nEste código puede usarse para recuperar el itinerario.`);
+        alert(`✅ Itinerario enviado al servidor\n\nCódigo: ${encodedItinerary}\n\nRevisa tu Google Sheet en la hoja "Itinerarios" para confirmar que se guardó.`);
         
     } catch (error) {
-        console.error('Error guardando itinerario:', error);
+        console.error('❌ ERROR AL GUARDAR:', error);
+        console.error('Mensaje de error:', error.message);
+        console.error('Stack trace:', error.stack);
         btnSave.disabled = false;
         btnSave.textContent = '💾 Guardar Itinerario';
         alert('❌ Error al guardar itinerario: ' + error.message);
