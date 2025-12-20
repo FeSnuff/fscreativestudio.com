@@ -130,7 +130,7 @@ function renderTours() {
     grid.innerHTML = TOURS.map((tour, i) => {
         const selected = CART.some(item => item.index === i);
         const cartIndex = selected ? CART.findIndex(item => item.index === i) + 1 : '';
-        const imageName = tour.name.toLowerCase().replace(/[\s\-]+/g, '_');
+        const imageName = tour.name.toLowerCase().replace(/[\s\-–—]+/g, '_');
         const imageUrl = `images/${imageName}/Principal.webp`;
         return `
             <div class="tour-card ${selected ? 'selected' : ''}" onclick="addToCart(${i})">
