@@ -146,11 +146,7 @@ function renderTours() {
         
         return `
             <div class="tour-card ${selected ? 'selected' : ''}" onclick="addToCart(${i})">
-                <div class="tour-image" style="background: url('images/${imageName}/Principal.webp') center/cover, 
-                                                        url('images/${imageName}/Principal.jpg') center/cover,
-                                                        url('images/${imageName}/Principal.jpeg') center/cover,
-                                                        url('images/${imageName}/Principal.png') center/cover,
-                                                        linear-gradient(135deg, #667eea, #764ba2);">
+                <div class="tour-image" id="tour-img-${i}" style="background: linear-gradient(135deg, #667eea, #764ba2);">
                     <span class="badge">${cartIndex}</span>
                     <div class="overlay">+</div>
                 </div>
@@ -162,6 +158,43 @@ function renderTours() {
             </div>
         `;
     }).join('');
+    
+    // Load images after rendering
+    TOURS.forEach((tour, i) => {
+        const imageName = tour.name.toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/ñ/g, 'n')
+            .replace(/[\s\-–—]+/g, '_');
+        loadTourImage(i, imageName);
+    });
+}
+
+function loadTourImage(index, imageName) {
+    const formats = ['webp', 'jpg', 'jpeg', 'png'];
+    const imgElement = document.getElementById(`tour-img-${index}`);
+    if (!imgElement) return;
+    
+    let currentFormat = 0;
+    
+    function tryNextFormat() {
+        if (currentFormat >= formats.length) return;
+        
+        const img = new Image();
+        const url = `images/${imageName}/Principal.${formats[currentFormat]}`;
+        
+        img.onload = function() {
+            imgElement.style.background = `url('${url}') center/cover`;
+        };
+        
+        img.onerror = function() {
+            currentFormat++;
+            tryNextFormat();
+        };
+        
+        img.src = url;
+    }
+    
+    tryNextFormat();
 }
 
 function updateCart() {
