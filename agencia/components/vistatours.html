@@ -204,7 +204,7 @@ function loadTourImage(index, imageName) {
 function updateCart() {
     const badge = document.getElementById('cartBadge');
     const total = document.getElementById('cartTotal');
-    const content = document.getElementById('cartContent');
+    const cartContent = document.getElementById('cartContent');
     const btn = document.getElementById('btnContinue');
     const floatingBtn = document.getElementById('floatingCartBtn');
     const floatingBadge = document.getElementById('floatingBadge');
@@ -219,16 +219,16 @@ function updateCart() {
     if (total) total.textContent = `S/ ${sum.toFixed(2)}`;
     if (floatingTotal) floatingTotal.textContent = sum.toFixed(2);
     
-    if (content) {
+    if (cartContent) {
         if (CART.length === 0) {
-            content.innerHTML = `
+            cartContent.innerHTML = `
                 <div class="empty-cart">
                     <div>📋</div>
                     <p>No hay tours seleccionados</p>
                 </div>
             `;
         } else {
-            content.innerHTML = CART.map((t, i) => `
+            cartContent.innerHTML = CART.map((t, i) => `
                 <div class="cart-item">
                     <div class="cart-item-info">
                         <div class="cart-item-num">${i + 1}</div>
