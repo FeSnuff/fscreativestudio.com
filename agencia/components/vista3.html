@@ -44,6 +44,7 @@ body { background: #f5f5f5; min-height: 100vh; margin: 0; font-family: Arial, sa
 .not-includes-list ul { list-style: none; padding: 0; margin: 0; }
 .not-includes-list li { padding: 5px 0; font-size: 13px; color: #666; }
 .cost-summary { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+.cost-summary-wrapper { page-break-inside: avoid !important; margin-bottom: 20px; }
 .cost-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e0e0e0; }
 .cost-total { display: flex; justify-content: space-between; padding: 15px 0; font-size: 20px; font-weight: bold; color: var(--primary-color, #667eea); margin-top: 10px; }
 .validity { background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107; margin-bottom: 20px; color: #856404; }
@@ -266,8 +267,9 @@ function renderDocument() {
         </div>
         
         <div class="final-page-section">
-            <div class="section-title">💰 Resumen de Costos</div>
-            <div class="cost-summary">
+            <div class="cost-summary-wrapper">
+                <div class="section-title">💰 Resumen de Costos</div>
+                <div class="cost-summary">
                 <div class="cost-row">
                     <span>Cantidad de Tours:</span>
                     <span>${CART.length}</span>
@@ -291,6 +293,7 @@ function renderDocument() {
                     <span>${currency} ${adultTotal.toFixed(2)}</span>
                 </div>
                 `}
+            </div>
             </div>
             
             <div class="validity">
@@ -505,6 +508,15 @@ async function generatePDF() {
                 margin-top: 20px !important;
             }
             
+            /* Mantener título con su contenido */
+            .cost-summary-wrapper {
+                page-break-inside: avoid !important;
+            }
+            
+            .section-title {
+                page-break-after: avoid !important;
+            }
+            
             /* Optimizar espaciado para aprovechar mejor el espacio */
             .itinerary-section {
                 margin-bottom: 20px !important;
@@ -600,7 +612,7 @@ async function generatePDF() {
             },
             pagebreak: { 
                 mode: ['avoid-all', 'css'],
-                avoid: ['.day-item', '.includes-section', '.activity-list', '.cost-summary', '.validity', '.payment-methods', '.terms', '.doc-footer', '.final-page-section']
+                avoid: ['.day-item', '.includes-section', '.activity-list', '.cost-summary-wrapper', '.cost-summary', '.validity', '.payment-methods', '.terms', '.doc-footer', '.final-page-section']
             }
         };
         
