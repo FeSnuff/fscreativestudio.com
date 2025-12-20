@@ -160,16 +160,22 @@
 
         // CARGAR VISTA
         async function loadView(viewName) {
-            // Load navbar
-            const navResponse = await fetch('components/navbar.html');
-            const navHtml = await navResponse.text();
+            let finalHtml = '';
+            
+            // NO cargar navbar en login
+            if (viewName !== 'login') {
+                const navResponse = await fetch('components/navbar.html');
+                const navHtml = await navResponse.text();
+                finalHtml += navHtml;
+            }
             
             // Load view content
             const response = await fetch(`components/${viewName}.html`);
             const html = await response.text();
+            finalHtml += html;
             
-            // Combine navbar + content
-            document.getElementById('app').innerHTML = navHtml + html;
+            // Set HTML
+            document.getElementById('app').innerHTML = finalHtml;
             
             // Execute scripts
             const scripts = document.getElementById('app').querySelectorAll('script');
@@ -180,7 +186,7 @@
             });
             
             // Update navbar active state
-            if (typeof updateNavbar === 'function') {
+            if (viewName !== 'login' && typeof updateNavbar === 'function') {
                 updateNavbar(viewName);
             }
         }
