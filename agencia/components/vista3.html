@@ -350,70 +350,101 @@ async function generatePDF() {
     btnPDF.textContent = '⏳ Generando PDF...';
     
     try {
-        // Load html2pdf library
-        if (!window.html2pdf) {
-            const script = document.createElement('script');
-            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+        // Load libraries if not present
+        if (!window.jspdf) {
+            const jsPDFScript = document.createElement('script');
+            jsPDFScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
             await new Promise((resolve, reject) => {
-                script.onload = resolve;
-                script.onerror = reject;
-                document.head.appendChild(script);
+                jsPDFScript.onload = resolve;
+                jsPDFScript.onerror = reject;
+                document.head.appendChild(jsPDFScript);
             });
         }
         
-        const element = document.getElementById('documentContent');
-        const vista2 = VISTA2_DATA || {};
-        const totalDays = CART.reduce((acc, t) => acc + t.duration_days, 0);
-        
-        // Separate cost summary from main content
-        const costSummaryStart = element.innerHTML.indexOf('<div class="section-title">💰 Resumen de Costos</div>');
-        const validityStart = element.innerHTML.indexOf('<div class="validity">');
-        
-        let mainContent = element.innerHTML;
-        let costContent = '';
-        
-        if (costSummaryStart > -1 && validityStart > -1) {
-            mainContent = element.innerHTML.substring(0, costSummaryStart);
-            costContent = element.innerHTML.substring(costSummaryStart);
+        if (!window.html2canvas) {
+            const html2canvasScript = document.createElement('script');
+            html2canvasScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+            await new Promise((resolve, reject) => {
+                html2canvasScript.onload = resolve;
+                html2canvasScript.onerror = reject;
+                document.head.appendChild(html2canvasScript);
+            });
         }
         
-        // Create temporary containers
-        const mainDiv = document.createElement('div');
-        mainDiv.innerHTML = mainContent;
-        mainDiv.style.padding = '20px';
-        mainDiv.style.background = '#fff';
+        // Wait a bit for libraries to be ready
+        await new Promise(resolve => setTimeout(resolve, 100));
         
-        const costDiv = document.createElement('div');
-        costDiv.innerHTML = costContent;
-        costDiv.style.padding = '20px';
-        costDiv.style.background = '#fff';
-        costDiv.style.pageBreakBefore = 'always';
+        const { jsPDF } = window.jspdf;
+        const element = document.getElementById('documentContent');
         
-        // Combine for PDF
-        const pdfContainer = document.createElement('div');
-        pdfContainer.appendChild(mainDiv);
-        pdfContainer.appendChild(costDiv);
-        document.body.appendChild(pdfContainer);
-        pdfContainer.style.position = 'absolute';
-        pdfContainer.style.left = '-9999px';
+        if (!element || !element.innerHTML.trim()) {
+            throw new Error('No hay contenido para generar el PDF');
+        }
         
-        const opt = {
-            margin: 10,
-            filename: `Itinerario_QoriWayra_${totalDays}dias.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, logging: false },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-        };
+        // Clone the element
+        const clone = element.cloneNode(true);
+        clone.style.width = '210mm'; // A4 width
+        clone.style.padding = '20px';
+        clone.style.background = '#fff';
+        clone.style.position = 'absolute';
+        clone.style.left = '-9999px';
+        clone.style.top = '0';
+        document.body.appendChild(clone);
         
-        await html2pdf().set(opt).from(pdfContainer).save();
+        // Wait for images to load
+        const images = clone.querySelectorAll('img');
+        await Promise.all(Array.from(images).map(img => {
+            if (img.complete) return Promise.resolve();
+            return new Promise(resolve => {
+                img.onload = resolve;
+                img.onerror = resolve; // Continue even if image fails
+                setTimeout(resolve, 2000); // Timeout after 2s
+            });
+        }));
         
-        // Clean up
-        document.body.removeChild(pdfContainer);
+        // Generate canvas
+        const canvas = await html2canvas(clone, {
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            backgroundColor: '#ffffff'
+        });
+        
+        // Remove clone
+        document.body.removeChild(clone);
+        
+        // Create PDF
+        const imgData = canvas.toDataURL('image/jpeg', 1.0);
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const imgWidth = pdfWidth - 20; // 10mm margin on each side
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        
+        let heightLeft = imgHeight;
+        let position = 10; // Top margin
+        
+        // Add first page
+        pdf.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
+        heightLeft -= (pdfHeight - 20); // Subtract page height minus margins
+        
+        // Add additional pages if needed
+        while (heightLeft > 0) {
+            position = heightLeft - imgHeight + 10;
+            pdf.addPage();
+            pdf.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
+            heightLeft -= (pdfHeight - 20);
+        }
+        
+        // Save PDF
+        const vista2 = VISTA2_DATA || {};
+        const totalDays = CART.reduce((acc, t) => acc + t.duration_days, 0);
+        const clientName = vista2.clientName ? `_${vista2.clientName.replace(/\s+/g, '_')}` : '';
+        pdf.save(`Itinerario_QoriWayra_${totalDays}dias${clientName}.pdf`);
         
         btnPDF.disabled = false;
         btnPDF.textContent = '📥 Generar PDF';
-        alert('PDF generado exitosamente');
         
     } catch (error) {
         console.error('Error generating PDF:', error);
