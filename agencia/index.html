@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tours App</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; }
+        #app { min-height: 100vh; }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwAOTSKw3rxOu_VyCPmpnXurDApQEiYjwfynkyyOeo8k6g1INY5aRsFruYVXzAsidBB9A/exec';
+        
+        // VARIABLES GLOBALES
+        let USER = null;
+        let TOURS = [];
+        let CART = [];
+        let IMAGE_CACHE = {};
+        let VISTA2_DATA = null;
+        let VISTA3_DATA = null;
+
+        // CARGAR DATOS PERSISTENTES
+        function loadPersistedData() {
+            try {
+                const cachedImages = localStorage.getItem('imageCache');
+                if (cachedImages) IMAGE_CACHE = JSON.parse(cachedImages);
+                
+                const vista2 = localStorage.getItem('vista2Data');
+                if (vista2) VISTA2_DATA = JSON.parse(vista2);
+                
+                const cart = localStorage.getItem('cart');
+                if (cart) CART = JSON.parse(cart);
+            } catch (e) {
+                console.error('Error loading persisted data:', e);
+            }
+        }
+
+        // GUARDAR DATOS EN LOCALSTORAGE
+        function saveImageCache() {
+            try {
+                localStorage.setItem('imageCache', JSON.stringify(IMAGE_CACHE));
+            } catch (e) {
+                console.error('Error saving image cache:', e);
+            }
+        }
+
+        function saveVista2Data(data) {
+            VISTA2_DATA = data;
+            try {
+                localStorage.setItem('vista2Data', JSON.stringify(data));
+            } catch (e) {
+                console.error('Error saving vista2 data:', e);
+            }
+        }
+
+        function saveCart() {
+            try {
+                localStorage.setItem('cart', JSON.stringify(CART));
+            } catch (e) {
+                console.error('Error saving cart:', e);
+            }
+        }
+
+        // LIMPIAR TODOS LOS DATOS
+        function clearAllData() {
+            CART = [];
+            VISTA2_DATA = null;
+            VISTA3_DATA = null;
+            localStorage.removeItem('cart');
+            localStorage.removeItem('vista2Data');
+            localStorage.removeItem('vista3Data');
+        }
+
+        // CARGAR VISTA
+        async function loadView(viewName) {
+            const response = await fetch(`components/${viewName}.html`);
+            const html = await response.text();
+            document.getElementById('app').innerHTML = html;
+            
+            const scripts = document.getElementById('app').querySelectorAll('script');
+            scripts.forEach(oldScript => {
+                const newScript = document.createElement('script');
+                newScript.textContent = oldScript.textContent;
+                oldScript.parentNode.replaceChild(newScript, oldScript);
+            });
+        }
+
+        // CARGAR TOURS
+        async function loadTours() {
+            try {
+                const res = await fetch('tours.json');
+                TOURS = await res.json();
+            } catch (e) {
+                TOURS = [];
+            }
+        }
+
+        // LOGIN
+        async function login(username, password) {
+            const url = `${SCRIPT_URL}?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            if (data.success) {
+                USER = username;
+                localStorage.setItem('user', username);
+                await loadTours();
+                await showSuccess();
+            } else {
+                throw new Error(data.message || 'Usuario o contraseña incorrectos');
+            }
+        }
+
+        async function showSuccess() {
+            await loadView('vistatours');
+        }
+
+        // LOGOUT
+        function logout() {
+            localStorage.removeItem('user');
+            location.reload();
+        }
+
+        // CART MANAGEMENT
+        function addToCart(index) {
+            const exists = CART.findIndex(item => item.index === index);
+            if (exists !== -1) {
+                CART.splice(exists, 1);
+            } else {
+                CART.push({ index, ...TOURS[index] });
+            }
+            saveCart();
+            if (typeof renderTours === 'function') renderTours();
+            if (typeof updateCart === 'function') updateCart();
+        }
+
+        // NAVEGACION
+        async function goToVista1() {
+            await loadView('vista1');
+        }
+
+        async function goToVista2() {
+            await loadView('vista2');
+        }
+
+        async function goToVista3() {
+            await loadView('vista3');
+        }
+
+        // DETECTAR SI ES RECARGA DE PÁGINA
+        let isPageReload = performance.navigation.type === 1 || 
+                          (performance.getEntriesByType('navigation')[0] && 
+                           performance.getEntriesByType('navigation')[0].type === 'reload');
+
+        // INICIALIZAR
+        async function init() {
+            // Si es F5/reload, limpiar datos excepto user e imageCache
+            if (isPageReload) {
+                localStorage.removeItem('cart');
+                localStorage.removeItem('vista2Data');
+                localStorage.removeItem('vista3Data');
+                CART = [];
+                VISTA2_DATA = null;
+                VISTA3_DATA = null;
+            }
+            
+            loadPersistedData();
+            USER = localStorage.getItem('user');
+            
+            if (USER) {
+                await loadTours();
+                await showSuccess();
+            } else {
+                await loadView('login');
+            }
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
