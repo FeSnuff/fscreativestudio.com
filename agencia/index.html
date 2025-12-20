@@ -6,7 +6,7 @@
     <title>Tours App</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        body { font-family: Arial, sans-serif; }
         #app { min-height: 100vh; }
     </style>
 </head>
@@ -16,55 +16,44 @@
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwAOTSKw3rxOu_VyCPmpnXurDApQEiYjwfynkyyOeo8k6g1INY5aRsFruYVXzAsidBB9A/exec';
         let USER = null;
-        let TOURS = [];
-        let CART = [];
 
         async function loadView(viewName) {
-            const res = await fetch(`${viewName}.html`);
-            const html = await res.text();
+            const response = await fetch(`${viewName}.html`);
+            const html = await response.text();
             document.getElementById('app').innerHTML = html;
             
             const scripts = document.getElementById('app').querySelectorAll('script');
-            scripts.forEach(old => {
-                const script = document.createElement('script');
-                script.textContent = old.textContent;
-                old.replaceWith(script);
+            scripts.forEach(oldScript => {
+                const newScript = document.createElement('script');
+                newScript.textContent = oldScript.textContent;
+                oldScript.replaceWith(newScript);
             });
         }
 
-        async function init() {
-            USER = localStorage.getItem('user');
-            
-            if (USER) {
-                await loadTours();
-                await loadView('vistatours');
-            } else {
-                await loadView('login');
-            }
-        }
-
-        async function loadTours() {
-            try {
-                const res = await fetch('tours.json');
-                TOURS = await res.json();
-            } catch (e) {
-                TOURS = [];
-            }
-        }
-
         async function login(username, password) {
-            const url = `${SCRIPT_URL}?username=${username}&password=${password}`;
-            const res = await fetch(url);
-            const data = await res.json();
+            const url = `${SCRIPT_URL}?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
+            const response = await fetch(url);
+            const data = await response.json();
             
             if (data.success) {
-                USER = data.username || username;
-                localStorage.setItem('user', USER);
-                await loadTours();
-                await loadView('vistatours');
+                USER = username;
+                localStorage.setItem('user', username);
+                showSuccess();
             } else {
-                alert(data.message || 'Usuario o contraseña incorrectos');
+                throw new Error(data.message || 'Usuario o contraseña incorrectos');
             }
+        }
+
+        function showSuccess() {
+            document.getElementById('app').innerHTML = `
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center;">
+                    <div style="background: white; padding: 40px; border-radius: 20px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                        <h1 style="color: #333; margin-bottom: 20px;">✅ Login Exitoso</h1>
+                        <p style="font-size: 18px; color: #666;">Bienvenido, <strong>${USER}</strong></p>
+                        <button onclick="logout()" style="margin-top: 20px; padding: 12px 30px; background: #dc3545; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600;">Cerrar Sesión</button>
+                    </div>
+                </div>
+            `;
         }
 
         function logout() {
@@ -72,19 +61,14 @@
             location.reload();
         }
 
-        function addToCart(index) {
-            const exists = CART.findIndex(item => item.index === index);
-            if (exists !== -1) {
-                CART.splice(exists, 1);
+        async function init() {
+            USER = localStorage.getItem('user');
+            
+            if (USER) {
+                showSuccess();
             } else {
-                CART.push({ index, ...TOURS[index] });
+                await loadView('login');
             }
-            renderTours();
-            updateCart();
-        }
-
-        async function goToVista1() {
-            await loadView('vista1');
         }
 
         window.onload = init;
