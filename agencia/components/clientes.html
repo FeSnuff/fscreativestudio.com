@@ -1,0 +1,481 @@
+<style>
+.clientes-view { min-height: 100vh; background: #f5f7fa; padding: 20px; }
+.clientes-container { max-width: 1400px; margin: 0 auto; }
+
+/* Header */
+.clientes-header { background: #fff; padding: 25px 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 30px; }
+.clientes-header h1 { margin: 0 0 20px 0; font-size: 28px; color: #2c3e50; }
+.header-controls { display: flex; gap: 15px; flex-wrap: wrap; align-items: center; }
+.search-box { flex: 1; min-width: 250px; position: relative; }
+.search-box input { width: 100%; padding: 12px 40px 12px 15px; border: 2px solid #e0e6ed; border-radius: 8px; font-size: 14px; }
+.search-box input:focus { outline: none; border-color: #667eea; }
+.search-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af; }
+.filter-group { display: flex; gap: 10px; }
+.filter-btn { padding: 10px 20px; border: 2px solid #e0e6ed; background: #fff; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.3s; }
+.filter-btn:hover { border-color: #667eea; color: #667eea; }
+.filter-btn.active { background: #667eea; color: #fff; border-color: #667eea; }
+
+/* Stats Cards */
+.stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+.stat-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.stat-card .stat-label { font-size: 13px; color: #64748b; font-weight: 500; margin-bottom: 8px; }
+.stat-card .stat-value { font-size: 32px; font-weight: 700; color: #1e293b; }
+.stat-card .stat-icon { font-size: 24px; margin-bottom: 10px; }
+.stat-card.total { border-left: 4px solid #667eea; }
+.stat-card.pending { border-left: 4px solid #f59e0b; }
+.stat-card.confirmed { border-left: 4px solid #10b981; }
+.stat-card.concluded { border-left: 4px solid #6366f1; }
+
+/* Client Cards Grid */
+.clients-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; }
+.client-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); cursor: pointer; transition: all 0.3s; border-left: 4px solid transparent; }
+.client-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+.client-card.status-sin-confirmar { border-left-color: #f59e0b; }
+.client-card.status-confirmado { border-left-color: #10b981; }
+.client-card.status-en-proceso { border-left-color: #3b82f6; }
+.client-card.status-concluido { border-left-color: #6366f1; }
+
+.card-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px; }
+.client-name { font-size: 18px; font-weight: 700; color: #1e293b; margin: 0; }
+.status-badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.status-badge.sin-confirmar { background: #fef3c7; color: #92400e; }
+.status-badge.confirmado { background: #d1fae5; color: #065f46; }
+.status-badge.en-proceso { background: #dbeafe; color: #1e40af; }
+.status-badge.concluido { background: #e0e7ff; color: #4338ca; }
+
+.card-body { margin: 15px 0; }
+.card-info { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 14px; color: #64748b; }
+.card-info-icon { color: #94a3b8; }
+
+.card-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 15px; border-top: 1px solid #e0e6ed; }
+.price-tag { font-size: 20px; font-weight: 700; color: #667eea; }
+.payment-badge { padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; background: #f1f5f9; color: #475569; }
+
+/* Modal */
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 9999; backdrop-filter: blur(4px); }
+.modal-overlay.active { display: flex; align-items: center; justify-content: center; }
+.modal-content { background: #fff; border-radius: 16px; max-width: 700px; width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+.modal-header { padding: 25px 30px; border-bottom: 2px solid #e0e6ed; display: flex; justify-content: space-between; align-items: center; }
+.modal-header h2 { margin: 0; font-size: 24px; color: #1e293b; }
+.modal-close { background: none; border: none; font-size: 28px; cursor: pointer; color: #94a3b8; line-height: 1; }
+.modal-close:hover { color: #475569; }
+
+.modal-body { padding: 30px; }
+.detail-section { margin-bottom: 25px; }
+.detail-section h3 { font-size: 16px; color: #667eea; margin-bottom: 15px; font-weight: 600; }
+.detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+.detail-item { }
+.detail-label { font-size: 12px; color: #64748b; font-weight: 500; margin-bottom: 5px; }
+.detail-value { font-size: 14px; color: #1e293b; font-weight: 600; }
+.detail-full { grid-column: 1 / -1; }
+
+.tours-list { background: #f8fafc; padding: 15px; border-radius: 8px; }
+.tour-item { padding: 10px 0; border-bottom: 1px solid #e0e6ed; }
+.tour-item:last-child { border-bottom: none; }
+
+.action-group { margin-top: 20px; }
+.action-label { font-size: 14px; font-weight: 600; color: #475569; margin-bottom: 10px; }
+.select-custom { width: 100%; padding: 12px; border: 2px solid #e0e6ed; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; }
+.select-custom:focus { outline: none; border-color: #667eea; }
+
+.modal-footer { padding: 20px 30px; border-top: 2px solid #e0e6ed; display: flex; gap: 10px; justify-content: flex-end; }
+.btn { padding: 12px 24px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px; transition: all 0.3s; }
+.btn-primary { background: #667eea; color: #fff; }
+.btn-primary:hover { background: #5568d3; }
+.btn-secondary { background: #e0e6ed; color: #475569; }
+.btn-secondary:hover { background: #cbd5e1; }
+
+.empty-state { text-align: center; padding: 60px 20px; }
+.empty-state-icon { font-size: 64px; margin-bottom: 20px; opacity: 0.3; }
+.empty-state-text { font-size: 18px; color: #64748b; }
+
+/* Navbar button */
+.btn-logout { background: #ef4444; color: #fff; }
+.btn-logout:hover { background: #dc2626; }
+
+/* Loading */
+.loading { text-align: center; padding: 40px; color: #667eea; font-size: 18px; }
+</style>
+
+<div class="clientes-view">
+    <div class="clientes-container">
+        <!-- Header -->
+        <div class="clientes-header">
+            <h1>📋 Gestión de Reservas</h1>
+            <div class="header-controls">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Buscar por nombre o código..." onkeyup="filterClients()">
+                    <span class="search-icon">🔍</span>
+                </div>
+                <div class="filter-group">
+                    <button class="filter-btn active" onclick="filterByStatus('todos')" data-filter="todos">Todos</button>
+                    <button class="filter-btn" onclick="filterByStatus('sin-confirmar')" data-filter="sin-confirmar">Sin Confirmar</button>
+                    <button class="filter-btn" onclick="filterByStatus('confirmado')" data-filter="confirmado">Confirmados</button>
+                    <button class="filter-btn" onclick="filterByStatus('en-proceso')" data-filter="en-proceso">En Proceso</button>
+                    <button class="filter-btn" onclick="filterByStatus('concluido')" data-filter="concluido">Concluidos</button>
+                </div>
+                <button class="btn btn-logout" onclick="logout()">🚪 Salir</button>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-container" id="statsContainer">
+            <div class="stat-card total">
+                <div class="stat-icon">📊</div>
+                <div class="stat-label">Total Reservas</div>
+                <div class="stat-value" id="statTotal">0</div>
+            </div>
+            <div class="stat-card pending">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-label">Sin Confirmar</div>
+                <div class="stat-value" id="statPending">0</div>
+            </div>
+            <div class="stat-card confirmed">
+                <div class="stat-icon">✅</div>
+                <div class="stat-label">Confirmadas</div>
+                <div class="stat-value" id="statConfirmed">0</div>
+            </div>
+            <div class="stat-card concluded">
+                <div class="stat-icon">🎉</div>
+                <div class="stat-label">Concluidas</div>
+                <div class="stat-value" id="statConcluded">0</div>
+            </div>
+        </div>
+
+        <!-- Clients Grid -->
+        <div id="clientsContainer" class="loading">Cargando reservas...</div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOnOverlay(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h2 id="modalTitle">Detalle de Reserva</h2>
+            <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-body" id="modalBody">
+            <!-- Content loaded dynamically -->
+        </div>
+    </div>
+</div>
+
+<script>
+let currentFilter = 'todos';
+let allClients = [];
+let selectedClient = null;
+
+// Load clients from Google Sheets
+async function loadClients() {
+    try {
+        console.log('📥 Cargando clientes desde Google Sheets...');
+        
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwdj3eC5B8IBV-q5X6c2-7YS86fvMo_LLgYeCV85kvtoM2sV51ybAVsm2y9elonGz9OWQ/exec';
+        const response = await fetch(`${SCRIPT_URL}?action=getItinerarios`);
+        const data = await response.json();
+        
+        if (data.success) {
+            allClients = data.itinerarios.map(item => ({
+                ...item,
+                decoded: window.decodeItinerary(item.codigo)
+            }));
+            
+            console.log('✅ Clientes cargados:', allClients.length);
+            renderClients();
+            updateStats();
+        } else {
+            throw new Error(data.message);
+        }
+    } catch (error) {
+        console.error('❌ Error cargando clientes:', error);
+        document.getElementById('clientsContainer').innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">❌</div>
+                <div class="empty-state-text">Error al cargar las reservas</div>
+            </div>
+        `;
+    }
+}
+
+// Render clients grid
+function renderClients() {
+    const container = document.getElementById('clientsContainer');
+    
+    let filtered = allClients;
+    
+    // Filter by status
+    if (currentFilter !== 'todos') {
+        filtered = allClients.filter(c => c.estado === currentFilter);
+    }
+    
+    // Filter by search
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    if (searchTerm) {
+        filtered = filtered.filter(c => 
+            c.cliente.toLowerCase().includes(searchTerm) ||
+            c.codigo.toLowerCase().includes(searchTerm) ||
+            c.tours.toLowerCase().includes(searchTerm)
+        );
+    }
+    
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <div class="empty-state-text">No se encontraron reservas</div>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = '<div class="clients-grid">' + filtered.map(client => `
+        <div class="client-card status-${client.estado}" onclick="openClientDetail('${client.codigo}')">
+            <div class="card-header">
+                <h3 class="client-name">${client.cliente}</h3>
+                <span class="status-badge ${client.estado}">${formatStatus(client.estado)}</span>
+            </div>
+            <div class="card-body">
+                <div class="card-info">
+                    <span class="card-info-icon">📅</span>
+                    <span>${formatDate(client.fecha)}</span>
+                </div>
+                <div class="card-info">
+                    <span class="card-info-icon">🗓️</span>
+                    <span>${client.dias} día${client.dias > 1 ? 's' : ''}</span>
+                </div>
+                <div class="card-info">
+                    <span class="card-info-icon">🎫</span>
+                    <span>${client.tours.substring(0, 50)}${client.tours.length > 50 ? '...' : ''}</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <span class="price-tag">${client.total}</span>
+                <span class="payment-badge">${client.metodoPago || 'Sin método'}</span>
+            </div>
+        </div>
+    `).join('') + '</div>';
+}
+
+// Update stats
+function updateStats() {
+    const total = allClients.length;
+    const pending = allClients.filter(c => c.estado === 'sin-confirmar').length;
+    const confirmed = allClients.filter(c => c.estado === 'confirmado').length;
+    const concluded = allClients.filter(c => c.estado === 'concluido').length;
+    
+    document.getElementById('statTotal').textContent = total;
+    document.getElementById('statPending').textContent = pending;
+    document.getElementById('statConfirmed').textContent = confirmed;
+    document.getElementById('statConcluded').textContent = concluded;
+}
+
+// Filter by status
+function filterByStatus(status) {
+    currentFilter = status;
+    
+    // Update active button
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    renderClients();
+}
+
+// Filter clients
+function filterClients() {
+    renderClients();
+}
+
+// Open client detail modal
+function openClientDetail(codigo) {
+    selectedClient = allClients.find(c => c.codigo === codigo);
+    if (!selectedClient) return;
+    
+    const modalBody = document.getElementById('modalBody');
+    modalBody.innerHTML = `
+        <div class="detail-section">
+            <h3>📋 Información del Cliente</h3>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-label">Nombre</div>
+                    <div class="detail-value">${selectedClient.cliente}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Nacionalidad</div>
+                    <div class="detail-value">${selectedClient.nacionalidad}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Teléfono</div>
+                    <div class="detail-value">${selectedClient.telefono}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Fecha de Reserva</div>
+                    <div class="detail-value">${formatDate(selectedClient.fecha)}</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="detail-section">
+            <h3>🎫 Tours Reservados</h3>
+            <div class="tours-list">
+                ${selectedClient.tours}
+            </div>
+        </div>
+        
+        <div class="detail-section">
+            <h3>💰 Información de Pago</h3>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-label">Días</div>
+                    <div class="detail-value">${selectedClient.dias} día${selectedClient.dias > 1 ? 's' : ''}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Total</div>
+                    <div class="detail-value">${selectedClient.total}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Moneda</div>
+                    <div class="detail-value">${selectedClient.moneda}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Usuario</div>
+                    <div class="detail-value">${selectedClient.usuario}</div>
+                </div>
+                <div class="detail-item detail-full">
+                    <div class="detail-label">Código</div>
+                    <div class="detail-value" style="font-size:11px;word-break:break-all">${selectedClient.codigo}</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="action-group">
+            <div class="action-label">Estado de la Reserva</div>
+            <select class="select-custom" id="statusSelect" onchange="updateClientStatus()">
+                <option value="sin-confirmar" ${selectedClient.estado === 'sin-confirmar' ? 'selected' : ''}>⏳ Sin Confirmar</option>
+                <option value="confirmado" ${selectedClient.estado === 'confirmado' ? 'selected' : ''}>✅ Confirmado</option>
+                <option value="en-proceso" ${selectedClient.estado === 'en-proceso' ? 'selected' : ''}>🔄 En Proceso</option>
+                <option value="concluido" ${selectedClient.estado === 'concluido' ? 'selected' : ''}>🎉 Concluido</option>
+            </select>
+        </div>
+        
+        <div class="action-group">
+            <div class="action-label">Método de Pago</div>
+            <select class="select-custom" id="paymentSelect" onchange="updatePaymentMethod()">
+                <option value="">Sin método</option>
+                <option value="Efectivo" ${selectedClient.metodoPago === 'Efectivo' ? 'selected' : ''}>💵 Efectivo</option>
+                <option value="Tarjeta" ${selectedClient.metodoPago === 'Tarjeta' ? 'selected' : ''}>💳 Tarjeta</option>
+            </select>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal()">Cerrar</button>
+        </div>
+    `;
+    
+    document.getElementById('modalOverlay').classList.add('active');
+}
+
+// Update client status
+async function updateClientStatus() {
+    const newStatus = document.getElementById('statusSelect').value;
+    
+    try {
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwdj3eC5B8IBV-q5X6c2-7YS86fvMo_LLgYeCV85kvtoM2sV51ybAVsm2y9elonGz9OWQ/exec';
+        
+        await fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'updateStatus',
+                codigo: selectedClient.codigo,
+                estado: newStatus
+            })
+        });
+        
+        // Update local data
+        selectedClient.estado = newStatus;
+        const clientIndex = allClients.findIndex(c => c.codigo === selectedClient.codigo);
+        if (clientIndex !== -1) {
+            allClients[clientIndex].estado = newStatus;
+        }
+        
+        renderClients();
+        updateStats();
+        
+    } catch (error) {
+        console.error('Error actualizando estado:', error);
+        alert('Error al actualizar el estado');
+    }
+}
+
+// Update payment method
+async function updatePaymentMethod() {
+    const newMethod = document.getElementById('paymentSelect').value;
+    
+    try {
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwdj3eC5B8IBV-q5X6c2-7YS86fvMo_LLgYeCV85kvtoM2sV51ybAVsm2y9elonGz9OWQ/exec';
+        
+        await fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'updatePayment',
+                codigo: selectedClient.codigo,
+                metodoPago: newMethod
+            })
+        });
+        
+        // Update local data
+        selectedClient.metodoPago = newMethod;
+        const clientIndex = allClients.findIndex(c => c.codigo === selectedClient.codigo);
+        if (clientIndex !== -1) {
+            allClients[clientIndex].metodoPago = newMethod;
+        }
+        
+        renderClients();
+        
+    } catch (error) {
+        console.error('Error actualizando método de pago:', error);
+        alert('Error al actualizar el método de pago');
+    }
+}
+
+// Close modal
+function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('active');
+}
+
+function closeModalOnOverlay(e) {
+    if (e.target.id === 'modalOverlay') {
+        closeModal();
+    }
+}
+
+// Helpers
+function formatStatus(status) {
+    const map = {
+        'sin-confirmar': 'Sin Confirmar',
+        'confirmado': 'Confirmado',
+        'en-proceso': 'En Proceso',
+        'concluido': 'Concluido'
+    };
+    return map[status] || status;
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', { 
+        day: '2-digit', 
+        month: 'short', 
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+// Initialize
+loadClients();
+</script>

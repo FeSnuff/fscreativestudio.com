@@ -2,6 +2,8 @@
 body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; margin: 0; }
 .tours-view { max-width: 1600px; margin: 0 auto; padding: 20px; display: grid; grid-template-columns: 1fr 350px; gap: 30px; min-height: 100vh; }
 .btn-logout-top { position: fixed; top: 20px; right: 20px; padding: 10px 20px; background: #dc3545; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; z-index: 1000; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+.btn-clientes-top { position: fixed; top: 20px; right: 140px; padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; z-index: 1000; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+.btn-clientes-top:hover { background: #5568d3; }
 .tours-header { grid-column: 1/-1; color: #fff; font-size: 32px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
 .user-welcome { color: #fff; font-size: 18px; }
 .filters { grid-column: 1/-1; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 15px; }
@@ -50,6 +52,7 @@ body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height
 }
 </style>
 
+<button class="btn-clientes-top" onclick="loadView('clientes')">📋 Clientes</button>
 <button class="btn-logout-top" onclick="logout()">Cerrar Sesión</button>
 
 <div class="tours-view">

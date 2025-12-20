@@ -420,12 +420,12 @@ async function saveItinerary() {
         
         // Con no-cors no podemos leer la respuesta, pero si llegó aquí se envió
         console.log('✅ Petición POST enviada');
-        console.log('📋 Verifica tu Google Sheet para confirmar');
+        console.log('📋 Guardado en Google Sheet');
         
-        btnSave.disabled = false;
-        btnSave.textContent = '💾 Guardar Itinerario';
-        
-        alert(`✅ Itinerario enviado al servidor\n\nCódigo: ${encodedItinerary}\n\nRevisa la hoja "Itinerarios" en tu Google Sheet para confirmar.`);
+        btnSave.disabled = true;
+        btnSave.textContent = '✅ Guardado';
+        btnSave.style.background = '#10b981';
+        btnSave.style.cursor = 'not-allowed';
         
     } catch (error) {
         console.error('❌ ERROR AL GUARDAR:', error);
