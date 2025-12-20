@@ -1,49 +1,217 @@
-<style>
-.login-container{display:flex;justify-content:center;align-items:center;min-height:80vh;padding:20px}
-.login-box{background:#fff;padding:40px;border-radius:15px;width:100%;max-width:400px;box-shadow:0 10px 40px rgba(0,0,0,0.2)}
-.login-title{text-align:center;font-size:28px;margin-bottom:30px;color:#333}
-.input-group{margin-bottom:20px}
-.input-group label{display:block;margin-bottom:8px;font-weight:600;color:#333}
-.input-group input{width:100%;padding:12px;border:2px solid #ddd;border-radius:8px;font-size:16px}
-.input-group input:focus{outline:none;border-color:#667eea}
-.btn-login{width:100%;padding:14px;border:none;border-radius:8px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:18px;font-weight:600;cursor:pointer}
-.btn-login:disabled{opacity:0.5;cursor:not-allowed}
-</style>
+// CÓDIGO COMPLETO PARA GOOGLE APPS SCRIPT
+// Incluye: Login + getTours + saveItinerary
 
-<div class="login-container">
-    <div class="login-box">
-        <h2 class="login-title">🌄 Iniciar Sesión</h2>
-        <form id="loginForm">
-            <div class="input-group">
-                <label>Usuario</label>
-                <input type="text" id="username" required>
-            </div>
-            <div class="input-group">
-                <label>Contraseña</label>
-                <input type="password" id="password" required>
-            </div>
-            <button type="submit" class="btn-login" id="btnSubmit">Entrar</button>
-        </form>
-    </div>
-</div>
+const SHEET_ID = '1T8qT7_JQVaE6FkLuMHiUZqVbfwVOyIkWWtNSHa9RpTI';
 
-<script>
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
+function doGet(e) {
+  try {
+    const action = e.parameter.action;
     
-    const user = document.getElementById('username').value;
-    const pass = document.getElementById('password').value;
-    const btn = document.getElementById('btnSubmit');
-    
-    btn.disabled = true;
-    btn.textContent = 'Verificando...';
-    
-    try {
-        await login(user, pass);
-    } catch (error) {
-        alert('Error: ' + error.message);
-        btn.disabled = false;
-        btn.textContent = 'Entrar';
+    // Debug info
+    if (!action) {
+      return ContentService.createTextOutput(JSON.stringify({
+        success: false,
+        message: 'No se recibió el parámetro action',
+        received: e.parameter
+      })).setMimeType(ContentService.MimeType.JSON);
     }
-});
-</script>
+    
+    // Login via GET
+    if (action === 'login') {
+      const username = e.parameter.username;
+      const password = e.parameter.password;
+      
+      if (!username || !password) {
+        return ContentService.createTextOutput(JSON.stringify({
+          success: false,
+          message: 'Faltan usuario o contraseña'
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
+      
+      const result = verifyLogin(username, password);
+      return ContentService.createTextOutput(JSON.stringify(result))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      message: 'Acción no válida: ' + action,
+      received: e.parameter
+    })).setMimeType(ContentService.MimeType.JSON);
+    
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      message: error.toString(),
+      stack: error.stack
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+    
+    // ACCIÓN: Verificar login
+    if (data.action === 'login') {
+      const result = verifyLogin(data.username, data.password);
+      return ContentService.createTextOutput(JSON.stringify(result))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    // ACCIÓN: Guardar itinerario
+    if (data.action === 'saveItinerary') {
+      const result = saveItinerary(data.data);
+      return ContentService.createTextOutput(JSON.stringify(result))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      message: 'Acción no reconocida'
+    })).setMimeType(ContentService.MimeType.JSON);
+    
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      message: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// ========== FUNCIÓN DE LOGIN ==========
+function verifyLogin(username, password) {
+  try {
+    const ss = SpreadsheetApp.openById(SHEET_ID);
+    const sheet = ss.getSheetByName('cuentas');
+    
+    if (!sheet) {
+      return {
+        success: false,
+        message: 'La hoja de cuentas no existe'
+      };
+    }
+    
+    const data = sheet.getDataRange().getValues();
+    
+    // Buscar usuario (asumiendo columna A = usuario, columna B = contraseña)
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const user = row[0]; // Columna A
+      const pass = row[1]; // Columna B
+      
+      if (user === username && pass === password) {
+        return {
+          success: true,
+          message: 'Login exitoso',
+          username: username
+        };
+      }
+    }
+    
+    return {
+      success: false,
+      message: 'Usuario o contraseña incorrectos'
+    };
+    
+  } catch (error) {
+    return {
+      success: false,
+      message: error.toString()
+    };
+  }
+}
+
+// ========== FUNCIÓN GUARDAR ITINERARIO ==========
+function saveItinerary(data) {
+  try {
+    const ss = SpreadsheetApp.openById(SHEET_ID);
+    
+    // Obtener o crear la hoja "Itinerarios"
+    let sheet = ss.getSheetByName('Itinerarios');
+    
+    if (!sheet) {
+      // Crear la hoja si no existe
+      sheet = ss.insertSheet('Itinerarios');
+      
+      // Agregar encabezados
+      sheet.getRange(1, 1, 1, 10).setValues([[
+        'Fecha/Hora',
+        'Cliente',
+        'Nacionalidad',
+        'Teléfono',
+        'Tours',
+        'Días',
+        'Total',
+        'Moneda',
+        'Código',
+        'Usuario'
+      ]]);
+      
+      // Formatear encabezados
+      sheet.getRange(1, 1, 1, 10)
+        .setBackground('#667eea')
+        .setFontColor('#ffffff')
+        .setFontWeight('bold')
+        .setHorizontalAlignment('center');
+      
+      // Ajustar anchos de columnas
+      sheet.setColumnWidth(1, 150); // Fecha
+      sheet.setColumnWidth(2, 150); // Cliente
+      sheet.setColumnWidth(3, 100); // Nacionalidad
+      sheet.setColumnWidth(4, 120); // Teléfono
+      sheet.setColumnWidth(5, 300); // Tours
+      sheet.setColumnWidth(6, 60);  // Días
+      sheet.setColumnWidth(7, 100); // Total
+      sheet.setColumnWidth(8, 80);  // Moneda
+      sheet.setColumnWidth(9, 200); // Código
+      sheet.setColumnWidth(10, 100); // Usuario
+      
+      // Congelar fila de encabezados
+      sheet.setFrozenRows(1);
+    }
+    
+    // Formatear la fecha
+    const fecha = new Date(data.fecha);
+    const fechaFormateada = Utilities.formatDate(fecha, 'America/Lima', 'dd/MM/yyyy HH:mm:ss');
+    
+    // Agregar nueva fila
+    sheet.appendRow([
+      fechaFormateada,
+      data.cliente,
+      data.nacionalidad,
+      data.telefono,
+      data.tours,
+      data.dias,
+      data.total,
+      data.moneda,
+      data.codigo,
+      data.usuario
+    ]);
+    
+    // Formatear la nueva fila
+    const lastRow = sheet.getLastRow();
+    sheet.getRange(lastRow, 1, 1, 10)
+      .setHorizontalAlignment('left')
+      .setBorder(true, true, true, true, true, true);
+    
+    // Alternar color de fila
+    if (lastRow % 2 === 0) {
+      sheet.getRange(lastRow, 1, 1, 10).setBackground('#f8f9fa');
+    }
+    
+    return {
+      success: true,
+      message: 'Itinerario guardado correctamente',
+      row: lastRow,
+      codigo: data.codigo
+    };
+    
+  } catch (error) {
+    Logger.log('Error al guardar itinerario: ' + error.toString());
+    return {
+      success: false,
+      message: error.toString()
+    };
+  }
+}
