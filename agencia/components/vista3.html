@@ -350,26 +350,31 @@ async function generatePDF() {
     btnPDF.textContent = '⏳ Generando PDF...';
     
     try {
-        // Load pdfmake libraries
-        if (!window.pdfMake) {
-            const pdfMakeScript = document.createElement('script');
-            pdfMakeScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js';
+        // Load jsPDF and autoTable
+        if (!window.jspdf) {
+            const jsPDFScript = document.createElement('script');
+            jsPDFScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
             await new Promise((resolve, reject) => {
-                pdfMakeScript.onload = resolve;
-                pdfMakeScript.onerror = reject;
-                document.head.appendChild(pdfMakeScript);
-            });
-            
-            const vfsScript = document.createElement('script');
-            vfsScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js';
-            await new Promise((resolve, reject) => {
-                vfsScript.onload = resolve;
-                vfsScript.onerror = reject;
-                document.head.appendChild(vfsScript);
+                jsPDFScript.onload = resolve;
+                jsPDFScript.onerror = reject;
+                document.head.appendChild(jsPDFScript);
             });
         }
         
-        await new Promise(resolve => setTimeout(resolve, 500));
+        if (!window.jspdf.jsPDF.API.autoTable) {
+            const autoTableScript = document.createElement('script');
+            autoTableScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js';
+            await new Promise((resolve, reject) => {
+                autoTableScript.onload = resolve;
+                autoTableScript.onerror = reject;
+                document.head.appendChild(autoTableScript);
+            });
+        }
+        
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
         
         const vista2 = VISTA2_DATA || {};
         const currency = vista2.currency === 'USD' ? '$' : 'S/';
@@ -379,282 +384,281 @@ async function generatePDF() {
         let adultTotal = vista2.adultTotal || vista2.totalAmount || CART.reduce((acc, t) => acc + t.price, 0);
         let childTotal = vista2.childTotal || 0;
         
-        // Build document content
-        const content = [];
+        const primaryColorRGB = hexToRgb(primaryColor);
+        let yPos = 20;
         
         // Header
-        content.push({
-            columns: [
-                {
-                    width: 'auto',
-                    text: 'Qori Wayra - Travel',
-                    style: 'header',
-                    color: primaryColor
-                },
-                {
-                    width: '*',
-                    text: [
-                        { text: 'Tel: +51 924 377 454\n', fontSize: 10 },
-                        { text: 'Web: qoriwayra-travel.com\n', fontSize: 10 },
-                        { text: 'Email: qoriwayra.cuscotravel@gmail.com\n', fontSize: 10 },
-                        { text: 'Instagram: @qoriwayratravel', fontSize: 10 }
-                    ],
-                    alignment: 'right'
-                }
-            ],
-            margin: [0, 0, 0, 20]
+        doc.setFontSize(20);
+        doc.setTextColor(primaryColorRGB.r, primaryColorRGB.g, primaryColorRGB.b);
+        doc.text('Qori Wayra - Travel', 20, yPos);
+        
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text('Experiencias unicas en Cusco y Peru', 20, yPos + 6);
+        
+        // Contact info (right aligned)
+        doc.setFontSize(9);
+        const contactInfo = [
+            'Tel: +51 924 377 454',
+            'Web: qoriwayra-travel.com',
+            'Email: qoriwayra.cuscotravel@gmail.com',
+            'Instagram: @qoriwayratravel'
+        ];
+        
+        contactInfo.forEach((line, i) => {
+            doc.text(line, 200, yPos + (i * 4), { align: 'right' });
         });
+        
+        yPos = 45;
         
         // Title
-        content.push({
-            text: 'ITINERARIO DE VIAJE',
-            style: 'title',
-            alignment: 'center',
-            margin: [0, 0, 0, 5]
-        });
+        doc.setFontSize(16);
+        doc.setTextColor(0, 0, 0);
+        doc.text('ITINERARIO DE VIAJE', 105, yPos, { align: 'center' });
         
-        content.push({
-            text: `${totalDays} día${totalDays > 1 ? 's' : ''} / ${totalNights} noche${totalNights > 1 ? 's' : ''}`,
-            fontSize: 12,
-            alignment: 'center',
-            margin: [0, 0, 0, 20],
-            color: '#666666'
-        });
+        yPos += 6;
+        doc.setFontSize(12);
+        doc.setTextColor(100, 100, 100);
+        doc.text(`${totalDays} dia${totalDays > 1 ? 's' : ''} / ${totalNights} noche${totalNights > 1 ? 's' : ''}`, 105, yPos, { align: 'center' });
+        
+        yPos += 10;
         
         // Client info
         if (vista2.includeClientData) {
-            content.push({
-                text: 'Información del Cliente',
-                style: 'sectionHeader',
-                color: primaryColor
+            doc.setFontSize(12);
+            doc.setTextColor(primaryColorRGB.r, primaryColorRGB.g, primaryColorRGB.b);
+            doc.text('Informacion del Cliente', 20, yPos);
+            yPos += 2;
+            
+            const clientData = [
+                ['Nombre:', vista2.clientName || ''],
+                ['Nacionalidad:', vista2.clientNationality ? vista2.clientNationality.split('|')[0] : ''],
+                ['Contacto:', `${vista2.phonePrefix || ''}${vista2.phoneNumber || ''}`]
+            ];
+            
+            doc.autoTable({
+                startY: yPos,
+                body: clientData,
+                theme: 'plain',
+                styles: { fontSize: 10, cellPadding: 2 },
+                columnStyles: {
+                    0: { fontStyle: 'bold', cellWidth: 40 },
+                    1: { cellWidth: 140 }
+                }
             });
             
-            content.push({
-                table: {
-                    widths: ['30%', '70%'],
-                    body: [
-                        ['Nombre:', vista2.clientName || ''],
-                        ['Nacionalidad:', vista2.clientNationality ? vista2.clientNationality.split('|')[0] : ''],
-                        ['Contacto:', `${vista2.phonePrefix || ''}${vista2.phoneNumber || ''}`]
-                    ]
-                },
-                layout: 'noBorders',
-                margin: [0, 5, 0, 20]
-            });
+            yPos = doc.lastAutoTable.finalY + 10;
+        }
+        
+        // Check if new page needed
+        if (yPos > 250) {
+            doc.addPage();
+            yPos = 20;
         }
         
         // Itinerary
-        content.push({
-            text: 'Cronograma',
-            style: 'sectionHeader',
-            color: primaryColor,
-            pageBreak: vista2.includeClientData ? undefined : 'before'
-        });
+        doc.setFontSize(12);
+        doc.setTextColor(primaryColorRGB.r, primaryColorRGB.g, primaryColorRGB.b);
+        doc.text('Cronograma', 20, yPos);
+        yPos += 8;
         
         let currentDay = 1;
         CART.forEach((tour, index) => {
             const days = tour.duration_days;
-            const dayLabel = days === 1 ? `Día ${currentDay}` : `Días ${currentDay} - ${currentDay + days - 1}`;
+            const dayLabel = days === 1 ? `Dia ${currentDay}` : `Dias ${currentDay} - ${currentDay + days - 1}`;
+            
+            // Check if need new page
+            if (yPos > 240) {
+                doc.addPage();
+                yPos = 20;
+            }
             
             // Day title
-            content.push({
-                text: dayLabel,
-                style: 'dayTitle',
-                color: primaryColor,
-                margin: [0, 10, 0, 5]
-            });
+            doc.setFontSize(11);
+            doc.setTextColor(primaryColorRGB.r, primaryColorRGB.g, primaryColorRGB.b);
+            doc.text(dayLabel, 20, yPos);
+            yPos += 5;
             
             // Tour name
-            content.push({
-                text: tour.name,
-                style: 'tourName',
-                margin: [0, 0, 0, 5]
-            });
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            doc.setFont(undefined, 'bold');
+            doc.text(tour.name, 20, yPos);
+            doc.setFont(undefined, 'normal');
+            yPos += 6;
             
             // Summary list
             if (tour.summary_list && tour.summary_list.length > 0) {
-                content.push({
-                    text: 'Itinerario:',
-                    fontSize: 11,
-                    bold: true,
-                    margin: [0, 5, 0, 3]
-                });
+                doc.setFontSize(9);
+                doc.setTextColor(80, 80, 80);
+                doc.setFont(undefined, 'bold');
+                doc.text('Itinerario:', 20, yPos);
+                doc.setFont(undefined, 'normal');
+                yPos += 4;
                 
-                const listItems = tour.summary_list.map(item => `• ${item}`);
-                content.push({
-                    text: listItems.join('\n'),
-                    fontSize: 10,
-                    margin: [10, 0, 0, 10]
+                tour.summary_list.forEach(item => {
+                    if (yPos > 270) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+                    const lines = doc.splitTextToSize(`- ${item}`, 170);
+                    doc.text(lines, 25, yPos);
+                    yPos += lines.length * 4;
                 });
+                yPos += 2;
             }
             
-            // Includes / Not includes
+            // Includes / Not includes table
             const includes = tour.includes || [];
             const notIncludes = tour.excludes || tour.not_includes || [];
             
             if (includes.length > 0 || notIncludes.length > 0) {
-                content.push({
-                    columns: [
-                        {
-                            width: '50%',
-                            stack: [
-                                { text: '✓ Incluye:', fontSize: 10, bold: true, color: '#28a745', margin: [0, 5, 0, 3] },
-                                {
-                                    ul: includes.map(item => `${window.getEmojiForItem(item, true)} ${item}`),
-                                    fontSize: 9
-                                }
-                            ]
-                        },
-                        {
-                            width: '50%',
-                            stack: [
-                                { text: '✗ No Incluye:', fontSize: 10, bold: true, color: '#dc3545', margin: [0, 5, 0, 3] },
-                                {
-                                    ul: notIncludes.map(item => `${window.getEmojiForItem(item, false)} ${item}`),
-                                    fontSize: 9
-                                }
-                            ]
-                        }
-                    ],
-                    margin: [0, 5, 0, 15]
+                const maxRows = Math.max(includes.length, notIncludes.length);
+                const tableData = [];
+                
+                for (let i = 0; i < maxRows; i++) {
+                    tableData.push([
+                        includes[i] ? `${window.getEmojiForItem(includes[i], true)} ${includes[i]}` : '',
+                        notIncludes[i] ? `${window.getEmojiForItem(notIncludes[i], false)} ${notIncludes[i]}` : ''
+                    ]);
+                }
+                
+                doc.autoTable({
+                    startY: yPos,
+                    head: [['Incluye', 'No Incluye']],
+                    body: tableData,
+                    theme: 'grid',
+                    styles: { fontSize: 8, cellPadding: 2 },
+                    headStyles: { 
+                        fillColor: [240, 240, 240],
+                        textColor: [0, 0, 0],
+                        fontStyle: 'bold'
+                    },
+                    columnStyles: {
+                        0: { cellWidth: 90 },
+                        1: { cellWidth: 90 }
+                    },
+                    margin: { left: 20, right: 20 }
                 });
+                
+                yPos = doc.lastAutoTable.finalY + 8;
             }
             
             currentDay += days;
         });
         
-        // Cost summary - always on new page
-        content.push({
-            text: 'Resumen de Costos',
-            style: 'sectionHeader',
-            color: primaryColor,
-            pageBreak: 'before'
-        });
+        // Cost summary - NEW PAGE
+        doc.addPage();
+        yPos = 20;
         
-        const costRows = [
+        doc.setFontSize(12);
+        doc.setTextColor(primaryColorRGB.r, primaryColorRGB.g, primaryColorRGB.b);
+        doc.text('Resumen de Costos', 20, yPos);
+        yPos += 8;
+        
+        const costData = [
             ['Cantidad de Tours:', CART.length.toString()],
-            ['Moneda:', vista2.currency === 'USD' ? 'Dólares (USD)' : 'Soles (PEN)']
+            ['Moneda:', vista2.currency === 'USD' ? 'Dolares (USD)' : 'Soles (PEN)']
         ];
         
         if (vista2.includeBudgetChild) {
-            costRows.push(['TOTAL ADULTO:', `${currency} ${adultTotal.toFixed(2)}`]);
-            costRows.push(['TOTAL NIÑO:', `${currency} ${childTotal.toFixed(2)}`]);
+            costData.push(['TOTAL ADULTO:', `${currency} ${adultTotal.toFixed(2)}`]);
+            costData.push(['TOTAL NIÑO:', `${currency} ${childTotal.toFixed(2)}`]);
         } else {
-            costRows.push(['TOTAL A PAGAR:', `${currency} ${adultTotal.toFixed(2)}`]);
+            costData.push(['TOTAL A PAGAR:', `${currency} ${adultTotal.toFixed(2)}`]);
         }
         
-        content.push({
-            table: {
-                widths: ['50%', '50%'],
-                body: costRows
-            },
-            layout: {
-                hLineWidth: () => 1,
-                vLineWidth: () => 0,
-                hLineColor: () => '#e0e0e0'
-            },
-            margin: [0, 10, 0, 20]
+        doc.autoTable({
+            startY: yPos,
+            body: costData,
+            theme: 'plain',
+            styles: { fontSize: 11, cellPadding: 3 },
+            columnStyles: {
+                0: { fontStyle: 'bold', cellWidth: 80 },
+                1: { cellWidth: 100, halign: 'right', fontStyle: 'bold' }
+            }
         });
+        
+        yPos = doc.lastAutoTable.finalY + 10;
         
         // Validity
-        content.push({
-            text: '⏰ Validez: Este presupuesto tiene una validez de 2 días desde su emisión.',
-            fillColor: '#fff3cd',
-            margin: [0, 0, 0, 15],
-            fontSize: 10
-        });
+        doc.setFillColor(255, 243, 205);
+        doc.rect(20, yPos, 170, 12, 'F');
+        doc.setFontSize(9);
+        doc.setTextColor(0, 0, 0);
+        doc.text('Validez: Este presupuesto tiene una validez de 2 dias desde su emision.', 25, yPos + 7);
+        
+        yPos += 18;
         
         // Payment methods
-        content.push({
-            text: 'Métodos de Pago',
-            style: 'sectionHeader',
-            color: primaryColor
-        });
+        doc.setFontSize(11);
+        doc.setTextColor(primaryColorRGB.r, primaryColorRGB.g, primaryColorRGB.b);
+        doc.text('Metodos de Pago', 20, yPos);
+        yPos += 6;
         
-        content.push({
-            text: [
-                { text: '💳 Tarjetas: ', bold: true },
-                'Visa, Mastercard\n',
-                { text: '💰 Transferencias: ', bold: true },
-                'Yape, Plin\n',
-                { text: '🌐 Internacional: ', bold: true },
-                'PayPal, Western Union'
-            ],
-            margin: [0, 5, 0, 15],
-            fontSize: 10
-        });
+        doc.setFontSize(9);
+        doc.setTextColor(0, 0, 0);
+        doc.text('Tarjetas: Visa, Mastercard', 25, yPos);
+        yPos += 5;
+        doc.text('Transferencias: Yape, Plin', 25, yPos);
+        yPos += 5;
+        doc.text('Internacional: PayPal, Western Union', 25, yPos);
+        yPos += 10;
         
         // Terms
-        content.push({
-            text: 'Términos y Condiciones',
-            style: 'sectionHeader',
-            color: primaryColor
-        });
+        doc.setFontSize(11);
+        doc.setTextColor(primaryColorRGB.r, primaryColorRGB.g, primaryColorRGB.b);
+        doc.text('Terminos y Condiciones', 20, yPos);
+        yPos += 6;
+        
+        doc.setFontSize(8);
+        doc.setTextColor(60, 60, 60);
         
         const terms = [
-            'Reserva y adelanto: Para confirmar tu reserva, solicitamos un adelanto del 50% del monto total.',
-            'Pagos internacionales: Los pagos con tarjetas extranjeras tienen un cargo del 5-10%.',
-            'Política de cancelación: Las cancelaciones con anticipación razonable (15-30 días) pueden ser evaluadas. El adelanto del 50% generalmente no es reembolsable.',
-            'Reembolsos: Solo proceden si por causas de nuestra agencia no se puede realizar el servicio.',
-            'Condiciones climáticas: Pueden afectar los tours. Se reprogramará sin cargo adicional cuando sea posible.',
-            'Disponibilidad: Todos los tours están sujetos a disponibilidad y confirmación.',
-            'Responsabilidad del viajero: El cliente debe contar con documentación necesaria (pasaporte, visas, etc.).'
+            '• Reserva y adelanto: Para confirmar tu reserva, solicitamos un adelanto del 50% del monto total.',
+            '• Pagos internacionales: Los pagos con tarjetas extranjeras tienen un cargo del 5-10%.',
+            '• Politica de cancelacion: Las cancelaciones con anticipacion razonable (15-30 dias) pueden ser evaluadas. El adelanto generalmente no es reembolsable.',
+            '• Reembolsos: Solo proceden si por causas de nuestra agencia no se puede realizar el servicio.',
+            '• Condiciones climaticas: Pueden afectar los tours. Se reprogramara sin cargo adicional cuando sea posible.',
+            '• Disponibilidad: Todos los tours estan sujetos a disponibilidad y confirmacion.',
+            '• Responsabilidad del viajero: El cliente debe contar con documentacion necesaria (pasaporte, visas, etc.).'
         ];
         
-        content.push({
-            ul: terms,
-            fontSize: 9,
-            margin: [0, 5, 0, 20]
+        terms.forEach(term => {
+            if (yPos > 270) {
+                doc.addPage();
+                yPos = 20;
+            }
+            const lines = doc.splitTextToSize(term, 170);
+            doc.text(lines, 20, yPos);
+            yPos += lines.length * 4 + 2;
         });
         
         // Footer
-        content.push({
-            text: [
-                { text: 'Documento generado por Qori Wayra - Travel\n', bold: true },
-                'Todos los tours están sujetos a disponibilidad y condiciones climáticas\n',
-                'Para más información, contáctenos a través de nuestros canales oficiales'
-            ],
-            alignment: 'center',
-            fontSize: 8,
-            color: '#666666',
-            margin: [0, 20, 0, 0]
+        yPos += 10;
+        if (yPos > 260) {
+            doc.addPage();
+            yPos = 20;
+        }
+        
+        doc.setFontSize(8);
+        doc.setTextColor(100, 100, 100);
+        const footerText = [
+            'Documento generado por Qori Wayra - Travel',
+            'Todos los tours estan sujetos a disponibilidad y condiciones climaticas',
+            'Para mas informacion, contactenos a traves de nuestros canales oficiales'
+        ];
+        
+        footerText.forEach(line => {
+            doc.text(line, 105, yPos, { align: 'center' });
+            yPos += 4;
         });
         
-        // Define document
-        const docDefinition = {
-            content: content,
-            styles: {
-                header: {
-                    fontSize: 18,
-                    bold: true,
-                    margin: [0, 0, 0, 5]
-                },
-                title: {
-                    fontSize: 16,
-                    bold: true
-                },
-                sectionHeader: {
-                    fontSize: 14,
-                    bold: true,
-                    margin: [0, 15, 0, 10]
-                },
-                dayTitle: {
-                    fontSize: 13,
-                    bold: true
-                },
-                tourName: {
-                    fontSize: 12,
-                    bold: true
-                }
-            },
-            pageMargins: [40, 40, 40, 40]
-        };
-        
-        // Generate PDF
+        // Save
         const clientName = vista2.clientName ? `_${vista2.clientName.replace(/\s+/g, '_')}` : '';
         const filename = `Itinerario_QoriWayra_${totalDays}dias${clientName}.pdf`;
         
-        pdfMake.createPdf(docDefinition).download(filename);
+        doc.save(filename);
         
         btnPDF.disabled = false;
         btnPDF.textContent = '📥 Generar PDF';
@@ -665,6 +669,16 @@ async function generatePDF() {
         btnPDF.textContent = '📥 Generar PDF';
         alert('❌ Error al generar PDF: ' + error.message);
     }
+}
+
+// Helper function to convert hex to RGB
+function hexToRgb(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : { r: 102, g: 126, b: 234 };
 }
 
 // Initialize
