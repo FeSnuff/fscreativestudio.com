@@ -47,6 +47,10 @@ body { background: #f5f5f5; min-height: 100vh; margin: 0; font-family: Arial, sa
 .not-includes-list li { padding: 4px 0; font-size: 12px; color: #666; }
 .cost-summary { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
 .cost-summary-wrapper { page-break-inside: avoid !important; margin-bottom: 20px; }
+.client-info-compact { background: #f8f9fa; padding: 10px 15px; border-radius: 8px; margin-bottom: 15px; display: flex; gap: 25px; flex-wrap: wrap; align-items: center; justify-content: space-around; }
+.client-info-item { display: flex; gap: 5px; font-size: 13px; }
+.client-info-item strong { color: #333; }
+.client-info-item span { color: #666; }
 .cost-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e0e0e0; }
 .cost-total { display: flex; justify-content: space-between; padding: 15px 0; font-size: 20px; font-weight: bold; color: var(--primary-color, #667eea); margin-top: 10px; }
 .validity { background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107; margin-bottom: 20px; color: #856404; }
@@ -251,17 +255,17 @@ function renderDocument() {
         ${vista2.includeClientData ? `
         <div class="client-info-section">
             <div class="section-title">👤 Información del Cliente</div>
-            <div class="cost-summary" style="margin-bottom:20px">
-                <div class="cost-row">
-                    <span>Nombre:</span>
+            <div class="client-info-compact">
+                <div class="client-info-item">
+                    <strong>Nombre:</strong>
                     <span>${vista2.clientName}</span>
                 </div>
-                <div class="cost-row">
-                    <span>Nacionalidad:</span>
+                <div class="client-info-item">
+                    <strong>Nacionalidad:</strong>
                     <span>${vista2.clientNationality ? vista2.clientNationality.split('|')[0] : ''}</span>
                 </div>
-                <div class="cost-row">
-                    <span>Contacto:</span>
+                <div class="client-info-item">
+                    <strong>Contacto:</strong>
                     <span>${vista2.phonePrefix}${vista2.phoneNumber}</span>
                 </div>
             </div>
@@ -526,70 +530,85 @@ async function generatePDF() {
             }
             
             .client-info-section .section-title {
-                font-size: 16px !important;
-                margin-bottom: 8px !important;
-                padding-bottom: 6px !important;
+                font-size: 15px !important;
+                margin-bottom: 6px !important;
+                padding-bottom: 5px !important;
             }
             
-            .client-info-section .cost-summary {
-                margin-bottom: 15px !important;
-                padding: 12px !important;
+            .client-info-compact {
+                margin-bottom: 10px !important;
+                padding: 8px 12px !important;
             }
             
-            /* Primer día compacto y unido */
+            .client-info-item {
+                font-size: 11px !important;
+            }
+            
+            /* Primer día EXTRA compacto y unido */
             .day-item.first-day {
                 page-break-before: avoid !important;
                 page-break-inside: avoid !important;
-                padding: 12px !important;
-                margin-bottom: 15px !important;
+                padding: 8px !important;
+                margin-bottom: 12px !important;
             }
             
             .first-day .day-title {
-                font-size: 15px !important;
-                margin-bottom: 6px !important;
+                font-size: 13px !important;
+                margin-bottom: 4px !important;
             }
             
             .first-day .tour-name-day {
-                font-size: 14px !important;
-                margin-bottom: 6px !important;
+                font-size: 12px !important;
+                margin-bottom: 4px !important;
             }
             
             .first-day .activity-list {
-                padding: 10px !important;
-                margin-top: 6px !important;
-                margin-bottom: 8px !important;
+                padding: 6px !important;
+                margin-top: 4px !important;
+                margin-bottom: 4px !important;
             }
             
             .first-day .activity-list h4 {
-                font-size: 12px !important;
-                margin-bottom: 6px !important;
+                font-size: 11px !important;
+                margin-bottom: 4px !important;
+            }
+            
+            .first-day .activity-list ul {
+                margin: 0 !important;
             }
             
             .first-day .activity-list li {
-                font-size: 11px !important;
-                padding: 3px 0 !important;
+                font-size: 10px !important;
+                padding: 2px 0 !important;
+                line-height: 1.3 !important;
             }
             
             .first-day .includes-section {
-                gap: 10px !important;
-                margin-top: 8px !important;
+                gap: 8px !important;
+                margin-top: 4px !important;
             }
             
             .first-day .includes-list,
             .first-day .not-includes-list {
-                padding: 10px !important;
+                padding: 6px !important;
             }
             
             .first-day .includes-list h4,
             .first-day .not-includes-list h4 {
-                font-size: 12px !important;
-                margin-bottom: 6px !important;
+                font-size: 11px !important;
+                margin-bottom: 4px !important;
+            }
+            
+            .first-day .includes-list ul,
+            .first-day .not-includes-list ul {
+                margin: 0 !important;
             }
             
             .first-day .includes-list li,
             .first-day .not-includes-list li {
-                font-size: 11px !important;
-                padding: 3px 0 !important;
+                font-size: 9px !important;
+                padding: 2px 0 !important;
+                line-height: 1.3 !important;
             }
             
             /* Evitar saltos de página dentro de estos elementos */
