@@ -1,0 +1,60 @@
+<style>
+body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; margin: 0; }
+.vista3-container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; min-height: 100vh; }
+.vista3-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; flex-wrap: wrap; gap: 15px; }
+.vista3-title { color: #fff; font-size: 32px; }
+.header-buttons { display: flex; gap: 10px; }
+.btn-back { padding: 12px 24px; background: #fff; color: #667eea; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+.btn-logout { padding: 12px 24px; background: #dc3545; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+.vista3-content { background: #fff; border-radius: 15px; padding: 60px; min-height: 500px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.vista3-placeholder { font-size: 80px; margin-bottom: 20px; }
+.vista3-text { font-size: 24px; color: #666; margin-bottom: 20px; }
+.data-preview { background: #f8f9fa; padding: 20px; border-radius: 10px; margin-top: 30px; text-align: left; max-width: 600px; width: 100%; }
+.data-item { padding: 10px 0; border-bottom: 1px solid #e0e0e0; display: flex; justify-content: space-between; }
+.data-label { font-weight: 600; color: #667eea; }
+</style>
+
+<div class="vista3-container">
+    <div class="vista3-header">
+        <div class="vista3-title">📄 Vista 3 - En Construcción</div>
+        <div class="header-buttons">
+            <button class="btn-back" onclick="loadView('vista2')">← Volver</button>
+            <button class="btn-logout" onclick="logout()">Cerrar Sesión</button>
+        </div>
+    </div>
+    
+    <div class="vista3-content">
+        <div class="vista3-placeholder">🚧</div>
+        <div class="vista3-text">Vista 3 en construcción</div>
+        <p style="color:#999">Esta vista se completará próximamente</p>
+        
+        <div class="data-preview">
+            <h3 style="color:#333;margin-bottom:15px">📊 Datos Guardados:</h3>
+            <div class="data-item">
+                <span class="data-label">Tours Seleccionados:</span>
+                <span id="previewTours"></span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">Moneda:</span>
+                <span id="previewCurrency"></span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">Presupuesto Niño:</span>
+                <span id="previewChild"></span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">Total:</span>
+                <span id="previewTotal"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const vista2Data = window.VISTA2_DATA || {};
+
+document.getElementById('previewTours').textContent = CART.length;
+document.getElementById('previewCurrency').textContent = vista2Data.currency === 'USD' ? 'Dólares ($)' : 'Soles (S/)';
+document.getElementById('previewChild').textContent = vista2Data.includeBudgetChild ? 'Sí' : 'No';
+document.getElementById('previewTotal').textContent = (vista2Data.currency === 'USD' ? '$' : 'S/') + ' ' + (vista2Data.totalAmount || 0).toFixed(2);
+</script>
