@@ -130,9 +130,11 @@ function renderTours() {
     grid.innerHTML = TOURS.map((tour, i) => {
         const selected = CART.some(item => item.index === i);
         const cartIndex = selected ? CART.findIndex(item => item.index === i) + 1 : '';
+        const imageName = tour.name.toLowerCase().replace(/\s+/g, '_');
+        const imageUrl = `images/${imageName}/Principal.webp`;
         return `
             <div class="tour-card ${selected ? 'selected' : ''}" onclick="addToCart(${i})">
-                <div class="tour-image">
+                <div class="tour-image" style="background-image: url('${imageUrl}'); background-size: cover; background-position: center;">
                     <span class="badge">${cartIndex}</span>
                     <div class="overlay">+</div>
                 </div>
