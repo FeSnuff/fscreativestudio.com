@@ -91,6 +91,7 @@ body { background: #f5f5f5; min-height: 100vh; margin: 0; font-family: Arial, sa
                 <button class="btn btn-back" onclick="loadView('vista2')">← Anterior</button>
                 <button class="btn btn-edit" id="btnEdit" onclick="toggleEditMode()">✏️ Editar</button>
                 <button class="btn btn-pdf" id="btnPDF" onclick="generatePDF()">📥 Generar PDF</button>
+                <button class="btn" id="btnSave" onclick="saveItinerary()" style="background:#17a2b8;color:white">💾 Guardar Itinerario</button>
                 <button class="btn btn-cancel" onclick="confirmCancel()">❌ Cancelar</button>
                 <button class="btn btn-logout" onclick="logout()">🚪 Salir</button>
             </div>
@@ -341,6 +342,64 @@ function confirmCancel() {
     if (confirm('¿Estás seguro de que deseas cancelar? Se perderán todos los datos.')) {
         clearAllData();
         loadView('vistatours');
+    }
+}
+
+async function saveItinerary() {
+    const btnSave = document.getElementById('btnSave');
+    btnSave.disabled = true;
+    btnSave.textContent = '⏳ Guardando...';
+    
+    try {
+        const vista2 = VISTA2_DATA || {};
+        const totalDays = CART.reduce((acc, t) => acc + t.duration_days, 0);
+        const currency = vista2.currency === 'USD' ? '$' : 'S/';
+        const adultTotal = vista2.adultTotal || vista2.totalAmount || CART.reduce((acc, t) => acc + t.price, 0);
+        const childTotal = vista2.childTotal || 0;
+        const total = adultTotal + childTotal;
+        
+        // Generate encoded itinerary
+        const encodedItinerary = window.encodeItinerary();
+        
+        // Prepare data for Google Sheets
+        const itineraryData = {
+            fecha: new Date().toISOString(),
+            cliente: vista2.clientName || 'Sin nombre',
+            nacionalidad: vista2.clientNationality ? vista2.clientNationality.split('|')[0] : 'N/A',
+            telefono: vista2.phonePrefix && vista2.phoneNumber ? `${vista2.phonePrefix}${vista2.phoneNumber}` : 'N/A',
+            tours: CART.map(t => t.name).join(', '),
+            dias: totalDays,
+            total: `${currency} ${total.toFixed(2)}`,
+            moneda: vista2.currency || 'PEN',
+            codigo: encodedItinerary,
+            usuario: USER || 'Anónimo'
+        };
+        
+        // Send to Google Apps Script
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwAOTSKw3rxOu_VyCPmpnXurDApQEiYjwfynkyyOeo8k6g1INY5aRsFruYVXzAsidBB9A/exec';
+        
+        const response = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                action: 'saveItinerary',
+                data: itineraryData
+            })
+        });
+        
+        btnSave.disabled = false;
+        btnSave.textContent = '💾 Guardar Itinerario';
+        
+        alert(`✅ Itinerario guardado exitosamente\n\nCódigo: ${encodedItinerary}\n\nEste código puede usarse para recuperar el itinerario.`);
+        
+    } catch (error) {
+        console.error('Error guardando itinerario:', error);
+        btnSave.disabled = false;
+        btnSave.textContent = '💾 Guardar Itinerario';
+        alert('❌ Error al guardar itinerario: ' + error.message);
     }
 }
 
