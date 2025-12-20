@@ -160,16 +160,29 @@
 
         // CARGAR VISTA
         async function loadView(viewName) {
+            // Load navbar
+            const navResponse = await fetch('components/navbar.html');
+            const navHtml = await navResponse.text();
+            
+            // Load view content
             const response = await fetch(`components/${viewName}.html`);
             const html = await response.text();
-            document.getElementById('app').innerHTML = html;
             
+            // Combine navbar + content
+            document.getElementById('app').innerHTML = navHtml + html;
+            
+            // Execute scripts
             const scripts = document.getElementById('app').querySelectorAll('script');
             scripts.forEach(oldScript => {
                 const newScript = document.createElement('script');
                 newScript.textContent = oldScript.textContent;
                 oldScript.parentNode.replaceChild(newScript, oldScript);
             });
+            
+            // Update navbar active state
+            if (typeof updateNavbar === 'function') {
+                updateNavbar(viewName);
+            }
         }
 
         // CARGAR TOURS
