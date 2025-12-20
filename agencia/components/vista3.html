@@ -57,7 +57,9 @@ body { background: #f5f5f5; min-height: 100vh; margin: 0; font-family: Arial, sa
 .doc-footer { border-top: 2px solid var(--primary-color, #667eea); padding-top: 20px; margin-top: 30px; text-align: center; color: #666; font-size: 12px; line-height: 1.6; }
 
 /* Page break container - agrupa secciones finales */
-.final-page-section { page-break-before: always; page-break-inside: avoid; }
+.final-page-section { 
+    page-break-inside: avoid;
+}
 
 /* Page guides - guías visuales de página A4 */
 .page-guide { position: relative; }
@@ -203,7 +205,7 @@ function renderDocument() {
             const imageName = tour.name.toLowerCase()
                 .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
                 .replace(/ñ/g, 'n')
-                .replace(/[\s\-–—]+/g, '_');
+                .replace(/[\s\-—–]+/g, '_');
             const imageUrl = IMAGE_CACHE[tour.name] || `images/${imageName}/Principal.jpg`;
             
             daysHTML += `
@@ -484,17 +486,52 @@ async function generatePDF() {
             @media print {
                 .page-guide::after { display: none !important; }
             }
-            .day-item { page-break-inside: avoid !important; }
-            .includes-section { page-break-inside: avoid !important; }
-            .activity-list { page-break-inside: avoid !important; }
             
-            /* Agrupar sección final en una página */
-            .final-page-section {
-                page-break-before: always !important;
-                page-break-inside: avoid !important;
+            /* Evitar saltos de página dentro de estos elementos */
+            .day-item { 
+                page-break-inside: avoid !important; 
+                margin-bottom: 20px !important;
+            }
+            .includes-section { 
+                page-break-inside: avoid !important; 
+            }
+            .activity-list { 
+                page-break-inside: avoid !important; 
             }
             
-            /* Reducir tamaños para que entre en una página */
+            /* La sección final debe fluir naturalmente sin forzar salto */
+            .final-page-section {
+                page-break-inside: avoid !important;
+                margin-top: 20px !important;
+            }
+            
+            /* Optimizar espaciado para aprovechar mejor el espacio */
+            .itinerary-section {
+                margin-bottom: 20px !important;
+            }
+            
+            .section-title {
+                margin-bottom: 12px !important;
+                padding-bottom: 8px !important;
+                page-break-after: avoid !important;
+            }
+            
+            /* Reducir tamaños para economizar espacio */
+            .cost-summary {
+                padding: 15px !important;
+                margin-bottom: 15px !important;
+            }
+            
+            .validity { 
+                padding: 12px !important; 
+                margin-bottom: 15px !important;
+                font-size: 13px !important;
+            }
+            
+            .payment-methods {
+                margin-bottom: 15px !important;
+            }
+            
             .terms { 
                 padding: 12px !important; 
                 margin-bottom: 15px !important;
@@ -512,18 +549,12 @@ async function generatePDF() {
             .terms li {
                 margin-bottom: 4px !important;
             }
-            .validity {
-                padding: 10px !important;
-                margin-bottom: 15px !important;
-                font-size: 12px !important;
-            }
-            .payment-methods {
-                margin-bottom: 15px !important;
-            }
+            
             .doc-footer {
                 padding-top: 15px !important;
                 margin-top: 15px !important;
                 font-size: 11px !important;
+                page-break-inside: avoid !important;
             }
         `;
         clone.prepend(style);
@@ -568,9 +599,8 @@ async function generatePDF() {
                 compress: true
             },
             pagebreak: { 
-                mode: ['avoid-all', 'css', 'legacy'],
-                before: '.cost-summary',
-                avoid: ['.day-item', '.includes-section', '.activity-list']
+                mode: ['avoid-all', 'css'],
+                avoid: ['.day-item', '.includes-section', '.activity-list', '.cost-summary', '.validity', '.payment-methods', '.terms', '.doc-footer', '.final-page-section']
             }
         };
         
