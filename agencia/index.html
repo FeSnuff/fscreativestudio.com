@@ -30,30 +30,34 @@
         let primaryColor = '#667eea';
         let isEditMode = false;
         
-        // Emoji mappings (global to avoid redeclaration)
-        const includeEmojis = {
-            'almuerzo': '🍽️', 'asistencia': '👨‍⚕️', 'oxigeno': '💨', 'balón': '💨',
-            'bastones': '🥾', 'botiquin': '🩹', 'primeros auxilios': '🩹',
-            'practica': '🏃', 'bus': '🚌', 'casco': '⛑️', 'equipo': '🎒', 'seguridad': '⛑️',
-            'cuatrimoto': '🏍️', 'desayuno': '🍳', 'guia': '👨‍🏫', 'profesional': '👨‍🏫',
-            'recojo': '🚐', 'hotel': '🏨', 'ticket': '🎫', 'tren': '🚂',
-            'ingreso': '🎟️', 'transporte': '🚗', 'turistico': '🚌', 'turístico': '🚌',
-            'subida': '⬆️', 'bajada': '⬇️', 'machupicchu': '🏛️', 'machu picchu': '🏛️',
-            'ida': '➡️', 'retorno': '⬅️', 'vuelta': '⬅️', 'doble': '👥', 'individual': '👤'
-        };
+        // Emoji mappings (use window to avoid redeclaration issues)
+        if (!window.includeEmojis) {
+            window.includeEmojis = {
+                'almuerzo': '🍽️', 'asistencia': '👨‍⚕️', 'oxigeno': '💨', 'balón': '💨',
+                'bastones': '🥾', 'botiquin': '🩹', 'primeros auxilios': '🩹',
+                'practica': '🏃', 'bus': '🚌', 'casco': '⛑️', 'equipo': '🎒', 'seguridad': '⛑️',
+                'cuatrimoto': '🏍️', 'desayuno': '🍳', 'guia': '👨‍🏫', 'profesional': '👨‍🏫',
+                'recojo': '🚐', 'hotel': '🏨', 'ticket': '🎫', 'tren': '🚂',
+                'ingreso': '🎟️', 'transporte': '🚗', 'turistico': '🚌', 'turístico': '🚌',
+                'subida': '⬆️', 'bajada': '⬇️', 'machupicchu': '🏛️', 'machu picchu': '🏛️',
+                'ida': '➡️', 'retorno': '⬅️', 'vuelta': '⬅️', 'doble': '👥', 'individual': '👤'
+            };
+        }
         
-        const notIncludeEmojis = {
-            'alimentacion': '🍴', 'alimentación': '🍴', 'btp': '🎫', 'boleto': '🎟️',
-            'caballo': '🐴', 'cena': '🍽️', 'entrada': '🚪', 'salineras': '🧂',
-            'hospedaje': '🏨', 'igv': '💰', 'ingreso': '🎟️', 'capilla': '⛪',
-            'lagunas': '🏞️', '7 lagunas': '🏞️', 'termales': '♨️', 'pitumarca': '🏔️',
-            'seguro': '🛡️', 'personal': '🛡️', 'tiket': '🎫', 'ticket': '🎫',
-            'waqrapukara': '🏔️', 'cusco': '🏙️', 'machupicchu': '🏛️'
-        };
+        if (!window.notIncludeEmojis) {
+            window.notIncludeEmojis = {
+                'alimentacion': '🍴', 'alimentación': '🍴', 'btp': '🎫', 'boleto': '🎟️',
+                'caballo': '🐴', 'cena': '🍽️', 'entrada': '🚪', 'salineras': '🧂',
+                'hospedaje': '🏨', 'igv': '💰', 'ingreso': '🎟️', 'capilla': '⛪',
+                'lagunas': '🏞️', '7 lagunas': '🏞️', 'termales': '♨️', 'pitumarca': '🏔️',
+                'seguro': '🛡️', 'personal': '🛡️', 'tiket': '🎫', 'ticket': '🎫',
+                'waqrapukara': '🏔️', 'cusco': '🏙️', 'machupicchu': '🏛️'
+            };
+        }
         
         function getEmojiForItem(text, isInclude) {
             const lowerText = text.toLowerCase();
-            const emojiMap = isInclude ? includeEmojis : notIncludeEmojis;
+            const emojiMap = isInclude ? window.includeEmojis : window.notIncludeEmojis;
             
             for (const [key, emoji] of Object.entries(emojiMap)) {
                 if (lowerText.includes(key)) {
