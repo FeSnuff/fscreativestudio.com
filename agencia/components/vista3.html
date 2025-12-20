@@ -392,7 +392,7 @@ async function saveItinerary() {
         console.log('Datos a enviar al servidor:', itineraryData);
         
         // Send to Google Apps Script
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzgub45v3L8VqWhUBnjXw25rvMsOpCZgq6KaslYQSWot7qwX6vgK9arBAzI1hHSZypmAw/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwdj3eC5B8IBV-q5X6c2-7YS86fvMo_LLgYeCV85kvtoM2sV51ybAVsm2y9elonGz9OWQ/exec';
         
         console.log('Enviando a Google Apps Script...');
         console.log('URL:', SCRIPT_URL);
@@ -404,9 +404,9 @@ async function saveItinerary() {
         
         console.log('Payload completo:', JSON.stringify(payload, null, 2));
         
+        console.log('Enviando POST request...');
         const response = await fetch(SCRIPT_URL, {
             method: 'POST',
-            mode: 'no-cors',
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -415,17 +415,24 @@ async function saveItinerary() {
         
         console.log('Respuesta recibida:', response);
         console.log('Status:', response.status);
-        console.log('Type:', response.type);
+        console.log('OK:', response.ok);
         
-        // Con mode: 'no-cors' no podemos leer la respuesta, pero si llegó aquí es que se envió
-        console.log('✅ Petición enviada exitosamente');
-        console.log('⚠️ Nota: Con mode no-cors no podemos ver la respuesta del servidor');
-        console.log('📋 Revisa tu Google Sheet para verificar si se guardó');
+        console.log('Parseando respuesta JSON...');
+        const result = await response.json();
+        console.log('Resultado del servidor:', result);
+        console.log('Version del servidor:', result.version);
         
         btnSave.disabled = false;
         btnSave.textContent = '💾 Guardar Itinerario';
         
-        alert(`✅ Itinerario enviado al servidor\n\nCódigo: ${encodedItinerary}\n\nRevisa tu Google Sheet en la hoja "Itinerarios" para confirmar que se guardó.`);
+        if (result.success) {
+            console.log('✅ Itinerario guardado exitosamente');
+            console.log('Fila en Sheet:', result.row);
+            alert(`✅ Itinerario guardado exitosamente\n\nCódigo: ${encodedItinerary}\n\nGuardado en la fila ${result.row} del Sheet.\n\nVersion: ${result.version}`);
+        } else {
+            console.error('❌ Error del servidor:', result.message);
+            alert(`❌ Error al guardar: ${result.message}`);
+        }
         
     } catch (error) {
         console.error('❌ ERROR AL GUARDAR:', error);
