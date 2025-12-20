@@ -18,7 +18,7 @@
         let USER = null;
 
         async function loadView(viewName) {
-            const response = await fetch(`${viewName}.html`);
+            const response = await fetch(`components/${viewName}.html`);
             const html = await response.text();
             document.getElementById('app').innerHTML = html;
             
