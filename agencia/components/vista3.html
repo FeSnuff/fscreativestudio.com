@@ -48,7 +48,7 @@ body { background: #f5f5f5; min-height: 100vh; margin: 0; font-family: Arial, sa
 .cost-total { display: flex; justify-content: space-between; padding: 15px 0; font-size: 20px; font-weight: bold; color: var(--primary-color, #667eea); margin-top: 10px; }
 .validity { background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107; margin-bottom: 20px; color: #856404; }
 .payment-methods { margin-bottom: 20px; }
-.payment-images { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+.payment-images { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; justify-content: center; }
 .payment-images img { height: 40px; border-radius: 5px; }
 .terms { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
 .terms h3 { color: #333; margin-bottom: 15px; font-size: 18px; }
@@ -56,7 +56,7 @@ body { background: #f5f5f5; min-height: 100vh; margin: 0; font-family: Arial, sa
 .doc-footer { border-top: 2px solid var(--primary-color, #667eea); padding-top: 20px; margin-top: 30px; text-align: center; color: #666; font-size: 12px; line-height: 1.6; }
 .editable-mode { outline: 2px dashed #ffc107; background: #fffbf0; }
 .activity-list { background: #fff; padding: 15px; border-radius: 8px; margin-top: 10px; margin-bottom: 15px; }
-.activity-list h4 { color: #667eea; margin-bottom: 10px; font-size: 14px; }
+.activity-list h4 { color: var(--primary-color, #667eea); margin-bottom: 10px; font-size: 14px; }
 .activity-list ul { list-style: none; padding: 0; margin: 0; }
 .activity-list li { padding: 5px 0; font-size: 13px; color: #666; }
 .activity-list li:before { content: "📍 "; }
@@ -270,10 +270,6 @@ function renderDocument() {
                 <span>TOTAL NIÑO:</span>
                 <span>${currency} ${childTotal.toFixed(2)}</span>
             </div>
-            <div class="cost-total" style="background:#f0f4ff;padding:15px;border-radius:8px;margin-top:10px">
-                <span>TOTAL GENERAL:</span>
-                <span>${currency} ${(adultTotal + childTotal).toFixed(2)}</span>
-            </div>
             ` : `
             <div class="cost-total">
                 <span>TOTAL A PAGAR:</span>
@@ -300,14 +296,14 @@ function renderDocument() {
         <div class="terms">
             <h3>📋 Términos y Condiciones</h3>
             <ul>
-                <li><strong>Adelanto:</strong> Se requiere el 50% del monto total como adelanto para confirmar la reserva.</li>
-                <li><strong>Pagos internacionales:</strong> Los pagos con tarjetas extranjeras mediante PayPal u otros medios internacionales tienen un recargo del 5% al 10% según el método.</li>
-                <li><strong>Reembolsos:</strong> Las cancelaciones con más de 7 días de anticipación tienen derecho a reembolso del 80% del adelanto. Cancelaciones con menos de 7 días no son reembolsables.</li>
-                <li><strong>Cambios climáticos:</strong> En caso de condiciones climáticas adversas, se reprogramará el tour sin costo adicional o se procederá al reembolso completo.</li>
-                <li><strong>Cambios de fecha por el cliente:</strong> Si el cliente necesita modificar las fechas de viaje o presenta imprevistos personales, haremos nuestro mejor esfuerzo para reprogramar. Sin embargo, la disponibilidad está sujeta a los proveedores de servicios y pueden aplicarse cargos adicionales.</li>
-                <li><strong>Responsabilidad:</strong> La empresa no se hace responsable por cambios en los planes de viaje debido a causas ajenas a nuestro control, tales como cambios de vuelos, demoras, o circunstancias personales del cliente.</li>
-                <li><strong>Disponibilidad:</strong> Todos los tours están sujetos a disponibilidad y confirmación.</li>
-                <li><strong>Documentación:</strong> Es responsabilidad del cliente contar con la documentación necesaria (pasaporte, visas, etc.).</li>
+                <li><strong>Reserva y adelanto:</strong> Para confirmar tu reserva, solicitamos un adelanto del 50% del monto total. Este adelanto asegura la disponibilidad de los servicios contratados.</li>
+                <li><strong>Pagos internacionales:</strong> Los pagos realizados con tarjetas extranjeras a través de PayPal u otros medios internacionales tienen un cargo adicional del 5% al 10% según la plataforma utilizada.</li>
+                <li><strong>Política de cancelación:</strong> Entendemos que los planes pueden cambiar. Las cancelaciones realizadas con anticipación razonable (sugerimos al menos 15-30 días antes del tour) pueden ser evaluadas caso por caso. Sin embargo, el adelanto del 50% cubre costos operativos ya incurridos y generalmente no es reembolsable.</li>
+                <li><strong>Reembolsos por circunstancias de la empresa:</strong> Si por causas atribuibles a nuestra agencia no podemos realizar el servicio contratado, procederemos al reembolso total del adelanto o reprogramación sin costo adicional.</li>
+                <li><strong>Condiciones climáticas y situaciones extraordinarias:</strong> Los tours pueden verse afectados por condiciones climáticas adversas, emergencias o situaciones fuera de nuestro control. En estos casos, haremos nuestro mejor esfuerzo para reprogramar sin cargo adicional. Estas circunstancias naturales no están cubiertas por políticas de reembolso.</li>
+                <li><strong>Cambios de itinerario del cliente:</strong> Si necesitas modificar fechas por razones personales, trabajaremos contigo para encontrar nuevas fechas sujetas a disponibilidad. Los cambios pueden generar costos adicionales según los proveedores.</li>
+                <li><strong>Disponibilidad de servicios:</strong> Todos nuestros tours están sujetos a disponibilidad de proveedores y confirmación final.</li>
+                <li><strong>Responsabilidad del viajero:</strong> Es responsabilidad del cliente contar con la documentación necesaria (pasaporte vigente, visas, seguros de viaje, etc.) para realizar los tours.</li>
             </ul>
         </div>
         
