@@ -350,315 +350,88 @@ async function generatePDF() {
     btnPDF.textContent = '⏳ Generando PDF...';
     
     try {
-        // Load jsPDF and autoTable
-        if (!window.jspdf) {
-            const jsPDFScript = document.createElement('script');
-            jsPDFScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+        // Load html2pdf library
+        if (!window.html2pdf) {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
             await new Promise((resolve, reject) => {
-                jsPDFScript.onload = resolve;
-                jsPDFScript.onerror = reject;
-                document.head.appendChild(jsPDFScript);
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
             });
         }
         
-        if (!window.jspdf.jsPDF.API.autoTable) {
-            const autoTableScript = document.createElement('script');
-            autoTableScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js';
-            await new Promise((resolve, reject) => {
-                autoTableScript.onload = resolve;
-                autoTableScript.onerror = reject;
-                document.head.appendChild(autoTableScript);
-            });
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        const element = document.getElementById('documentContent');
+        
+        if (!element) {
+            throw new Error('No se encontró el contenido del documento');
         }
         
-        await new Promise(resolve => setTimeout(resolve, 300));
+        // Clone element for PDF
+        const clone = element.cloneNode(true);
         
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
+        // Add CSS for better page breaks
+        const style = document.createElement('style');
+        style.textContent = `
+            .day-item { page-break-inside: avoid; }
+            .includes-section { page-break-inside: avoid; }
+            .activity-list { page-break-inside: avoid; }
+            .cost-summary { page-break-before: always; page-break-inside: avoid; }
+            .payment-methods { page-break-inside: avoid; }
+            .terms { page-break-inside: avoid; }
+        `;
+        clone.prepend(style);
         
+        // Replace payment images with text (avoid CORS)
+        const paymentSection = clone.querySelector('.payment-methods');
+        if (paymentSection) {
+            const paymentImages = paymentSection.querySelector('.payment-images');
+            if (paymentImages) {
+                paymentImages.innerHTML = `
+                    <div style="text-align:center;padding:15px;background:#f8f9fa;border-radius:8px">
+                        <p style="margin:5px 0"><strong>💳 Tarjetas:</strong> Visa, Mastercard</p>
+                        <p style="margin:5px 0"><strong>💰 Transferencias:</strong> Yape, Plin</p>
+                        <p style="margin:5px 0"><strong>🌐 Internacional:</strong> PayPal, Western Union</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Configure options
         const vista2 = VISTA2_DATA || {};
-        const currency = vista2.currency === 'USD' ? '$' : 'S/';
         const totalDays = CART.reduce((acc, t) => acc + t.duration_days, 0);
-        const totalNights = totalDays - 1;
-        
-        let adultTotal = vista2.adultTotal || vista2.totalAmount || CART.reduce((acc, t) => acc + t.price, 0);
-        let childTotal = vista2.childTotal || 0;
-        
-        const primaryColorRGB = hexToRgb(primaryColor);
-        let yPos = 20;
-        
-        // Header
-        doc.setFontSize(20);
-        doc.setTextColor(primaryColorRGB.r, primaryColorRGB.g, primaryColorRGB.b);
-        doc.text('Qori Wayra - Travel', 20, yPos);
-        
-        doc.setFontSize(10);
-        doc.setTextColor(100, 100, 100);
-        doc.text('Experiencias unicas en Cusco y Peru', 20, yPos + 6);
-        
-        // Contact info (right aligned)
-        doc.setFontSize(9);
-        const contactInfo = [
-            'Tel: +51 924 377 454',
-            'Web: qoriwayra-travel.com',
-            'Email: qoriwayra.cuscotravel@gmail.com',
-            'Instagram: @qoriwayratravel'
-        ];
-        
-        contactInfo.forEach((line, i) => {
-            doc.text(line, 200, yPos + (i * 4), { align: 'right' });
-        });
-        
-        yPos = 45;
-        
-        // Title
-        doc.setFontSize(16);
-        doc.setTextColor(0, 0, 0);
-        doc.text('ITINERARIO DE VIAJE', 105, yPos, { align: 'center' });
-        
-        yPos += 6;
-        doc.setFontSize(12);
-        doc.setTextColor(100, 100, 100);
-        doc.text(`${totalDays} dia${totalDays > 1 ? 's' : ''} / ${totalNights} noche${totalNights > 1 ? 's' : ''}`, 105, yPos, { align: 'center' });
-        
-        yPos += 10;
-        
-        // Client info
-        if (vista2.includeClientData) {
-            doc.setFontSize(12);
-            doc.setTextColor(primaryColorRGB.r, primaryColorRGB.g, primaryColorRGB.b);
-            doc.text('Informacion del Cliente', 20, yPos);
-            yPos += 2;
-            
-            const clientData = [
-                ['Nombre:', vista2.clientName || ''],
-                ['Nacionalidad:', vista2.clientNationality ? vista2.clientNationality.split('|')[0] : ''],
-                ['Contacto:', `${vista2.phonePrefix || ''}${vista2.phoneNumber || ''}`]
-            ];
-            
-            doc.autoTable({
-                startY: yPos,
-                body: clientData,
-                theme: 'plain',
-                styles: { fontSize: 10, cellPadding: 2 },
-                columnStyles: {
-                    0: { fontStyle: 'bold', cellWidth: 40 },
-                    1: { cellWidth: 140 }
-                }
-            });
-            
-            yPos = doc.lastAutoTable.finalY + 10;
-        }
-        
-        // Check if new page needed
-        if (yPos > 250) {
-            doc.addPage();
-            yPos = 20;
-        }
-        
-        // Itinerary
-        doc.setFontSize(12);
-        doc.setTextColor(primaryColorRGB.r, primaryColorRGB.g, primaryColorRGB.b);
-        doc.text('Cronograma', 20, yPos);
-        yPos += 8;
-        
-        let currentDay = 1;
-        CART.forEach((tour, index) => {
-            const days = tour.duration_days;
-            const dayLabel = days === 1 ? `Dia ${currentDay}` : `Dias ${currentDay} - ${currentDay + days - 1}`;
-            
-            // Check if need new page
-            if (yPos > 240) {
-                doc.addPage();
-                yPos = 20;
-            }
-            
-            // Day title
-            doc.setFontSize(11);
-            doc.setTextColor(primaryColorRGB.r, primaryColorRGB.g, primaryColorRGB.b);
-            doc.text(dayLabel, 20, yPos);
-            yPos += 5;
-            
-            // Tour name
-            doc.setFontSize(10);
-            doc.setTextColor(0, 0, 0);
-            doc.setFont(undefined, 'bold');
-            doc.text(tour.name, 20, yPos);
-            doc.setFont(undefined, 'normal');
-            yPos += 6;
-            
-            // Summary list
-            if (tour.summary_list && tour.summary_list.length > 0) {
-                doc.setFontSize(9);
-                doc.setTextColor(80, 80, 80);
-                doc.setFont(undefined, 'bold');
-                doc.text('Itinerario:', 20, yPos);
-                doc.setFont(undefined, 'normal');
-                yPos += 4;
-                
-                tour.summary_list.forEach(item => {
-                    if (yPos > 270) {
-                        doc.addPage();
-                        yPos = 20;
-                    }
-                    const lines = doc.splitTextToSize(`- ${item}`, 170);
-                    doc.text(lines, 25, yPos);
-                    yPos += lines.length * 4;
-                });
-                yPos += 2;
-            }
-            
-            // Includes / Not includes table
-            const includes = tour.includes || [];
-            const notIncludes = tour.excludes || tour.not_includes || [];
-            
-            if (includes.length > 0 || notIncludes.length > 0) {
-                const maxRows = Math.max(includes.length, notIncludes.length);
-                const tableData = [];
-                
-                for (let i = 0; i < maxRows; i++) {
-                    tableData.push([
-                        includes[i] ? `${window.getEmojiForItem(includes[i], true)} ${includes[i]}` : '',
-                        notIncludes[i] ? `${window.getEmojiForItem(notIncludes[i], false)} ${notIncludes[i]}` : ''
-                    ]);
-                }
-                
-                doc.autoTable({
-                    startY: yPos,
-                    head: [['Incluye', 'No Incluye']],
-                    body: tableData,
-                    theme: 'grid',
-                    styles: { fontSize: 8, cellPadding: 2 },
-                    headStyles: { 
-                        fillColor: [240, 240, 240],
-                        textColor: [0, 0, 0],
-                        fontStyle: 'bold'
-                    },
-                    columnStyles: {
-                        0: { cellWidth: 90 },
-                        1: { cellWidth: 90 }
-                    },
-                    margin: { left: 20, right: 20 }
-                });
-                
-                yPos = doc.lastAutoTable.finalY + 8;
-            }
-            
-            currentDay += days;
-        });
-        
-        // Cost summary - NEW PAGE
-        doc.addPage();
-        yPos = 20;
-        
-        doc.setFontSize(12);
-        doc.setTextColor(primaryColorRGB.r, primaryColorRGB.g, primaryColorRGB.b);
-        doc.text('Resumen de Costos', 20, yPos);
-        yPos += 8;
-        
-        const costData = [
-            ['Cantidad de Tours:', CART.length.toString()],
-            ['Moneda:', vista2.currency === 'USD' ? 'Dolares (USD)' : 'Soles (PEN)']
-        ];
-        
-        if (vista2.includeBudgetChild) {
-            costData.push(['TOTAL ADULTO:', `${currency} ${adultTotal.toFixed(2)}`]);
-            costData.push(['TOTAL NIÑO:', `${currency} ${childTotal.toFixed(2)}`]);
-        } else {
-            costData.push(['TOTAL A PAGAR:', `${currency} ${adultTotal.toFixed(2)}`]);
-        }
-        
-        doc.autoTable({
-            startY: yPos,
-            body: costData,
-            theme: 'plain',
-            styles: { fontSize: 11, cellPadding: 3 },
-            columnStyles: {
-                0: { fontStyle: 'bold', cellWidth: 80 },
-                1: { cellWidth: 100, halign: 'right', fontStyle: 'bold' }
-            }
-        });
-        
-        yPos = doc.lastAutoTable.finalY + 10;
-        
-        // Validity
-        doc.setFillColor(255, 243, 205);
-        doc.rect(20, yPos, 170, 12, 'F');
-        doc.setFontSize(9);
-        doc.setTextColor(0, 0, 0);
-        doc.text('Validez: Este presupuesto tiene una validez de 2 dias desde su emision.', 25, yPos + 7);
-        
-        yPos += 18;
-        
-        // Payment methods
-        doc.setFontSize(11);
-        doc.setTextColor(primaryColorRGB.r, primaryColorRGB.g, primaryColorRGB.b);
-        doc.text('Metodos de Pago', 20, yPos);
-        yPos += 6;
-        
-        doc.setFontSize(9);
-        doc.setTextColor(0, 0, 0);
-        doc.text('Tarjetas: Visa, Mastercard', 25, yPos);
-        yPos += 5;
-        doc.text('Transferencias: Yape, Plin', 25, yPos);
-        yPos += 5;
-        doc.text('Internacional: PayPal, Western Union', 25, yPos);
-        yPos += 10;
-        
-        // Terms
-        doc.setFontSize(11);
-        doc.setTextColor(primaryColorRGB.r, primaryColorRGB.g, primaryColorRGB.b);
-        doc.text('Terminos y Condiciones', 20, yPos);
-        yPos += 6;
-        
-        doc.setFontSize(8);
-        doc.setTextColor(60, 60, 60);
-        
-        const terms = [
-            '• Reserva y adelanto: Para confirmar tu reserva, solicitamos un adelanto del 50% del monto total.',
-            '• Pagos internacionales: Los pagos con tarjetas extranjeras tienen un cargo del 5-10%.',
-            '• Politica de cancelacion: Las cancelaciones con anticipacion razonable (15-30 dias) pueden ser evaluadas. El adelanto generalmente no es reembolsable.',
-            '• Reembolsos: Solo proceden si por causas de nuestra agencia no se puede realizar el servicio.',
-            '• Condiciones climaticas: Pueden afectar los tours. Se reprogramara sin cargo adicional cuando sea posible.',
-            '• Disponibilidad: Todos los tours estan sujetos a disponibilidad y confirmacion.',
-            '• Responsabilidad del viajero: El cliente debe contar con documentacion necesaria (pasaporte, visas, etc.).'
-        ];
-        
-        terms.forEach(term => {
-            if (yPos > 270) {
-                doc.addPage();
-                yPos = 20;
-            }
-            const lines = doc.splitTextToSize(term, 170);
-            doc.text(lines, 20, yPos);
-            yPos += lines.length * 4 + 2;
-        });
-        
-        // Footer
-        yPos += 10;
-        if (yPos > 260) {
-            doc.addPage();
-            yPos = 20;
-        }
-        
-        doc.setFontSize(8);
-        doc.setTextColor(100, 100, 100);
-        const footerText = [
-            'Documento generado por Qori Wayra - Travel',
-            'Todos los tours estan sujetos a disponibilidad y condiciones climaticas',
-            'Para mas informacion, contactenos a traves de nuestros canales oficiales'
-        ];
-        
-        footerText.forEach(line => {
-            doc.text(line, 105, yPos, { align: 'center' });
-            yPos += 4;
-        });
-        
-        // Save
         const clientName = vista2.clientName ? `_${vista2.clientName.replace(/\s+/g, '_')}` : '';
         const filename = `Itinerario_QoriWayra_${totalDays}dias${clientName}.pdf`;
         
-        doc.save(filename);
+        const opt = {
+            margin: [10, 10, 10, 10],
+            filename: filename,
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { 
+                scale: 2,
+                useCORS: false,
+                allowTaint: true,
+                logging: false,
+                letterRendering: true,
+                backgroundColor: '#ffffff'
+            },
+            jsPDF: { 
+                unit: 'mm', 
+                format: 'a4', 
+                orientation: 'portrait',
+                compress: true
+            },
+            pagebreak: { 
+                mode: ['avoid-all', 'css', 'legacy'],
+                before: '.cost-summary',
+                avoid: ['.day-item', '.includes-section', '.activity-list']
+            }
+        };
+        
+        // Generate PDF
+        await html2pdf().set(opt).from(clone).save();
         
         btnPDF.disabled = false;
         btnPDF.textContent = '📥 Generar PDF';
