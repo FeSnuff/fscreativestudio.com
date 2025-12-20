@@ -371,86 +371,97 @@ async function generatePDF() {
             });
         }
         
-        // Wait a bit for libraries to be ready
-        await new Promise(resolve => setTimeout(resolve, 100));
+        // Wait for libraries
+        await new Promise(resolve => setTimeout(resolve, 500));
         
-        const { jsPDF } = window.jspdf;
         const element = document.getElementById('documentContent');
         
-        if (!element || !element.innerHTML.trim()) {
-            throw new Error('No hay contenido para generar el PDF');
+        if (!element) {
+            throw new Error('No se encontró el contenido del documento');
         }
         
-        // Clone the element
-        const clone = element.cloneNode(true);
-        clone.style.width = '210mm'; // A4 width
-        clone.style.padding = '20px';
-        clone.style.background = '#fff';
-        clone.style.position = 'absolute';
-        clone.style.left = '-9999px';
-        clone.style.top = '0';
-        document.body.appendChild(clone);
+        console.log('Element found:', element);
+        console.log('Element HTML length:', element.innerHTML.length);
         
-        // Wait for images to load
-        const images = clone.querySelectorAll('img');
-        await Promise.all(Array.from(images).map(img => {
-            if (img.complete) return Promise.resolve();
-            return new Promise(resolve => {
-                img.onload = resolve;
-                img.onerror = resolve; // Continue even if image fails
-                setTimeout(resolve, 2000); // Timeout after 2s
-            });
-        }));
+        // Make element visible for capture
+        const originalPosition = element.style.position;
+        const originalLeft = element.style.left;
+        element.style.position = 'relative';
+        element.style.left = '0';
         
-        // Generate canvas
-        const canvas = await html2canvas(clone, {
+        // Scroll to top
+        window.scrollTo(0, 0);
+        
+        // Wait a bit
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        console.log('Capturing with html2canvas...');
+        
+        // Generate canvas from visible element
+        const canvas = await html2canvas(element, {
             scale: 2,
             useCORS: true,
-            logging: false,
-            backgroundColor: '#ffffff'
+            allowTaint: true,
+            logging: true,
+            backgroundColor: '#ffffff',
+            width: element.scrollWidth,
+            height: element.scrollHeight
         });
         
-        // Remove clone
-        document.body.removeChild(clone);
+        console.log('Canvas created:', canvas.width, 'x', canvas.height);
+        
+        // Restore original styles
+        element.style.position = originalPosition;
+        element.style.left = originalLeft;
+        
+        if (canvas.width === 0 || canvas.height === 0) {
+            throw new Error('Canvas vacío - no se pudo capturar el contenido');
+        }
         
         // Create PDF
-        const imgData = canvas.toDataURL('image/jpeg', 1.0);
+        const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'mm', 'a4');
         
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = pdf.internal.pageSize.getHeight();
-        const imgWidth = pdfWidth - 20; // 10mm margin on each side
+        const imgWidth = pdfWidth - 20; // margins
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
         
+        const imgData = canvas.toDataURL('image/png');
+        
         let heightLeft = imgHeight;
-        let position = 10; // Top margin
+        let position = 10;
         
-        // Add first page
-        pdf.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
-        heightLeft -= (pdfHeight - 20); // Subtract page height minus margins
+        // First page
+        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+        heightLeft -= (pdfHeight - 20);
         
-        // Add additional pages if needed
+        // Additional pages
         while (heightLeft > 0) {
             position = heightLeft - imgHeight + 10;
             pdf.addPage();
-            pdf.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
+            pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
             heightLeft -= (pdfHeight - 20);
         }
         
-        // Save PDF
+        // Save
         const vista2 = VISTA2_DATA || {};
         const totalDays = CART.reduce((acc, t) => acc + t.duration_days, 0);
         const clientName = vista2.clientName ? `_${vista2.clientName.replace(/\s+/g, '_')}` : '';
-        pdf.save(`Itinerario_QoriWayra_${totalDays}dias${clientName}.pdf`);
+        const filename = `Itinerario_QoriWayra_${totalDays}dias${clientName}.pdf`;
+        
+        console.log('Saving PDF:', filename);
+        pdf.save(filename);
         
         btnPDF.disabled = false;
         btnPDF.textContent = '📥 Generar PDF';
+        alert('✅ PDF generado exitosamente');
         
     } catch (error) {
-        console.error('Error generating PDF:', error);
+        console.error('Error completo:', error);
         btnPDF.disabled = false;
         btnPDF.textContent = '📥 Generar PDF';
-        alert('Error al generar PDF: ' + error.message);
+        alert('❌ Error al generar PDF: ' + error.message + '\n\nRevisa la consola para más detalles');
     }
 }
 
