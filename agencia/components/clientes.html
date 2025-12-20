@@ -170,9 +170,18 @@ async function loadClients() {
     try {
         console.log('📥 Cargando clientes desde Google Sheets...');
         
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwdj3eC5B8IBV-q5X6c2-7YS86fvMo_LLgYeCV85kvtoM2sV51ybAVsm2y9elonGz9OWQ/exec';
-        const response = await fetch(`${SCRIPT_URL}?action=getItinerarios`);
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyhy2orKUdaAUDp91lNQ5ertl28xLLpAgiSzORLQWfXXaju4rbLjU8TCqU9XSf3J7_3YQ/exec';
+        console.log('URL:', SCRIPT_URL);
+        
+        const url = `${SCRIPT_URL}?action=getItinerarios`;
+        console.log('Fetching:', url);
+        
+        const response = await fetch(url);
+        console.log('Response:', response);
+        console.log('Status:', response.status);
+        
         const data = await response.json();
+        console.log('Data received:', data);
         
         if (data.success) {
             allClients = data.itinerarios.map(item => ({
@@ -191,7 +200,7 @@ async function loadClients() {
         document.getElementById('clientsContainer').innerHTML = `
             <div class="empty-state">
                 <div class="empty-state-icon">❌</div>
-                <div class="empty-state-text">Error al cargar las reservas</div>
+                <div class="empty-state-text">Error al cargar las reservas: ${error.message}</div>
             </div>
         `;
     }
@@ -381,7 +390,7 @@ async function updateClientStatus() {
     const newStatus = document.getElementById('statusSelect').value;
     
     try {
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwdj3eC5B8IBV-q5X6c2-7YS86fvMo_LLgYeCV85kvtoM2sV51ybAVsm2y9elonGz9OWQ/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyhy2orKUdaAUDp91lNQ5ertl28xLLpAgiSzORLQWfXXaju4rbLjU8TCqU9XSf3J7_3YQ/exec';
         
         await fetch(SCRIPT_URL, {
             method: 'POST',
@@ -415,7 +424,7 @@ async function updatePaymentMethod() {
     const newMethod = document.getElementById('paymentSelect').value;
     
     try {
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwT3sgjRrd0-EuYsoLWphPGVy1ZPFpkJDYS_TijxmLhfQjGP-btWyLm_K-enQgotzXIlQ/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyhy2orKUdaAUDp91lNQ5ertl28xLLpAgiSzORLQWfXXaju4rbLjU8TCqU9XSf3J7_3YQ/exec';
         
         await fetch(SCRIPT_URL, {
             method: 'POST',
