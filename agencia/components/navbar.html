@@ -20,52 +20,63 @@
 .navbar-brand {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 15px;
     color: #fff;
     text-decoration: none;
 }
 
 .navbar-logo {
-    font-size: 32px;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    width: 45px;
+    height: 45px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #fff;
+    padding: 5px;
+}
+
+.navbar-brand-text {
+    display: flex;
+    flex-direction: column;
 }
 
 .navbar-title {
     font-size: 20px;
     font-weight: 700;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
+    line-height: 1.2;
 }
 
 .navbar-subtitle {
-    font-size: 11px;
+    font-size: 12px;
     opacity: 0.9;
     font-weight: 400;
 }
 
 .navbar-nav {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     align-items: center;
 }
 
 .nav-item {
-    padding: 10px 20px;
+    padding: 10px 24px;
     border-radius: 8px;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.15);
     color: #fff;
-    border: 2px solid transparent;
+    border: none;
     cursor: pointer;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 15px;
     transition: all 0.3s;
     display: flex;
     align-items: center;
     gap: 8px;
+    white-space: nowrap;
 }
 
 .nav-item:hover {
-    background: rgba(255,255,255,0.2);
-    border-color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.25);
+    transform: translateY(-1px);
 }
 
 .nav-item.active {
@@ -74,24 +85,53 @@
 }
 
 .nav-item.logout {
-    background: rgba(220,53,69,0.9);
-    margin-left: 10px;
+    background: rgba(239,68,68,0.9);
 }
 
 .nav-item.logout:hover {
-    background: rgba(220,53,69,1);
-    border-color: rgba(255,255,255,0.3);
+    background: rgba(239,68,68,1);
 }
 
-/* Mobile responsive */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: rgba(255,255,255,0.15);
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.hamburger span {
+    width: 25px;
+    height: 3px;
+    background: #fff;
+    border-radius: 2px;
+    transition: all 0.3s;
+}
+
+.hamburger.active span:nth-child(1) {
+    transform: rotate(45deg) translate(8px, 8px);
+}
+
+.hamburger.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -7px);
+}
+
+/* Mobile Menu */
 @media (max-width: 768px) {
     .navbar-container {
-        padding: 12px 15px;
-        flex-wrap: wrap;
+        padding: 12px 20px;
     }
     
-    .navbar-brand {
-        flex: 1;
+    .navbar-logo {
+        width: 40px;
+        height: 40px;
     }
     
     .navbar-title {
@@ -99,24 +139,36 @@
     }
     
     .navbar-subtitle {
-        display: none;
+        font-size: 10px;
+    }
+    
+    .hamburger {
+        display: flex;
     }
     
     .navbar-nav {
-        width: 100%;
-        margin-top: 10px;
-        justify-content: space-between;
+        position: fixed;
+        top: 70px;
+        right: -100%;
+        width: 250px;
+        height: calc(100vh - 70px);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        flex-direction: column;
+        padding: 20px;
+        gap: 15px;
+        transition: right 0.3s ease;
+        box-shadow: -4px 0 12px rgba(0,0,0,0.2);
+    }
+    
+    .navbar-nav.active {
+        right: 0;
     }
     
     .nav-item {
-        padding: 8px 12px;
-        font-size: 12px;
-        flex: 1;
+        width: 100%;
         justify-content: center;
-    }
-    
-    .nav-item span.nav-text {
-        display: none;
+        padding: 15px;
+        font-size: 16px;
     }
 }
 </style>
@@ -124,41 +176,72 @@
 <nav class="navbar">
     <div class="navbar-container">
         <a href="#" class="navbar-brand" onclick="event.preventDefault()">
-            <div class="navbar-logo">🏔️</div>
-            <div>
+            <img src="FSlogo.png" alt="FS Creative Studio" class="navbar-logo">
+            <div class="navbar-brand-text">
                 <div class="navbar-title">FS Creative Studio</div>
                 <div class="navbar-subtitle">Tours Management App</div>
             </div>
         </a>
         
-        <div class="navbar-nav">
-            <button class="nav-item" id="navTours" onclick="loadView('vistatours')">
+        <button class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        
+        <div class="navbar-nav" id="navbarNav">
+            <button class="nav-item" id="navTours" onclick="loadView('vistatours'); closeMenu();">
                 <span>🗺️</span>
-                <span class="nav-text">Tours</span>
+                <span>Tours</span>
             </button>
-            <button class="nav-item" id="navClientes" onclick="loadView('clientes')">
+            <button class="nav-item" id="navClientes" onclick="loadView('clientes'); closeMenu();">
                 <span>📋</span>
-                <span class="nav-text">Clientes</span>
+                <span>Clientes</span>
             </button>
             <button class="nav-item logout" onclick="logout()">
                 <span>🚪</span>
-                <span class="nav-text">Salir</span>
+                <span>Cerrar Sesión</span>
             </button>
         </div>
     </div>
 </nav>
 
 <script>
-// Update active nav item
+function toggleMenu() {
+    const nav = document.getElementById('navbarNav');
+    const hamburger = document.querySelector('.hamburger');
+    nav.classList.toggle('active');
+    hamburger.classList.toggle('active');
+}
+
+function closeMenu() {
+    const nav = document.getElementById('navbarNav');
+    const hamburger = document.querySelector('.hamburger');
+    nav.classList.remove('active');
+    hamburger.classList.remove('active');
+}
+
 function updateNavbar(currentView) {
     document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.remove('active');
     });
     
     if (currentView === 'vistatours') {
-        document.getElementById('navTours').classList.add('active');
+        document.getElementById('navTours')?.classList.add('active');
     } else if (currentView === 'clientes') {
-        document.getElementById('navClientes').classList.add('active');
+        document.getElementById('navClientes')?.classList.add('active');
     }
 }
+
+// Close menu on outside click
+document.addEventListener('click', function(event) {
+    const nav = document.getElementById('navbarNav');
+    const hamburger = document.querySelector('.hamburger');
+    
+    if (nav && hamburger && nav.classList.contains('active')) {
+        if (!nav.contains(event.target) && !hamburger.contains(event.target)) {
+            closeMenu();
+        }
+    }
+});
 </script>
