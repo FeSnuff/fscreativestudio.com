@@ -1,6 +1,7 @@
 <style>
-.tours-view { max-width: 1600px; margin: 0 auto; padding: 20px; display: grid; grid-template-columns: 1fr 350px; gap: 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
-.btn-logout-top { position: absolute; top: 20px; right: 20px; padding: 10px 20px; background: #dc3545; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; z-index: 10; }
+body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; margin: 0; }
+.tours-view { max-width: 1600px; margin: 0 auto; padding: 20px; display: grid; grid-template-columns: 1fr 350px; gap: 30px; min-height: 100vh; }
+.btn-logout-top { position: fixed; top: 20px; right: 20px; padding: 10px 20px; background: #dc3545; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; z-index: 1000; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
 .tours-header { grid-column: 1/-1; color: #fff; font-size: 32px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
 .user-welcome { color: #fff; font-size: 18px; }
 .filters { grid-column: 1/-1; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 15px; }
@@ -39,10 +40,13 @@
 .cart-total span:last-child { color: #667eea; font-size: 22px; }
 .btn-continue { width: 100%; padding: 14px; border: none; border-radius: 8px; background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; }
 .btn-continue:disabled { opacity: 0.5; cursor: not-allowed; }
+.floating-cart-btn { display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 16px 32px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 50px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 6px 20px rgba(0,0,0,0.3); z-index: 999; }
+.floating-cart-btn:disabled { opacity: 0.5; }
 @media (max-width: 1024px) {
-    .tours-view { grid-template-columns: 1fr; }
+    .tours-view { grid-template-columns: 1fr; padding-bottom: 100px; }
     .cart-sidebar { display: none; }
     .filters { grid-template-columns: 1fr; }
+    .floating-cart-btn { display: block; }
 }
 </style>
 
@@ -108,9 +112,13 @@
                 <span>TOTAL:</span>
                 <span id="cartTotal">S/ 0.00</span>
             </div>
-            <button class="btn-continue" id="btnContinue" disabled>Ver Itinerario →</button>
+            <button class="btn-continue" id="btnContinue" onclick="goToVista1()" disabled>Ver Itinerario →</button>
         </div>
     </div>
+    
+    <button class="floating-cart-btn" id="floatingCartBtn" onclick="goToVista1()" disabled>
+        🛒 Ver Itinerario (<span id="floatingBadge">0</span>) - S/ <span id="floatingTotal">0.00</span>
+    </button>
 </div>
 
 <script>
@@ -131,15 +139,10 @@ function renderTours() {
         const selected = CART.some(item => item.index === i);
         const cartIndex = selected ? CART.findIndex(item => item.index === i) + 1 : '';
         
-        // Normalize: lowercase, replace ñ with n, replace spaces/hyphens with underscores
         const imageName = tour.name.toLowerCase()
-            .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remove accents
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
             .replace(/ñ/g, 'n')
             .replace(/[\s\-–—]+/g, '_');
-        
-        // Try multiple formats
-        const formats = ['webp', 'jpg', 'jpeg', 'png'];
-        const imageUrl = `images/${imageName}/Principal.webp`;
         
         return `
             <div class="tour-card ${selected ? 'selected' : ''}" onclick="addToCart(${i})">
@@ -166,12 +169,18 @@ function updateCart() {
     const total = document.getElementById('cartTotal');
     const content = document.getElementById('cartContent');
     const btn = document.getElementById('btnContinue');
+    const floatingBtn = document.getElementById('floatingCartBtn');
+    const floatingBadge = document.getElementById('floatingBadge');
+    const floatingTotal = document.getElementById('floatingTotal');
     
     if (badge) badge.textContent = CART.length;
+    if (floatingBadge) floatingBadge.textContent = CART.length;
     if (btn) btn.disabled = CART.length === 0;
+    if (floatingBtn) floatingBtn.disabled = CART.length === 0;
     
     const sum = CART.reduce((acc, t) => acc + t.price, 0);
     if (total) total.textContent = `S/ ${sum.toFixed(2)}`;
+    if (floatingTotal) floatingTotal.textContent = sum.toFixed(2);
     
     if (content) {
         if (CART.length === 0) {
@@ -226,5 +235,9 @@ function filterTours() {
     
     TOURS = filtered;
     renderTours();
+}
+
+async function goToVista1() {
+    await loadView('vista1');
 }
 </script>
