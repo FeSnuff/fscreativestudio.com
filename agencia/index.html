@@ -63,6 +63,48 @@
             }
             return isInclude ? '✅' : '❌';
         };
+        
+        // Encode itinerary to compact string
+        window.encodeItinerary = function() {
+            const tourIndices = CART.map(tour => TOURS.findIndex(t => t.name === tour.name)).join(',');
+            const vista2 = VISTA2_DATA || {};
+            
+            const data = {
+                tours: tourIndices,
+                currency: vista2.currency || 'PEN',
+                child: vista2.includeBudgetChild ? '1' : '0',
+                adultTotal: vista2.adultTotal || 0,
+                childTotal: vista2.childTotal || 0,
+                color: primaryColor.replace('#', ''),
+                view: currentView,
+                clientData: vista2.includeClientData ? '1' : '0'
+            };
+            
+            const compact = `${data.tours}|${data.currency}|${data.child}|${data.adultTotal}|${data.childTotal}|${data.color}|${data.view}|${data.clientData}`;
+            return btoa(compact); // Base64 encode
+        };
+        
+        // Decode itinerary from string
+        window.decodeItinerary = function(encoded) {
+            try {
+                const compact = atob(encoded); // Base64 decode
+                const parts = compact.split('|');
+                
+                return {
+                    tourIndices: parts[0].split(',').map(Number),
+                    currency: parts[1],
+                    includeBudgetChild: parts[2] === '1',
+                    adultTotal: parseFloat(parts[3]),
+                    childTotal: parseFloat(parts[4]),
+                    color: '#' + parts[5],
+                    view: parts[6],
+                    includeClientData: parts[7] === '1'
+                };
+            } catch (error) {
+                console.error('Error decoding itinerary:', error);
+                return null;
+            }
+        };
 
         // CARGAR DATOS PERSISTENTES
         function loadPersistedData() {
