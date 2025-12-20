@@ -392,23 +392,44 @@ async function generatePDF() {
         // Scroll to top
         window.scrollTo(0, 0);
         
+        // Replace payment images with text for PDF (avoid CORS)
+        const paymentSection = element.querySelector('.payment-methods');
+        let originalPaymentHTML = '';
+        if (paymentSection) {
+            originalPaymentHTML = paymentSection.innerHTML;
+            paymentSection.innerHTML = `
+                <div class="section-title">💳 Métodos de Pago</div>
+                <div style="text-align:center;padding:20px;background:#f8f9fa;border-radius:8px;margin-top:10px">
+                    <p style="margin:5px 0"><strong>💳 Tarjetas:</strong> Visa, Mastercard</p>
+                    <p style="margin:5px 0"><strong>💰 Transferencias:</strong> Yape, Plin</p>
+                    <p style="margin:5px 0"><strong>🌐 Internacional:</strong> PayPal, Western Union</p>
+                </div>
+            `;
+        }
+        
         // Wait a bit
         await new Promise(resolve => setTimeout(resolve, 500));
         
         console.log('Capturing with html2canvas...');
         
-        // Generate canvas from visible element
+        // Generate canvas from visible element (allow taint for external images)
         const canvas = await html2canvas(element, {
             scale: 2,
-            useCORS: true,
+            useCORS: false,
             allowTaint: true,
             logging: true,
             backgroundColor: '#ffffff',
             width: element.scrollWidth,
-            height: element.scrollHeight
+            height: element.scrollHeight,
+            foreignObjectRendering: false
         });
         
         console.log('Canvas created:', canvas.width, 'x', canvas.height);
+        
+        // Restore payment images
+        if (paymentSection && originalPaymentHTML) {
+            paymentSection.innerHTML = originalPaymentHTML;
+        }
         
         // Restore original styles
         element.style.position = originalPosition;
