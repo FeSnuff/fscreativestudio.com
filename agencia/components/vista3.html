@@ -350,146 +350,320 @@ async function generatePDF() {
     btnPDF.textContent = '⏳ Generando PDF...';
     
     try {
-        // Load libraries if not present
-        if (!window.jspdf) {
-            const jsPDFScript = document.createElement('script');
-            jsPDFScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+        // Load pdfmake libraries
+        if (!window.pdfMake) {
+            const pdfMakeScript = document.createElement('script');
+            pdfMakeScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js';
             await new Promise((resolve, reject) => {
-                jsPDFScript.onload = resolve;
-                jsPDFScript.onerror = reject;
-                document.head.appendChild(jsPDFScript);
+                pdfMakeScript.onload = resolve;
+                pdfMakeScript.onerror = reject;
+                document.head.appendChild(pdfMakeScript);
+            });
+            
+            const vfsScript = document.createElement('script');
+            vfsScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js';
+            await new Promise((resolve, reject) => {
+                vfsScript.onload = resolve;
+                vfsScript.onerror = reject;
+                document.head.appendChild(vfsScript);
             });
         }
         
-        if (!window.html2canvas) {
-            const html2canvasScript = document.createElement('script');
-            html2canvasScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-            await new Promise((resolve, reject) => {
-                html2canvasScript.onload = resolve;
-                html2canvasScript.onerror = reject;
-                document.head.appendChild(html2canvasScript);
-            });
-        }
-        
-        // Wait for libraries
         await new Promise(resolve => setTimeout(resolve, 500));
         
-        const element = document.getElementById('documentContent');
+        const vista2 = VISTA2_DATA || {};
+        const currency = vista2.currency === 'USD' ? '$' : 'S/';
+        const totalDays = CART.reduce((acc, t) => acc + t.duration_days, 0);
+        const totalNights = totalDays - 1;
         
-        if (!element) {
-            throw new Error('No se encontró el contenido del documento');
-        }
+        let adultTotal = vista2.adultTotal || vista2.totalAmount || CART.reduce((acc, t) => acc + t.price, 0);
+        let childTotal = vista2.childTotal || 0;
         
-        console.log('Element found:', element);
-        console.log('Element HTML length:', element.innerHTML.length);
+        // Build document content
+        const content = [];
         
-        // Make element visible for capture
-        const originalPosition = element.style.position;
-        const originalLeft = element.style.left;
-        element.style.position = 'relative';
-        element.style.left = '0';
-        
-        // Scroll to top
-        window.scrollTo(0, 0);
-        
-        // Replace payment images with text for PDF (avoid CORS)
-        const paymentSection = element.querySelector('.payment-methods');
-        let originalPaymentHTML = '';
-        if (paymentSection) {
-            originalPaymentHTML = paymentSection.innerHTML;
-            paymentSection.innerHTML = `
-                <div class="section-title">💳 Métodos de Pago</div>
-                <div style="text-align:center;padding:20px;background:#f8f9fa;border-radius:8px;margin-top:10px">
-                    <p style="margin:5px 0"><strong>💳 Tarjetas:</strong> Visa, Mastercard</p>
-                    <p style="margin:5px 0"><strong>💰 Transferencias:</strong> Yape, Plin</p>
-                    <p style="margin:5px 0"><strong>🌐 Internacional:</strong> PayPal, Western Union</p>
-                </div>
-            `;
-        }
-        
-        // Wait a bit
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        console.log('Capturing with html2canvas...');
-        
-        // Generate canvas from visible element (allow taint for external images)
-        const canvas = await html2canvas(element, {
-            scale: 2,
-            useCORS: false,
-            allowTaint: true,
-            logging: true,
-            backgroundColor: '#ffffff',
-            width: element.scrollWidth,
-            height: element.scrollHeight,
-            foreignObjectRendering: false
+        // Header
+        content.push({
+            columns: [
+                {
+                    width: 'auto',
+                    text: 'Qori Wayra - Travel',
+                    style: 'header',
+                    color: primaryColor
+                },
+                {
+                    width: '*',
+                    text: [
+                        { text: 'Tel: +51 924 377 454\n', fontSize: 10 },
+                        { text: 'Web: qoriwayra-travel.com\n', fontSize: 10 },
+                        { text: 'Email: qoriwayra.cuscotravel@gmail.com\n', fontSize: 10 },
+                        { text: 'Instagram: @qoriwayratravel', fontSize: 10 }
+                    ],
+                    alignment: 'right'
+                }
+            ],
+            margin: [0, 0, 0, 20]
         });
         
-        console.log('Canvas created:', canvas.width, 'x', canvas.height);
+        // Title
+        content.push({
+            text: 'ITINERARIO DE VIAJE',
+            style: 'title',
+            alignment: 'center',
+            margin: [0, 0, 0, 5]
+        });
         
-        // Restore payment images
-        if (paymentSection && originalPaymentHTML) {
-            paymentSection.innerHTML = originalPaymentHTML;
-        }
+        content.push({
+            text: `${totalDays} día${totalDays > 1 ? 's' : ''} / ${totalNights} noche${totalNights > 1 ? 's' : ''}`,
+            fontSize: 12,
+            alignment: 'center',
+            margin: [0, 0, 0, 20],
+            color: '#666666'
+        });
         
-        // Restore original styles
-        element.style.position = originalPosition;
-        element.style.left = originalLeft;
-        
-        if (canvas.width === 0 || canvas.height === 0) {
-            throw new Error('Canvas vacío - no se pudo capturar el contenido');
-        }
-        
-        // Create PDF with better page handling
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight();
-        const margin = 10;
-        const contentWidth = pageWidth - (2 * margin);
-        const contentHeight = pageHeight - (2 * margin);
-        
-        // Calculate scaling
-        const imgWidth = contentWidth;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        
-        const imgData = canvas.toDataURL('image/png', 1.0);
-        
-        // If content fits in one page
-        if (imgHeight <= contentHeight) {
-            pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight);
-        } else {
-            // Multiple pages needed
-            const totalPages = Math.ceil(imgHeight / contentHeight);
+        // Client info
+        if (vista2.includeClientData) {
+            content.push({
+                text: 'Información del Cliente',
+                style: 'sectionHeader',
+                color: primaryColor
+            });
             
-            for (let page = 0; page < totalPages; page++) {
-                if (page > 0) {
-                    pdf.addPage();
-                }
-                
-                const yOffset = -(page * contentHeight);
-                pdf.addImage(imgData, 'PNG', margin, yOffset + margin, imgWidth, imgHeight);
-            }
+            content.push({
+                table: {
+                    widths: ['30%', '70%'],
+                    body: [
+                        ['Nombre:', vista2.clientName || ''],
+                        ['Nacionalidad:', vista2.clientNationality ? vista2.clientNationality.split('|')[0] : ''],
+                        ['Contacto:', `${vista2.phonePrefix || ''}${vista2.phoneNumber || ''}`]
+                    ]
+                },
+                layout: 'noBorders',
+                margin: [0, 5, 0, 20]
+            });
         }
         
-        // Save
-        const vista2 = VISTA2_DATA || {};
-        const totalDays = CART.reduce((acc, t) => acc + t.duration_days, 0);
+        // Itinerary
+        content.push({
+            text: 'Cronograma',
+            style: 'sectionHeader',
+            color: primaryColor,
+            pageBreak: vista2.includeClientData ? undefined : 'before'
+        });
+        
+        let currentDay = 1;
+        CART.forEach((tour, index) => {
+            const days = tour.duration_days;
+            const dayLabel = days === 1 ? `Día ${currentDay}` : `Días ${currentDay} - ${currentDay + days - 1}`;
+            
+            // Day title
+            content.push({
+                text: dayLabel,
+                style: 'dayTitle',
+                color: primaryColor,
+                margin: [0, 10, 0, 5]
+            });
+            
+            // Tour name
+            content.push({
+                text: tour.name,
+                style: 'tourName',
+                margin: [0, 0, 0, 5]
+            });
+            
+            // Summary list
+            if (tour.summary_list && tour.summary_list.length > 0) {
+                content.push({
+                    text: 'Itinerario:',
+                    fontSize: 11,
+                    bold: true,
+                    margin: [0, 5, 0, 3]
+                });
+                
+                const listItems = tour.summary_list.map(item => `• ${item}`);
+                content.push({
+                    text: listItems.join('\n'),
+                    fontSize: 10,
+                    margin: [10, 0, 0, 10]
+                });
+            }
+            
+            // Includes / Not includes
+            const includes = tour.includes || [];
+            const notIncludes = tour.excludes || tour.not_includes || [];
+            
+            if (includes.length > 0 || notIncludes.length > 0) {
+                content.push({
+                    columns: [
+                        {
+                            width: '50%',
+                            stack: [
+                                { text: '✓ Incluye:', fontSize: 10, bold: true, color: '#28a745', margin: [0, 5, 0, 3] },
+                                {
+                                    ul: includes.map(item => `${window.getEmojiForItem(item, true)} ${item}`),
+                                    fontSize: 9
+                                }
+                            ]
+                        },
+                        {
+                            width: '50%',
+                            stack: [
+                                { text: '✗ No Incluye:', fontSize: 10, bold: true, color: '#dc3545', margin: [0, 5, 0, 3] },
+                                {
+                                    ul: notIncludes.map(item => `${window.getEmojiForItem(item, false)} ${item}`),
+                                    fontSize: 9
+                                }
+                            ]
+                        }
+                    ],
+                    margin: [0, 5, 0, 15]
+                });
+            }
+            
+            currentDay += days;
+        });
+        
+        // Cost summary - always on new page
+        content.push({
+            text: 'Resumen de Costos',
+            style: 'sectionHeader',
+            color: primaryColor,
+            pageBreak: 'before'
+        });
+        
+        const costRows = [
+            ['Cantidad de Tours:', CART.length.toString()],
+            ['Moneda:', vista2.currency === 'USD' ? 'Dólares (USD)' : 'Soles (PEN)']
+        ];
+        
+        if (vista2.includeBudgetChild) {
+            costRows.push(['TOTAL ADULTO:', `${currency} ${adultTotal.toFixed(2)}`]);
+            costRows.push(['TOTAL NIÑO:', `${currency} ${childTotal.toFixed(2)}`]);
+        } else {
+            costRows.push(['TOTAL A PAGAR:', `${currency} ${adultTotal.toFixed(2)}`]);
+        }
+        
+        content.push({
+            table: {
+                widths: ['50%', '50%'],
+                body: costRows
+            },
+            layout: {
+                hLineWidth: () => 1,
+                vLineWidth: () => 0,
+                hLineColor: () => '#e0e0e0'
+            },
+            margin: [0, 10, 0, 20]
+        });
+        
+        // Validity
+        content.push({
+            text: '⏰ Validez: Este presupuesto tiene una validez de 2 días desde su emisión.',
+            fillColor: '#fff3cd',
+            margin: [0, 0, 0, 15],
+            fontSize: 10
+        });
+        
+        // Payment methods
+        content.push({
+            text: 'Métodos de Pago',
+            style: 'sectionHeader',
+            color: primaryColor
+        });
+        
+        content.push({
+            text: [
+                { text: '💳 Tarjetas: ', bold: true },
+                'Visa, Mastercard\n',
+                { text: '💰 Transferencias: ', bold: true },
+                'Yape, Plin\n',
+                { text: '🌐 Internacional: ', bold: true },
+                'PayPal, Western Union'
+            ],
+            margin: [0, 5, 0, 15],
+            fontSize: 10
+        });
+        
+        // Terms
+        content.push({
+            text: 'Términos y Condiciones',
+            style: 'sectionHeader',
+            color: primaryColor
+        });
+        
+        const terms = [
+            'Reserva y adelanto: Para confirmar tu reserva, solicitamos un adelanto del 50% del monto total.',
+            'Pagos internacionales: Los pagos con tarjetas extranjeras tienen un cargo del 5-10%.',
+            'Política de cancelación: Las cancelaciones con anticipación razonable (15-30 días) pueden ser evaluadas. El adelanto del 50% generalmente no es reembolsable.',
+            'Reembolsos: Solo proceden si por causas de nuestra agencia no se puede realizar el servicio.',
+            'Condiciones climáticas: Pueden afectar los tours. Se reprogramará sin cargo adicional cuando sea posible.',
+            'Disponibilidad: Todos los tours están sujetos a disponibilidad y confirmación.',
+            'Responsabilidad del viajero: El cliente debe contar con documentación necesaria (pasaporte, visas, etc.).'
+        ];
+        
+        content.push({
+            ul: terms,
+            fontSize: 9,
+            margin: [0, 5, 0, 20]
+        });
+        
+        // Footer
+        content.push({
+            text: [
+                { text: 'Documento generado por Qori Wayra - Travel\n', bold: true },
+                'Todos los tours están sujetos a disponibilidad y condiciones climáticas\n',
+                'Para más información, contáctenos a través de nuestros canales oficiales'
+            ],
+            alignment: 'center',
+            fontSize: 8,
+            color: '#666666',
+            margin: [0, 20, 0, 0]
+        });
+        
+        // Define document
+        const docDefinition = {
+            content: content,
+            styles: {
+                header: {
+                    fontSize: 18,
+                    bold: true,
+                    margin: [0, 0, 0, 5]
+                },
+                title: {
+                    fontSize: 16,
+                    bold: true
+                },
+                sectionHeader: {
+                    fontSize: 14,
+                    bold: true,
+                    margin: [0, 15, 0, 10]
+                },
+                dayTitle: {
+                    fontSize: 13,
+                    bold: true
+                },
+                tourName: {
+                    fontSize: 12,
+                    bold: true
+                }
+            },
+            pageMargins: [40, 40, 40, 40]
+        };
+        
+        // Generate PDF
         const clientName = vista2.clientName ? `_${vista2.clientName.replace(/\s+/g, '_')}` : '';
         const filename = `Itinerario_QoriWayra_${totalDays}dias${clientName}.pdf`;
         
-        console.log('Saving PDF:', filename);
-        pdf.save(filename);
+        pdfMake.createPdf(docDefinition).download(filename);
         
         btnPDF.disabled = false;
         btnPDF.textContent = '📥 Generar PDF';
-        alert('✅ PDF generado exitosamente');
         
     } catch (error) {
         console.error('Error completo:', error);
         btnPDF.disabled = false;
         btnPDF.textContent = '📥 Generar PDF';
-        alert('❌ Error al generar PDF: ' + error.message + '\n\nRevisa la consola para más detalles');
+        alert('❌ Error al generar PDF: ' + error.message);
     }
 }
 
