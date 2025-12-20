@@ -14,7 +14,7 @@
     <div id="app"></div>
 
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwT3sgjRrd0-EuYsoLWphPGVy1ZPFpkJDYS_TijxmLhfQjGP-btWyLm_K-enQgotzXIlQ/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyhy2orKUdaAUDp91lNQ5ertl28xLLpAgiSzORLQWfXXaju4rbLjU8TCqU9XSf3J7_3YQ/exec';
         
         // VARIABLES GLOBALES
         let USER = null;
@@ -187,10 +187,10 @@
             console.log('--- Función login() ejecutándose ---');
             console.log('SCRIPT_URL:', SCRIPT_URL);
             
-            const url = `${SCRIPT_URL}?action=login&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
+            const url = `${SCRIPT_URL}?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
             console.log('URL completa (sin contraseña visible):', url.replace(/password=[^&]+/, 'password=***'));
             
-            console.log('Enviando petición fetch...');
+            console.log('Enviando petición GET...');
             const response = await fetch(url);
             console.log('Respuesta recibida:', response);
             console.log('Status:', response.status);
@@ -199,9 +199,11 @@
             console.log('Parseando JSON...');
             const data = await response.json();
             console.log('Datos recibidos:', data);
+            console.log('Version del servidor:', data.version);
             
             if (data.success) {
                 console.log('✅ Login exitoso - Usuario:', username);
+                console.log('✅ Version confirmada:', data.version);
                 USER = username;
                 localStorage.setItem('user', username);
                 console.log('Usuario guardado en localStorage');
@@ -215,6 +217,7 @@
             } else {
                 console.error('❌ Login fallido');
                 console.error('Mensaje del servidor:', data.message);
+                console.error('Version del servidor:', data.version);
                 throw new Error(data.message || 'Usuario o contraseña incorrectos');
             }
         }
