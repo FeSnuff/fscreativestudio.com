@@ -50,10 +50,21 @@ body { background: #f5f5f5; min-height: 100vh; margin: 0; font-family: Arial, sa
 .payment-methods { margin-bottom: 20px; }
 .payment-images { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; justify-content: center; }
 .payment-images img { height: 40px; border-radius: 5px; }
-.terms { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
-.terms h3 { color: #333; margin-bottom: 15px; font-size: 18px; }
-.terms ul { color: #666; line-height: 1.8; }
+.terms { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+.terms h3 { color: #333; margin-bottom: 10px; font-size: 16px; }
+.terms ul { color: #666; line-height: 1.5; font-size: 11px; margin: 0; padding-left: 20px; }
+.terms li { margin-bottom: 6px; }
 .doc-footer { border-top: 2px solid var(--primary-color, #667eea); padding-top: 20px; margin-top: 30px; text-align: center; color: #666; font-size: 12px; line-height: 1.6; }
+
+/* Page break container - agrupa secciones finales */
+.final-page-section { page-break-before: always; page-break-inside: avoid; }
+
+/* Page guides - guías visuales de página A4 */
+.page-guide { position: relative; }
+.page-guide::after { content: 'Límite de página A4'; position: absolute; left: 0; right: 0; height: 2px; background: repeating-linear-gradient(to right, #e74c3c 0, #e74c3c 10px, transparent 10px, transparent 20px); pointer-events: none; opacity: 0.4; z-index: 10; font-size: 10px; color: #e74c3c; text-align: center; }
+.page-guide-1::after { top: 1050px; }
+.page-guide-2::after { top: 2100px; }
+.page-guide-3::after { top: 3150px; }
 .editable-mode { outline: 2px dashed #ffc107; background: #fffbf0; }
 .activity-list { background: #fff; padding: 15px; border-radius: 8px; margin-top: 10px; margin-bottom: 15px; }
 .activity-list h4 { color: var(--primary-color, #667eea); margin-bottom: 10px; font-size: 14px; }
@@ -247,71 +258,73 @@ function renderDocument() {
         </div>
         ` : ''}
         
-        <div class="itinerary-section">
+        <div class="itinerary-section page-guide page-guide-1 page-guide-2 page-guide-3">
             <div class="section-title">📅 Cronograma</div>
             ${daysHTML}
         </div>
         
-        <div class="section-title">💰 Resumen de Costos</div>
-        <div class="cost-summary">
-            <div class="cost-row">
-                <span>Cantidad de Tours:</span>
-                <span>${CART.length}</span>
+        <div class="final-page-section">
+            <div class="section-title">💰 Resumen de Costos</div>
+            <div class="cost-summary">
+                <div class="cost-row">
+                    <span>Cantidad de Tours:</span>
+                    <span>${CART.length}</span>
+                </div>
+                <div class="cost-row">
+                    <span>Moneda:</span>
+                    <span>${vista2.currency === 'USD' ? 'Dólares (USD)' : 'Soles (PEN)'}</span>
+                </div>
+                ${vista2.includeBudgetChild ? `
+                <div class="cost-total" style="margin-top:10px;padding-top:10px;border-top:2px solid #e0e0e0">
+                    <span>TOTAL ADULTO:</span>
+                    <span>${currency} ${adultTotal.toFixed(2)}</span>
+                </div>
+                <div class="cost-total" style="margin-top:0;padding-top:10px">
+                    <span>TOTAL NIÑO:</span>
+                    <span>${currency} ${childTotal.toFixed(2)}</span>
+                </div>
+                ` : `
+                <div class="cost-total">
+                    <span>TOTAL A PAGAR:</span>
+                    <span>${currency} ${adultTotal.toFixed(2)}</span>
+                </div>
+                `}
             </div>
-            <div class="cost-row">
-                <span>Moneda:</span>
-                <span>${vista2.currency === 'USD' ? 'Dólares (USD)' : 'Soles (PEN)'}</span>
+            
+            <div class="validity">
+                ⏰ <strong>Validez:</strong> Este presupuesto tiene una validez de 2 días desde su emisión.
             </div>
-            ${vista2.includeBudgetChild ? `
-            <div class="cost-total" style="margin-top:10px;padding-top:10px;border-top:2px solid #e0e0e0">
-                <span>TOTAL ADULTO:</span>
-                <span>${currency} ${adultTotal.toFixed(2)}</span>
+            
+            <div class="payment-methods">
+                <div class="section-title">💳 Métodos de Pago</div>
+                <div class="payment-images">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Visa">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal">
+                    <img src="https://images.seeklogo.com/logo-png/49/1/western-union-2023-logo-png_seeklogo-499195.png" alt="Western Union">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Yape_peru_logotype.svg/1200px-Yape_peru_logotype.svg.png" alt="Yape">
+                </div>
             </div>
-            <div class="cost-total" style="margin-top:0;padding-top:10px">
-                <span>TOTAL NIÑO:</span>
-                <span>${currency} ${childTotal.toFixed(2)}</span>
+            
+            <div class="terms">
+                <h3>📋 Términos y Condiciones</h3>
+                <ul>
+                    <li><strong>Reserva y adelanto:</strong> Para confirmar tu reserva, solicitamos un adelanto del 50% del monto total. Este adelanto asegura la disponibilidad de los servicios contratados.</li>
+                    <li><strong>Pagos internacionales:</strong> Los pagos realizados con tarjetas extranjeras a través de PayPal u otros medios internacionales tienen un cargo adicional del 5% al 10% según la plataforma utilizada.</li>
+                    <li><strong>Política de cancelación:</strong> Entendemos que los planes pueden cambiar. Las cancelaciones realizadas con anticipación razonable (sugerimos al menos 15-30 días antes del tour) pueden ser evaluadas caso por caso. Sin embargo, el adelanto del 50% cubre costos operativos ya incurridos y generalmente no es reembolsable.</li>
+                    <li><strong>Reembolsos por circunstancias de la empresa:</strong> Si por causas atribuibles a nuestra agencia no podemos realizar el servicio contratado, procederemos al reembolso total del adelanto o reprogramación sin costo adicional.</li>
+                    <li><strong>Condiciones climáticas y situaciones extraordinarias:</strong> Los tours pueden verse afectados por condiciones climáticas adversas, emergencias o situaciones fuera de nuestro control. En estos casos, haremos nuestro mejor esfuerzo para reprogramar sin cargo adicional. Estas circunstancias naturales no están cubiertas por políticas de reembolso.</li>
+                    <li><strong>Cambios de itinerario del cliente:</strong> Si necesitas modificar fechas por razones personales, trabajaremos contigo para encontrar nuevas fechas sujetas a disponibilidad. Los cambios pueden generar costos adicionales según los proveedores.</li>
+                    <li><strong>Disponibilidad de servicios:</strong> Todos nuestros tours están sujetos a disponibilidad de proveedores y confirmación final.</li>
+                    <li><strong>Responsabilidad del viajero:</strong> Es responsabilidad del cliente contar con la documentación necesaria (pasaporte vigente, visas, seguros de viaje, etc.) para realizar los tours.</li>
+                </ul>
             </div>
-            ` : `
-            <div class="cost-total">
-                <span>TOTAL A PAGAR:</span>
-                <span>${currency} ${adultTotal.toFixed(2)}</span>
+            
+            <div class="doc-footer">
+                <strong>Documento generado por Qori Wayra - Travel</strong><br>
+                Todos los tours están sujetos a disponibilidad y condiciones climáticas<br>
+                Para más información, contáctenos a través de nuestros canales oficiales
             </div>
-            `}
-        </div>
-        
-        <div class="validity">
-            ⏰ <strong>Validez:</strong> Este presupuesto tiene una validez de 2 días desde su emisión.
-        </div>
-        
-        <div class="payment-methods">
-            <div class="section-title">💳 Métodos de Pago</div>
-            <div class="payment-images">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Visa">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal">
-                <img src="https://images.seeklogo.com/logo-png/49/1/western-union-2023-logo-png_seeklogo-499195.png" alt="Western Union">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Yape_peru_logotype.svg/1200px-Yape_peru_logotype.svg.png" alt="Yape">
-            </div>
-        </div>
-        
-        <div class="terms">
-            <h3>📋 Términos y Condiciones</h3>
-            <ul>
-                <li><strong>Reserva y adelanto:</strong> Para confirmar tu reserva, solicitamos un adelanto del 50% del monto total. Este adelanto asegura la disponibilidad de los servicios contratados.</li>
-                <li><strong>Pagos internacionales:</strong> Los pagos realizados con tarjetas extranjeras a través de PayPal u otros medios internacionales tienen un cargo adicional del 5% al 10% según la plataforma utilizada.</li>
-                <li><strong>Política de cancelación:</strong> Entendemos que los planes pueden cambiar. Las cancelaciones realizadas con anticipación razonable (sugerimos al menos 15-30 días antes del tour) pueden ser evaluadas caso por caso. Sin embargo, el adelanto del 50% cubre costos operativos ya incurridos y generalmente no es reembolsable.</li>
-                <li><strong>Reembolsos por circunstancias de la empresa:</strong> Si por causas atribuibles a nuestra agencia no podemos realizar el servicio contratado, procederemos al reembolso total del adelanto o reprogramación sin costo adicional.</li>
-                <li><strong>Condiciones climáticas y situaciones extraordinarias:</strong> Los tours pueden verse afectados por condiciones climáticas adversas, emergencias o situaciones fuera de nuestro control. En estos casos, haremos nuestro mejor esfuerzo para reprogramar sin cargo adicional. Estas circunstancias naturales no están cubiertas por políticas de reembolso.</li>
-                <li><strong>Cambios de itinerario del cliente:</strong> Si necesitas modificar fechas por razones personales, trabajaremos contigo para encontrar nuevas fechas sujetas a disponibilidad. Los cambios pueden generar costos adicionales según los proveedores.</li>
-                <li><strong>Disponibilidad de servicios:</strong> Todos nuestros tours están sujetos a disponibilidad de proveedores y confirmación final.</li>
-                <li><strong>Responsabilidad del viajero:</strong> Es responsabilidad del cliente contar con la documentación necesaria (pasaporte vigente, visas, seguros de viaje, etc.) para realizar los tours.</li>
-            </ul>
-        </div>
-        
-        <div class="doc-footer">
-            <strong>Documento generado por Qori Wayra - Travel</strong><br>
-            Todos los tours están sujetos a disponibilidad y condiciones climáticas<br>
-            Para más información, contáctenos a través de nuestros canales oficiales
         </div>
     `;
 }
@@ -468,12 +481,50 @@ async function generatePDF() {
         // Add CSS for better page breaks
         const style = document.createElement('style');
         style.textContent = `
-            .day-item { page-break-inside: avoid; }
-            .includes-section { page-break-inside: avoid; }
-            .activity-list { page-break-inside: avoid; }
-            .cost-summary { page-break-before: always; page-break-inside: avoid; }
-            .payment-methods { page-break-inside: avoid; }
-            .terms { page-break-inside: avoid; }
+            @media print {
+                .page-guide::after { display: none !important; }
+            }
+            .day-item { page-break-inside: avoid !important; }
+            .includes-section { page-break-inside: avoid !important; }
+            .activity-list { page-break-inside: avoid !important; }
+            
+            /* Agrupar sección final en una página */
+            .final-page-section {
+                page-break-before: always !important;
+                page-break-inside: avoid !important;
+            }
+            
+            /* Reducir tamaños para que entre en una página */
+            .terms { 
+                padding: 12px !important; 
+                margin-bottom: 15px !important;
+            }
+            .terms h3 { 
+                font-size: 14px !important; 
+                margin-bottom: 8px !important;
+            }
+            .terms ul { 
+                font-size: 10px !important; 
+                line-height: 1.4 !important; 
+                margin: 0 !important;
+                padding-left: 18px !important;
+            }
+            .terms li {
+                margin-bottom: 4px !important;
+            }
+            .validity {
+                padding: 10px !important;
+                margin-bottom: 15px !important;
+                font-size: 12px !important;
+            }
+            .payment-methods {
+                margin-bottom: 15px !important;
+            }
+            .doc-footer {
+                padding-top: 15px !important;
+                margin-top: 15px !important;
+                font-size: 11px !important;
+            }
         `;
         clone.prepend(style);
         
