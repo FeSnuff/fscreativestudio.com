@@ -3,504 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tours App - Login</title>
+    <title>Tours App</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .login-container {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .login-container h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 28px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 500;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .btn-login {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .btn-login:hover {
-            transform: translateY(-2px);
-        }
-
-        .btn-login:active {
-            transform: translateY(0);
-        }
-
-        .btn-login:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .error-message {
-            background: #fee;
-            color: #c33;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            display: none;
-            text-align: center;
-        }
-
-        .loading {
-            text-align: center;
-            color: #667eea;
-            margin-top: 10px;
-            display: none;
-        }
-
-        /* Página principal después del login */
-        .main-container {
-            display: none;
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 800px;
-            text-align: center;
-        }
-
-        .main-container h1 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        .main-container p {
-            color: #666;
-            font-size: 18px;
-            margin-bottom: 30px;
-        }
-
-        .btn-logout {
-            padding: 10px 30px;
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .btn-logout:hover {
-            background: #c82333;
-        }
-
-        .user-info {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-
-        /* TOURS VIEW */
-        #toursView { padding: 20px; max-width: 1600px; margin: 0 auto; }
-        .tours-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .tours-header h2 { color: #333; font-size: 28px; }
-        .cart-btn { padding: 12px 24px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
-        .filters { background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 15px; }
-        .filter-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; }
-        .filter-group input, .filter-group select { width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; }
-        .tours-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .tour-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; transition: all 0.3s; position: relative; }
-        .tour-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
-        .tour-card.selected { border: 3px solid #667eea; }
-        .tour-img { height: 180px; background: linear-gradient(135deg, #667eea, #764ba2); position: relative; }
-        .tour-overlay { position: absolute; inset: 0; background: rgba(102,126,234,0.9); display: flex; align-items: center; justify-content: center; font-size: 48px; color: white; opacity: 0; transition: opacity 0.3s; }
-        .tour-card:hover .tour-overlay { opacity: 1; }
-        .selection-num { position: absolute; top: 10px; left: 10px; width: 30px; height: 30px; border-radius: 50%; background: #667eea; color: white; display: none; align-items: center; justify-content: center; font-weight: bold; }
-        .tour-card.selected .selection-num { display: flex; }
-        .tour-info { padding: 15px; }
-        .tour-info h3 { font-size: 16px; margin-bottom: 10px; color: #333; min-height: 40px; }
-        .tour-info p { color: #666; font-size: 14px; margin: 5px 0; }
-        .tour-price { color: #667eea; font-weight: bold; font-size: 20px; margin-top: 8px; }
-        .cart-sidebar { position: fixed; right: 20px; top: 100px; width: 350px; background: white; border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.2); max-height: calc(100vh - 120px); display: flex; flex-direction: column; }
-        .cart-header { padding: 20px; border-bottom: 2px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; }
-        .cart-badge { width: 30px; height: 30px; border-radius: 50%; background: #667eea; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-        .cart-content { flex: 1; overflow-y: auto; padding: 20px; }
-        .cart-item { background: #f8f9fa; padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .cart-item-num { width: 28px; height: 28px; border-radius: 50%; background: #667eea; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
-        .cart-footer { padding: 20px; border-top: 2px solid #e0e0e0; }
-        .cart-total { display: flex; justify-content: space-between; font-size: 20px; font-weight: bold; margin-bottom: 15px; }
-        .btn-continue { width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; }
-        .btn-logout-top { position: absolute; top: 20px; right: 20px; padding: 10px 20px; background: #dc3545; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
-        @media (max-width: 1024px) { .filters { grid-template-columns: 1fr; } .cart-sidebar { display: none; } }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        #app { min-height: 100vh; }
     </style>
 </head>
 <body>
-    <!-- Formulario de Login -->
-    <div class="login-container" id="loginContainer">
-        <h1>🔐 Iniciar Sesión</h1>
-        <div class="error-message" id="errorMessage"></div>
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="username">Usuario</label>
-                <input type="text" id="username" name="username" required autocomplete="username">
-            </div>
-            <div class="form-group">
-                <label for="password">Contraseña</label>
-                <input type="password" id="password" name="password" required autocomplete="current-password">
-            </div>
-            <button type="submit" class="btn-login" id="btnLogin">Iniciar Sesión</button>
-            <div class="loading" id="loading">Verificando credenciales...</div>
-        </form>
-    </div>
-
-    <!-- Página Principal (se muestra después del login) -->
-    <div class="main-container" id="mainContainer">
-        <div id="toursView"></div>
-    </div>
+    <div id="app"></div>
 
     <script>
-        // URL del Google Apps Script
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwAOTSKw3rxOu_VyCPmpnXurDApQEiYjwfynkyyOeo8k6g1INY5aRsFruYVXzAsidBB9A/exec';
+        let USER = null;
+        let TOURS = [];
+        let CART = [];
 
-        // Elementos del DOM
-        const loginContainer = document.getElementById('loginContainer');
-        const mainContainer = document.getElementById('mainContainer');
-        const loginForm = document.getElementById('loginForm');
-        const errorMessage = document.getElementById('errorMessage');
-        const loading = document.getElementById('loading');
-        const btnLogin = document.getElementById('btnLogin');
-        const btnLogout = document.getElementById('btnLogout');
-        const loggedUser = document.getElementById('loggedUser');
-
-        // Verificar si hay sesión guardada al cargar la página
-        window.addEventListener('load', () => {
-            const savedUser = localStorage.getItem('loggedUser');
-            if (savedUser) {
-                showMainPage(savedUser);
-            }
-        });
-
-        // Manejar el envío del formulario
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+        async function loadView(viewName) {
+            const res = await fetch(`${viewName}.html`);
+            const html = await res.text();
+            document.getElementById('app').innerHTML = html;
             
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value;
-
-            // Validación básica
-            if (!username || !password) {
-                showError('Por favor, completa todos los campos');
-                return;
-            }
-
-            // Mostrar loading
-            btnLogin.disabled = true;
-            loading.style.display = 'block';
-            errorMessage.style.display = 'none';
-
-            try {
-                console.log('Llamando a:', SCRIPT_URL);
-                console.log('Usuario:', username);
-                
-                // Llamar al Google Apps Script
-                const response = await fetch(`${SCRIPT_URL}?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
-                
-                console.log('Response status:', response.status);
-                
-                const data = await response.json();
-                console.log('Response data:', data);
-
-                if (data.success) {
-                    // Guardar sesión en localStorage (usar el username de la respuesta)
-                    const userName = data.username || username;
-                    localStorage.setItem('loggedUser', userName);
-                    showMainPage(userName);
-                } else {
-                    showError(data.message || 'Usuario o contraseña incorrectos');
-                }
-            } catch (error) {
-                console.error('Error completo:', error);
-                showError('Error al conectar con el servidor: ' + error.message);
-            } finally {
-                btnLogin.disabled = false;
-                loading.style.display = 'none';
-            }
-        });
-
-        // Botón de cerrar sesión
-        btnLogout.addEventListener('click', () => {
-            localStorage.removeItem('loggedUser');
-            showLoginPage();
-        });
-
-        // Función para mostrar la página principal
-        function showMainPage(username) {
-            loginContainer.style.display = 'none';
-            mainContainer.style.display = 'block';
-            
-            // Limpiar el formulario
-            loginForm.reset();
-            
-            loadToursView(username);
+            const scripts = document.getElementById('app').querySelectorAll('script');
+            scripts.forEach(old => {
+                const script = document.createElement('script');
+                script.textContent = old.textContent;
+                old.replaceWith(script);
+            });
         }
 
-        // Función para mostrar la página de login
-        function showLoginPage() {
-            loginContainer.style.display = 'block';
-            mainContainer.style.display = 'none';
-        }
-
-        // Función para mostrar errores
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorMessage.style.display = 'block';
-            setTimeout(() => {
-                errorMessage.style.display = 'none';
-            }, 5000);
-        }
-
-        // TOURS FUNCTIONALITY
-        let allTours = [];
-        let cart = [];
-
-        async function loadToursView(username) {
-            const view = document.getElementById('toursView');
+        async function init() {
+            USER = localStorage.getItem('user');
             
-            // Load tours.json
+            if (USER) {
+                await loadTours();
+                await loadView('vistatours');
+            } else {
+                await loadView('login');
+            }
+        }
+
+        async function loadTours() {
             try {
                 const res = await fetch('tours.json');
-                allTours = await res.json();
+                TOURS = await res.json();
             } catch (e) {
-                allTours = [];
+                TOURS = [];
             }
-            
-            view.innerHTML = `
-                <button class="btn-logout-top" onclick="logout()">Cerrar Sesión</button>
-                <div class="tours-header">
-                    <h2>🗺️ Tours Disponibles</h2>
-                    <div style="color:#667eea;font-weight:600">Hola, ${username}</div>
-                </div>
-                
-                <div class="filters">
-                    <div class="filter-group">
-                        <label>🔍 Buscar</label>
-                        <input type="text" id="searchInput" placeholder="Buscar tours...">
-                    </div>
-                    <div class="filter-group">
-                        <label>Ordenar</label>
-                        <select id="sortFilter">
-                            <option value="name">Nombre A-Z</option>
-                            <option value="price-low">Precio: Menor</option>
-                            <option value="price-high">Precio: Mayor</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label>Duración</label>
-                        <select id="durationFilter">
-                            <option value="all">Todas</option>
-                            <option value="1">1 día</option>
-                            <option value="2">2 días</option>
-                            <option value="3">3 días</option>
-                            <option value="4+">4+ días</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label>Precio</label>
-                        <select id="priceFilter">
-                            <option value="all">Todos</option>
-                            <option value="0-100">S/ 0-100</option>
-                            <option value="100-200">S/ 100-200</option>
-                            <option value="200+">S/ 200+</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="tours-grid" id="toursGrid"></div>
-                
-                <div class="cart-sidebar">
-                    <div class="cart-header">
-                        <h3>🛒 Mi Itinerario</h3>
-                        <div class="cart-badge" id="cartBadge">0</div>
-                    </div>
-                    <div class="cart-content" id="cartContent">
-                        <div style="text-align:center;padding:40px 20px;color:#999">
-                            <div style="font-size:50px">📋</div>
-                            <p>No hay tours seleccionados</p>
-                        </div>
-                    </div>
-                    <div class="cart-footer">
-                        <div class="cart-total">
-                            <span>TOTAL:</span>
-                            <span id="cartTotal" style="color:#667eea">S/ 0.00</span>
-                        </div>
-                        <button class="btn-continue" id="btnContinue" disabled>Ver Itinerario →</button>
-                    </div>
-                </div>
-            `;
-            
-            renderTours();
-            
-            document.getElementById('searchInput').addEventListener('input', filterTours);
-            document.getElementById('sortFilter').addEventListener('change', filterTours);
-            document.getElementById('durationFilter').addEventListener('change', filterTours);
-            document.getElementById('priceFilter').addEventListener('change', filterTours);
         }
 
-        function renderTours() {
-            const grid = document.getElementById('toursGrid');
-            if (!grid) return;
+        async function login(username, password) {
+            const url = `${SCRIPT_URL}?username=${username}&password=${password}`;
+            const res = await fetch(url);
+            const data = await res.json();
             
-            grid.innerHTML = allTours.map((tour, i) => {
-                const selected = cart.some(c => c.index === i);
-                const cartIndex = selected ? cart.findIndex(c => c.index === i) + 1 : '';
-                return `
-                    <div class="tour-card ${selected ? 'selected' : ''}" onclick="toggleCart(${i})">
-                        <div class="tour-img">
-                            <div class="selection-num">${cartIndex}</div>
-                            <div class="tour-overlay">+</div>
-                        </div>
-                        <div class="tour-info">
-                            <h3>${tour.name}</h3>
-                            <p>📅 ${tour.duration_days} día${tour.duration_days > 1 ? 's' : ''}</p>
-                            <p class="tour-price">S/ ${tour.price.toFixed(2)}</p>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function toggleCart(index) {
-            const exists = cart.findIndex(c => c.index === index);
-            if (exists >= 0) {
-                cart.splice(exists, 1);
+            if (data.success) {
+                USER = data.username || username;
+                localStorage.setItem('user', USER);
+                await loadTours();
+                await loadView('vistatours');
             } else {
-                cart.push({ index, ...allTours[index] });
+                alert(data.message || 'Usuario o contraseña incorrectos');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('user');
+            location.reload();
+        }
+
+        function addToCart(index) {
+            const exists = CART.findIndex(item => item.index === index);
+            if (exists !== -1) {
+                CART.splice(exists, 1);
+            } else {
+                CART.push({ index, ...TOURS[index] });
             }
             renderTours();
             updateCart();
         }
 
-        function updateCart() {
-            const badge = document.getElementById('cartBadge');
-            const total = document.getElementById('cartTotal');
-            const content = document.getElementById('cartContent');
-            const btn = document.getElementById('btnContinue');
-            
-            if (badge) badge.textContent = cart.length;
-            if (btn) btn.disabled = cart.length === 0;
-            
-            const sum = cart.reduce((acc, t) => acc + t.price, 0);
-            if (total) total.textContent = `S/ ${sum.toFixed(2)}`;
-            
-            if (content) {
-                if (cart.length === 0) {
-                    content.innerHTML = `
-                        <div style="text-align:center;padding:40px 20px;color:#999">
-                            <div style="font-size:50px">📋</div>
-                            <p>No hay tours seleccionados</p>
-                        </div>
-                    `;
-                } else {
-                    content.innerHTML = cart.map((t, i) => `
-                        <div class="cart-item">
-                            <div style="display:flex;align-items:center;gap:10px">
-                                <div class="cart-item-num">${i + 1}</div>
-                                <div>
-                                    <div style="font-weight:600;font-size:14px">${t.name}</div>
-                                    <div style="color:#667eea;font-weight:600">S/ ${t.price.toFixed(2)}</div>
-                                </div>
-                            </div>
-                            <button onclick="toggleCart(${t.index})" style="border:none;background:#dc3545;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer">×</button>
-                        </div>
-                    `).join('');
-                }
-            }
+        async function goToVista1() {
+            await loadView('vista1');
         }
 
-        function filterTours() {
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const sort = document.getElementById('sortFilter').value;
-            const duration = document.getElementById('durationFilter').value;
-            const price = document.getElementById('priceFilter').value;
-            
-            let filtered = [...allTours];
-            
-            if (search) filtered = filtered.filter(t => t.name.toLowerCase().includes(search));
-            
-            if (duration !== 'all') {
-                const d = parseInt(duration);
-                filtered = filtered.filter(t => duration === '4+' ? t.duration_days >= 4 : t.duration_days === d);
-            }
-            
-            if (price !== 'all') {
-                const [min, max] = price.split('-');
-                filtered = filtered.filter(t => {
-                    if (max === '+') return t.price >= parseInt(min);
-                    return t.price >= parseInt(min) && t.price <= parseInt(max);
-                });
-            }
-            
-            if (sort === 'price-low') filtered.sort((a, b) => a.price - b.price);
-            if (sort === 'price-high') filtered.sort((a, b) => b.price - a.price);
-            if (sort === 'name') filtered.sort((a, b) => a.name.localeCompare(b.name));
-            
-            allTours = filtered;
-            renderTours();
-        }
-
-        function logout() {
-            localStorage.removeItem('loggedUser');
-            location.reload();
-        }
+        window.onload = init;
     </script>
 </body>
 </html>
