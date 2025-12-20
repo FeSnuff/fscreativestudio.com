@@ -170,12 +170,16 @@
 </div>
 
 <script>
-let currentFilter = 'todos';
-let allClients = [];
-let selectedClient = null;
+// Variables globales ya declaradas en index.html
+// currentFilter, allClients, selectedClient
 
 // Load clients from Google Sheets
 async function loadClients() {
+    // Reset variables
+    currentFilter = 'todos';
+    allClients = [];
+    selectedClient = null;
+    
     try {
         console.log('📥 Cargando clientes desde Google Sheets...');
         
