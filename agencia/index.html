@@ -28,7 +28,7 @@
             scripts.forEach(oldScript => {
                 const newScript = document.createElement('script');
                 newScript.textContent = oldScript.textContent;
-                oldScript.replaceWith(newScript);
+                oldScript.parentNode.replaceChild(newScript, oldScript);
             });
         }
 
