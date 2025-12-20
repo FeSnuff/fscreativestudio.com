@@ -130,11 +130,24 @@ function renderTours() {
     grid.innerHTML = TOURS.map((tour, i) => {
         const selected = CART.some(item => item.index === i);
         const cartIndex = selected ? CART.findIndex(item => item.index === i) + 1 : '';
-        const imageName = tour.name.toLowerCase().replace(/[\s\-–—]+/g, '_');
+        
+        // Normalize: lowercase, replace ñ with n, replace spaces/hyphens with underscores
+        const imageName = tour.name.toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remove accents
+            .replace(/ñ/g, 'n')
+            .replace(/[\s\-–—]+/g, '_');
+        
+        // Try multiple formats
+        const formats = ['webp', 'jpg', 'jpeg', 'png'];
         const imageUrl = `images/${imageName}/Principal.webp`;
+        
         return `
             <div class="tour-card ${selected ? 'selected' : ''}" onclick="addToCart(${i})">
-                <div class="tour-image" style="background-image: url('${imageUrl}'); background-size: cover; background-position: center;">
+                <div class="tour-image" style="background: url('images/${imageName}/Principal.webp') center/cover, 
+                                                        url('images/${imageName}/Principal.jpg') center/cover,
+                                                        url('images/${imageName}/Principal.jpeg') center/cover,
+                                                        url('images/${imageName}/Principal.png') center/cover,
+                                                        linear-gradient(135deg, #667eea, #764ba2);">
                     <span class="badge">${cartIndex}</span>
                     <div class="overlay">+</div>
                 </div>
