@@ -1,44 +1,47 @@
 <style>
 body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; margin: 0; }
-.vista1-container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; min-height: 100vh; }
-.vista1-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; flex-wrap: wrap; gap: 15px; }
+.vista1-container { max-width: 1400px; margin: 0 auto; padding: 40px 20px 120px 20px; min-height: 100vh; }
+.vista1-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px; }
 .vista1-title { color: #fff; font-size: 32px; }
 .header-buttons { display: flex; gap: 10px; }
 .btn-back { padding: 12px 24px; background: #fff; color: #667eea; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
 .btn-logout { padding: 12px 24px; background: #dc3545; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
-.vista1-content { background: #fff; border-radius: 15px; padding: 30px; }
-.itinerary-section { margin-bottom: 30px; }
-.section-title { font-size: 24px; color: #333; margin-bottom: 20px; border-bottom: 3px solid #667eea; padding-bottom: 10px; }
-.tour-item { background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 5px solid #667eea; }
-.tour-item-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px; }
-.tour-item-number { width: 40px; height: 40px; border-radius: 50%; background: #667eea; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; margin-right: 15px; flex-shrink: 0; }
-.tour-item-info { flex: 1; }
-.tour-item-name { font-size: 20px; font-weight: 600; color: #333; margin-bottom: 5px; }
-.tour-item-duration { color: #666; font-size: 14px; margin-bottom: 3px; }
-.tour-item-price { color: #667eea; font-size: 24px; font-weight: bold; }
-.tour-item-details { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd; }
-.detail-section h4 { font-size: 14px; color: #667eea; margin-bottom: 8px; font-weight: 600; }
-.detail-section ul { margin: 0; padding-left: 20px; }
-.detail-section li { color: #666; font-size: 14px; margin-bottom: 4px; }
-.summary-box { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 30px; border-radius: 15px; margin-top: 30px; }
-.summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px; }
-.summary-item { text-align: center; }
-.summary-label { font-size: 14px; opacity: 0.9; margin-bottom: 5px; }
-.summary-value { font-size: 28px; font-weight: bold; }
-.summary-total { text-align: center; font-size: 36px; font-weight: bold; margin-top: 20px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.3); }
-.empty-state { text-align: center; padding: 60px 20px; }
-.empty-state-icon { font-size: 80px; margin-bottom: 20px; }
-.empty-state-text { font-size: 24px; color: #666; margin-bottom: 20px; }
-@media (max-width: 768px) {
-    .vista1-title { font-size: 24px; }
-    .tour-item-details { grid-template-columns: 1fr; }
-    .summary-grid { grid-template-columns: 1fr; }
+.vista1-content { display: grid; grid-template-columns: 1fr 350px; gap: 30px; }
+.main-section { }
+.section-title { color: #fff; font-size: 24px; margin-bottom: 20px; }
+.tours-list { display: flex; flex-direction: column; gap: 15px; }
+.tour-card-drag { background: #fff; padding: 20px; border-radius: 10px; cursor: move; border-left: 5px solid #667eea; display: flex; align-items: center; gap: 15px; }
+.tour-card-drag.dragging { opacity: 0.5; }
+.drag-handle { font-size: 24px; color: #999; cursor: grab; }
+.drag-handle:active { cursor: grabbing; }
+.tour-number { width: 40px; height: 40px; border-radius: 50%; background: #667eea; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; flex-shrink: 0; }
+.tour-details { flex: 1; }
+.tour-name { font-size: 18px; font-weight: 600; color: #333; margin-bottom: 5px; }
+.tour-meta { color: #666; font-size: 14px; }
+.tour-price { font-size: 20px; font-weight: bold; color: #667eea; }
+.btn-remove-tour { background: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 14px; }
+.add-tours-section { background: #fff; padding: 20px; border-radius: 10px; margin-top: 20px; }
+.available-tours { display: grid; gap: 10px; margin-top: 15px; max-height: 300px; overflow-y: auto; }
+.available-tour-item { background: #f8f9fa; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
+.btn-add-tour { background: #667eea; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 14px; }
+.sidebar { background: #fff; padding: 25px; border-radius: 10px; height: fit-content; position: sticky; top: 20px; }
+.summary-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #e0e0e0; }
+.summary-total { font-size: 24px; font-weight: bold; color: #667eea; margin-top: 20px; padding-top: 20px; border-top: 3px solid #667eea; display: flex; justify-content: space-between; }
+.btn-next { width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 20px; }
+.floating-next-btn { display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 16px 48px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 50px; font-size: 18px; font-weight: 600; cursor: pointer; box-shadow: 0 6px 20px rgba(0,0,0,0.3); z-index: 999; }
+.empty-state { background: #fff; padding: 60px 20px; border-radius: 15px; text-align: center; }
+.empty-icon { font-size: 80px; margin-bottom: 20px; }
+@media (max-width: 1024px) {
+    .vista1-content { grid-template-columns: 1fr; }
+    .sidebar { position: static; }
+    .btn-next { display: none; }
+    .floating-next-btn { display: block; }
 }
 </style>
 
 <div class="vista1-container">
     <div class="vista1-header">
-        <div class="vista1-title">📋 Tu Itinerario de Viaje</div>
+        <div class="vista1-title">📋 Personaliza tu Itinerario</div>
         <div class="header-buttons">
             <button class="btn-back" onclick="loadView('vistatours')">← Volver a Tours</button>
             <button class="btn-logout" onclick="logout()">Cerrar Sesión</button>
@@ -46,6 +49,8 @@ body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height
     </div>
     
     <div class="vista1-content" id="mainContent"></div>
+    
+    <button class="floating-next-btn" onclick="goToVista2()">Siguiente →</button>
 </div>
 
 <script>
@@ -54,65 +59,154 @@ const content = document.getElementById('mainContent');
 if (CART.length === 0) {
     content.innerHTML = `
         <div class="empty-state">
-            <div class="empty-state-icon">📭</div>
-            <div class="empty-state-text">No has seleccionado ningún tour</div>
+            <div class="empty-icon">📭</div>
+            <h2 style="color:#333;margin-bottom:10px">No hay tours seleccionados</h2>
+            <p style="color:#666;margin-bottom:20px">Selecciona al menos un tour para crear tu itinerario</p>
             <button class="btn-back" onclick="loadView('vistatours')">Explorar Tours</button>
         </div>
     `;
 } else {
+    renderVista1();
+}
+
+function renderVista1() {
     const totalDays = CART.reduce((acc, t) => acc + t.duration_days, 0);
     const totalPrice = CART.reduce((acc, t) => acc + t.price, 0);
+    const availableTours = TOURS.filter(tour => !CART.some(c => c.index === tour.index));
     
     const toursHTML = CART.map((tour, i) => `
-        <div class="tour-item">
-            <div style="display: flex;">
-                <div class="tour-item-number">${i + 1}</div>
-                <div class="tour-item-info">
-                    <div class="tour-item-header">
-                        <div>
-                            <div class="tour-item-name">${tour.name}</div>
-                            <div class="tour-item-duration">📅 ${tour.duration_days} día${tour.duration_days > 1 ? 's' : ''}</div>
-                        </div>
-                        <div class="tour-item-price">S/ ${tour.price.toFixed(2)}</div>
-                    </div>
-                    <div class="tour-item-details">
-                        <div class="detail-section">
-                            <h4>📝 Resumen</h4>
-                            <p style="color:#666;font-size:14px">${tour.summary || 'Tour increíble por descubrir'}</p>
-                        </div>
-                        <div class="detail-section">
-                            <h4>✅ Incluye</h4>
-                            <ul>
-                                ${tour.includes ? tour.includes.slice(0, 3).map(item => `<li>${item}</li>`).join('') : '<li>Guía profesional</li><li>Transporte</li><li>Entradas</li>'}
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+        <div class="tour-card-drag" draggable="true" data-index="${i}">
+            <div class="drag-handle">⋮⋮</div>
+            <div class="tour-number">${i + 1}</div>
+            <div class="tour-details">
+                <div class="tour-name">${tour.name}</div>
+                <div class="tour-meta">📅 ${tour.duration_days} día${tour.duration_days > 1 ? 's' : ''}</div>
             </div>
+            <div class="tour-price">S/ ${tour.price.toFixed(2)}</div>
+            <button class="btn-remove-tour" onclick="removeFromCart(${tour.index})">✕</button>
+        </div>
+    `).join('');
+    
+    const availableHTML = availableTours.map(tour => `
+        <div class="available-tour-item">
+            <div>
+                <div style="font-weight:600;color:#333">${tour.name}</div>
+                <div style="font-size:12px;color:#666">📅 ${tour.duration_days} día${tour.duration_days > 1 ? 's' : ''} | S/ ${tour.price.toFixed(2)}</div>
+            </div>
+            <button class="btn-add-tour" onclick="addTourToCart(${TOURS.indexOf(tour)})">+ Agregar</button>
         </div>
     `).join('');
     
     content.innerHTML = `
-        <div class="itinerary-section">
-            <h2 class="section-title">Tours Seleccionados</h2>
-            ${toursHTML}
+        <div class="main-section">
+            <h2 class="section-title">🎯 Tours Seleccionados</h2>
+            <div class="tours-list" id="toursList">
+                ${toursHTML}
+            </div>
+            
+            <div class="add-tours-section">
+                <h3 style="color:#333;margin-bottom:10px">➕ Agregar más tours</h3>
+                <p style="color:#666;font-size:14px;margin-bottom:15px">Selecciona tours adicionales para tu itinerario</p>
+                <div class="available-tours">
+                    ${availableHTML || '<p style="color:#999;text-align:center;padding:20px">No hay más tours disponibles</p>'}
+                </div>
+            </div>
         </div>
         
-        <div class="summary-box">
-            <div class="summary-grid">
-                <div class="summary-item">
-                    <div class="summary-label">Total de Tours</div>
-                    <div class="summary-value">${CART.length}</div>
-                </div>
-                <div class="summary-item">
-                    <div class="summary-label">Duración Total</div>
-                    <div class="summary-value">${totalDays} día${totalDays > 1 ? 's' : ''}</div>
-                </div>
+        <div class="sidebar">
+            <h3 style="color:#333;margin-bottom:20px">📊 Resumen</h3>
+            <div class="summary-item">
+                <span style="color:#666">Total de Tours:</span>
+                <span style="font-weight:600">${CART.length}</span>
+            </div>
+            <div class="summary-item">
+                <span style="color:#666">Duración Total:</span>
+                <span style="font-weight:600">${totalDays} día${totalDays > 1 ? 's' : ''}</span>
             </div>
             <div class="summary-total">
-                TOTAL A PAGAR: S/ ${totalPrice.toFixed(2)}
+                <span>TOTAL:</span>
+                <span>S/ ${totalPrice.toFixed(2)}</span>
             </div>
+            <button class="btn-next" onclick="goToVista2()">Siguiente →</button>
         </div>
     `;
+    
+    setupDragAndDrop();
+}
+
+function setupDragAndDrop() {
+    const items = document.querySelectorAll('.tour-card-drag');
+    let draggedItem = null;
+    
+    items.forEach(item => {
+        item.addEventListener('dragstart', function(e) {
+            draggedItem = this;
+            this.classList.add('dragging');
+        });
+        
+        item.addEventListener('dragend', function(e) {
+            this.classList.remove('dragging');
+        });
+        
+        item.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            const afterElement = getDragAfterElement(document.getElementById('toursList'), e.clientY);
+            if (afterElement == null) {
+                document.getElementById('toursList').appendChild(draggedItem);
+            } else {
+                document.getElementById('toursList').insertBefore(draggedItem, afterElement);
+            }
+        });
+        
+        item.addEventListener('drop', function(e) {
+            e.preventDefault();
+            updateCartOrder();
+        });
+    });
+}
+
+function getDragAfterElement(container, y) {
+    const draggableElements = [...container.querySelectorAll('.tour-card-drag:not(.dragging)')];
+    return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+            return { offset: offset, element: child };
+        } else {
+            return closest;
+        }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+function updateCartOrder() {
+    const items = document.querySelectorAll('.tour-card-drag');
+    const newOrder = [];
+    items.forEach(item => {
+        const oldIndex = parseInt(item.dataset.index);
+        newOrder.push(CART[oldIndex]);
+    });
+    CART = newOrder;
+    renderVista1();
+}
+
+function removeFromCart(tourIndex) {
+    const index = CART.findIndex(item => item.index === tourIndex);
+    if (index !== -1) {
+        CART.splice(index, 1);
+        if (CART.length === 0) {
+            loadView('vistatours');
+        } else {
+            renderVista1();
+        }
+    }
+}
+
+function addTourToCart(tourIndex) {
+    CART.push({ index: tourIndex, ...TOURS[tourIndex] });
+    renderVista1();
+}
+
+async function goToVista2() {
+    await loadView('vista2');
 }
 </script>
