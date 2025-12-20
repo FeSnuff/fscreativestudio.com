@@ -16,6 +16,8 @@
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwAOTSKw3rxOu_VyCPmpnXurDApQEiYjwfynkyyOeo8k6g1INY5aRsFruYVXzAsidBB9A/exec';
         let USER = null;
+        let TOURS = [];
+        let CART = [];
 
         async function loadView(viewName) {
             const response = await fetch(`components/${viewName}.html`);
@@ -38,22 +40,35 @@
             if (data.success) {
                 USER = username;
                 localStorage.setItem('user', username);
-                showSuccess();
+                await loadTours();
+                await showSuccess();
             } else {
                 throw new Error(data.message || 'Usuario o contraseña incorrectos');
             }
         }
 
-        function showSuccess() {
-            document.getElementById('app').innerHTML = `
-                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center;">
-                    <div style="background: white; padding: 40px; border-radius: 20px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
-                        <h1 style="color: #333; margin-bottom: 20px;">✅ Login Exitoso</h1>
-                        <p style="font-size: 18px; color: #666;">Bienvenido, <strong>${USER}</strong></p>
-                        <button onclick="logout()" style="margin-top: 20px; padding: 12px 30px; background: #dc3545; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600;">Cerrar Sesión</button>
-                    </div>
-                </div>
-            `;
+        async function loadTours() {
+            try {
+                const response = await fetch('tours.json');
+                TOURS = await response.json();
+            } catch (e) {
+                TOURS = [];
+            }
+        }
+
+        function addToCart(index) {
+            const exists = CART.findIndex(item => item.index === index);
+            if (exists !== -1) {
+                CART.splice(exists, 1);
+            } else {
+                CART.push({ index, ...TOURS[index] });
+            }
+            renderTours();
+            updateCart();
+        }
+
+        async function showSuccess() {
+            await loadView('vistatours');
         }
 
         function logout() {
@@ -65,7 +80,8 @@
             USER = localStorage.getItem('user');
             
             if (USER) {
-                showSuccess();
+                await loadTours();
+                await showSuccess();
             } else {
                 await loadView('login');
             }
