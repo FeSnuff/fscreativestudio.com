@@ -18,9 +18,14 @@ body { background: #f5f5f5; min-height: 100vh; margin: 0; font-family: Arial, sa
 .btn-cancel { background: #dc3545; color: white; }
 .btn-logout { background: #343a40; color: white; }
 .document { background: #fff; padding: 40px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-.doc-header { border-bottom: 3px solid var(--primary-color, #667eea); padding-bottom: 20px; margin-bottom: 30px; }
-.doc-logo { font-size: 28px; font-weight: bold; color: var(--primary-color, #667eea); margin-bottom: 10px; }
-.doc-info { color: #666; font-size: 14px; line-height: 1.8; }
+.doc-header { border-bottom: 3px solid var(--primary-color, #667eea); padding-bottom: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+.doc-header-left { display: flex; align-items: center; gap: 20px; }
+.doc-logo-img { width: 100px; height: 100px; object-fit: contain; }
+.doc-logo-text { display: flex; flex-direction: column; }
+.doc-logo-title { font-size: 28px; font-weight: bold; color: #5b7fd4; }
+.doc-logo-subtitle { font-size: 16px; color: #666; margin-top: 5px; }
+.doc-header-right { text-align: right; color: #666; font-size: 14px; line-height: 1.8; }
+.doc-header-right a { color: #5b7fd4; text-decoration: none; }
 .doc-title { font-size: 24px; font-weight: bold; color: #333; text-align: center; margin-bottom: 30px; }
 .itinerary-section { margin-bottom: 30px; }
 .section-title { font-size: 20px; font-weight: bold; color: var(--primary-color, #667eea); margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid var(--primary-color, #667eea); }
@@ -35,11 +40,9 @@ body { background: #f5f5f5; min-height: 100vh; margin: 0; font-family: Arial, sa
 .not-includes-list h4 { color: #dc3545; margin-bottom: 10px; font-size: 14px; }
 .includes-list ul { list-style: none; padding: 0; margin: 0; }
 .includes-list li { padding: 5px 0; font-size: 13px; color: #666; }
-.includes-list li:before { content: "✓ "; color: #28a745; font-weight: bold; }
 .not-includes-list { background: #fff; padding: 15px; border-radius: 8px; }
 .not-includes-list ul { list-style: none; padding: 0; margin: 0; }
 .not-includes-list li { padding: 5px 0; font-size: 13px; color: #666; }
-.not-includes-list li:before { content: "✗ "; color: #dc3545; font-weight: bold; }
 .cost-summary { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
 .cost-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e0e0e0; }
 .cost-total { display: flex; justify-content: space-between; padding: 15px 0; font-size: 20px; font-weight: bold; color: var(--primary-color, #667eea); margin-top: 10px; }
@@ -51,11 +54,19 @@ body { background: #f5f5f5; min-height: 100vh; margin: 0; font-family: Arial, sa
 .terms h3 { color: #333; margin-bottom: 15px; font-size: 18px; }
 .terms ul { color: #666; line-height: 1.8; }
 .doc-footer { border-top: 2px solid var(--primary-color, #667eea); padding-top: 20px; margin-top: 30px; text-align: center; color: #666; font-size: 12px; line-height: 1.6; }
+.editable-mode { outline: 2px dashed #ffc107; background: #fffbf0; }
+.activity-list { background: #fff; padding: 15px; border-radius: 8px; margin-top: 10px; margin-bottom: 15px; }
+.activity-list h4 { color: #667eea; margin-bottom: 10px; font-size: 14px; }
+.activity-list ul { list-style: none; padding: 0; margin: 0; }
+.activity-list li { padding: 5px 0; font-size: 13px; color: #666; }
+.activity-list li:before { content: "📍 "; }
 @media (max-width: 768px) {
     .includes-section { grid-template-columns: 1fr; }
     .document { padding: 20px; }
     .action-buttons { width: 100%; }
     .btn { flex: 1; }
+    .doc-header { flex-direction: column; text-align: center; }
+    .doc-header-right { text-align: center; }
 }
 </style>
 
@@ -78,7 +89,7 @@ body { background: #f5f5f5; min-height: 100vh; margin: 0; font-family: Arial, sa
             </div>
             <div class="action-buttons">
                 <button class="btn btn-back" onclick="loadView('vista2')">← Anterior</button>
-                <button class="btn btn-edit" onclick="loadView('vista1')">✏️ Editar</button>
+                <button class="btn btn-edit" id="btnEdit" onclick="toggleEditMode()">✏️ Editar</button>
                 <button class="btn btn-pdf" onclick="alert('Función de PDF próximamente')">📥 Generar PDF</button>
                 <button class="btn btn-cancel" onclick="confirmCancel()">❌ Cancelar</button>
                 <button class="btn btn-logout" onclick="logout()">🚪 Salir</button>
@@ -93,6 +104,78 @@ body { background: #f5f5f5; min-height: 100vh; margin: 0; font-family: Arial, sa
 // Use global variables (no let/const)
 currentView = 'resumen';
 primaryColor = '#667eea';
+isEditMode = false;
+
+// Emoji mapping for includes/not includes
+const includeEmojis = {
+    'almuerzo': '🍽️',
+    'asistencia': '👨‍⚕️',
+    'oxigeno': '💨',
+    'bastones': '🥾',
+    'botiquin': '🩹',
+    'practica': '🏃',
+    'bus': '🚌',
+    'casco': '⛑️',
+    'equipo': '🎒',
+    'cuatrimoto': '🏍️',
+    'desayuno': '🍳',
+    'guia': '👨‍🏫',
+    'recojo': '🚐',
+    'hotel': '🏨',
+    'ticket': '🎫',
+    'tren': '🚂',
+    'ingreso': '🎟️',
+    'transporte': '🚗'
+};
+
+const notIncludeEmojis = {
+    'alimentacion': '🍴',
+    'btp': '🎫',
+    'boleto': '🎟️',
+    'caballo': '🐴',
+    'cena': '🍽️',
+    'entrada': '🚪',
+    'salineras': '🧂',
+    'hospedaje': '🏨',
+    'igv': '💰',
+    'ingreso': '🎟️',
+    'capilla': '⛪',
+    'lagunas': '🏞️',
+    'termales': '♨️',
+    'pitumarca': '🏔️',
+    'seguro': '🛡️',
+    'tiket': '🎫'
+};
+
+function getEmojiForItem(text, isInclude) {
+    const lowerText = text.toLowerCase();
+    const emojiMap = isInclude ? includeEmojis : notIncludeEmojis;
+    
+    for (const [key, emoji] of Object.entries(emojiMap)) {
+        if (lowerText.includes(key)) {
+            return emoji;
+        }
+    }
+    return isInclude ? '✓' : '✗';
+}
+
+function toggleEditMode() {
+    isEditMode = !isEditMode;
+    const doc = document.getElementById('documentContent');
+    const btn = document.getElementById('btnEdit');
+    
+    if (isEditMode) {
+        doc.contentEditable = 'true';
+        doc.classList.add('editable-mode');
+        btn.innerHTML = '✅ Terminar Edición';
+        btn.style.background = '#28a745';
+    } else {
+        doc.contentEditable = 'false';
+        doc.classList.remove('editable-mode');
+        btn.innerHTML = '✏️ Editar';
+        btn.style.background = '#ffc107';
+    }
+}
 
 function selectView(view) {
     currentView = view;
@@ -121,11 +204,23 @@ function renderDocument() {
         const days = tour.duration_days;
         const dayLabel = days === 1 ? `Día ${currentDay}` : `Días ${currentDay} - ${currentDay + days - 1}`;
         
+        // Activity list
+        const activities = tour.activities || tour.itinerary || [];
+        const activityHTML = activities.length > 0 ? `
+            <div class="activity-list">
+                <h4>📋 Actividades:</h4>
+                <ul>
+                    ${activities.map(activity => `<li>${activity}</li>`).join('')}
+                </ul>
+            </div>
+        ` : '';
+        
         if (currentView === 'resumen') {
             daysHTML += `
                 <div class="day-item">
                     <div class="day-title">${dayLabel}</div>
                     <div class="tour-name-day">${tour.name}</div>
+                    ${activityHTML}
                     ${renderIncludes(tour)}
                 </div>
             `;
@@ -142,6 +237,7 @@ function renderDocument() {
                     <div class="tour-name-day">${tour.name}</div>
                     <img src="${imageUrl}" class="tour-image-detail" alt="${tour.name}" onerror="this.style.background='linear-gradient(135deg, #667eea, #764ba2)'; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3C/svg%3E'">
                     <div class="tour-summary">${tour.summary || 'Disfruta de una experiencia única en este tour.'}</div>
+                    ${activityHTML}
                     ${renderIncludes(tour)}
                 </div>
             `;
@@ -152,13 +248,18 @@ function renderDocument() {
     
     document.getElementById('documentContent').innerHTML = `
         <div class="doc-header">
-            <div class="doc-logo">🗺️ Qori Wayra - Travel</div>
-            <div class="doc-info">
-                Experiencias únicas en Cusco y Perú<br>
-                📞 Tel: +51 924 377 454<br>
-                🌐 Web: qoriwayra-travel.com<br>
-                ✉️ Email: qoriwayra.cuscotravel@gmail.com<br>
-                📱 Instagram: @qoriwayratravel
+            <div class="doc-header-left">
+                <img src="images/logo.png" alt="Qori Wayra Logo" class="doc-logo-img" onerror="this.style.display='none'">
+                <div class="doc-logo-text">
+                    <div class="doc-logo-title">Qori Wayra - Travel</div>
+                    <div class="doc-logo-subtitle">Experiencias únicas en Cusco y Perú</div>
+                </div>
+            </div>
+            <div class="doc-header-right">
+                Tel: <a href="tel:+51924377454">+51 924 377 454</a><br>
+                Web: <a href="https://qoriwayra-travel.com" target="_blank">qoriwayra-travel.com</a><br>
+                Email: <a href="mailto:qoriwayra.cuscotravel@gmail.com">qoriwayra.cuscotravel@gmail.com</a><br>
+                Instagram: <a href="https://instagram.com/qoriwayratravel" target="_blank">@qoriwayratravel</a>
             </div>
         </div>
         
@@ -247,13 +348,13 @@ function renderIncludes(tour) {
             <div class="includes-list">
                 <h4>✓ Incluye:</h4>
                 <ul>
-                    ${includes.map(item => `<li>${item}</li>`).join('')}
+                    ${includes.map(item => `<li>${getEmojiForItem(item, true)} ${item}</li>`).join('')}
                 </ul>
             </div>
             <div class="not-includes-list">
                 <h4>✗ No Incluye:</h4>
                 <ul>
-                    ${notIncludes.map(item => `<li>${item}</li>`).join('')}
+                    ${notIncludes.map(item => `<li>${getEmojiForItem(item, false)} ${item}</li>`).join('')}
                 </ul>
             </div>
         </div>
