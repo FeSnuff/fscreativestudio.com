@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecozeo - Innovación en Nanofertilizantes</title>
+    <style>
+        /* ==========================================
+           RESET Y CONFIGURACIÓN BASE
+           ========================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Paleta de colores minimalista: verde claro y morado */
+            --color-primary: #7c3aed; /* Morado */
+            --color-primary-light: #a78bfa;
+            --color-secondary: #10b981; /* Verde claro */
+            --color-secondary-light: #34d399;
+            --color-dark: #1f2937;
+            --color-text: #374151;
+            --color-text-light: #6b7280;
+            --color-bg: #ffffff;
+            --color-bg-alt: #f9fafb;
+            --color-border: #e5e7eb;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--color-text);
+            background-color: var(--color-bg);
+        }
+
+        /* ==========================================
+           NAVEGACIÓN
+           ========================================== */
+        nav {
+            background-color: var(--color-bg);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        nav.scrolled {
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-container img {
+            height: 45px;
+            width: auto;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: var(--color-text);
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            color: var(--color-primary);
+        }
+
+        .nav-menu a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--color-primary);
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--color-primary);
+            transition: var(--transition);
+        }
+
+        /* ==========================================
+           BOTONES FLOTANTES (WhatsApp y Llamada)
+           ========================================== */
+        .floating-buttons {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 999;
+        }
+
+        .floating-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: var(--transition);
+            text-decoration: none;
+            animation: pulse 2s infinite;
+        }
+
+        .floating-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .btn-whatsapp {
+            background-color: #25d366;
+        }
+
+        .btn-phone {
+            background-color: var(--color-primary);
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        /* ==========================================
+           SISTEMA DE VISTAS (Single Page Application)
+           ========================================== */
+        .page-view {
+            display: none;
+            padding-top: 80px;
+            min-height: calc(100vh - 80px);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .page-view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ==========================================
+           SECCIÓN HERO (Página Inicio)
+           ========================================== */
+        .hero {
+            position: relative;
+            height: 85vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%);
+        }
+
+        .hero-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.15;
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 800px;
+            padding: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--color-dark);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero h1 .highlight {
+            color: var(--color-primary);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: var(--color-text-light);
+            margin-bottom: 2rem;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.9rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--color-primary);
+            border: 2px solid var(--color-primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--color-primary);
+            color: white;
+        }
+
+        /* ==========================================
+           SECCIONES DE CONTENIDO
+           ========================================== */
+        .section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--color-dark);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--color-text-light);
+            text-align: center;
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ==========================================
+           TARJETAS Y GRIDS
+           ========================================== */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .card {
+            background: var(--color-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-dark);
+            margin-bottom: 0.75rem;
+        }
+
+        .card-text {
+            color: var(--color-text-light);
+            line-height: 1.6;
+        }
+
+        /* ==========================================
+           PÁGINA NOSOTROS
+           ========================================== */
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .about-card {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.03) 0%, rgba(16, 185, 129, 0.03) 100%);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+        }
+
+        .about-card h3 {
+            font-size: 1.5rem;
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+        }
+
+        .about-card p {
+            color: var(--color-text);
+            line-height: 1.7;
+        }
+
+        /* ==========================================
+           PÁGINA PRODUCTOS
+           ========================================== */
+        .product-card {
+            background: var(--color-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .product-header {
+            position: relative;
+            height: 300px;
+            overflow: hidden;
+        }
+
+        .product-header img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-body {
+            padding: 2rem;
+        }
+
+        .product-name {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-dark);
+            margin-bottom: 1rem;
+        }
+
+        .product-description {
+            color: var(--color-text);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .technical-specs {
+            background: var(--color-bg-alt);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--color-secondary);
+        }
+
+        .technical-specs h4 {
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .technical-specs ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .technical-specs li {
+            padding: 0.5rem 0;
+            color: var(--color-text);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .technical-specs li:last-child {
+            border-bottom: none;
+        }
+
+        /* ==========================================
+           PÁGINA CONTACTO
+           ========================================== */
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .contact-form {
+            background: var(--color-bg-alt);
+            padding: 2rem;
+            border-radius: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--color-dark);
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--color-bg-alt);
+            border-radius: 12px;
+            transition: var(--transition);
+        }
+
+        .contact-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            color: white;
+            font-weight: 700;
+        }
+
+        /* ==========================================
+           FOOTER
+           ========================================== */
+        footer {
+            background-color: var(--color-dark);
+            color: white;
+            padding: 3rem 2rem 1.5rem;
+            margin-top: 4rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            color: var(--color-secondary-light);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-section a:hover {
+            color: var(--color-secondary-light);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background: var(--color-primary);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* ==========================================
+           RESPONSIVE DESIGN (Mobile First)
+           ========================================== */
+        @media (max-width: 768px) {
+            .nav-menu {
+                position: fixed;
+                left: -100%;
+                top: 70px;
+                flex-direction: column;
+                background-color: var(--color-bg);
+                width: 100%;
+                text-align: center;
+                transition: var(--transition);
+                box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+                padding: 2rem 0;
+            }
+
+            .nav-menu.active {
+                left: 0;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+
+            .floating-buttons {
+                bottom: 20px;
+                right: 20px;
+            }
+
+            .floating-btn {
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ==========================================
+         BARRA DE NAVEGACIÓN FIJA
+         ========================================== -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo-container">
+                <img src="images/logo.png" alt="Ecozeo Logo">
+                <span class="logo-text">Ecozeo</span>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#" class="nav-link active" data-page="inicio">Inicio</a></li>
+                <li><a href="#" class="nav-link" data-page="nosotros">Nosotros</a></li>
+                <li><a href="#" class="nav-link" data-page="productos">Productos</a></li>
+                <li><a href="#" class="nav-link" data-page="servicios">Servicios</a></li>
+                <li><a href="#" class="nav-link" data-page="proyectos">Proyectos & Pruebas</a></li>
+                <li><a href="#" class="nav-link" data-page="contacto">Contacto</a></li>
+            </ul>
+            <div class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ==========================================
+         BOTONES FLOTANTES (WhatsApp y Llamada)
+         ========================================== -->
+    <div class="floating-buttons">
+        <a href="https://wa.me/573001234567" target="_blank" class="floating-btn btn-whatsapp" title="Contactar por WhatsApp">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+        </a>
+        <a href="tel:+573001234567" class="floating-btn btn-phone" title="Llamar ahora">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
+                <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/>
+            </svg>
+        </a>
+    </div>
+
+    <!-- ==========================================
+         VISTA: INICIO
+         ========================================== -->
+    <div id="inicio" class="page-view active">
+        <section class="hero">
+            <img src="images/image1.jpg" alt="Agricultura sostenible" class="hero-image">
+            <div class="hero-content">
+                <h1>Innovación en <span class="highlight">Nanofertilizantes</span></h1>
+                <p>Potenciamos la agricultura sostenible con tecnología de nanopartículas que optimiza la absorción de nutrientes y maximiza el rendimiento de tus cultivos.</p>
+                <div class="hero-buttons">
+                    <a href="#" class="btn btn-primary nav-link" data-page="productos">Conoce Nuestros Productos</a>
+                    <a href="#" class="btn btn-secondary nav-link" data-page="contacto">Contáctanos</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">¿Por qué elegir Ecozeo?</h2>
+            <p class="section-subtitle">Somos líderes en el desarrollo de soluciones nanotecnológicas para la agricultura moderna, comprometidos con la sustentabilidad y la eficiencia productiva.</p>
+            
+            <div class="cards-grid">
+                <div class="card">
+                    <img src="images/image2.jpg" alt="Tecnología avanzada" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">Tecnología de Vanguardia</h3>
+                        <p class="card-text">Nuestros nanofertilizantes utilizan partículas de 1-100 nm que garantizan una absorción foliar y radicular hasta 5 veces superior a los fertilizantes convencionales.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="images/image3.jpg" alt="Sostenibilidad" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">Compromiso Ambiental</h3>
+                        <p class="card-text">Reducimos la contaminación de acuíferos en un 70% mediante liberación controlada de nutrientes, minimizando la lixiviación y volatilización.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="images/image4.jpg" alt="Resultados comprobados" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">Resultados Comprobados</h3>
+                        <p class="card-text">Incrementos promedio del 35% en productividad agrícola, validados mediante ensayos controlados en más de 50 especies cultivadas.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==========================================
+         VISTA: NOSOTROS
+         ========================================== -->
+    <div id="nosotros" class="page-view">
+        <section class="section">
+            <h2 class="section-title">Sobre Ecozeo</h2>
+            <p class="section-subtitle">Pioneros en nanotecnología aplicada a la nutrición vegetal, transformando la agricultura con ciencia e innovación.</p>
+
+            <div class="about-grid">
+                <div class="about-card">
+                    <h3>Nuestra Historia</h3>
+                    <p>Fundada en 2018 por un equipo multidisciplinario de ingenieros agrónomos y nanotecnólogos, Ecozeo nació con la visión de revolucionar la fertilización agrícola. Tras cuatro años de investigación en colaboración con universidades líderes en América Latina, desarrollamos nuestra primera línea de nanofertilizantes de liberación controlada. Hoy operamos en seis países, con presencia en más de 10,000 hectáreas productivas.</p>
+                </div>
+                <div class="about-card">
+                    <h3>Misión</h3>
+                    <p>Desarrollar, producir y comercializar soluciones nanotecnológicas de nutrición vegetal que maximicen la eficiencia agronómica, reduzcan el impacto ambiental y contribuyan a la seguridad alimentaria global mediante tecnología accesible, sostenible y científicamente validada.</p>
+                </div>
+                <div class="about-card">
+                    <h3>Visión</h3>
+                    <p>Ser la empresa líder en Latinoamérica en nanofertilizantes para 2028, posicionándonos como referente internacional en innovación agrotecnológica y sustentabilidad, con presencia en 15 países y un portafolio de 20 productos especializados por tipo de cultivo y fase fenológica.</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 4rem;">
+                <h3 style="font-size: 2rem; color: var(--color-dark); margin-bottom: 2rem; text-align: center;">Nuestros Valores</h3>
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-content">
+                            <h3 class="card-title">Innovación Científica</h3>
+                            <p class="card-text">Invertimos el 15% de nuestros ingresos en I+D+i, manteniendo alianzas estratégicas con centros de investigación de excelencia.</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-content">
+                            <h3 class="card-title">Sostenibilidad</h3>
+                            <p class="card-text">Cada producto es diseñado para minimizar la huella hídrica, reducir emisiones de GEI y proteger la biodiversidad edáfica.</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-content">
+                            <h3 class="card-title">Excelencia</h3>
+                            <p class="card-text">Certificaciones ISO 9001, ISO 14001 y cumplimiento de normativas internacionales de calidad y trazabilidad.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==========================================
+         VISTA: PRODUCTOS
+         ========================================== -->
+    <div id="productos" class="page-view">
+        <section class="section">
+            <h2 class="section-title">Nuestros Productos</h2>
+            <p class="section-subtitle">Soluciones nanotecnológicas diseñadas para optimizar la nutrición vegetal en cada etapa del cultivo.</p>
+
+            <div style="display: flex; flex-direction: column; gap: 3rem; margin-top: 3rem;">
+                <!-- Producto 1 -->
+                <div class="product-card">
+                    <div class="product-header">
+                        <img src="images/image2.jpg" alt="NanoN Plus">
+                    </div>
+                    <div class="product-body">
+                        <h3 class="product-name">NanoN Plus</h3>
+                        <p class="product-description">
+                            Nanofertilizante nitrogenado de liberación controlada con partículas de 20-50 nm encapsuladas en biopolímeros. Formulado con nanopartículas de urea recubiertas que garantizan una entrega gradual de nitrógeno durante 45-60 días, maximizando la eficiencia de uso del nutriente (EUN) hasta un 85%. Ideal para cultivos de ciclo largo y sistemas de fertirrigación tecnificada.
+                        </p>
+                        <div class="technical-specs">
+                            <h4>Ficha Técnica</h4>
+                            <ul>
+                                <li><strong>Composición:</strong> Nitrógeno total (N) 28%, Nitrógeno amoniacal 14%, Nitrógeno ureico nanoencapsulado 14%</li>
+                                <li><strong>Tamaño de partícula:</strong> 20-50 nanómetros</li>
+                                <li><strong>pH:</strong> 6.5 - 7.2</li>
+                                <li><strong>Densidad:</strong> 1.18 g/cm³</li>
+                                <li><strong>Solubilidad:</strong> Completa en agua</li>
+                                <li><strong>Dosificación recomendada:</strong> 2-4 L/ha vía foliar, 8-12 L/ha vía fertirrigación</li>
+                                <li><strong>Compatibilidad:</strong> Compatible con la mayoría de agroquímicos (realizar prueba de mezcla)</li>
+                                <li><strong>Vida útil:</strong> 24 meses en condiciones de almacenamiento adecuadas</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 2 -->
+                <div class="product-card">
+                    <div class="product-header">
+                        <img src="images/image3.jpg" alt="NanoP Pro">
+                    </div>
+                    <div class="product-body">
+                        <h3 class="product-name">NanoP Pro</h3>
+                        <p class="product-description">
+                            Nanofertilizante fosforado de alta biodisponibilidad con nanopartículas de fosfato monocálcico estabilizadas en matriz coloidal. Diseñado para superar las limitaciones de fijación de fósforo en suelos ácidos y alcalinos, aumentando la absorción radicular en un 60% comparado con fuentes convencionales. Promueve el desarrollo radicular vigoroso y adelanto en floración.
+                        </p>
+                        <div class="technical-specs">
+                            <h4>Ficha Técnica</h4>
+                            <ul>
+                                <li><strong>Composición:</strong> P₂O₅ total 32%, Fósforo soluble en agua 28%, Calcio (Ca) 8%</li>
+                                <li><strong>Tamaño de partícula:</strong> 15-40 nanómetros</li>
+                                <li><strong>pH:</strong> 5.8 - 6.5</li>
+                                <li><strong>Densidad:</strong> 1.25 g/cm³</li>
+                                <li><strong>Índice de dispersión:</strong> 95% (alta estabilidad coloidal)</li>
+                                <li><strong>Dosificación recomendada:</strong> 3-5 L/ha vía foliar, 10-15 L/ha vía drench</li>
+                                <li><strong>Momento de aplicación:</strong> Pre-floración, cuajado de frutos, llenado de grano</li>
+                                <li><strong>Certificaciones:</strong> OMRI Listed (agricultura orgánica), ECOCERT compatible</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==========================================
+         VISTA: SERVICIOS
+         ========================================== -->
+    <div id="servicios" class="page-view">
+        <section class="section">
+            <h2 class="section-title">Nuestros Servicios</h2>
+            <p class="section-subtitle">Acompañamiento integral desde el diagnóstico hasta la implementación de programas nutricionales personalizados.</p>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <img src="images/image4.jpg" alt="Asesoría Técnica" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">Asesoría Técnica Especializada</h3>
+                        <p class="card-text">Diagnóstico nutricional mediante análisis foliar y de suelo, interpretación de resultados y diseño de programas de fertilización nanotecnológica adaptados a cada cultivo, zona agroecológica y objetivo productivo. Incluye visitas periódicas y ajustes durante el ciclo fenológico.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="images/image5.jpg" alt="Capacitación" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">Capacitación y Transferencia Tecnológica</h3>
+                        <p class="card-text">Programas de formación para técnicos de campo y productores sobre manejo de nanofertilizantes, calibración de equipos de aplicación, momentos óptimos de aplicación, mezclas compatibles y monitoreo de respuesta vegetal. Talleres presenciales y virtuales con material didáctico incluido.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="images/image1.jpg" alt="Ensayos" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">Ensayos Demostrativos</h3>
+                        <p class="card-text">Implementación de parcelas demostrativas con diseño experimental riguroso, evaluación de variables productivas (biomasa, rendimiento, calidad), análisis estadístico de resultados y generación de reportes técnicos con recomendaciones específicas para la región.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="images/image2.jpg" alt="Análisis" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">Análisis de Laboratorio</h3>
+                        <p class="card-text">Servicios de análisis de suelo (físico-químico completo), análisis foliar (macro y micronutrientes), análisis de agua de riego (calidad y compatibilidad), y análisis de residualidad en cosecha. Laboratorio acreditado ISO 17025 con entrega de resultados en 5-7 días hábiles.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==========================================
+         VISTA: PROYECTOS & PRUEBAS
+         ========================================== -->
+    <div id="proyectos" class="page-view">
+        <section class="section">
+            <h2 class="section-title">Proyectos & Pruebas de Campo</h2>
+            <p class="section-subtitle">Resultados validados científicamente en condiciones reales de producción agrícola.</p>
+
+            <div style="display: flex; flex-direction: column; gap: 2.5rem; margin-top: 3rem;">
+                <div class="card">
+                    <div class="card-content">
+                        <h3 class="card-title">Caso de Estudio: Café Arábica - Risaralda, Colombia</h3>
+                        <p class="card-text">
+                            <strong>Objetivo:</strong> Evaluar el efecto de NanoN Plus en producción de café variedad Castillo.<br><br>
+                            <strong>Metodología:</strong> Diseño de bloques completos al azar, 4 tratamientos, 5 repeticiones. Aplicaciones foliares cada 21 días durante fase de llenado de grano.<br><br>
+                            <strong>Resultados:</strong> Incremento del 32% en peso de grano (de 18.5 a 24.4 g por cereza), reducción del 40% en dosis de fertilizante convencional, mejora del 15% en perfil de taza (escala SCA). Relación costo-beneficio: 1:3.8<br><br>
+                            <strong>Conclusión:</strong> La nanotecnología permitió optimizar la ventana de absorción de N en fase crítica, traducido en mayor llenado y calidad organoléptica.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-content">
+                        <h3 class="card-title">Ensayo Experimental: Arroz (Oryza sativa) - Tolima, Colombia</h3>
+                        <p class="card-text">
+                            <strong>Objetivo:</strong> Comparar eficiencia de NanoN Plus vs. urea granulada en arroz bajo riego.<br><br>
+                            <strong>Metodología:</strong> Parcelas de 500 m² por tratamiento, variedad Fedearroz 67, aplicación fraccionada (macollamiento, primordio floral, llenado).<br><br>
+                            <strong>Resultados:</strong> Rendimiento: 8.2 ton/ha con NanoN Plus vs. 6.4 ton/ha con urea (28% superior). Eficiencia de uso de N: 78% vs. 45%. Reducción de pérdidas por volatilización del 65%. Menor incidencia de Pyricularia oryzae asociada a mejor balance nutricional.<br><br>
+                            <strong>Validación:</strong> Análisis de N en grano: contenido proteico 8.2% (óptimo para exportación). Publicación en Revista Colombiana de Ciencias Hortícolas (2023).
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-content">
+                        <h3 class="card-title">Prueba Comercial: Papa (Solanum tuberosum) - Boyacá, Colombia</h3>
+                        <p class="card-text">
+                            <strong>Objetivo:</strong> Validar NanoP Pro en formación de tubérculos variedad Parda Pastusa.<br><br>
+                            <strong>Metodología:</strong> 3 hectáreas comerciales, 2 aplicaciones vía drench (15 y 45 días post-siembra), monitoreo semanal de desarrollo radicular.<br><br>
+                            <strong>Resultados:</strong> Aumento del 38% en número de tubérculos categoría primera (>80 mm de diámetro), mejora del 25% en gravedad específica (1.085), adelanto de cosecha en 12 días promedio. Reducción del 50% en aplicaciones de P convencional.<br><br>
+                            <strong>Impacto económico:</strong> Incremento neto de $8,500,000 COP/ha. Productor adoptó tecnología en 100% de su área cultivada para siguiente ciclo.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==========================================
+         VISTA: CONTACTO
+         ========================================== -->
+    <div id="contacto" class="page-view">
+        <section class="section">
+            <h2 class="section-title">Contáctanos</h2>
+            <p class="section-subtitle">Estamos listos para asesorarte y llevar tu producción agrícola al siguiente nivel.</p>
+
+            <div class="contact-container">
+                <div class="contact-form">
+                    <h3 style="margin-bottom: 1.5rem; color: var(--color-dark);">Envíanos un mensaje</h3>
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="nombre">Nombre completo *</label>
+                            <input type="text" id="nombre" name="nombre" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Correo electrónico *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="telefono">Teléfono</label>
+                            <input type="tel" id="telefono" name="telefono">
+                        </div>
+                        <div class="form-group">
+                            <label for="asunto">Asunto *</label>
+                            <select id="asunto" name="asunto" required>
+                                <option value="">Selecciona una opción</option>
+                                <option value="productos">Consulta sobre productos</option>
+                                <option value="servicios">Solicitar servicios técnicos</option>
+                                <option value="cotizacion">Solicitar cotización</option>
+                                <option value="distribuidor">Ser distribuidor</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="mensaje">Mensaje *</label>
+                            <textarea id="mensaje" name="mensaje" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Enviar Mensaje</button>
+                    </form>
+                </div>
+
+                <div class="contact-info">
+                    <h3 style="margin-bottom: 1.5rem; color: var(--color-dark);">Información de contacto</h3>
+                    
+                    <a href="https://wa.me/573001234567" target="_blank" class="contact-item" style="text-decoration: none; color: inherit;">
+                        <div class="contact-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <strong>WhatsApp</strong><br>
+                            +57 300 123 4567
+                        </div>
+                    </a>
+
+                    <a href="tel:+573001234567" class="contact-item" style="text-decoration: none; color: inherit;">
+                        <div class="contact-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                                <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <strong>Teléfono</strong><br>
+                            +57 300 123 4567
+                        </div>
+                    </a>
+
+                    <a href="mailto:contacto@ecozeo.com" class="contact-item" style="text-decoration: none; color: inherit;">
+                        <div class="contact-icon">✉</div>
+                        <div>
+                            <strong>Email</strong><br>
+                            contacto@ecozeo.com
+                        </div>
+                    </a>
+
+                    <div class="contact-item">
+                        <div class="contact-icon">📍</div>
+                        <div>
+                            <strong>Ubicación</strong><br>
+                            Calle 123 #45-67<br>
+                            Bogotá, Colombia
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==========================================
+         FOOTER (Persistente en todas las vistas)
+         ========================================== -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Ecozeo</h3>
+                <p style="color: rgba(255, 255, 255, 0.7); line-height: 1.7;">
+                    Innovación en nanofertilizantes para una agricultura sostenible y productiva.
+                </p>
+                <div class="social-links">
+                    <a href="https://facebook.com/ecozeo" target="_blank" title="Facebook">f</a>
+                    <a href="https://instagram.com/ecozeo" target="_blank" title="Instagram">📷</a>
+                    <a href="https://linkedin.com/company/ecozeo" target="_blank" title="LinkedIn">in</a>
+                    <a href="https://youtube.com/@ecozeo" target="_blank" title="YouTube">▶</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Navegación</h3>
+                <ul>
+                    <li><a href="#" class="nav-link" data-page="inicio">Inicio</a></li>
+                    <li><a href="#" class="nav-link" data-page="nosotros">Nosotros</a></li>
+                    <li><a href="#" class="nav-link" data-page="productos">Productos</a></li>
+                    <li><a href="#" class="nav-link" data-page="servicios">Servicios</a></li>
+                    <li><a href="#" class="nav-link" data-page="proyectos">Proyectos</a></li>
+                    <li><a href="#" class="nav-link" data-page="contacto">Contacto</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Productos</h3>
+                <ul>
+                    <li><a href="#" class="nav-link" data-page="productos">NanoN Plus</a></li>
+                    <li><a href="#" class="nav-link" data-page="productos">NanoP Pro</a></li>
+                    <li><a href="#" class="nav-link" data-page="servicios">Asesoría Técnica</a></li>
+                    <li><a href="#" class="nav-link" data-page="servicios">Análisis de Laboratorio</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Contacto</h3>
+                <ul>
+                    <li><a href="mailto:contacto@ecozeo.com">contacto@ecozeo.com</a></li>
+                    <li><a href="tel:+573001234567">+57 300 123 4567</a></li>
+                    <li style="color: rgba(255, 255, 255, 0.7);">Calle 123 #45-67</li>
+                    <li style="color: rgba(255, 255, 255, 0.7);">Bogotá, Colombia</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2024 Ecozeo. Todos los derechos reservados. | Innovación en Nanofertilizantes</p>
+        </div>
+    </footer>
+
+    <!-- ==========================================
+         JAVASCRIPT - Sistema de Navegación SPA
+         ========================================== -->
+    <script>
+        // ============================================
+        // SISTEMA DE NAVEGACIÓN ENTRE VISTAS
+        // ============================================
+        
+        // Obtener todos los enlaces de navegación
+        const navLinks = document.querySelectorAll('.nav-link');
+        const pageViews = document.querySelectorAll('.page-view');
+
+        // Función para cambiar de vista
+        function navigateTo(pageName) {
+            // Ocultar todas las vistas
+            pageViews.forEach(view => {
+                view.classList.remove('active');
+            });
+
+            // Mostrar la vista seleccionada
+            const targetView = document.getElementById(pageName);
+            if (targetView) {
+                targetView.classList.add('active');
+            }
+
+            // Actualizar enlaces activos
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-page') === pageName) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Scroll al inicio de la página
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Cerrar menú móvil si está abierto
+            navMenu.classList.remove('active');
+        }
+
+        // Event listeners para todos los enlaces de navegación
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const pageName = link.getAttribute('data-page');
+                navigateTo(pageName);
+            });
+        });
+
+        // ============================================
+        // MENÚ MÓVIL (HAMBURGUESA)
+        // ============================================
+        const menuToggle = document.getElementById('menuToggle');
+        const navMenu = document.getElementById('navMenu');
+
+        menuToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+        });
+
+        // ============================================
+        // EFECTO SCROLL EN NAVBAR
+        // ============================================
+        const navbar = document.getElementById('navbar');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // ============================================
+        // FORMULARIO DE CONTACTO (Simulado)
+        // ============================================
+        const contactForm = document.getElementById('contactForm');
+        
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Obtener datos del formulario
+            const formData = new FormData(contactForm);
+            const nombre = formData.get('nombre');
+            
+            // Simulación de envío
+            alert(`¡Gracias por contactarnos, ${nombre}! Tu mensaje ha sido recibido. Nos pondremos en contacto contigo pronto.`);
+            
+            // Limpiar formulario
+            contactForm.reset();
+        });
+
+        // ============================================
+        // ANIMACIONES AL HACER SCROLL (Opcional)
+        // ============================================
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Aplicar animaciones a las tarjetas
+        document.querySelectorAll('.card, .about-card, .product-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+    </script>
+
+    <!-- 
+    ================================================
+    ESTRUCTURA DE CARPETAS ESPERADA:
+    ================================================
+    
+    proyecto/
+    ├── index.html          (Este archivo)
+    └── images/
+        ├── logo.png        (Logo de Ecozeo)
+        ├── image1.jpg      (Imagen 1)
+        ├── image2.jpg      (Imagen 2)
+        ├── image3.jpg      (Imagen 3)
+        ├── image4.jpg      (Imagen 4)
+        └── image5.jpg      (Imagen 5)
+
+    NOTAS:
+    - El archivo es 100% estático y funciona sin servidor
+    - Compatible con GitHub Pages
+    - No requiere frameworks ni librerías externas
+    - Todo el CSS y JavaScript está incluido en el mismo archivo
+    - Las imágenes deben colocarse en la carpeta /images/
+    - El sistema de navegación funciona mediante JavaScript puro
+    - Los botones de WhatsApp y llamada usan wa.me y tel: respectivamente
+    - El formulario es estático (no envía datos a un servidor)
+    ================================================
+    -->
+</body>
+</html>
