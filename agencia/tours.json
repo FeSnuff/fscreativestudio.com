@@ -26,7 +26,7 @@
             "Boleto turístico parcial",
             "IGV"
         ],
-        "price": 300.0
+        "price": 30.0
     },
     {
         "name": "MARAS MORAY SALINERAS",
@@ -110,7 +110,7 @@
             "Hospedaje en Cusco",
             "IGV"
         ],
-        "price": 0.0
+        "price": 690.0
     },
     {
         "name": "MACHUPICCHU 2D-1N LOCAL CIRCUITO 2",
@@ -165,7 +165,7 @@
             "Alimentación",
             "IGV"
         ],
-        "price": 0.0
+        "price": 160.0
     },
     {
         "name": "CUATRIMOTO MARAS–MORAY SIMPLE",
@@ -517,5 +517,30 @@
             "Alimentación"
         ],
         "price": 40.0
+    },
+    {
+        "name": "MISTICO 4 EN 1",
+        "duration_days": 1,
+        "summary": "Embárcate en un tour místico que recorre cuatro destinos emblemáticos: Morada de los Dioses, Parque de los Duendes, Humedal de Huasao y Bosque de los End. Vive una experiencia única en la que se combinan la espiritualidad y la naturaleza ancestral.",
+        "summary_list": [
+            "Morada de los Dioses",
+            "Parque de los Duendes",
+            "Humedal de Huasao",
+            "Bosque de los End"
+        ],
+        "extended_list": [
+            "El tour inicia con el traslado desde Cusco. Llegamos a la Morada de los Dioses, un lugar lleno de misticismo y leyendas ancestrales. Luego, visitamos el Parque de los Duendes, donde la magia de la naturaleza se combina con el folclore local. Continuamos hacia el Humedal de Huasao, un ecosistema único que alberga una gran diversidad de flora y fauna, y finalizamos en el Bosque de los End, un remanso de paz y belleza natural.",
+            "El tour ofrece una inmersión en la cultura y la naturaleza de la región, complementado con la guía de un experto local que te explicará cada uno de estos fascinantes lugares."
+        ],
+        "includes": [
+            "Transporte turístico",
+            "Guía profesional"
+        ],
+        "excludes": [
+            "Tiket de ingreso",
+            "Alimentación",
+            "IGV"
+        ],
+        "price": 60.0
     }
 ]
