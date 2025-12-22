@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Andes Explorer - Agencia de Viajes en Cusco</title>
+    
+    <style>
+        /* ============================================
+           PROYECTO: Cusco Travel Agency MVP
+           ESTRUCTURA:
+           - index.html (este archivo)
+           - /images/logo.png
+           - /images/image1.jpg hasta image10.jpg
+           ============================================ */
+        
+        /* === RESET Y VARIABLES === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Paleta de colores peruanos inspirada en la bandera y cultura */
+            --primary: #c8102e; /* Rojo peruano */
+            --secondary: #8B4513; /* Marrón andino / terracota */
+            --accent: #FFD700; /* Oro inca */
+            --dark: #1a1a1a;
+            --light: #faf7f2;
+            --green: #2d5016; /* Verde de la selva peruana */
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            --gradient-gold: linear-gradient(135deg, var(--accent) 0%, #DAA520 100%);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: var(--light);
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 14px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+        }
+        
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(212, 130, 26, 0.3);
+        }
+        
+        .btn-outline {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+        }
+        
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* === MODAL DE IDIOMA === */
+        #languageModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        #languageModal.hidden {
+            display: none;
+        }
+        
+        .language-selector {
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            animation: slideUp 0.5s ease;
+        }
+        
+        .language-selector h2 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            color: var(--secondary);
+        }
+        
+        .language-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .lang-btn {
+            padding: 20px 40px;
+            font-size: 1.2em;
+            border-radius: 15px;
+            border: 3px solid var(--primary);
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .lang-btn:hover {
+            background: var(--gradient);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        /* === NAVBAR === */
+        nav {
+            background: white;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo {
+            height: 50px;
+            width: auto;
+        }
+        
+        .brand-name {
+            font-size: 1.5em;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 600;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+        
+        .lang-toggle {
+            background: var(--gradient);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .mobile-menu {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+        
+        .mobile-menu span {
+            width: 25px;
+            height: 3px;
+            background: var(--secondary);
+        }
+        
+        /* === PÁGINAS === */
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+            min-height: 70vh;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        /* === HERO SLIDER === */
+        .hero-slider {
+            position: relative;
+            height: 80vh;
+            overflow: hidden;
+        }
+        
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        
+        .slide.active {
+            opacity: 1;
+        }
+        
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.6));
+            z-index: 1;
+        }
+        
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .slide-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            z-index: 2;
+            width: 90%;
+            max-width: 800px;
+        }
+        
+        .slide-content h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+        }
+        
+        .slide-content p {
+            font-size: 1.4em;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+        }
+        
+        .slider-nav {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 3;
+        }
+        
+        .slider-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .slider-dot.active {
+            background: white;
+            width: 40px;
+            border-radius: 10px;
+        }
+        
+        .section {
+            padding: 80px 0;
+        }
+        
+        .section-title {
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 50px;
+            color: var(--secondary);
+            position: relative;
+            padding-bottom: 20px;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--gradient);
+            border-radius: 2px;
+        }
+        
+        /* === TOURS === */
+        .tours-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .tour-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .tour-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(200, 16, 46, 0.3);
+        }
+        
+        .tour-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        
+        .tour-card-content {
+            padding: 25px;
+        }
+        
+        .tour-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+        
+        .tour-card p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        /* === MACHU PICCHU === */
+        .machu-hero {
+            position: relative;
+            height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .machu-hero img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.7);
+        }
+        
+        .machu-hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            color: white;
+        }
+        
+        .machu-hero h1 {
+            font-size: 4em;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.7);
+        }
+        
+        .machu-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            margin-top: 50px;
+            align-items: center;
+        }
+        
+        .machu-content img {
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .machu-text h2 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+        
+        .machu-text p {
+            margin-bottom: 15px;
+            line-height: 1.8;
+            color: #555;
+        }
+        
+        /* === ABOUT === */
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .value-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .value-card h3 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        
+        .value-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(200, 16, 46, 0.2);
+        }
+        
+        /* === CONTACTO === */
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            margin-top: 40px;
+        }
+        
+        .contact-form {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .contact-method {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .contact-method h3 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        /* === WHATSAPP FLOTANTE === */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 20px rgba(37, 211, 102, 0.4);
+            z-index: 1000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(37, 211, 102, 0.6);
+        }
+        
+        .whatsapp-float svg {
+            width: 35px;
+            height: 35px;
+            fill: white;
+        }
+        
+        /* === FOOTER === */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 60px 0 20px;
+            margin-top: 80px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-section h3 {
+            color: var(--accent);
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-section a:hover {
+            color: var(--primary);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: var(--secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background: var(--primary);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid #444;
+            color: #888;
+        }
+        
+        /* === ANIMACIONES === */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* === MODAL TOUR DETALLE === */
+        .tour-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            overflow-y: auto;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .tour-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .tour-modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.4s ease;
+        }
+        
+        .tour-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 24px;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .tour-modal-close:hover {
+            background: var(--primary);
+            color: white;
+            transform: rotate(90deg);
+        }
+        
+        .tour-modal-image {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .tour-modal-body {
+            padding: 40px;
+        }
+        
+        .tour-modal-title {
+            font-size: 2.5em;
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+        
+        .tour-modal-price {
+            font-size: 2em;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tour-modal-price small {
+            font-size: 0.5em;
+            color: #666;
+            font-weight: 400;
+        }
+        
+        .tour-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+        
+        .tour-detail-section h3 {
+            color: var(--secondary);
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tour-detail-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .tour-detail-section ul li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #555;
+        }
+        
+        .tour-detail-section ul li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--green);
+            font-weight: 700;
+        }
+        
+        .tour-detail-section.not-included ul li::before {
+            content: '✗';
+            color: var(--primary);
+        }
+        
+        .tour-modal-description {
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 30px;
+            font-size: 1.05em;
+        }
+        
+        .tour-modal-cta {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .tour-modal-cta .btn {
+            flex: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .tour-details-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tour-modal-body {
+                padding: 20px;
+            }
+            
+            .tour-modal-title {
+                font-size: 1.8em;
+            }
+            
+            .tour-modal-cta {
+                flex-direction: column;
+            }
+        }
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 80px;
+                left: -100%;
+                flex-direction: column;
+                background: white;
+                width: 100%;
+                padding: 30px;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+                transition: left 0.3s ease;
+            }
+            
+            .nav-links.active {
+                left: 0;
+            }
+            
+            .mobile-menu {
+                display: flex;
+            }
+            
+            .slide-content h1 {
+                font-size: 2em;
+            }
+            
+            .machu-content,
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- MODAL SELECCIÓN IDIOMA -->
+    <div id="languageModal">
+        <div class="language-selector">
+            <h2>Select your language / Selecciona tu idioma</h2>
+            <p>Choose your preferred language</p>
+            <div class="language-buttons">
+                <button class="lang-btn" onclick="selectLanguage('es')">🇪🇸 Español</button>
+                <button class="lang-btn" onclick="selectLanguage('en')">🇬🇧 English</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- NAVBAR -->
+    <nav>
+        <div class="container">
+            <div class="navbar">
+                <div class="logo-container">
+                    <img src="images/logo.png" alt="Andes Explorer" class="logo">
+                    <span class="brand-name">Andes Explorer</span>
+                </div>
+                
+                <ul class="nav-links" id="navLinks">
+                    <li><a onclick="showPage('home')" class="active" data-translate="nav_home">Inicio</a></li>
+                    <li><a onclick="showPage('tours')" data-translate="nav_tours">Tours</a></li>
+                    <li><a onclick="showPage('machu')" data-translate="nav_machu">Machu Picchu</a></li>
+                    <li><a onclick="showPage('about')" data-translate="nav_about">Nosotros</a></li>
+                    <li><a onclick="showPage('contact')" data-translate="nav_contact">Contacto</a></li>
+                    <li><span class="lang-toggle" onclick="toggleLanguage()" id="langToggle">EN</span></li>
+                </ul>
+                
+                <div class="mobile-menu" onclick="toggleMobileMenu()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- HOME PAGE -->
+    <div id="home" class="page active">
+        <div class="hero-slider">
+            <div class="slide active">
+                <img src="images/image1.jpg" alt="Machu Picchu">
+                <div class="slide-content">
+                    <h1 data-translate="slide1_title">Descubre la Magia de los Andes</h1>
+                    <p data-translate="slide1_subtitle">Experiencias auténticas en el corazón del Imperio Inca</p>
+                    <a href="https://wa.me/51999999999" class="btn btn-primary" data-translate="slide_cta">Planea tu Aventura</a>
+                </div>
+            </div>
+            
+            <div class="slide">
+                <img src="images/image2.jpg" alt="Valle Sagrado">
+                <div class="slide-content">
+                    <h1 data-translate="slide2_title">Valle Sagrado de los Incas</h1>
+                    <p data-translate="slide2_subtitle">Conecta con la naturaleza y la historia milenaria</p>
+                    <a href="https://wa.me/51999999999" class="btn btn-primary" data-translate="slide_cta">Planea tu Aventura</a>
+                </div>
+            </div>
+            
+            <div class="slide">
+                <img src="images/image3.jpg" alt="Montaña de Colores">
+                <div class="slide-content">
+                    <h1 data-translate="slide3_title">Paisajes que te Dejarán Sin Aliento</h1>
+                    <p data-translate="slide3_subtitle">Montañas de colores, lagunas turquesas y más</p>
+                    <a href="https://wa.me/51999999999" class="btn btn-primary" data-translate="slide_cta">Planea tu Aventura</a>
+                </div>
+            </div>
+            
+            <div class="slider-nav">
+                <span class="slider-dot active" onclick="goToSlide(0)"></span>
+                <span class="slider-dot" onclick="goToSlide(1)"></span>
+                <span class="slider-dot" onclick="goToSlide(2)"></span>
+            </div>
+        </div>
+        
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title" data-translate="home_why_title">¿Por qué elegirnos?</h2>
+                <div class="about-grid">
+                    <div class="value-card">
+                        <h3 data-translate="home_local_title">Operadores Locales</h3>
+                        <p data-translate="home_local_desc">Somos cusqueños apasionados por nuestra tierra</p>
+                    </div>
+                    <div class="value-card">
+                        <h3 data-translate="home_experience_title">20 Años de Experiencia</h3>
+                        <p data-translate="home_experience_desc">Miles de viajeros han vivido momentos inolvidables</p>
+                    </div>
+                    <div class="value-card">
+                        <h3 data-translate="home_sustainable_title">Turismo Responsable</h3>
+                        <p data-translate="home_sustainable_desc">Comprometidos con la preservación cultural y natural</p>
+                    </div>
+                    <div class="value-card">
+                        <h3 data-translate="home_personalized_title">Experiencias Personalizadas</h3>
+                        <p data-translate="home_personalized_desc">Diseñamos cada tour según tus intereses</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <!-- TOURS PAGE -->
+    <div id="tours" class="page">
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title" data-translate="tours_title">Nuestras Experiencias</h2>
+                <p style="text-align: center; max-width: 800px; margin: 0 auto 40px; color: #666;" data-translate="tours_subtitle">
+                    Cada tour es una aventura diseñada para conectarte con los Andes
+                </p>
+                
+                <div class="tours-grid">
+                    <div class="tour-card">
+                        <img src="images/image4.jpg" alt="City Tour">
+                        <div class="tour-card-content">
+                            <h3 data-translate="tour1_title">City Tour Cusco</h3>
+                            <p data-translate="tour1_desc">Explora Qorikancha, Sacsayhuamán y más. Historia viva.</p>
+                            <a onclick="openTourModal('citytour')" class="btn btn-outline" data-translate="tour_cta">Más Info</a>
+                        </div>
+                    </div>
+                    
+                    <div class="tour-card">
+                        <img src="images/image5.jpg" alt="Valle Sagrado">
+                        <div class="tour-card-content">
+                            <h3 data-translate="tour2_title">Valle Sagrado</h3>
+                            <p data-translate="tour2_desc">Pisac, Moray, Maras y Ollantaytambo en un día.</p>
+                            <a onclick="openTourModal('citytour')" class="btn btn-outline" data-translate="tour_cta">Más Info</a>
+                        </div>
+                    </div>
+                    
+                    <div class="tour-card">
+                        <img src="images/image6.jpg" alt="Montaña de Colores">
+                        <div class="tour-card-content">
+                            <h3 data-translate="tour3_title">Montaña de 7 Colores</h3>
+                            <p data-translate="tour3_desc">Vinicunca a 5,200 msnm. Paisajes únicos.</p>
+                            <a onclick="openTourModal('citytour')" class="btn btn-outline" data-translate="tour_cta">Más Info</a>
+                        </div>
+                    </div>
+                    
+                    <div class="tour-card">
+                        <img src="images/image7.jpg" alt="Laguna Humantay">
+                        <div class="tour-card-content">
+                            <h3 data-translate="tour4_title">Laguna Humantay</h3>
+                            <p data-translate="tour4_desc">Aguas turquesas rodeadas de picos nevados.</p>
+                            <a onclick="openTourModal('citytour')" class="btn btn-outline" data-translate="tour_cta">Más Info</a>
+                        </div>
+                    </div>
+                    
+                    <div class="tour-card">
+                        <img src="images/image8.jpg" alt="Camino Inca">
+                        <div class="tour-card-content">
+                            <h3 data-translate="tour5_title">Camino Inca 4D/3N</h3>
+                            <p data-translate="tour5_desc">Ruta clásica a Machu Picchu por la Puerta del Sol.</p>
+                            <a onclick="openTourModal('citytour')" class="btn btn-outline" data-translate="tour_cta">Más Info</a>
+                        </div>
+                    </div>
+                    
+                    <div class="tour-card">
+                        <img src="images/image9.jpg" alt="Tour Místico">
+                        <div class="tour-card-content">
+                            <h3 data-translate="tour6_title">Experiencia Mística</h3>
+                            <p data-translate="tour6_desc">Ceremonia a la Pachamama y saberes ancestrales.</p>
+                            <a onclick="openTourModal('citytour')" class="btn btn-outline" data-translate="tour_cta">Más Info</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <!-- MACHU PICCHU PAGE -->
+    <div id="machu" class="page">
+        <div class="machu-hero">
+            <img src="images/image1.jpg" alt="Machu Picchu">
+            <div class="machu-hero-content">
+                <h1 data-translate="machu_hero_title">Machu Picchu</h1>
+                <p data-translate="machu_hero_subtitle">La Maravilla que Cambiará tu Vida</p>
+            </div>
+        </div>
+        
+        <section class="section">
+            <div class="container">
+                <div class="machu-content">
+                    <div class="machu-text">
+                        <h2 data-translate="machu_history_title">Ciudad Suspendida en el Tiempo</h2>
+                        <p data-translate="machu_history_p1">
+                            Machu Picchu se alza a 2,430 msnm envuelta en nubes y misterio. Construida en el siglo XV 
+                            bajo Pachacútec, representa la cúspide de la arquitectura inca.
+                        </p>
+                        <p data-translate="machu_history_p2">
+                            Oculta hasta 1911 cuando Hiram Bingham la reveló. Hoy es Patrimonio UNESCO y una de las 
+                            Siete Maravillas del Mundo Moderno.
+                        </p>
+                        <p data-translate="machu_history_p3">
+                            Cada piedra cuenta historia. El Intihuatana, Templo del Sol, Tres Ventanas... cada rincón 
+                            te transporta a la civilización andina.
+                        </p>
+                    </div>
+                    <div>
+                        <img src="images/image2.jpg" alt="Vista de Machu Picchu">
+                    </div>
+                </div>
+                
+                <div class="machu-content" style="margin-top: 60px;">
+                    <div>
+                        <img src="images/image3.jpg" alt="Terrazas">
+                    </div>
+                    <div class="machu-text">
+                        <h2 data-translate="machu_experience_title">Experiencias en Machu Picchu</h2>
+                        <p data-translate="machu_experience_p1">
+                            <strong>Tour 1 Día:</strong> Tren panorámico desde Ollantaytambo, vistas del Valle Sagrado 
+                            y recorrido con guías expertos.
+                        </p>
+                        <p data-translate="machu_experience_p2">
+                            <strong>Camino Inca:</strong> Senderos ancestrales, pasos a 4,200 msnm, llega al amanecer 
+                            por Inti Punku.
+                        </p>
+                        <p data-translate="machu_experience_p3">
+                            <strong>Huayna Picchu:</strong> Vistas panorámicas incomparables. Requiere reserva anticipada.
+                        </p>
+                        <a href="https://wa.me/51999999999" class="btn btn-primary" style="margin-top: 20px;" data-translate="machu_cta">
+                            Reserva Ahora
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <!-- ABOUT PAGE -->
+    <div id="about" class="page">
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title" data-translate="about_title">Nuestra Historia</h2>
+                <div class="machu-content">
+                    <div>
+                        <img src="images/image10.jpg" alt="Equipo">
+                    </div>
+                    <div class="machu-text">
+                        <p data-translate="about_p1">
+                            Andes Explorer nació hace 20 años en Cusco, fundada por guías locales apasionados. 
+                            Somos cusqueños comprometidos con la esencia andina.
+                        </p>
+                        <p data-translate="about_p2">
+                            Hemos guiado a miles de viajeros de 80+ países, creando experiencias más allá del turismo tradicional.
+                        </p>
+                        <p data-translate="about_p3">
+                            Trabajamos con comunidades andinas apoyando desarrollo sostenible y conservación.
+                        </p>
+                    </div>
+                </div>
+                
+                <h2 class="section-title" style="margin-top: 80px;" data-translate="about_values_title">Valores</h2>
+                <div class="about-grid">
+                    <div class="value-card">
+                        <h3 data-translate="about_value1_title">🌿 Sostenibilidad</h3>
+                        <p data-translate="about_value1_desc">Turismo responsable que protege ambiente y comunidades.</p>
+                    </div>
+                    <div class="value-card">
+                        <h3 data-translate="about_value2_title">🤝 Autenticidad</h3>
+                        <p data-translate="about_value2_desc">Experiencias genuinas con la verdadera cultura andina.</p>
+                    </div>
+                    <div class="value-card">
+                        <h3 data-translate="about_value3_title">❤️ Pasión</h3>
+                        <p data-translate="about_value3_desc">Comprometidos con crear momentos memorables.</p>
+                    </div>
+                    <div class="value-card">
+                        <h3 data-translate="about_value4_title">⭐ Excelencia</h3>
+                        <p data-translate="about_value4_desc">Superamos expectativas en cada detalle.</p>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 60px; text-align: center; background: white; padding: 50px; border-radius: 15px;">
+                    <h2 data-translate="about_mission_title">Nuestra Misión</h2>
+                    <p style="font-size: 1.2em; max-width: 800px; margin: 20px auto; color: #555;" data-translate="about_mission_desc">
+                        Crear experiencias transformadoras conectando viajeros con los Andes, preservando nuestro patrimonio.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <!-- CONTACT PAGE -->
+    <div id="contact" class="page">
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title" data-translate="contact_title">Contáctanos</h2>
+                <p style="text-align: center; max-width: 700px; margin: 0 auto 50px; color: #666;" data-translate="contact_subtitle">
+                    Diseñamos tu aventura perfecta. Respuesta en 24 horas.
+                </p>
+                
+                <div class="contact-container">
+                    <div class="contact-form">
+                        <h3 data-translate="contact_form_title">Envíanos Mensaje</h3>
+                        <form onsubmit="handleFormSubmit(event)">
+                            <div class="form-group">
+                                <label data-translate="contact_name">Nombre</label>
+                                <input type="text" required>
+                            </div>
+                            <div class="form-group">
+                                <label data-translate="contact_email">Email</label>
+                                <input type="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label data-translate="contact_country">País</label>
+                                <input type="text">
+                            </div>
+                            <div class="form-group">
+                                <label data-translate="contact_message">Mensaje</label>
+                                <textarea required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;" data-translate="contact_send">
+                                Enviar
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="contact-info">
+                        <div class="contact-method">
+                            <h3>💬 WhatsApp</h3>
+                            <p data-translate="contact_whatsapp_desc">Contacto rápido 24/7</p>
+                            <a href="https://wa.me/51999999999" class="btn btn-primary" style="margin-top: 15px; background: #25D366;">
+                                <span data-translate="contact_whatsapp_btn">Chatear</span>
+                            </a>
+                        </div>
+                        
+                        <div class="contact-method">
+                            <h3>📧 Email</h3>
+                            <p data-translate="contact_email_desc">Escríbenos tus preguntas</p>
+                            <a href="mailto:info@andesexplorer.com" class="btn btn-outline" style="margin-top: 15px;">
+                                info@andesexplorer.com
+                            </a>
+                        </div>
+                        
+                        <div class="contact-method">
+                            <h3>📍 <span data-translate="contact_location_title">Ubicación</span></h3>
+                            <p data-translate="contact_location_desc">
+                                Av. El Sol 123<br>
+                                Centro Cusco<br>
+                                Perú
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <!-- WHATSAPP FLOTANTE -->
+    <a href="https://wa.me/51999999999" class="whatsapp-float" target="_blank" aria-label="Contactar por WhatsApp">
+        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 0c-8.837 0-16 7.163-16 16 0 2.825 0.737 5.607 2.137 8.048l-2.137 7.952 7.933-2.127c2.42 1.37 5.173 2.127 8.067 2.127 8.837 0 16-7.163 16-16s-7.163-16-16-16zM16 29.467c-2.482 0-4.908-0.646-7.07-1.87l-0.507-0.292-4.713 1.262 1.262-4.669-0.292-0.508c-1.207-2.100-1.847-4.507-1.847-6.924 0-7.435 6.050-13.485 13.485-13.485s13.485 6.050 13.485 13.485c0 7.435-6.050 13.485-13.485 13.485zM21.960 18.735c-0.347-0.174-2.051-1.012-2.369-1.128-0.318-0.116-0.549-0.174-0.78 0.174s-0.896 1.128-1.099 1.360c-0.203 0.232-0.405 0.261-0.751 0.087s-1.463-0.539-2.788-1.720c-1.031-0.919-1.727-2.054-1.930-2.401s-0.022-0.535 0.152-0.707c0.156-0.156 0.347-0.405 0.520-0.608s0.232-0.347 0.347-0.578c0.116-0.232 0.058-0.434-0.029-0.608s-0.780-1.88-1.070-2.574c-0.282-0.676-0.569-0.585-0.780-0.596-0.203-0.010-0.434-0.012-0.665-0.012s-0.607 0.087-0.925 0.434c-0.318 0.347-1.213 1.186-1.213 2.892s1.242 3.355 1.416 3.587c0.174 0.232 2.445 3.733 5.922 5.235 0.827 0.357 1.473 0.571 1.977 0.731 0.831 0.264 1.586 0.227 2.183 0.138 0.666-0.099 2.051-0.839 2.340-1.649s0.289-1.504 0.203-1.649c-0.087-0.145-0.318-0.232-0.665-0.405z"/>
+        </svg>
+    </a>
+    
+    <!-- MODAL DE DETALLE DE TOUR -->
+    <div id="tourModal" class="tour-modal">
+        <div class="tour-modal-content">
+            <div class="tour-modal-close" onclick="closeTourModal()">✕</div>
+            <img id="tourModalImage" src="images/image4.jpg" alt="Tour" class="tour-modal-image">
+            <div class="tour-modal-body">
+                <h2 id="tourModalTitle" class="tour-modal-title">City Tour Cusco</h2>
+                <div class="tour-modal-price">
+                    <span id="tourModalPrice">$45 USD</span>
+                    <small id="tourModalPriceNote">por persona</small>
+                </div>
+                
+                <p id="tourModalDescription" class="tour-modal-description">
+                    Descubre el corazón del Imperio Inca en un recorrido de día completo por Cusco y sus impresionantes 
+                    ruinas arqueológicas. Visitarás el Templo del Sol (Qorikancha), la imponente fortaleza de Sacsayhuamán, 
+                    el anfiteatro de Q'enqo, la torre funeraria de Puka Pukara y el complejo hidráulico de Tambomachay. 
+                    Un viaje fascinante por la historia y arquitectura inca.
+                </p>
+                
+                <div class="tour-details-grid">
+                    <div class="tour-detail-section included">
+                        <h3>✓ <span id="tourIncludedTitle">Incluye</span></h3>
+                        <ul id="tourIncludedList">
+                            <li>Transporte turístico desde tu hotel</li>
+                            <li>Guía profesional bilingüe (ES/EN)</li>
+                            <li>Entradas a todos los sitios arqueológicos</li>
+                            <li>Boleto Turístico Parcial de Cusco</li>
+                            <li>Recojo y retorno a hotel</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="tour-detail-section not-included">
+                        <h3>✗ <span id="tourNotIncludedTitle">No Incluye</span></h3>
+                        <ul id="tourNotIncludedList">
+                            <li>Alimentación (almuerzo)</li>
+                            <li>Bebidas durante el tour</li>
+                            <li>Propinas (opcional)</li>
+                            <li>Gastos personales</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="tour-modal-cta">
+                    <a href="https://wa.me/51999999999?text=Hola,%20me%20interesa%20el%20City%20Tour%20Cusco" 
+                       class="btn btn-primary" target="_blank">
+                        <span id="tourWhatsappBtn">Solicitar Cotización por WhatsApp</span>
+                    </a>
+                    <a href="mailto:info@andesexplorer.com?subject=Cotización City Tour Cusco" 
+                       class="btn btn-outline">
+                        <span id="tourEmailBtn">Cotizar por Email</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Andes Explorer</h3>
+                    <p data-translate="footer_desc">Tu agencia local en Cusco desde 2004.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook">📘</a>
+                        <a href="#" aria-label="Instagram">📷</a>
+                        <a href="#" aria-label="LinkedIn">💼</a>
+                        <a href="#" aria-label="YouTube">📺</a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 data-translate="footer_tours">Tours</h3>
+                    <ul>
+                        <li><a href="#" onclick="showPage('machu')">Machu Picchu</a></li>
+                        <li><a href="#" onclick="showPage('tours')">Valle Sagrado</a></li>
+                        <li><a href="#" onclick="showPage('tours')">Montaña Colores</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 data-translate="footer_company">Compañía</h3>
+                    <ul>
+                        <li><a href="#" onclick="showPage('about')">Nosotros</a></li>
+                        <li><a href="#" onclick="showPage('contact')">Contacto</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 data-translate="footer_contact">Contacto</h3>
+                    <ul>
+                        <li>📧 info@andesexplorer.com</li>
+                        <li>💬 <a href="https://wa.me/51999999999" style="color: #25D366;">WhatsApp</a></li>
+                        <li>📍 Cusco, Perú</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Andes Explorer. <span data-translate="footer_rights">Todos los derechos reservados.</span></p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // SISTEMA DE TRADUCCIONES
+        const translations = {
+            es: {
+                nav_home: 'Inicio',
+                nav_tours: 'Tours',
+                nav_machu: 'Machu Picchu',
+                nav_about: 'Nosotros',
+                nav_contact: 'Contacto',
+                slide1_title: 'Descubre la Magia de los Andes',
+                slide1_subtitle: 'Experiencias auténticas en el Imperio Inca',
+                slide2_title: 'Valle Sagrado de los Incas',
+                slide2_subtitle: 'Conecta con naturaleza e historia',
+                slide3_title: 'Paisajes que te Dejarán Sin Aliento',
+                slide3_subtitle: 'Montañas de colores y lagunas turquesas',
+                slide_cta: 'Planea tu Aventura',
+                home_why_title: '¿Por qué elegirnos?',
+                home_local_title: 'Operadores Locales',
+                home_local_desc: 'Cusqueños apasionados por nuestra tierra',
+                home_experience_title: '20 Años de Experiencia',
+                home_experience_desc: 'Miles de viajeros satisfechos',
+                home_sustainable_title: 'Turismo Responsable',
+                home_sustainable_desc: 'Preservación cultural y natural',
+                home_personalized_title: 'Experiencias Personalizadas',
+                home_personalized_desc: 'Tours según tus intereses',
+                tours_title: 'Nuestras Experiencias',
+                tours_subtitle: 'Aventuras diseñadas para conectarte con los Andes',
+                tour1_title: 'City Tour Cusco',
+                tour1_desc: 'Explora Qorikancha, Sacsayhuamán y más',
+                tour2_title: 'Valle Sagrado',
+                tour2_desc: 'Pisac, Moray, Maras y Ollantaytambo',
+                tour3_title: 'Montaña de 7 Colores',
+                tour3_desc: 'Vinicunca a 5,200 msnm',
+                tour4_title: 'Laguna Humantay',
+                tour4_desc: 'Aguas turquesas y picos nevados',
+                tour5_title: 'Camino Inca 4D/3N',
+                tour5_desc: 'Ruta clásica a Machu Picchu',
+                tour6_title: 'Experiencia Mística',
+                tour6_desc: 'Ceremonia a la Pachamama',
+                tour_cta: 'Más Info',
+                machu_hero_title: 'Machu Picchu',
+                machu_hero_subtitle: 'La Maravilla que Cambiará tu Vida',
+                machu_history_title: 'Ciudad Suspendida en el Tiempo',
+                machu_history_p1: 'Machu Picchu a 2,430 msnm, construida en el siglo XV por Pachacútec.',
+                machu_history_p2: 'Oculta hasta 1911, hoy Patrimonio UNESCO y Maravilla del Mundo.',
+                machu_history_p3: 'Cada piedra cuenta historia de la civilización inca.',
+                machu_experience_title: 'Experiencias en Machu Picchu',
+                machu_experience_p1: 'Tour 1 Día: Tren panorámico y recorrido con guías.',
+                machu_experience_p2: 'Camino Inca: Senderos ancestrales hasta Inti Punku.',
+                machu_experience_p3: 'Huayna Picchu: Vistas panorámicas incomparables.',
+                machu_cta: 'Reserva Ahora',
+                about_title: 'Nuestra Historia',
+                about_p1: 'Fundada hace 20 años por guías locales cusqueños.',
+                about_p2: 'Miles de viajeros de 80+ países guiados.',
+                about_p3: 'Apoyo a comunidades y conservación.',
+                about_values_title: 'Valores',
+                about_value1_title: '🌿 Sostenibilidad',
+                about_value1_desc: 'Turismo responsable',
+                about_value2_title: '🤝 Autenticidad',
+                about_value2_desc: 'Experiencias genuinas',
+                about_value3_title: '❤️ Pasión',
+                about_value3_desc: 'Momentos memorables',
+                about_value4_title: '⭐ Excelencia',
+                about_value4_desc: 'Superando expectativas',
+                about_mission_title: 'Nuestra Misión',
+                about_mission_desc: 'Experiencias transformadoras preservando patrimonio.',
+                contact_title: 'Contáctanos',
+                contact_subtitle: 'Respuesta en 24 horas',
+                contact_form_title: 'Envíanos Mensaje',
+                contact_name: 'Nombre',
+                contact_email: 'Email',
+                contact_country: 'País',
+                contact_message: 'Mensaje',
+                contact_send: 'Enviar',
+                contact_whatsapp_desc: 'Contacto rápido 24/7',
+                contact_whatsapp_btn: 'Chatear',
+                contact_email_desc: 'Escríbenos preguntas',
+                contact_location_title: 'Ubicación',
+                contact_location_desc: 'Av. El Sol 123<br>Cusco, Perú',
+                footer_desc: 'Agencia local desde 2004',
+                footer_tours: 'Tours',
+                footer_company: 'Compañía',
+                footer_contact: 'Contacto',
+                footer_rights: 'Todos los derechos reservados',
+                // Modal Tour
+                modal_price_note: 'por persona',
+                modal_included: 'Incluye',
+                modal_not_included: 'No Incluye',
+                modal_whatsapp_btn: 'Solicitar Cotización por WhatsApp',
+                modal_email_btn: 'Cotizar por Email'
+            },
+            en: {
+                nav_home: 'Home',
+                nav_tours: 'Tours',
+                nav_machu: 'Machu Picchu',
+                nav_about: 'About Us',
+                nav_contact: 'Contact',
+                slide1_title: 'Discover the Magic of the Andes',
+                slide1_subtitle: 'Authentic experiences in the Inca Empire',
+                slide2_title: 'Sacred Valley of the Incas',
+                slide2_subtitle: 'Connect with nature and history',
+                slide3_title: 'Breathtaking Landscapes',
+                slide3_subtitle: 'Rainbow mountains and turquoise lagoons',
+                slide_cta: 'Plan Your Adventure',
+                home_why_title: 'Why Choose Us?',
+                home_local_title: 'Local Operators',
+                home_local_desc: 'Passionate Cusqueños about our land',
+                home_experience_title: '20 Years Experience',
+                home_experience_desc: 'Thousands of satisfied travelers',
+                home_sustainable_title: 'Responsible Tourism',
+                home_sustainable_desc: 'Cultural and natural preservation',
+                home_personalized_title: 'Personalized Experiences',
+                home_personalized_desc: 'Tours tailored to your interests',
+                tours_title: 'Our Experiences',
+                tours_subtitle: 'Adventures designed to connect you with the Andes',
+                tour1_title: 'Cusco City Tour',
+                tour1_desc: 'Explore Qorikancha, Sacsayhuamán and more',
+                tour2_title: 'Sacred Valley',
+                tour2_desc: 'Pisac, Moray, Maras and Ollantaytambo',
+                tour3_title: 'Rainbow Mountain',
+                tour3_desc: 'Vinicunca at 5,200 masl',
+                tour4_title: 'Humantay Lagoon',
+                tour4_desc: 'Turquoise waters and snow peaks',
+                tour5_title: 'Inca Trail 4D/3N',
+                tour5_desc: 'Classic route to Machu Picchu',
+                tour6_title: 'Mystical Experience',
+                tour6_desc: 'Pachamama ceremony',
+                tour_cta: 'More Info',
+                machu_hero_title: 'Machu Picchu',
+                machu_hero_subtitle: 'The Wonder That Will Change Your Life',
+                machu_history_title: 'City Suspended in Time',
+                machu_history_p1: 'Machu Picchu at 2,430 masl, built in 15th century by Pachacútec.',
+                machu_history_p2: 'Hidden until 1911, now UNESCO Heritage and World Wonder.',
+                machu_history_p3: 'Each stone tells Inca civilization history.',
+                machu_experience_title: 'Machu Picchu Experiences',
+                machu_experience_p1: '1 Day Tour: Panoramic train and guided tour.',
+                machu_experience_p2: 'Inca Trail: Ancestral paths to Inti Punku.',
+                machu_experience_p3: 'Huayna Picchu: Incomparable panoramic views.',
+                machu_cta: 'Book Now',
+                about_title: 'Our Story',
+                about_p1: 'Founded 20 years ago by local Cusqueño guides.',
+                about_p2: 'Thousands of travelers from 80+ countries guided.',
+                about_p3: 'Community support and conservation.',
+                about_values_title: 'Values',
+                about_value1_title: '🌿 Sustainability',
+                about_value1_desc: 'Responsible tourism',
+                about_value2_title: '🤝 Authenticity',
+                about_value2_desc: 'Genuine experiences',
+                about_value3_title: '❤️ Passion',
+                about_value3_desc: 'Memorable moments',
+                about_value4_title: '⭐ Excellence',
+                about_value4_desc: 'Exceeding expectations',
+                about_mission_title: 'Our Mission',
+                about_mission_desc: 'Transformative experiences preserving heritage.',
+                contact_title: 'Contact Us',
+                contact_subtitle: 'Response within 24 hours',
+                contact_form_title: 'Send Message',
+                contact_name: 'Name',
+                contact_email: 'Email',
+                contact_country: 'Country',
+                contact_message: 'Message',
+                contact_send: 'Send',
+                contact_whatsapp_desc: 'Fast contact 24/7',
+                contact_whatsapp_btn: 'Chat',
+                contact_email_desc: 'Write your questions',
+                contact_location_title: 'Location',
+                contact_location_desc: 'Av. El Sol 123<br>Cusco, Peru',
+                footer_desc: 'Local agency since 2004',
+                footer_tours: 'Tours',
+                footer_company: 'Company',
+                footer_contact: 'Contact',
+                footer_rights: 'All rights reserved',
+                // Modal Tour
+                modal_price_note: 'per person',
+                modal_included: 'Included',
+                modal_not_included: 'Not Included',
+                modal_whatsapp_btn: 'Request Quote via WhatsApp',
+                modal_email_btn: 'Quote by Email'
+            }
+        };
+        
+        let currentLang = 'es';
+        let currentSlide = 0;
+        const totalSlides = 3;
+        let slideInterval;
+        
+        // SELECCIÓN INICIAL DE IDIOMA
+        function selectLanguage(lang) {
+            currentLang = lang;
+            document.getElementById('languageModal').classList.add('hidden');
+            document.getElementById('langToggle').textContent = lang === 'es' ? 'EN' : 'ES';
+            translatePage();
+            startSlider();
+        }
+        
+        // CAMBIO DE IDIOMA
+        function toggleLanguage() {
+            currentLang = currentLang === 'es' ? 'en' : 'es';
+            document.getElementById('langToggle').textContent = currentLang === 'es' ? 'EN' : 'ES';
+            translatePage();
+        }
+        
+        // TRADUCIR PÁGINA
+        function translatePage() {
+            document.querySelectorAll('[data-translate]').forEach(el => {
+                const key = el.getAttribute('data-translate');
+                if (translations[currentLang][key]) {
+                    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                        el.placeholder = translations[currentLang][key];
+                    } else {
+                        el.innerHTML = translations[currentLang][key];
+                    }
+                }
+            });
+        }
+        
+        // NAVEGACIÓN SPA
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            
+            document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            window.scrollTo({top: 0, behavior: 'smooth'});
+            
+            if (window.innerWidth <= 768) {
+                document.getElementById('navLinks').classList.remove('active');
+            }
+        }
+        
+        // SLIDER
+        function startSlider() {
+            slideInterval = setInterval(nextSlide, 5000);
+        }
+        
+        function nextSlide() {
+            const slides = document.querySelectorAll('.slide');
+            const dots = document.querySelectorAll('.slider-dot');
+            
+            slides[currentSlide].classList.remove('active');
+            dots[currentSlide].classList.remove('active');
+            
+            currentSlide = (currentSlide + 1) % totalSlides;
+            
+            slides[currentSlide].classList.add('active');
+            dots[currentSlide].classList.add('active');
+        }
+        
+        function goToSlide(index) {
+            const slides = document.querySelectorAll('.slide');
+            const dots = document.querySelectorAll('.slider-dot');
+            
+            slides[currentSlide].classList.remove('active');
+            dots[currentSlide].classList.remove('active');
+            
+            currentSlide = index;
+            
+            slides[currentSlide].classList.add('active');
+            dots[currentSlide].classList.add('active');
+            
+            clearInterval(slideInterval);
+            startSlider();
+        }
+        
+        // MENU MÓVIL
+        function toggleMobileMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+        
+        // FORMULARIO
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            alert(currentLang === 'es' 
+                ? '¡Gracias! Te contactaremos pronto.' 
+                : 'Thank you! We will contact you soon.');
+            e.target.reset();
+        }
+        
+        // ABRIR MODAL DE TOUR
+        function openTourModal(tourId) {
+            const tourData = {
+                es: {
+                    title: 'City Tour Cusco',
+                    price: '$45 USD',
+                    priceNote: 'por persona',
+                    description: 'Descubre el corazón del Imperio Inca en un recorrido de día completo por Cusco y sus impresionantes ruinas arqueológicas. Visitarás el Templo del Sol (Qorikancha), la imponente fortaleza de Sacsayhuamán, el anfiteatro de Q\'enqo, la torre funeraria de Puka Pukara y el complejo hidráulico de Tambomachay. Un viaje fascinante por la historia y arquitectura inca.',
+                    included: [
+                        'Transporte turístico desde tu hotel',
+                        'Guía profesional bilingüe (ES/EN)',
+                        'Entradas a todos los sitios arqueológicos',
+                        'Boleto Turístico Parcial de Cusco',
+                        'Recojo y retorno a hotel'
+                    ],
+                    notIncluded: [
+                        'Alimentación (almuerzo)',
+                        'Bebidas durante el tour',
+                        'Propinas (opcional)',
+                        'Gastos personales'
+                    ]
+                },
+                en: {
+                    title: 'Cusco City Tour',
+                    price: '$45 USD',
+                    priceNote: 'per person',
+                    description: 'Discover the heart of the Inca Empire on a full-day tour of Cusco and its impressive archaeological ruins. You will visit the Temple of the Sun (Qorikancha), the imposing fortress of Sacsayhuamán, the amphitheater of Q\'enqo, the funeral tower of Puka Pukara and the hydraulic complex of Tambomachay. A fascinating journey through Inca history and architecture.',
+                    included: [
+                        'Tourist transport from your hotel',
+                        'Professional bilingual guide (ES/EN)',
+                        'Entrance to all archaeological sites',
+                        'Cusco Partial Tourist Ticket',
+                        'Hotel pickup and return'
+                    ],
+                    notIncluded: [
+                        'Food (lunch)',
+                        'Drinks during the tour',
+                        'Tips (optional)',
+                        'Personal expenses'
+                    ]
+                }
+            };
+            
+            const data = tourData[currentLang];
+            
+            // Actualizar contenido del modal
+            document.getElementById('tourModalTitle').textContent = data.title;
+            document.getElementById('tourModalPrice').textContent = data.price;
+            document.getElementById('tourModalPriceNote').textContent = data.priceNote;
+            document.getElementById('tourModalDescription').textContent = data.description;
+            
+            // Actualizar lista de incluidos
+            const includedList = document.getElementById('tourIncludedList');
+            includedList.innerHTML = '';
+            data.included.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                includedList.appendChild(li);
+            });
+            
+            // Actualizar lista de no incluidos
+            const notIncludedList = document.getElementById('tourNotIncludedList');
+            notIncludedList.innerHTML = '';
+            data.notIncluded.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                notIncludedList.appendChild(li);
+            });
+            
+            // Traducir títulos
+            document.getElementById('tourIncludedTitle').textContent = translations[currentLang].modal_included;
+            document.getElementById('tourNotIncludedTitle').textContent = translations[currentLang].modal_not_included;
+            document.getElementById('tourWhatsappBtn').textContent = translations[currentLang].modal_whatsapp_btn;
+            document.getElementById('tourEmailBtn').textContent = translations[currentLang].modal_email_btn;
+            
+            // Mostrar modal
+            document.getElementById('tourModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // CERRAR MODAL DE TOUR
+        function closeTourModal() {
+            document.getElementById('tourModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('tourModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeTourModal();
+            }
+        });
+    </script>
+</body>
+</html>
