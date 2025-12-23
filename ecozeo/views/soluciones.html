@@ -149,7 +149,7 @@
         .product-description {
             font-size: 1.1rem;
             line-height: 1.6;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             opacity: 0.9;
             display: -webkit-box;
             -webkit-line-clamp: 3;
@@ -159,32 +159,25 @@
         }
 
         .product-read-more {
-            font-size: 1rem;
-            color: rgba(255, 255, 255, 0.95);
-            font-weight: 600;
-            margin-bottom: 2rem;
+            font-size: 1.05rem;
+            color: var(--color-secondary);
+            font-weight: 700;
+            margin-top: auto;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .product-read-more:hover {
+            color: white;
+            transform: translateX(5px);
         }
 
         .product-cta {
-            padding: 1rem 2rem;
-            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            align-self: flex-start;
-            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
-        }
-
-        .product-cta:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.5);
+            display: none; /* Ocultar botón Ver Detalles */
         }
 
         /* WHY SECTION */
@@ -636,6 +629,18 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
+        }
+
+        .btn-modal::before {
+            font-size: 1.3rem;
+        }
+
+        .btn-modal[data-open-ficha]::before {
+            content: '📄';
+        }
+
+        .btn-modal[href="#contacto"]::before {
+            content: '✉️';
         }
 
         .btn-modal.primary {
