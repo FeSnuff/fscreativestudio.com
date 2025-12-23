@@ -1,0 +1,426 @@
+<div class="contacto-view">
+    <style>
+        /* ==========================================
+           ESTILOS DE LA VISTA CONTACTO
+           ========================================== */
+        
+        .contacto-view {
+            background: var(--color-bg);
+        }
+
+        /* HERO CONTACTO */
+        .contacto-hero {
+            position: relative;
+            padding: 8rem 2rem 6rem;
+            background: linear-gradient(135deg, #7c3aed 0%, #10b981 100%);
+            color: white;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .contacto-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 20px,
+                rgba(255, 255, 255, 0.03) 20px,
+                rgba(255, 255, 255, 0.03) 40px
+            );
+        }
+
+        .contacto-hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .contacto-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .contacto-hero p {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+
+        /* CONTENEDOR PRINCIPAL */
+        .contacto-content {
+            padding: 6rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .contacto-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        /* INFORMACIÓN DE CONTACTO */
+        .contact-info {
+            background: white;
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .contact-info h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-dark);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .contact-item {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: var(--color-bg-alt);
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.1);
+        }
+
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .contact-details h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--color-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-details p {
+            font-size: 1rem;
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        .contact-details a {
+            color: var(--color-primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-details a:hover {
+            color: var(--color-secondary);
+            text-decoration: underline;
+        }
+
+        /* FORMULARIO */
+        .contact-form {
+            background: white;
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .contact-form h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-dark);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--color-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1rem;
+            border: 2px solid var(--color-border);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-submit {
+            width: 100%;
+            padding: 1.2rem 2rem;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .form-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
+        }
+
+        /* MAPA */
+        .map-container {
+            width: 100%;
+            height: 500px;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 968px) {
+            .contacto-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .contacto-hero {
+                padding: 5rem 1.5rem 4rem;
+            }
+
+            .contacto-hero h1 {
+                font-size: 2rem;
+            }
+
+            .contacto-hero p {
+                font-size: 1.1rem;
+            }
+
+            .contacto-content {
+                padding: 3rem 1rem;
+            }
+
+            .contact-info,
+            .contact-form {
+                padding: 2rem 1.5rem;
+            }
+
+            .contact-info h2,
+            .contact-form h2 {
+                font-size: 1.5rem;
+            }
+
+            .contact-item {
+                padding: 1.25rem;
+                margin-bottom: 1rem;
+            }
+
+            .contact-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
+            }
+
+            .contact-details h3 {
+                font-size: 1rem;
+            }
+
+            .contact-details p {
+                font-size: 0.95rem;
+            }
+
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                padding: 0.875rem;
+                font-size: 16px; /* Evita zoom en iOS */
+            }
+
+            .form-submit {
+                padding: 1rem 1.5rem;
+                font-size: 1rem;
+            }
+
+            .map-container {
+                height: 350px;
+            }
+        }
+    </style>
+
+    <!-- HERO -->
+    <section class="contacto-hero">
+        <div class="contacto-hero-content">
+            <h1 data-translate="contact_hero_title"></h1>
+            <p data-translate="contact_hero_subtitle"></p>
+        </div>
+    </section>
+
+    <!-- CONTENIDO -->
+    <section class="contacto-content">
+        <!-- GRID: INFO + FORMULARIO -->
+        <div class="contacto-grid">
+            <!-- INFORMACIÓN DE CONTACTO -->
+            <div class="contact-info">
+                <h2>
+                    <span>📍</span>
+                    <span data-translate="contact_info_title"></span>
+                </h2>
+
+                <!-- Dirección -->
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <div class="contact-details">
+                        <h3 data-translate="contact_address_label"></h3>
+                        <p>229 Ash St<br>Henderson, NV 89015<br>United States</p>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="contact-item">
+                    <div class="contact-icon">✉️</div>
+                    <div class="contact-details">
+                        <h3 data-translate="contact_email_label"></h3>
+                        <p><a href="mailto:cdavidzeoquim@gmail.com">cdavidzeoquim@gmail.com</a></p>
+                    </div>
+                </div>
+
+                <!-- Teléfono -->
+                <div class="contact-item">
+                    <div class="contact-icon">📞</div>
+                    <div class="contact-details">
+                        <h3 data-translate="contact_phone_label"></h3>
+                        <p><a href="tel:+17025258142">+1 (702) 525-8142</a></p>
+                    </div>
+                </div>
+
+                <!-- Horario -->
+                <div class="contact-item">
+                    <div class="contact-icon">🕐</div>
+                    <div class="contact-details">
+                        <h3 data-translate="contact_hours_label"></h3>
+                        <p data-translate="contact_hours_text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FORMULARIO -->
+            <div class="contact-form">
+                <h2>
+                    <span>💬</span>
+                    <span data-translate="contact_form_title"></span>
+                </h2>
+
+                <form id="contact-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label data-translate="form_name_label"></label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-translate="form_email_label"></label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label data-translate="form_phone_label"></label>
+                            <input type="tel" id="phone" name="phone">
+                        </div>
+                        <div class="form-group">
+                            <label data-translate="form_subject_label"></label>
+                            <select id="subject" name="subject" required>
+                                <option value="" data-translate="form_subject_option1"></option>
+                                <option value="nanozeo" data-translate="form_subject_option2"></option>
+                                <option value="nanozeoag" data-translate="form_subject_option3"></option>
+                                <option value="other" data-translate="form_subject_option4"></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-translate="form_message_label"></label>
+                        <textarea id="message" name="message" required></textarea>
+                    </div>
+
+                    <button type="submit" class="form-submit">
+                        <span>📧</span>
+                        <span data-translate="form_submit_btn"></span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- MAPA -->
+        <div class="map-container">
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3220.8947287654547!2d-114.98159492347!3d36.03897997227855!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c8c0f5c3b5b5b5%3A0x1!2s229%20Ash%20St%2C%20Henderson%2C%20NV%2089015%2C%20USA!5e0!3m2!1sen!2s!4v1234567890123!5m2!1sen!2s" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade"
+                title="Ecozeo Location">
+            </iframe>
+        </div>
+    </section>
+</div>

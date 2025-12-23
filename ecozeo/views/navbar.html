@@ -1,0 +1,264 @@
+<nav>
+    <style>
+        /* ==========================================
+           ESTILOS DEL NAVBAR
+           ========================================== */
+        nav {
+            background-color: var(--color-bg);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+        }
+
+        nav.scrolled {
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+        }
+
+        .logo-container img {
+            height: 50px;
+            width: auto;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--color-text);
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--color-primary);
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--color-primary);
+        }
+
+        .language-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.8rem;
+            border: 2px solid var(--color-border);
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .language-selector:hover {
+            border-color: var(--color-primary);
+        }
+
+        .language-flag-current {
+            width: 24px;
+            height: 18px;
+            border-radius: 3px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .language-flag-current img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .language-text {
+            color: var(--color-text);
+            font-size: 0.9rem;
+        }
+
+        .language-arrow {
+            font-size: 0.6rem;
+            color: var(--color-text-light);
+            margin-left: -0.2rem;
+        }
+
+        .language-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: var(--transition);
+            min-width: 160px;
+            z-index: 1000;
+        }
+
+        .language-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .language-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            background: white;
+            width: 100%;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        .language-dropdown-item:hover {
+            background: var(--color-bg-alt);
+        }
+
+        .language-dropdown-item.active {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(16, 185, 129, 0.1));
+            color: var(--color-primary);
+            font-weight: 600;
+        }
+
+        .language-flag-icon {
+            width: 24px;
+            height: 18px;
+            border-radius: 3px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .language-flag-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .language-container {
+            position: relative;
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--color-primary);
+            transition: var(--transition);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-menu {
+                position: fixed;
+                left: -100%;
+                top: 70px;
+                flex-direction: column;
+                background-color: var(--color-bg);
+                width: 100%;
+                text-align: center;
+                transition: var(--transition);
+                box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+                padding: 2rem 0;
+            }
+
+            .nav-menu.active {
+                left: 0;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+        }
+    </style>
+
+    <div class="nav-container">
+        <div class="logo-container" data-nav="inicio">
+            <img src="images/logo-ecozeo.png" alt="Ecozeo Logo">
+        </div>
+
+        <ul class="nav-menu" id="navMenu">
+            <li><a class="nav-link" data-nav="inicio" data-translate="nav_home">Inicio</a></li>
+            <li><a class="nav-link" data-nav="nosotros" data-translate="nav_about">Nosotros</a></li>
+            <li><a class="nav-link" data-nav="soluciones" data-translate="nav_products">Soluciones</a></li>
+            <li><a class="nav-link" data-nav="aplicaciones" data-translate="nav_applications">Aplicaciones</a></li>
+            <li><a class="nav-link" data-nav="portafolio" data-translate="nav_portfolio">Portafolio</a></li>
+            <li><a class="nav-link" data-nav="contacto" data-translate="nav_contact">Contacto</a></li>
+            <li class="language-container">
+                <div class="language-selector" id="languageSelector">
+                    <div class="language-flag-current" id="currentFlagContainer">
+                        <img src="https://flagcdn.com/w40/es.png" alt="ES" id="currentFlagImg">
+                    </div>
+                    <span class="language-text" id="currentLangText">ES</span>
+                    <span class="language-arrow">▼</span>
+                </div>
+                <div class="language-dropdown" id="languageDropdown">
+                    <button class="language-dropdown-item active" data-lang="es">
+                        <div class="language-flag-icon">
+                            <img src="https://flagcdn.com/w40/es.png" alt="ES">
+                        </div>
+                        <span>Español</span>
+                    </button>
+                    <button class="language-dropdown-item" data-lang="en">
+                        <div class="language-flag-icon">
+                            <img src="https://flagcdn.com/w40/us.png" alt="EN">
+                        </div>
+                        <span>English</span>
+                    </button>
+                </div>
+            </li>
+        </ul>
+
+        <div class="menu-toggle" id="menuToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</nav>

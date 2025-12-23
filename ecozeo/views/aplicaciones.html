@@ -1,0 +1,449 @@
+<div class="aplicaciones-view">
+    <style>
+        /* ==========================================
+           ESTILOS DE LA VISTA APLICACIONES
+           ========================================== */
+        
+        .aplicaciones-view {
+            background: var(--color-bg);
+        }
+
+        /* HERO APLICACIONES */
+        .aplicaciones-hero {
+            position: relative;
+            padding: 8rem 2rem 6rem;
+            background: linear-gradient(135deg, #7c3aed 0%, #10b981 100%);
+            color: white;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .aplicaciones-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 20px,
+                rgba(255, 255, 255, 0.03) 20px,
+                rgba(255, 255, 255, 0.03) 40px
+            );
+        }
+
+        .aplicaciones-hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .aplicaciones-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .aplicaciones-hero p {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+
+        /* CONTENIDO */
+        .aplicaciones-content {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* SECCIÓN DE ÁREA */
+        .app-section {
+            margin-bottom: 5rem;
+        }
+
+        .app-section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .app-section-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .app-section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--color-dark);
+            margin-bottom: 1rem;
+        }
+
+        .app-section-subtitle {
+            font-size: 1.2rem;
+            color: var(--color-text-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* GRID DE VENTAJAS */
+        .advantages-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .advantage-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .advantage-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.15);
+        }
+
+        .advantage-number {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            color: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .advantage-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--color-dark);
+            margin-bottom: 1rem;
+        }
+
+        .advantage-text {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--color-text);
+        }
+
+        .advantage-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 1rem;
+        }
+
+        .advantage-list li {
+            padding: 0.5rem 0 0.5rem 2rem;
+            position: relative;
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        .advantage-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--color-secondary);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        /* SECCIÓN DE QUÍMICA */
+        .chemistry-section {
+            background: white;
+            padding: 4rem;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            margin-bottom: 4rem;
+        }
+
+        .chemistry-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .chemistry-item {
+            padding: 2rem;
+            background: var(--color-bg-alt);
+            border-radius: 16px;
+            border-left: 4px solid var(--color-primary);
+        }
+
+        .chemistry-item h4 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .chemistry-item p {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--color-text);
+        }
+
+        /* CTA FINAL */
+        .app-cta-section {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(16, 185, 129, 0.1));
+            border-radius: 24px;
+        }
+
+        .app-cta-section h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--color-dark);
+            margin-bottom: 1rem;
+        }
+
+        .app-cta-section p {
+            font-size: 1.2rem;
+            color: var(--color-text);
+            margin-bottom: 2rem;
+        }
+
+        .app-cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1.2rem 2.5rem;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            color: white;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .app-cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 968px) {
+            .advantages-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chemistry-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .aplicaciones-hero {
+                padding: 5rem 1.5rem 4rem;
+            }
+
+            .aplicaciones-hero h1 {
+                font-size: 2rem;
+            }
+
+            .aplicaciones-hero p {
+                font-size: 1.1rem;
+            }
+
+            .app-section-title {
+                font-size: 2rem;
+            }
+
+            .chemistry-section {
+                padding: 2rem;
+            }
+        }
+    </style>
+
+    <!-- HERO -->
+    <section class="aplicaciones-hero">
+        <div class="aplicaciones-hero-content">
+            <h1 data-translate="apps_hero_title"></h1>
+            <p data-translate="apps_hero_subtitle"></p>
+        </div>
+    </section>
+
+    <!-- CONTENIDO -->
+    <section class="aplicaciones-content">
+        <!-- AGRICULTURA -->
+        <div class="app-section">
+            <div class="app-section-header">
+                <div class="app-section-icon">🌾</div>
+                <h2 class="app-section-title" data-translate="apps_agriculture_title"></h2>
+                <p class="app-section-subtitle" data-translate="apps_agriculture_subtitle"></p>
+            </div>
+
+            <div class="advantages-grid">
+                <div class="advantage-card">
+                    <div class="advantage-number">1</div>
+                    <h3 class="advantage-title" data-translate="apps_agr_adv1_title"></h3>
+                    <p class="advantage-text" data-translate="apps_agr_adv1_text"></p>
+                </div>
+
+                <div class="advantage-card">
+                    <div class="advantage-number">2</div>
+                    <h3 class="advantage-title" data-translate="apps_agr_adv2_title"></h3>
+                    <p class="advantage-text" data-translate="apps_agr_adv2_text"></p>
+                </div>
+
+                <div class="advantage-card">
+                    <div class="advantage-number">3</div>
+                    <h3 class="advantage-title" data-translate="apps_agr_adv3_title"></h3>
+                    <p class="advantage-text" data-translate="apps_agr_adv3_text"></p>
+                    <ul class="advantage-list">
+                        <li data-translate="apps_agr_adv3_item1"></li>
+                        <li data-translate="apps_agr_adv3_item2"></li>
+                    </ul>
+                </div>
+
+                <div class="advantage-card">
+                    <div class="advantage-number">4</div>
+                    <h3 class="advantage-title" data-translate="apps_agr_adv4_title"></h3>
+                    <p class="advantage-text" data-translate="apps_agr_adv4_text"></p>
+                    <ul class="advantage-list">
+                        <li data-translate="apps_agr_adv4_item1"></li>
+                        <li data-translate="apps_agr_adv4_item2"></li>
+                    </ul>
+                </div>
+
+                <div class="advantage-card">
+                    <div class="advantage-number">5</div>
+                    <h3 class="advantage-title" data-translate="apps_agr_adv5_title"></h3>
+                    <p class="advantage-text" data-translate="apps_agr_adv5_text"></p>
+                    <ul class="advantage-list">
+                        <li data-translate="apps_agr_adv5_item1"></li>
+                        <li data-translate="apps_agr_adv5_item2"></li>
+                    </ul>
+                </div>
+
+                <div class="advantage-card">
+                    <div class="advantage-number">6</div>
+                    <h3 class="advantage-title" data-translate="apps_agr_adv6_title"></h3>
+                    <p class="advantage-text" data-translate="apps_agr_adv6_text"></p>
+                    <ul class="advantage-list">
+                        <li data-translate="apps_agr_adv6_item1"></li>
+                        <li data-translate="apps_agr_adv6_item2"></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- JARDINES Y ÁREAS VERDES -->
+        <div class="app-section">
+            <div class="app-section-header">
+                <div class="app-section-icon">🌿</div>
+                <h2 class="app-section-title" data-translate="apps_gardens_title"></h2>
+                <p class="app-section-subtitle" data-translate="apps_gardens_subtitle"></p>
+            </div>
+
+            <div class="advantages-grid">
+                <div class="advantage-card">
+                    <div class="advantage-number">1</div>
+                    <h3 class="advantage-title" data-translate="apps_gdn_adv1_title"></h3>
+                    <p class="advantage-text" data-translate="apps_gdn_adv1_text"></p>
+                    <ul class="advantage-list">
+                        <li data-translate="apps_gdn_adv1_item1"></li>
+                        <li data-translate="apps_gdn_adv1_item2"></li>
+                    </ul>
+                </div>
+
+                <div class="advantage-card">
+                    <div class="advantage-number">2</div>
+                    <h3 class="advantage-title" data-translate="apps_gdn_adv2_title"></h3>
+                    <p class="advantage-text" data-translate="apps_gdn_adv2_text"></p>
+                    <ul class="advantage-list">
+                        <li data-translate="apps_gdn_adv2_item1"></li>
+                        <li data-translate="apps_gdn_adv2_item2"></li>
+                    </ul>
+                </div>
+
+                <div class="advantage-card">
+                    <div class="advantage-number">3</div>
+                    <h3 class="advantage-title" data-translate="apps_gdn_adv3_title"></h3>
+                    <p class="advantage-text" data-translate="apps_gdn_adv3_text"></p>
+                    <ul class="advantage-list">
+                        <li data-translate="apps_gdn_adv3_item1"></li>
+                        <li data-translate="apps_gdn_adv3_item2"></li>
+                    </ul>
+                </div>
+
+                <div class="advantage-card">
+                    <div class="advantage-number">4</div>
+                    <h3 class="advantage-title" data-translate="apps_gdn_adv4_title"></h3>
+                    <p class="advantage-text" data-translate="apps_gdn_adv4_text"></p>
+                    <ul class="advantage-list">
+                        <li data-translate="apps_gdn_adv4_item1"></li>
+                        <li data-translate="apps_gdn_adv4_item2"></li>
+                    </ul>
+                </div>
+
+                <div class="advantage-card">
+                    <div class="advantage-number">5</div>
+                    <h3 class="advantage-title" data-translate="apps_gdn_adv5_title"></h3>
+                    <p class="advantage-text" data-translate="apps_gdn_adv5_text"></p>
+                    <ul class="advantage-list">
+                        <li data-translate="apps_gdn_adv5_item1"></li>
+                        <li data-translate="apps_gdn_adv5_item2"></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUÍMICA -->
+        <div class="chemistry-section">
+            <div class="app-section-header">
+                <div class="app-section-icon">⚗️</div>
+                <h2 class="app-section-title" data-translate="apps_chemistry_title"></h2>
+                <p class="app-section-subtitle" data-translate="apps_chemistry_subtitle"></p>
+            </div>
+
+            <div class="chemistry-grid">
+                <div class="chemistry-item">
+                    <h4 data-translate="apps_chem1_title"></h4>
+                    <p data-translate="apps_chem1_text"></p>
+                </div>
+
+                <div class="chemistry-item">
+                    <h4 data-translate="apps_chem2_title"></h4>
+                    <p data-translate="apps_chem2_text"></p>
+                </div>
+
+                <div class="chemistry-item">
+                    <h4 data-translate="apps_chem3_title"></h4>
+                    <p data-translate="apps_chem3_text"></p>
+                </div>
+
+                <div class="chemistry-item">
+                    <h4 data-translate="apps_chem4_title"></h4>
+                    <p data-translate="apps_chem4_text"></p>
+                </div>
+
+                <div class="chemistry-item">
+                    <h4 data-translate="apps_chem5_title"></h4>
+                    <p data-translate="apps_chem5_text"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA FINAL -->
+        <div class="app-cta-section">
+            <h2 data-translate="apps_cta_title"></h2>
+            <p data-translate="apps_cta_text"></p>
+            <a href="#soluciones" class="app-cta-btn">
+                <span>🌱</span>
+                <span data-translate="apps_cta_btn"></span>
+            </a>
+        </div>
+    </section>
+</div>

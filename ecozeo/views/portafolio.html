@@ -1,0 +1,395 @@
+<div class="portafolio-view">
+    <style>
+        /* ==========================================
+           ESTILOS DE LA VISTA PORTAFOLIO
+           ========================================== */
+        
+        .portafolio-view {
+            background: var(--color-bg);
+        }
+
+        /* HERO PORTAFOLIO */
+        .portafolio-hero {
+            position: relative;
+            padding: 8rem 2rem 6rem;
+            background: linear-gradient(135deg, #7c3aed 0%, #10b981 100%);
+            color: white;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .portafolio-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 20px,
+                rgba(255, 255, 255, 0.03) 20px,
+                rgba(255, 255, 255, 0.03) 40px
+            );
+        }
+
+        .portafolio-hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .portafolio-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .portafolio-hero p {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+
+        /* CONTENIDO */
+        .portafolio-content {
+            padding: 6rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* GRID DE PROYECTOS */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
+        }
+
+        /* TARJETA DE PROYECTO */
+        .project-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(124, 58, 237, 0.2);
+        }
+
+        .project-image {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #7c3aed 0%, #10b981 100%);
+        }
+
+        .project-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .project-card:hover .project-image img {
+            transform: scale(1.1);
+        }
+
+        .project-tag {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--color-primary);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        .project-content {
+            padding: 2.5rem;
+        }
+
+        .project-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--color-dark);
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .project-description {
+            font-size: 1rem;
+            color: var(--color-text);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .project-stats {
+            display: flex;
+            gap: 2rem;
+            padding: 1.5rem 0;
+            border-top: 2px solid var(--color-border);
+            border-bottom: 2px solid var(--color-border);
+            margin-bottom: 1.5rem;
+        }
+
+        .project-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .project-stat-label {
+            font-size: 0.875rem;
+            color: var(--color-text-light);
+            font-weight: 500;
+        }
+
+        .project-stat-value {
+            font-size: 1.25rem;
+            color: var(--color-primary);
+            font-weight: 700;
+        }
+
+        .project-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .project-feature {
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(16, 185, 129, 0.1));
+            border-radius: 8px;
+            font-size: 0.875rem;
+            color: var(--color-dark);
+            font-weight: 500;
+        }
+
+        .project-cta {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            color: white;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .project-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 968px) {
+            .projects-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .portafolio-hero {
+                padding: 5rem 1.5rem 4rem;
+            }
+
+            .portafolio-hero h1 {
+                font-size: 2rem;
+            }
+
+            .portafolio-hero p {
+                font-size: 1.1rem;
+            }
+
+            .project-image {
+                height: 250px;
+            }
+
+            .project-content {
+                padding: 2rem;
+            }
+
+            .project-stats {
+                gap: 1rem;
+            }
+        }
+    </style>
+
+    <!-- HERO -->
+    <section class="portafolio-hero">
+        <div class="portafolio-hero-content">
+            <h1 data-translate="portfolio_hero_title"></h1>
+            <p data-translate="portfolio_hero_subtitle"></p>
+        </div>
+    </section>
+
+    <!-- PROYECTOS -->
+    <section class="portafolio-content">
+        <div class="projects-grid">
+            <!-- PROYECTO 1 -->
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&h=600&fit=crop" alt="Proyecto 1">
+                    <div class="project-tag" data-translate="project1_tag"></div>
+                </div>
+                <div class="project-content">
+                    <h2 class="project-title" data-translate="project1_title"></h2>
+                    <p class="project-description" data-translate="project1_description"></p>
+                    
+                    <div class="project-stats">
+                        <div class="project-stat">
+                            <span class="project-stat-label" data-translate="stat_area_label"></span>
+                            <span class="project-stat-value">850 ha</span>
+                        </div>
+                        <div class="project-stat">
+                            <span class="project-stat-label" data-translate="stat_increase_label"></span>
+                            <span class="project-stat-value">+35%</span>
+                        </div>
+                        <div class="project-stat">
+                            <span class="project-stat-label" data-translate="stat_duration_label"></span>
+                            <span class="project-stat-value">6 <span data-translate="stat_months"></span></span>
+                        </div>
+                    </div>
+
+                    <div class="project-features">
+                        <span class="project-feature" data-translate="project1_feature1"></span>
+                        <span class="project-feature" data-translate="project1_feature2"></span>
+                        <span class="project-feature" data-translate="project1_feature3"></span>
+                    </div>
+
+                    <a href="#contacto" class="project-cta">
+                        <span>📧</span>
+                        <span data-translate="btn_contact_project"></span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- PROYECTO 2 -->
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&h=600&fit=crop" alt="Proyecto 2">
+                    <div class="project-tag" data-translate="project2_tag"></div>
+                </div>
+                <div class="project-content">
+                    <h2 class="project-title" data-translate="project2_title"></h2>
+                    <p class="project-description" data-translate="project2_description"></p>
+                    
+                    <div class="project-stats">
+                        <div class="project-stat">
+                            <span class="project-stat-label" data-translate="stat_area_label"></span>
+                            <span class="project-stat-value">120 ha</span>
+                        </div>
+                        <div class="project-stat">
+                            <span class="project-stat-label" data-translate="stat_reduction_label"></span>
+                            <span class="project-stat-value">-45%</span>
+                        </div>
+                        <div class="project-stat">
+                            <span class="project-stat-label" data-translate="stat_duration_label"></span>
+                            <span class="project-stat-value">8 <span data-translate="stat_months"></span></span>
+                        </div>
+                    </div>
+
+                    <div class="project-features">
+                        <span class="project-feature" data-translate="project2_feature1"></span>
+                        <span class="project-feature" data-translate="project2_feature2"></span>
+                        <span class="project-feature" data-translate="project2_feature3"></span>
+                    </div>
+
+                    <a href="#contacto" class="project-cta">
+                        <span>📧</span>
+                        <span data-translate="btn_contact_project"></span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- PROYECTO 3 -->
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&h=600&fit=crop" alt="Proyecto 3">
+                    <div class="project-tag" data-translate="project3_tag"></div>
+                </div>
+                <div class="project-content">
+                    <h2 class="project-title" data-translate="project3_title"></h2>
+                    <p class="project-description" data-translate="project3_description"></p>
+                    
+                    <div class="project-stats">
+                        <div class="project-stat">
+                            <span class="project-stat-label" data-translate="stat_area_label"></span>
+                            <span class="project-stat-value">45 campos</span>
+                        </div>
+                        <div class="project-stat">
+                            <span class="project-stat-label" data-translate="stat_quality_label"></span>
+                            <span class="project-stat-value">+60%</span>
+                        </div>
+                        <div class="project-stat">
+                            <span class="project-stat-label" data-translate="stat_duration_label"></span>
+                            <span class="project-stat-value">12 <span data-translate="stat_months"></span></span>
+                        </div>
+                    </div>
+
+                    <div class="project-features">
+                        <span class="project-feature" data-translate="project3_feature1"></span>
+                        <span class="project-feature" data-translate="project3_feature2"></span>
+                        <span class="project-feature" data-translate="project3_feature3"></span>
+                    </div>
+
+                    <a href="#contacto" class="project-cta">
+                        <span>📧</span>
+                        <span data-translate="btn_contact_project"></span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- PROYECTO 4 -->
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=800&h=600&fit=crop" alt="Proyecto 4">
+                    <div class="project-tag" data-translate="project4_tag"></div>
+                </div>
+                <div class="project-content">
+                    <h2 class="project-title" data-translate="project4_title"></h2>
+                    <p class="project-description" data-translate="project4_description"></p>
+                    
+                    <div class="project-stats">
+                        <div class="project-stat">
+                            <span class="project-stat-label" data-translate="stat_volume_label"></span>
+                            <span class="project-stat-value">50,000 L</span>
+                        </div>
+                        <div class="project-stat">
+                            <span class="project-stat-label" data-translate="stat_purity_label"></span>
+                            <span class="project-stat-value">99.9%</span>
+                        </div>
+                        <div class="project-stat">
+                            <span class="project-stat-label" data-translate="stat_duration_label"></span>
+                            <span class="project-stat-value">4 <span data-translate="stat_months"></span></span>
+                        </div>
+                    </div>
+
+                    <div class="project-features">
+                        <span class="project-feature" data-translate="project4_feature1"></span>
+                        <span class="project-feature" data-translate="project4_feature2"></span>
+                        <span class="project-feature" data-translate="project4_feature3"></span>
+                    </div>
+
+                    <a href="#contacto" class="project-cta">
+                        <span>📧</span>
+                        <span data-translate="btn_contact_project"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

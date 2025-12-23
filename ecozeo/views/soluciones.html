@@ -1,0 +1,1170 @@
+<div class="soluciones-view">
+    <style>
+        /* ==========================================
+           ESTILOS DE LA VISTA SOLUCIONES
+           ========================================== */
+        
+        .soluciones-view {
+            background: var(--color-bg);
+        }
+
+        /* HERO SOLUCIONES */
+        .soluciones-hero {
+            position: relative;
+            padding: 8rem 2rem 6rem;
+            background: linear-gradient(135deg, #7c3aed 0%, #10b981 100%);
+            color: white;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .soluciones-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 20px,
+                rgba(255, 255, 255, 0.03) 20px,
+                rgba(255, 255, 255, 0.03) 40px
+            );
+        }
+
+        .soluciones-hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .soluciones-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .soluciones-hero p {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+
+        /* SHOWCASE PRODUCTS */
+        .products-showcase {
+            padding: 6rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .product-card-showcase {
+            position: relative;
+            height: 600px;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .product-card-showcase:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 20px 60px rgba(124, 58, 237, 0.3);
+        }
+
+        .product-card-bg {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.4s ease;
+        }
+
+        .product-card-showcase:hover .product-card-bg {
+            transform: scale(1.1);
+        }
+
+        .product-card-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0.3) 0%,
+                rgba(0, 0, 0, 0.7) 100%
+            );
+        }
+
+        .product-card-content {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2.5rem;
+            color: white;
+        }
+
+        .product-logo {
+            width: 120px;
+            height: 120px;
+            background: transparent;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.3));
+        }
+
+        .product-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .product-name {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .product-category {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            margin-bottom: 1.5rem;
+        }
+
+        .product-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .product-cta {
+            padding: 1rem 2rem;
+            background: white;
+            color: var(--color-primary);
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            align-self: flex-start;
+        }
+
+        .product-cta:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+        }
+
+        /* WHY SECTION */
+        .why-section {
+            padding: 6rem 2rem;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%);
+        }
+
+        .why-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .why-section h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--color-dark);
+            margin-bottom: 1rem;
+        }
+
+        .why-section > p {
+            font-size: 1.1rem;
+            color: var(--color-text-light);
+            margin-bottom: 3rem;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .benefit-item {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .benefit-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(124, 58, 237, 0.15);
+        }
+
+        .benefit-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .benefit-item h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--color-dark);
+            margin-bottom: 0.75rem;
+        }
+
+        .benefit-item p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--color-text);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 968px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .soluciones-hero {
+                padding: 5rem 1.5rem 4rem;
+            }
+
+            .soluciones-hero h1 {
+                font-size: 2rem;
+            }
+
+            .soluciones-hero p {
+                font-size: 1.1rem;
+            }
+
+            .product-card-showcase {
+                height: 500px;
+            }
+
+            .product-name {
+                font-size: 2rem;
+            }
+        }
+
+        /* ==========================================
+           MODALES
+           ========================================== */
+        .product-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .product-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeInModal 0.3s ease;
+        }
+
+        @keyframes fadeInModal {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUpModal 0.4s ease;
+        }
+
+        @keyframes slideUpModal {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.1);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--color-dark);
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .modal-close:hover {
+            background: var(--color-primary);
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .modal-header {
+            padding: 3rem 3rem 2rem;
+            border-bottom: 2px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .modal-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(16, 185, 129, 0.1));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            padding: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .modal-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .modal-header-text {
+            flex: 1;
+        }
+
+        .modal-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--color-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-header p {
+            font-size: 1.2rem;
+            color: var(--color-text-light);
+        }
+
+        /* Responsive modal header */
+        @media (max-width: 768px) {
+            .modal-header {
+                gap: 1rem;
+            }
+
+            .modal-logo {
+                width: 60px;
+                height: 60px;
+            }
+
+            .modal-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .modal-header p {
+                font-size: 1rem;
+            }
+        }
+
+        .modal-body {
+            padding: 2rem 3rem 3rem;
+        }
+
+        .modal-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .modal-section h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--color-dark);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-section p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--color-text);
+            margin-bottom: 1rem;
+        }
+
+        .benefits-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .benefit-tag {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(16, 185, 129, 0.05));
+            border-radius: 12px;
+            border-left: 4px solid var(--color-primary);
+        }
+
+        .benefit-tag .icon {
+            font-size: 1.5rem;
+            color: var(--color-primary);
+        }
+
+        .benefit-tag span {
+            font-size: 1rem;
+            color: var(--color-dark);
+            font-weight: 500;
+        }
+
+        .applications-list {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .applications-list li {
+            padding: 0.75rem 1rem;
+            background: var(--color-bg-alt);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            color: var(--color-text);
+        }
+
+        .applications-list li::before {
+            content: '🎯';
+            font-size: 1.2rem;
+        }
+
+        /* ==========================================
+           SLIDER DE GALERÍA EN MODAL
+           ========================================== */
+        .gallery-slider {
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+            margin: 2rem 0;
+            border-radius: 16px;
+            overflow: hidden;
+            background: var(--color-bg-alt);
+        }
+
+        .slider-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
+        }
+
+        .slider-track {
+            display: flex;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 100%;
+        }
+
+        .slider-slide {
+            min-width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+        }
+
+        .slider-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Botones de navegación */
+        .slider-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--color-dark);
+            transition: all 0.3s ease;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .slider-nav:hover {
+            background: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .slider-nav.prev {
+            left: 1rem;
+        }
+
+        .slider-nav.next {
+            right: 1rem;
+        }
+
+        /* Indicadores (dots) */
+        .slider-dots {
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+
+        .slider-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+
+        .slider-dot.active {
+            background: white;
+            width: 24px;
+            border-radius: 5px;
+        }
+
+        /* Responsive slider */
+        @media (max-width: 768px) {
+            .slider-nav {
+                width: 35px;
+                height: 35px;
+                font-size: 1.2rem;
+            }
+
+            .slider-nav.prev {
+                left: 0.5rem;
+            }
+
+            .slider-nav.next {
+                right: 0.5rem;
+            }
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--color-border);
+        }
+
+        .btn-modal {
+            flex: 1;
+            padding: 1.2rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-modal.primary {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            color: white;
+        }
+
+        .btn-modal.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
+        }
+
+        .btn-modal.secondary {
+            background: white;
+            color: var(--color-primary);
+            border: 2px solid var(--color-primary);
+        }
+
+        .btn-modal.secondary:hover {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        /* ==========================================
+           VISOR DE FICHA TÉCNICA
+           ========================================== */
+        .ficha-viewer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 11000;
+            padding: 1rem;
+        }
+
+        .ficha-viewer.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeInModal 0.3s ease;
+        }
+
+        .ficha-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 1200px;
+            max-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ficha-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            /* Permitir zoom con gestos en móvil */
+            touch-action: pinch-zoom;
+        }
+
+        .ficha-close {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--color-dark);
+            transition: all 0.3s ease;
+            z-index: 11001;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .ficha-close:hover {
+            background: white;
+            transform: rotate(90deg);
+        }
+
+        @media (max-width: 768px) {
+            .ficha-close {
+                top: 1rem;
+                right: 1rem;
+                width: 45px;
+                height: 45px;
+                font-size: 1.8rem;
+            }
+        }
+
+        /* ==========================================
+           SISTEMA DE PESTAÑAS EN MODAL
+           ========================================== */
+        .modal-tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid var(--color-border);
+            margin: 0 -3rem 2rem -3rem;
+            padding: 0 3rem;
+            background: var(--color-bg-alt);
+        }
+
+        .modal-tab {
+            padding: 1rem 2rem;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--color-text-light);
+            transition: all 0.3s ease;
+            position: relative;
+            bottom: -2px;
+        }
+
+        .modal-tab:hover {
+            color: var(--color-primary);
+        }
+
+        .modal-tab.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+            background: white;
+        }
+
+        .modal-tab-content {
+            display: none;
+        }
+
+        .modal-tab-content.active {
+            display: block;
+            animation: fadeInTab 0.3s ease;
+        }
+
+        @keyframes fadeInTab {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Estilos para ficha técnica */
+        .ficha-section {
+            margin-bottom: 2rem;
+        }
+
+        .ficha-section h4 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        .ficha-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .ficha-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .ficha-item-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .ficha-item-value {
+            font-size: 1rem;
+            color: var(--color-dark);
+            font-weight: 500;
+        }
+
+        .ficha-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .ficha-table th,
+        .ficha-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .ficha-table th {
+            background: var(--color-bg-alt);
+            font-weight: 600;
+            color: var(--color-dark);
+        }
+
+        .ficha-table tr:hover {
+            background: var(--color-bg-alt);
+        }
+
+        /* Responsive modales */
+        @media (max-width: 768px) {
+            .product-modal {
+                padding: 1rem;
+            }
+
+            .modal-content {
+                border-radius: 16px;
+            }
+
+            .modal-header,
+            .modal-body {
+                padding: 2rem 1.5rem;
+            }
+
+            .modal-header h2 {
+                font-size: 2rem;
+            }
+
+            .applications-list {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <!-- HERO -->
+    <section class="soluciones-hero">
+        <div class="soluciones-hero-content">
+            <h1 data-translate="solutions_hero_title"></h1>
+            <p data-translate="solutions_hero_subtitle"></p>
+        </div>
+    </section>
+
+    <!-- PRODUCTOS SHOWCASE -->
+    <section class="products-showcase">
+        <div class="products-grid">
+            <!-- NANO-ZEO -->
+            <div class="product-card-showcase" data-product="nanozeo">
+                <div class="product-card-bg" style="background-image: url('images/nano-zeo-jardineria.jpg');"></div>
+                <div class="product-card-overlay"></div>
+                <div class="product-card-content">
+                    <div>
+                        <div class="product-logo">
+                            <img src="images/logo-nano-zeo.png" alt="Nano-Zeo Logo">
+                        </div>
+                        <h2 class="product-name" data-translate="product1_name"></h2>
+                        <p class="product-category" data-translate="product1_category"></p>
+                        <p class="product-description" data-translate="product1_desc_short"></p>
+                    </div>
+                    <button class="product-cta" data-translate="btn_see_details"></button>
+                </div>
+            </div>
+
+            <!-- NANO-ZEO AG -->
+            <div class="product-card-showcase" data-product="nanozeoag">
+                <div class="product-card-bg" style="background-image: url('images/nano-zeo-ag.jpg');"></div>
+                <div class="product-card-overlay"></div>
+                <div class="product-card-content">
+                    <div>
+                        <div class="product-logo">
+                            <img src="images/logo-nano-zeo-ag.png" alt="Nano-Zeo Ag Logo">
+                        </div>
+                        <h2 class="product-name" data-translate="product2_name"></h2>
+                        <p class="product-category" data-translate="product2_category"></p>
+                        <p class="product-description" data-translate="product2_desc_short"></p>
+                    </div>
+                    <button class="product-cta" data-translate="btn_see_details"></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ¿POR QUÉ NANO-ZEO? -->
+    <section class="why-section">
+        <div class="why-container">
+            <h2 data-translate="why_title"></h2>
+            <p data-translate="why_subtitle"></p>
+
+            <div class="benefits-grid">
+                <div class="benefit-item">
+                    <div class="benefit-icon">🔬</div>
+                    <h3 data-translate="why1_title"></h3>
+                    <p data-translate="why1_text"></p>
+                </div>
+
+                <div class="benefit-item">
+                    <div class="benefit-icon">💧</div>
+                    <h3 data-translate="why2_title"></h3>
+                    <p data-translate="why2_text"></p>
+                </div>
+
+                <div class="benefit-item">
+                    <div class="benefit-icon">🌍</div>
+                    <h3 data-translate="why3_title"></h3>
+                    <p data-translate="why3_text"></p>
+                </div>
+
+                <div class="benefit-item">
+                    <div class="benefit-icon">📈</div>
+                    <h3 data-translate="why4_title"></h3>
+                    <p data-translate="why4_text"></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MODALES DE PRODUCTOS -->
+    
+    <!-- MODAL NANO-ZEO -->
+    <div id="modal-nanozeo" class="product-modal">
+        <div class="modal-content">
+            <button class="modal-close" data-close-modal="nanozeo">×</button>
+            
+            <div class="modal-header">
+                <div class="modal-logo">
+                    <img src="images/logo-nano-zeo.png" alt="Nano-Zeo Logo">
+                </div>
+                <div class="modal-header-text">
+                    <h2 data-translate="product1_name"></h2>
+                    <p data-translate="product1_category"></p>
+                </div>
+            </div>
+
+            <div class="modal-body">
+                <div class="modal-section">
+                    <h3>📋 <span data-translate="modal_description"></span></h3>
+                    <p data-translate="product1_desc_full"></p>
+                </div>
+
+                <!-- GALERÍA SLIDER -->
+                <div class="gallery-slider">
+                    <div class="slider-container">
+                        <div class="slider-track" data-slider="nanozeo">
+                            <div class="slider-slide">
+                                <img src="images/nanozeo-gallery-1.jpg" alt="Nano-Zeo 1">
+                            </div>
+                            <div class="slider-slide">
+                                <img src="images/nanozeo-gallery-2.jpg" alt="Nano-Zeo 2">
+                            </div>
+                            <div class="slider-slide">
+                                <img src="images/nanozeo-gallery-3.jpg" alt="Nano-Zeo 3">
+                            </div>
+                        </div>
+                        <button class="slider-nav prev" data-slider-prev="nanozeo">‹</button>
+                        <button class="slider-nav next" data-slider-next="nanozeo">›</button>
+                        <div class="slider-dots">
+                            <button class="slider-dot active" data-slider-dot="nanozeo" data-index="0"></button>
+                            <button class="slider-dot" data-slider-dot="nanozeo" data-index="1"></button>
+                            <button class="slider-dot" data-slider-dot="nanozeo" data-index="2"></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h3>✨ <span data-translate="modal_benefits"></span></h3>
+                    <div class="benefits-list">
+                        <div class="benefit-tag">
+                            <span class="icon">💧</span>
+                            <span data-translate="product1_benefit1"></span>
+                        </div>
+                        <div class="benefit-tag">
+                            <span class="icon">🌱</span>
+                            <span data-translate="product1_benefit2"></span>
+                        </div>
+                        <div class="benefit-tag">
+                            <span class="icon">✅</span>
+                            <span data-translate="product1_benefit3"></span>
+                        </div>
+                        <div class="benefit-tag">
+                            <span class="icon">⏱️</span>
+                            <span data-translate="product1_benefit4"></span>
+                        </div>
+                        <div class="benefit-tag">
+                            <span class="icon">🌿</span>
+                            <span data-translate="product1_benefit5"></span>
+                        </div>
+                        <div class="benefit-tag">
+                            <span class="icon">🌍</span>
+                            <span data-translate="product1_benefit6"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h3>🎯 <span data-translate="modal_applications"></span></h3>
+                    <ul class="applications-list">
+                        <li data-translate="product1_app1"></li>
+                        <li data-translate="product1_app2"></li>
+                        <li data-translate="product1_app3"></li>
+                        <li data-translate="product1_app4"></li>
+                        <li data-translate="product1_app5"></li>
+                        <li data-translate="product1_app6"></li>
+                    </ul>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn-modal primary" data-open-ficha="nanozeo">
+                        <span>📄</span>
+                        <span data-translate="btn_open_datasheet"></span>
+                    </button>
+                    <button class="btn-modal secondary" data-contact="nanozeo">
+                        <span>✉️</span>
+                        <span data-translate="btn_contact"></span>
+                    </button>
+                    <button class="btn-modal secondary" data-close-modal="nanozeo">
+                        <span data-translate="btn_close"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL NANO-ZEO AG -->
+    <div id="modal-nanozeoag" class="product-modal">
+        <div class="modal-content">
+            <button class="modal-close" data-close-modal="nanozeoag">×</button>
+            
+            <div class="modal-header">
+                <div class="modal-logo">
+                    <img src="images/logo-nano-zeo-ag.png" alt="Nano-Zeo Ag Logo">
+                </div>
+                <div class="modal-header-text">
+                    <h2 data-translate="product2_name"></h2>
+                    <p data-translate="product2_category"></p>
+                </div>
+            </div>
+
+            <div class="modal-body">
+                <div class="modal-section">
+                    <h3>📋 <span data-translate="modal_description"></span></h3>
+                    <p data-translate="product2_desc_full"></p>
+                </div>
+
+                <!-- GALERÍA SLIDER -->
+                <div class="gallery-slider">
+                    <div class="slider-container">
+                        <div class="slider-track" data-slider="nanozeoag">
+                            <div class="slider-slide">
+                                <img src="images/nanozeoag-gallery-1.jpg" alt="Nano-Zeo Ag 1">
+                            </div>
+                            <div class="slider-slide">
+                                <img src="images/nanozeoag-gallery-2.jpg" alt="Nano-Zeo Ag 2">
+                            </div>
+                            <div class="slider-slide">
+                                <img src="images/nanozeoag-gallery-3.jpg" alt="Nano-Zeo Ag 3">
+                            </div>
+                        </div>
+                        <button class="slider-nav prev" data-slider-prev="nanozeoag">‹</button>
+                        <button class="slider-nav next" data-slider-next="nanozeoag">›</button>
+                        <div class="slider-dots">
+                            <button class="slider-dot active" data-slider-dot="nanozeoag" data-index="0"></button>
+                            <button class="slider-dot" data-slider-dot="nanozeoag" data-index="1"></button>
+                            <button class="slider-dot" data-slider-dot="nanozeoag" data-index="2"></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h3>✨ <span data-translate="modal_benefits"></span></h3>
+                    <div class="benefits-list">
+                        <div class="benefit-tag">
+                            <span class="icon">📈</span>
+                            <span data-translate="product2_benefit1"></span>
+                        </div>
+                        <div class="benefit-tag">
+                            <span class="icon">💧</span>
+                            <span data-translate="product2_benefit2"></span>
+                        </div>
+                        <div class="benefit-tag">
+                            <span class="icon">🌱</span>
+                            <span data-translate="product2_benefit3"></span>
+                        </div>
+                        <div class="benefit-tag">
+                            <span class="icon">🌊</span>
+                            <span data-translate="product2_benefit4"></span>
+                        </div>
+                        <div class="benefit-tag">
+                            <span class="icon">🌍</span>
+                            <span data-translate="product2_benefit5"></span>
+                        </div>
+                        <div class="benefit-tag">
+                            <span class="icon">💰</span>
+                            <span data-translate="product2_benefit6"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h3>🎯 <span data-translate="modal_applications"></span></h3>
+                    <ul class="applications-list">
+                        <li data-translate="product2_app1"></li>
+                        <li data-translate="product2_app2"></li>
+                        <li data-translate="product2_app3"></li>
+                        <li data-translate="product2_app4"></li>
+                        <li data-translate="product2_app5"></li>
+                        <li data-translate="product2_app6"></li>
+                    </ul>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn-modal primary" data-open-ficha="nanozeoag">
+                        <span>📄</span>
+                        <span data-translate="btn_open_datasheet"></span>
+                    </button>
+                    <button class="btn-modal secondary" data-contact="nanozeoag">
+                        <span>✉️</span>
+                        <span data-translate="btn_contact"></span>
+                    </button>
+                    <button class="btn-modal secondary" data-close-modal="nanozeoag">
+                        <span data-translate="btn_close"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VISOR DE FICHA TÉCNICA -->
+    <div id="ficha-viewer" class="ficha-viewer">
+        <button class="ficha-close" data-close-ficha>×</button>
+        <div class="ficha-container">
+            <img id="ficha-image" class="ficha-image" src="" alt="Ficha Técnica">
+        </div>
+    </div>
+</div>
