@@ -143,8 +143,8 @@ const translations = {
         modal_description: "Descripción",
         modal_benefits: "Ventajas Principales",
         modal_applications: "Aplicaciones",
-        btn_open_datasheet: "📄 Abrir Ficha Técnica",
-        btn_contact: "✉️ Contactar",
+        btn_open_datasheet: "Abrir Ficha Técnica",
+        btn_contact: "Contactar",
         btn_close: "Cerrar",
         
         // CONTACT
@@ -409,8 +409,8 @@ const translations = {
         modal_description: "Description",
         modal_benefits: "Main Benefits",
         modal_applications: "Applications",
-        btn_open_datasheet: "📄 Open Technical Datasheet",
-        btn_contact: "✉️ Contact",
+        btn_open_datasheet: "Open Technical Datasheet",
+        btn_contact: "Contact",
         btn_close: "Close",
         
         // CONTACT
