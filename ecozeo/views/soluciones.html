@@ -155,8 +155,8 @@
 
         .product-cta {
             padding: 1rem 2rem;
-            background: white;
-            color: var(--color-primary);
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            color: white;
             border: none;
             border-radius: 12px;
             font-size: 1.1rem;
@@ -164,11 +164,12 @@
             cursor: pointer;
             transition: all 0.3s ease;
             align-self: flex-start;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
         }
 
         .product-cta:hover {
-            transform: translateX(5px);
-            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.5);
         }
 
         /* WHY SECTION */
@@ -325,7 +326,7 @@
             right: 1.5rem;
             width: 40px;
             height: 40px;
-            background: rgba(0, 0, 0, 0.1);
+            background: rgba(239, 68, 68, 0.1);
             border: none;
             border-radius: 50%;
             cursor: pointer;
@@ -333,13 +334,13 @@
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
-            color: var(--color-dark);
+            color: #ef4444;
             transition: all 0.3s ease;
             z-index: 10;
         }
 
         .modal-close:hover {
-            background: var(--color-primary);
+            background: #ef4444;
             color: white;
             transform: rotate(90deg);
         }
@@ -478,11 +479,6 @@
             gap: 0.5rem;
             font-size: 1rem;
             color: var(--color-text);
-        }
-
-        .applications-list li::before {
-            content: '🎯';
-            font-size: 1.2rem;
         }
 
         /* ==========================================
@@ -968,15 +964,13 @@
             </div>
 
             <div class="modal-body">
-                <div class="modal-section">
-                    <h3>📋 <span data-translate="modal_description"></span></h3>
-                    <p data-translate="product1_desc_full"></p>
-                </div>
-
                 <!-- GALERÍA SLIDER -->
                 <div class="gallery-slider">
                     <div class="slider-container">
                         <div class="slider-track" data-slider="nanozeo">
+                            <div class="slider-slide">
+                                <img src="images/nano-zeo-jardineria.jpg" alt="Nano-Zeo Principal">
+                            </div>
                             <div class="slider-slide">
                                 <img src="images/nanozeo-gallery-1.jpg" alt="Nano-Zeo 1">
                             </div>
@@ -993,8 +987,13 @@
                             <button class="slider-dot active" data-slider-dot="nanozeo" data-index="0"></button>
                             <button class="slider-dot" data-slider-dot="nanozeo" data-index="1"></button>
                             <button class="slider-dot" data-slider-dot="nanozeo" data-index="2"></button>
+                            <button class="slider-dot" data-slider-dot="nanozeo" data-index="3"></button>
                         </div>
                     </div>
+                </div>
+
+                <div class="modal-section">
+                    <p data-translate="product1_desc_full"></p>
                 </div>
 
                 <div class="modal-section">
@@ -1072,15 +1071,13 @@
             </div>
 
             <div class="modal-body">
-                <div class="modal-section">
-                    <h3>📋 <span data-translate="modal_description"></span></h3>
-                    <p data-translate="product2_desc_full"></p>
-                </div>
-
                 <!-- GALERÍA SLIDER -->
                 <div class="gallery-slider">
                     <div class="slider-container">
                         <div class="slider-track" data-slider="nanozeoag">
+                            <div class="slider-slide">
+                                <img src="images/nano-zeo-ag.jpg" alt="Nano-Zeo Ag Principal">
+                            </div>
                             <div class="slider-slide">
                                 <img src="images/nanozeoag-gallery-1.jpg" alt="Nano-Zeo Ag 1">
                             </div>
@@ -1097,8 +1094,13 @@
                             <button class="slider-dot active" data-slider-dot="nanozeoag" data-index="0"></button>
                             <button class="slider-dot" data-slider-dot="nanozeoag" data-index="1"></button>
                             <button class="slider-dot" data-slider-dot="nanozeoag" data-index="2"></button>
+                            <button class="slider-dot" data-slider-dot="nanozeoag" data-index="3"></button>
                         </div>
                     </div>
+                </div>
+
+                <div class="modal-section">
+                    <p data-translate="product2_desc_full"></p>
                 </div>
 
                 <div class="modal-section">
