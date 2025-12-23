@@ -149,8 +149,23 @@
         .product-description {
             font-size: 1.1rem;
             line-height: 1.6;
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
             opacity: 0.9;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .product-read-more {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 600;
+            margin-bottom: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .product-cta {
@@ -888,6 +903,7 @@
                         <h2 class="product-name" data-translate="product1_name"></h2>
                         <p class="product-category" data-translate="product1_category"></p>
                         <p class="product-description" data-translate="product1_desc_short"></p>
+                        <span class="product-read-more" data-translate="read_more_label"></span>
                     </div>
                     <button class="product-cta" data-translate="btn_see_details"></button>
                 </div>
@@ -905,6 +921,7 @@
                         <h2 class="product-name" data-translate="product2_name"></h2>
                         <p class="product-category" data-translate="product2_category"></p>
                         <p class="product-description" data-translate="product2_desc_short"></p>
+                        <span class="product-read-more" data-translate="read_more_label"></span>
                     </div>
                     <button class="product-cta" data-translate="btn_see_details"></button>
                 </div>
