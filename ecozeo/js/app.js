@@ -349,25 +349,6 @@ const App = {
                 });
             });
             
-            // Event listener para cerrar ficha técnica
-            const closeFichaBtn = document.querySelector('[data-close-ficha]');
-            if (closeFichaBtn) {
-                closeFichaBtn.addEventListener('click', () => {
-                    console.log(`❌ [SOLUCIONES] Cerrar ficha técnica`);
-                    this.closeFichaTecnica();
-                });
-            }
-            
-            // Cerrar ficha con click fuera
-            const fichaViewer = document.getElementById('ficha-viewer');
-            if (fichaViewer) {
-                fichaViewer.addEventListener('click', (e) => {
-                    if (e.target === fichaViewer) {
-                        console.log('❌ [SOLUCIONES] Click fuera de ficha');
-                        this.closeFichaTecnica();
-                    }
-                });
-            }
             
             // Cerrar modal al hacer click fuera
             document.querySelectorAll('.product-modal').forEach(modal => {
@@ -383,14 +364,6 @@ const App = {
             // Cerrar modal con tecla ESC
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
-                    // Cerrar ficha técnica si está abierta
-                    const fichaViewer = document.querySelector('.ficha-viewer.show');
-                    if (fichaViewer) {
-                        console.log('⌨️ [SOLUCIONES] ESC - Cerrando ficha técnica');
-                        this.closeFichaTecnica();
-                        return;
-                    }
-                    
                     // Cerrar modal si está abierto
                     const openModal = document.querySelector('.product-modal.show');
                     if (openModal) {
@@ -449,58 +422,32 @@ const App = {
     openFichaTecnica: function(productId) {
         console.log(`📄 [FICHA] Abriendo ficha: ${productId}`);
         
-        const fichaViewer = document.getElementById('ficha-viewer');
-        const fichaImage = document.getElementById('ficha-image');
-        
-        if (!fichaViewer || !fichaImage) {
-            console.error('❌ [FICHA] Elementos no encontrados');
-            return;
-        }
-        
         // Obtener idioma actual
         const lang = localStorage.getItem('ecozeo_language') || 'es';
         
-        // Rutas de las imágenes (según idioma)
+        // Rutas de los PDFs según producto e idioma
         const fichas = {
             'nanozeo': {
-                'es': 'images/ficha-nanozeo-es.jpg',
-                'en': 'images/ficha-nanozeo-en.jpg'
+                'es': 'docs/Nano-Zeo_Ficha-Tecnica_ES.pdf',
+                'en': 'docs/Nano-Zeo_Technical-Datasheet_EN.pdf'
             },
             'nanozeoag': {
-                'es': 'images/ficha-nanozeoag-es.jpg',
-                'en': 'images/ficha-nanozeoag-en.jpg'
+                'es': 'docs/Nano-ZeoAg_Ficha-Tecnica_ES.pdf',
+                'en': 'docs/Nano-ZeoAg_Technical-Datasheet_EN.pdf'
             }
         };
         
-        // Establecer la imagen según producto e idioma
+        // Abrir PDF en nueva pestaña
         if (fichas[productId] && fichas[productId][lang]) {
-            fichaImage.src = fichas[productId][lang];
-            fichaImage.alt = `Ficha Técnica - ${productId}`;
-            
-            // Mostrar el visor
-            fichaViewer.classList.add('show');
-            document.body.style.overflow = 'hidden';
-            
-            console.log(`✅ [FICHA] Abierta: ${productId} (${lang})`);
+            const pdfUrl = fichas[productId][lang];
+            window.open(pdfUrl, '_blank');
+            console.log(`✅ [FICHA] PDF abierto: ${pdfUrl}`);
         } else {
-            console.error(`❌ [FICHA] No se encontró imagen para: ${productId} (${lang})`);
-            // Imagen de placeholder si no existe
-            fichaImage.src = 'https://via.placeholder.com/1000x1400/7c3aed/ffffff?text=Ficha+Técnica';
-            fichaViewer.classList.add('show');
-            document.body.style.overflow = 'hidden';
+            console.error(`❌ [FICHA] No se encontró PDF para: ${productId} (${lang})`);
+            alert('Ficha técnica no disponible');
         }
     },
 
-    closeFichaTecnica: function() {
-        console.log('🔒 [FICHA] Cerrando ficha técnica');
-        
-        const fichaViewer = document.getElementById('ficha-viewer');
-        if (fichaViewer) {
-            fichaViewer.classList.remove('show');
-            document.body.style.overflow = 'auto';
-            console.log('✅ [FICHA] Cerrada');
-        }
-    },
 
     // ============================================
     // SLIDER DE GALERÍA
