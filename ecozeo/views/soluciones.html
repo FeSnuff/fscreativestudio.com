@@ -667,83 +667,8 @@
         /* ==========================================
            VISOR DE FICHA TÉCNICA
            ========================================== */
-        .ficha-viewer {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 11000;
-            padding: 1rem;
-        }
-
-        .ficha-viewer.show {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: fadeInModal 0.3s ease;
-        }
-
-        .ficha-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            max-width: 1200px;
-            max-height: 90vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .ficha-image {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            border-radius: 8px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            /* Permitir zoom con gestos en móvil */
-            touch-action: pinch-zoom;
-        }
-
-        .ficha-close {
-            position: fixed;
-            top: 1.5rem;
-            right: 1.5rem;
-            width: 50px;
-            height: 50px;
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: var(--color-dark);
-            transition: all 0.3s ease;
-            z-index: 11001;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .ficha-close:hover {
-            background: white;
-            transform: rotate(90deg);
-        }
-
-        @media (max-width: 768px) {
-            .ficha-close {
-                top: 1rem;
-                right: 1rem;
-                width: 45px;
-                height: 45px;
-                font-size: 1.8rem;
-            }
-        }
-
         /* ==========================================
-           SISTEMA DE PESTAÑAS EN MODAL
+           SISTEMA DE PESTAÑAS EN MODAL (NO USADO)
            ========================================== */
         .modal-tabs {
             display: flex;
@@ -1181,10 +1106,5 @@
     </div>
 
     <!-- VISOR DE FICHA TÉCNICA -->
-    <div id="ficha-viewer" class="ficha-viewer">
-        <button class="ficha-close" data-close-ficha>×</button>
-        <div class="ficha-container">
-            <img id="ficha-image" class="ficha-image" src="" alt="Ficha Técnica">
-        </div>
-    </div>
+    <!-- Visor eliminado - ahora se abren PDFs en nueva pestaña -->
 </div>
