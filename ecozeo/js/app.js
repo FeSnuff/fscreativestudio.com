@@ -349,6 +349,25 @@ const App = {
                 });
             });
             
+            // Event listeners para visor PDF
+            const closePdfBtn = document.getElementById('close-pdf-btn');
+            if (closePdfBtn) {
+                closePdfBtn.addEventListener('click', () => {
+                    console.log('❌ [SOLUCIONES] Cerrar PDF');
+                    this.closePdfViewer();
+                });
+            }
+            
+            // Cerrar PDF con click fuera
+            const pdfViewer = document.getElementById('pdf-viewer');
+            if (pdfViewer) {
+                pdfViewer.addEventListener('click', (e) => {
+                    if (e.target === pdfViewer) {
+                        console.log('❌ [SOLUCIONES] Click fuera del PDF');
+                        this.closePdfViewer();
+                    }
+                });
+            }
             
             // Cerrar modal al hacer click fuera
             document.querySelectorAll('.product-modal').forEach(modal => {
@@ -364,6 +383,14 @@ const App = {
             // Cerrar modal con tecla ESC
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
+                    // Cerrar visor PDF si está abierto (prioridad)
+                    const pdfViewer = document.querySelector('#pdf-viewer.show');
+                    if (pdfViewer) {
+                        console.log('⌨️ [SOLUCIONES] ESC - Cerrando PDF');
+                        this.closePdfViewer();
+                        return;
+                    }
+                    
                     // Cerrar modal si está abierto
                     const openModal = document.querySelector('.product-modal.show');
                     if (openModal) {
@@ -422,6 +449,14 @@ const App = {
     openFichaTecnica: function(productId) {
         console.log(`📄 [FICHA] Abriendo ficha: ${productId}`);
         
+        const pdfViewer = document.getElementById('pdf-viewer');
+        const pdfFrame = document.getElementById('pdf-frame');
+        
+        if (!pdfViewer || !pdfFrame) {
+            console.error('❌ [FICHA] Visor no encontrado');
+            return;
+        }
+        
         // Obtener idioma actual
         const lang = localStorage.getItem('ecozeo_language') || 'es';
         
@@ -437,14 +472,38 @@ const App = {
             }
         };
         
-        // Abrir PDF en nueva pestaña
+        // Cargar PDF en el iframe
         if (fichas[productId] && fichas[productId][lang]) {
             const pdfUrl = fichas[productId][lang];
-            window.open(pdfUrl, '_blank');
-            console.log(`✅ [FICHA] PDF abierto: ${pdfUrl}`);
+            pdfFrame.src = pdfUrl;
+            
+            // Mostrar el visor
+            pdfViewer.classList.add('show');
+            document.body.style.overflow = 'hidden';
+            
+            console.log(`✅ [FICHA] PDF cargado: ${pdfUrl}`);
         } else {
             console.error(`❌ [FICHA] No se encontró PDF para: ${productId} (${lang})`);
             alert('Ficha técnica no disponible');
+        }
+    },
+
+    closePdfViewer: function() {
+        console.log('🔒 [FICHA] Cerrando visor PDF');
+        
+        const pdfViewer = document.getElementById('pdf-viewer');
+        const pdfFrame = document.getElementById('pdf-frame');
+        
+        if (pdfViewer) {
+            pdfViewer.classList.remove('show');
+            document.body.style.overflow = 'auto';
+            
+            // Limpiar iframe
+            if (pdfFrame) {
+                pdfFrame.src = '';
+            }
+            
+            console.log('✅ [FICHA] Visor cerrado');
         }
     },
 
