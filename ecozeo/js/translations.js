@@ -146,6 +146,7 @@ const translations = {
         btn_open_datasheet: "Abrir Ficha Técnica",
         btn_contact: "Contactar",
         btn_close: "Cerrar",
+        pdf_viewer_title: "Ficha Técnica",
         
         // CONTACT
         contact_hero_title: "Contáctanos",
@@ -412,6 +413,7 @@ const translations = {
         btn_open_datasheet: "Open Technical Datasheet",
         btn_contact: "Contact",
         btn_close: "Close",
+        pdf_viewer_title: "Technical Datasheet",
         
         // CONTACT
         contact_hero_title: "Contact Us",
