@@ -450,9 +450,9 @@ const App = {
         console.log(`📄 [FICHA] Abriendo ficha: ${productId}`);
         
         const pdfViewer = document.getElementById('pdf-viewer');
-        const pdfFrame = document.getElementById('pdf-frame');
+        const canvasContainer = document.getElementById('pdf-canvas-container');
         
-        if (!pdfViewer || !pdfFrame) {
+        if (!pdfViewer || !canvasContainer) {
             console.error('❌ [FICHA] Visor no encontrado');
             return;
         }
@@ -472,14 +472,16 @@ const App = {
             }
         };
         
-        // Cargar PDF en el iframe
+        // Cargar PDF con PDF.js
         if (fichas[productId] && fichas[productId][lang]) {
             const pdfUrl = fichas[productId][lang];
-            pdfFrame.src = pdfUrl;
             
             // Mostrar el visor
             pdfViewer.classList.add('show');
             document.body.style.overflow = 'hidden';
+            
+            // Cargar PDF con PDF.js
+            this.loadPDF(pdfUrl);
             
             console.log(`✅ [FICHA] PDF cargado: ${pdfUrl}`);
         } else {
@@ -488,19 +490,272 @@ const App = {
         }
     },
 
+    loadPDF: function(url) {
+        const container = document.getElementById('pdf-canvas-container');
+        container.innerHTML = '<div class="pdf-loading">Cargando PDF...</div>';
+        
+        // Cargar PDF.js desde CDN
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+        script.onload = () => {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            
+            const loadingTask = pdfjsLib.getDocument(url);
+            loadingTask.promise.then(pdf => {
+                console.log('PDF cargado:', pdf.numPages, 'páginas');
+                
+                // Actualizar contador de páginas
+                const pageCount = document.getElementById('pdf-page-count');
+                const mobilePageCount = document.getElementById('mobile-page-count');
+                
+                if (pageCount) pageCount.textContent = pdf.numPages;
+                if (mobilePageCount) mobilePageCount.textContent = pdf.numPages;
+                
+                let currentPage = 1;
+                let currentScale = 1.5;
+                let canvas, wrapper;
+                let isRendering = false; // Flag para prevenir renders simultáneos
+                
+                // Variables para swipe
+                let touchStartX = 0;
+                let touchEndX = 0;
+                
+                const updateZoomDisplay = () => {
+                    const zoomValue = document.getElementById('pdf-zoom-value');
+                    if (zoomValue) {
+                        zoomValue.textContent = Math.round(currentScale * 100);
+                    }
+                };
+                
+                const renderPage = (pageNum) => {
+                    // Prevenir renders simultáneos
+                    if (isRendering) {
+                        console.log('⏳ Render en progreso, esperando...');
+                        return;
+                    }
+                    
+                    console.log('🔄 Iniciando render de página:', pageNum);
+                    isRendering = true;
+                    
+                    pdf.getPage(pageNum).then(page => {
+                        console.log('📄 Página obtenida:', pageNum);
+                        
+                        // Escala adaptativa para móvil
+                        const isMobile = window.innerWidth <= 768;
+                        const baseScale = isMobile ? 1.2 : 1.5;
+                        const viewport = page.getViewport({ scale: baseScale * currentScale });
+                        
+                        if (!canvas) {
+                            canvas = document.createElement('canvas');
+                            wrapper = document.createElement('div');
+                            wrapper.id = 'pdf-canvas-wrapper';
+                            wrapper.appendChild(canvas);
+                        }
+                        
+                        const context = canvas.getContext('2d');
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
+                        
+                        container.innerHTML = '';
+                        container.appendChild(wrapper);
+                        
+                        const renderContext = {
+                            canvasContext: context,
+                            viewport: viewport
+                        };
+                        
+                        // Renderizar y luego liberar el flag
+                        const renderTask = page.render(renderContext);
+                        
+                        renderTask.promise.then(() => {
+                            console.log('✅ Página renderizada exitosamente:', pageNum);
+                            isRendering = false;
+                            
+                            // Actualizar número de página
+                            const pageNumEl = document.getElementById('pdf-page-num');
+                            const mobilePageNumEl = document.getElementById('mobile-page-num');
+                            
+                            if (pageNumEl) pageNumEl.textContent = pageNum;
+                            if (mobilePageNumEl) mobilePageNumEl.textContent = pageNum;
+                            
+                            // Actualizar botones
+                            const prevBtn = document.getElementById('pdf-prev');
+                            const nextBtn = document.getElementById('pdf-next');
+                            
+                            if (prevBtn) prevBtn.disabled = pageNum <= 1;
+                            if (nextBtn) nextBtn.disabled = pageNum >= pdf.numPages;
+                            
+                        }).catch(error => {
+                            console.error('❌ Error en render task:', error);
+                            isRendering = false;
+                        });
+                        
+                        // Touch events para swipe (solo móvil) - solo agregar una vez
+                        if (isMobile && !canvas.dataset.swipeAdded) {
+                            canvas.dataset.swipeAdded = 'true';
+                            
+                            canvas.addEventListener('touchstart', (e) => {
+                                touchStartX = e.changedTouches[0].screenX;
+                            }, { passive: true });
+                            
+                            canvas.addEventListener('touchend', (e) => {
+                                touchEndX = e.changedTouches[0].screenX;
+                                handleSwipe();
+                            }, { passive: true });
+                        }
+                        
+                    }).catch(error => {
+                        console.error('❌ Error obteniendo página:', error);
+                        isRendering = false;
+                    });
+                };
+                
+                const handleSwipe = () => {
+                    // No hacer nada si ya está renderizando
+                    if (isRendering) {
+                        console.log('⏳ Swipe ignorado - renderizando...');
+                        return;
+                    }
+                    
+                    const swipeThreshold = 50;
+                    const diff = touchStartX - touchEndX;
+                    
+                    if (Math.abs(diff) > swipeThreshold) {
+                        if (diff > 0 && currentPage < pdf.numPages) {
+                            // Swipe izquierda - página siguiente
+                            currentPage++;
+                            renderPage(currentPage);
+                        } else if (diff < 0 && currentPage > 1) {
+                            // Swipe derecha - página anterior
+                            currentPage--;
+                            renderPage(currentPage);
+                        }
+                    }
+                };
+                
+                // Renderizar primera página
+                renderPage(currentPage);
+                updateZoomDisplay();
+                
+                // Navegación con botones
+                const prevBtn = document.getElementById('pdf-prev');
+                const nextBtn = document.getElementById('pdf-next');
+                
+                if (prevBtn) {
+                    prevBtn.onclick = () => {
+                        if (currentPage > 1) {
+                            currentPage--;
+                            renderPage(currentPage);
+                        }
+                    };
+                }
+                
+                if (nextBtn) {
+                    nextBtn.onclick = () => {
+                        if (currentPage < pdf.numPages) {
+                            currentPage++;
+                            renderPage(currentPage);
+                        }
+                    };
+                }
+                
+                // Controles de zoom
+                const zoomInBtn = document.getElementById('pdf-zoom-in');
+                const zoomOutBtn = document.getElementById('pdf-zoom-out');
+                
+                if (zoomInBtn) {
+                    zoomInBtn.onclick = () => {
+                        if (currentScale < 3) {
+                            currentScale += 0.25;
+                            renderPage(currentPage);
+                            updateZoomDisplay();
+                        }
+                    };
+                }
+                
+                if (zoomOutBtn) {
+                    zoomOutBtn.onclick = () => {
+                        if (currentScale > 0.5) {
+                            currentScale -= 0.25;
+                            renderPage(currentPage);
+                            updateZoomDisplay();
+                        }
+                    };
+                }
+                
+                // Pinch to zoom para móvil
+                if ('ontouchstart' in window) {
+                    let initialDistance = 0;
+                    let initialScale = currentScale;
+                    
+                    container.addEventListener('touchstart', (e) => {
+                        if (e.touches.length === 2) {
+                            e.preventDefault();
+                            const touch1 = e.touches[0];
+                            const touch2 = e.touches[1];
+                            initialDistance = Math.hypot(
+                                touch2.pageX - touch1.pageX,
+                                touch2.pageY - touch1.pageY
+                            );
+                            initialScale = currentScale;
+                        }
+                    });
+                    
+                    container.addEventListener('touchmove', (e) => {
+                        if (e.touches.length === 2) {
+                            e.preventDefault();
+                            const touch1 = e.touches[0];
+                            const touch2 = e.touches[1];
+                            const distance = Math.hypot(
+                                touch2.pageX - touch1.pageX,
+                                touch2.pageY - touch1.pageY
+                            );
+                            
+                            const scale = (distance / initialDistance) * initialScale;
+                            if (scale >= 0.5 && scale <= 3) {
+                                currentScale = scale;
+                                renderPage(currentPage);
+                                updateZoomDisplay();
+                            }
+                        }
+                    });
+                }
+                
+                // Mostrar hint de swipe en móvil
+                if (window.innerWidth <= 768) {
+                    const hint = document.querySelector('.pdf-swipe-hint');
+                    if (hint) {
+                        setTimeout(() => {
+                            hint.style.animation = 'fadeInOut 3s ease-in-out';
+                        }, 500);
+                    }
+                }
+            }).catch(error => {
+                console.error('Error cargando PDF:', error);
+                container.innerHTML = '<div class="pdf-loading">Error al cargar el PDF</div>';
+            });
+        };
+        
+        if (!document.querySelector('script[src*="pdf.js"]')) {
+            document.head.appendChild(script);
+        } else {
+            script.onload();
+        }
+    },
+
     closePdfViewer: function() {
         console.log('🔒 [FICHA] Cerrando visor PDF');
         
         const pdfViewer = document.getElementById('pdf-viewer');
-        const pdfFrame = document.getElementById('pdf-frame');
         
         if (pdfViewer) {
             pdfViewer.classList.remove('show');
             document.body.style.overflow = 'auto';
             
-            // Limpiar iframe
-            if (pdfFrame) {
-                pdfFrame.src = '';
+            // Limpiar contenedor
+            const container = document.getElementById('pdf-canvas-container');
+            if (container) {
+                container.innerHTML = '<div class="pdf-loading">Cargando PDF...</div>';
             }
             
             console.log('✅ [FICHA] Visor cerrado');
