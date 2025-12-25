@@ -11,10 +11,12 @@
         /* HERO NOSOTROS */
         .nosotros-hero {
             position: relative;
-            padding: 8rem 2rem 6rem;
+            min-height: 85vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background: linear-gradient(135deg, #7c3aed 0%, #10b981 100%);
             color: white;
-            text-align: center;
             overflow: hidden;
         }
 
@@ -22,33 +24,32 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: repeating-linear-gradient(
-                45deg,
-                transparent,
-                transparent 20px,
-                rgba(255, 255, 255, 0.03) 20px,
-                rgba(255, 255, 255, 0.03) 40px
-            );
+            background: url('https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=1920&h=1080&fit=crop');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: 0;
         }
 
         .nosotros-hero-content {
             position: relative;
             z-index: 2;
-            max-width: 800px;
-            margin: 0 auto;
+            max-width: 900px;
+            padding: 2rem;
+            text-align: center;
         }
 
         .nosotros-hero h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
+            font-size: 4.5rem;
+            font-weight: 900;
             margin-bottom: 1.5rem;
-            line-height: 1.2;
+            line-height: 1.1;
         }
 
         .nosotros-hero p {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             opacity: 0.95;
-            line-height: 1.6;
+            line-height: 1.7;
         }
 
         /* SECCIÓN CON IMAGEN */
@@ -434,12 +435,8 @@
         }
 
         @media (max-width: 768px) {
-            .nosotros-hero {
-                padding: 5rem 1.5rem 4rem;
-            }
-
             .nosotros-hero h1 {
-                font-size: 2rem;
+                font-size: 2.5rem;
             }
 
             .nosotros-hero p {
