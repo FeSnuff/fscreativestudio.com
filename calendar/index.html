@@ -145,6 +145,21 @@
   .legend div{display:flex;align-items:center;gap:.35rem;font-size:.71rem;color:var(--ink-2)}
   .legend i{width:.5rem;height:.5rem;border-radius:2px;background:var(--c);display:block}
 
+  /* ---------- botón de pantalla completa ---------- */
+  #btnFs{
+    position:fixed;right:calc(var(--pad) * 1.25);bottom:var(--pad);z-index:50;
+    display:flex;align-items:center;gap:.4rem;
+    font-family:var(--sans);font-size:.75rem;color:var(--ink-2);
+    background:var(--paper);border:1px solid var(--line);border-radius:999px;
+    padding:.35rem .7rem .35rem .55rem;cursor:pointer;
+    box-shadow:0 1px 3px rgba(20,22,26,.06);
+    transition:border-color .15s ease, color .15s ease;
+  }
+  #btnFs:hover{border-color:var(--line-2);color:var(--ink)}
+  #btnFs:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  #btnFs svg{width:.9rem;height:.9rem;display:block}
+  body.fs #btnFs{display:none}
+
   @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 
@@ -183,6 +198,13 @@
     </aside>
   </main>
 </div>
+
+<button id="btnFs" type="button" title="Pantalla completa">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8.5 3.5h-5v5M15.5 3.5h5v5M8.5 20.5h-5v-5M15.5 20.5h5v-5"></path>
+  </svg>
+  Pantalla completa
+</button>
 
 <script>
 /* ============================================================
@@ -391,4 +413,23 @@ function tic(){
 }
 tic();
 setInterval(tic, 20000);
+
+/* --- pantalla completa: el botón desaparece al entrar --- */
+(function fs(){
+  const btn = document.getElementById("btnFs");
+  const el  = document.documentElement;
+
+  const activa = () => document.fullscreenElement || document.webkitFullscreenElement;
+  const marca  = () => document.body.classList.toggle("fs", !!activa());
+
+  btn.addEventListener("click", () => {
+    if (activa()) return;
+    const pedir = el.requestFullscreen || el.webkitRequestFullscreen;
+    if (pedir) Promise.resolve(pedir.call(el)).catch(() => {});
+  });
+
+  document.addEventListener("fullscreenchange", marca);
+  document.addEventListener("webkitfullscreenchange", marca);
+  marca();
+})();
 </script>
