@@ -22,7 +22,12 @@
 
     --sans:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
     --disp:"Archivo","Helvetica Neue",Arial,sans-serif;
-    --pad:clamp(13px, 1.5vh, 28px);
+
+    /* Todo el tamaño sale de la altura de la pantalla.
+       Si en tu TV lo ves chico o grande, mueve solo --escala (0.9 – 1.3). */
+    --escala:1;
+    --base:calc(clamp(10.5px, 1.5vh, 26px) * var(--escala));
+    --pad:calc(clamp(9px, 1.35vh, 26px) * var(--escala));
   }
 
   *{box-sizing:border-box;margin:0;padding:0}
@@ -30,7 +35,7 @@
   body{
     background:var(--paper);color:var(--ink);
     font-family:var(--sans);
-    font-size:clamp(12px, 0.95vh + 0.34vw, 21px);
+    font-size:var(--base);
     line-height:1.35;-webkit-font-smoothing:antialiased;
   }
   .app{
@@ -52,7 +57,7 @@
   .clock{font-family:var(--disp);font-weight:600;font-size:2.55rem;letter-spacing:-.03em;line-height:.95;font-variant-numeric:tabular-nums}
 
   /* ---------- rejilla principal ---------- */
-  .main{display:grid;grid-template-columns:1fr minmax(250px, 26vw);gap:calc(var(--pad) * 1.3);min-height:0}
+  .main{display:grid;grid-template-columns:1fr clamp(210px, 24vw, 460px);gap:calc(var(--pad) * 1.2);min-height:0}
 
   /* ---------- calendario ---------- */
   .cal{display:flex;flex-direction:column;min-height:0;min-width:0}
@@ -66,7 +71,7 @@
   }
   .cell{
     border-right:1px solid var(--line);border-bottom:1px solid var(--line);
-    padding:.35rem .35rem .3rem;display:flex;flex-direction:column;gap:.2rem;
+    padding:.35rem .38rem .3rem;display:flex;flex-direction:column;gap:.25rem;
     min-height:0;overflow:hidden;
   }
   .cell:nth-child(7n){border-right:none}
@@ -83,17 +88,24 @@
   .cell.today{background:#FBFAF6;box-shadow:inset 0 0 0 2px var(--ink)}
   .today .num{background:var(--ink);color:var(--paper);border-radius:999px;min-width:1.75rem;text-align:center;font-weight:600}
   .fc{width:.95rem;height:.95rem;opacity:.85;flex:none}
+  .hr{display:flex;align-items:center;gap:.3rem;margin-left:auto;padding-right:.1rem}
 
   .chip{
-    display:flex;align-items:baseline;gap:.4rem;border-radius:4px;
-    padding:.15rem .4rem .18rem .35rem;border-left:3px solid var(--c);background:var(--bg);
-    font-size:.77rem;line-height:1.25;white-space:nowrap;overflow:hidden;
+    display:flex;align-items:flex-start;gap:.35rem;border-radius:4px;
+    padding:.2rem .35rem .22rem .35rem;border-left:3px solid var(--c);background:var(--bg);
+    font-size:.79rem;line-height:1.28;overflow:hidden;
   }
-  .chip time{font-family:var(--disp);font-variant-numeric:tabular-nums;color:var(--c);font-weight:600;font-size:.71rem;flex:none}
-  .chip span{overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
+  .chip time{
+    font-family:var(--disp);font-variant-numeric:tabular-nums;color:var(--c);
+    font-weight:600;font-size:.72rem;flex:none;padding-top:.08rem;
+  }
+  .chip span{
+    color:var(--ink);min-width:0;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
   .chip.all{background:var(--c);border-left-color:var(--c)}
   .chip.all span{color:#fff;font-weight:500}
-  .more{font-size:.71rem;color:var(--ink-3);padding-left:.4rem}
+  .more{font-size:.72rem;color:var(--ink-3);font-variant-numeric:tabular-nums;white-space:nowrap}
 
   /* ---------- panel del día ---------- */
   .day{display:flex;flex-direction:column;min-height:0;border-left:2px solid var(--line-2);padding-left:calc(var(--pad) * 1.15)}
@@ -120,10 +132,6 @@
     position:absolute;left:2.55rem;right:0;z-index:0;background:var(--agua-t);
     border-top:1px dashed var(--agua-l);border-bottom:1px dashed var(--agua-l);border-radius:3px;
   }
-  .banda em{
-    position:absolute;right:.4rem;bottom:.15rem;font-style:normal;
-    font-size:.68rem;color:var(--agua);letter-spacing:.06em;text-transform:uppercase;font-weight:600;
-  }
   .ev{
     position:absolute;left:2.55rem;right:0;z-index:2;background:var(--bg);
     border-left:3px solid var(--c);border-radius:5px;padding:.18rem .45rem;overflow:hidden;
@@ -141,24 +149,23 @@
   .prox i{font-style:normal;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:600;flex:none}
   .prox span{color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .prox b{font-family:var(--disp);font-variant-numeric:tabular-nums;color:var(--ink-2);flex:none}
-  .legend{display:flex;flex-wrap:wrap;gap:.35rem .85rem}
+  .legend{display:flex;flex-wrap:wrap;gap:.35rem .85rem;padding-right:2.6rem}
   .legend div{display:flex;align-items:center;gap:.35rem;font-size:.71rem;color:var(--ink-2)}
   .legend i{width:.5rem;height:.5rem;border-radius:2px;background:var(--c);display:block}
 
   /* ---------- botón de pantalla completa ---------- */
   #btnFs{
-    position:fixed;right:calc(var(--pad) * 1.25);bottom:var(--pad);z-index:50;
-    display:flex;align-items:center;gap:.4rem;
-    font-family:var(--sans);font-size:.75rem;color:var(--ink-2);
-    background:var(--paper);border:1px solid var(--line);border-radius:999px;
-    padding:.35rem .7rem .35rem .55rem;cursor:pointer;
-    box-shadow:0 1px 3px rgba(20,22,26,.06);
+    position:fixed;right:calc(var(--pad) * 1.25);bottom:calc(var(--pad) * .7);z-index:50;
+    display:grid;place-items:center;width:2rem;height:2rem;
+    color:var(--ink-3);background:var(--paper);
+    border:1px solid var(--line);border-radius:999px;cursor:pointer;
     transition:border-color .15s ease, color .15s ease;
   }
   #btnFs:hover{border-color:var(--line-2);color:var(--ink)}
   #btnFs:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-  #btnFs svg{width:.9rem;height:.9rem;display:block}
+  #btnFs svg{width:.95rem;height:.95rem;display:block}
   body.fs #btnFs{display:none}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 
   @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -203,7 +210,7 @@
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
     <path d="M8.5 3.5h-5v5M15.5 3.5h5v5M8.5 20.5h-5v-5M15.5 20.5h5v-5"></path>
   </svg>
-  Pantalla completa
+  <span class="sr">Pantalla completa</span>
 </button>
 
 <script>
@@ -318,11 +325,18 @@ document.getElementById("wx").innerHTML =
   `<b>${CLIMA.actual.temp}&deg;</b> ${CLIMA.actual.texto}
    <u>${CLIMA.actual.min}&deg; / ${CLIMA.actual.max}&deg;</u>`;
 
+/* Cuántas tareas caben por casilla y cada cuántas horas se rotula el horario:
+   depende de la altura real de la pantalla (720p vs 1080p vs 4K).      */
+const corto  = () => window.innerHeight < 820;
+const MAXCHIP = () => corto() ? 2 : 3;
+const PASOH   = () => corto() ? 2 : 1;
+
 /* --- rejilla del mes --- */
-(function mes(){
+function pintarMes(){
   const offset   = (new Date(ANIO, MES, 1).getDay() + 6) % 7;   // lunes = 0
   const diasMes  = new Date(ANIO, MES + 1, 0).getDate();
   const diasPrev = new Date(ANIO, MES, 0).getDate();
+  const max = MAXCHIP();
   let html = "";
 
   for (let i = 0; i < 35; i++){
@@ -333,21 +347,24 @@ document.getElementById("wx").innerHTML =
     const cls = ["cell", dentro ? "" : "off", finde ? "fin" : "", dentro && n === HOY ? "today" : ""].join(" ");
     const fc = dentro && CLIMA.pron[n] ? svg(CLIMA.pron[n], "fc") : "";
 
-    let chips = "";
+    let chips = "", extra = "";
     if (dentro){
       const evs = porDia(n);
-      evs.slice(0,3).forEach(e => {
+      evs.slice(0, max).forEach(e => {
         const k = CAT[e.c];
         chips += e.all
           ? `<div class="chip all" style="--c:${k.c}"><span>${e.t}</span></div>`
           : `<div class="chip" style="--c:${k.c};--bg:${k.bg}"><time>${hhmm(e.ini)}</time><span>${e.t}</span></div>`;
       });
-      if (evs.length > 3) chips += `<div class="more">+${evs.length - 3} más</div>`;
+      if (evs.length > max) extra = `<span class="more">+${evs.length - max}</span>`;
     }
-    html += `<div class="${cls}"><div class="head"><div class="num">${num}</div>${fc}</div>${chips}</div>`;
+    html += `<div class="${cls}">
+               <div class="head"><div class="num">${num}</div><div class="hr">${extra}${fc}</div></div>
+               ${chips}
+             </div>`;
   }
   document.getElementById("weeks").innerHTML = html;
-})();
+}
 
 /* --- aviso del clima --- */
 (function aviso(){
@@ -361,17 +378,19 @@ document.getElementById("wx").innerHTML =
 
 /* --- agenda del día --- */
 const INI = 6, FIN = 21;
-(function agenda(){
+function pintarAgenda(){
   const span = FIN - INI;
   const pos = h => ((Math.min(Math.max(h, INI), FIN) - INI) / span) * 100;
+  const paso = PASOH();
   let html = "";
 
   if (CLIMA.aviso){
     const t = pos(CLIMA.aviso.ini), b = pos(CLIMA.aviso.fin);
-    html += `<div class="banda" style="top:${t}%;height:${b - t}%"><em>lluvia</em></div>`;
+    html += `<div class="banda" style="top:${t}%;height:${b - t}%"></div>`;
   }
   for (let h = INI; h <= FIN; h++){
-    html += `<div class="hour" style="top:${pos(h)}%"><b>${hhmm(h)}</b></div>`;
+    const rotulo = ((h - INI) % paso === 0) ? `<b>${hhmm(h)}</b>` : "";
+    html += `<div class="hour" style="top:${pos(h)}%">${rotulo}</div>`;
   }
 
   const evs = porDia(HOY).filter(e => !e.all);
@@ -387,7 +406,10 @@ const INI = 6, FIN = 21;
 
   document.getElementById("rail").innerHTML = html + `<div class="nowline" id="nowline" hidden></div>`;
   document.getElementById("count").textContent = porDia(HOY).length + " actividades";
-})();
+}
+
+pintarMes();
+pintarAgenda();
 
 /* --- leyenda --- */
 document.getElementById("legend").innerHTML =
@@ -413,6 +435,13 @@ function tic(){
 }
 tic();
 setInterval(tic, 20000);
+
+/* --- si cambia el tamaño de pantalla (o entra a pantalla completa), redibuja --- */
+let espera;
+window.addEventListener("resize", () => {
+  clearTimeout(espera);
+  espera = setTimeout(() => { pintarMes(); pintarAgenda(); tic(); }, 250);
+});
 
 /* --- pantalla completa: el botón desaparece al entrar --- */
 (function fs(){
