@@ -4,75 +4,86 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Instrument+Sans:wght@400;500;600&display=swap">
 <style>
   :root{
+    /* ---- DOS UNIDADES INDEPENDIENTES ----------------------------------
+       --u   : estructura (márgenes, casillas, altos). Fija, sale de la altura
+               de la pantalla. NO cambia con Ctrl + rueda.
+       --txt : tamaño de letra. Es lo único que mueve Ctrl + rueda.
+       Todo lo que está en rem es texto; todo lo que usa --u es estructura. */
+    --u:clamp(9px, 1.35vh, 26px);
+    --txt:15px;
+    --gut:calc(var(--txt) * 2.7);   /* canal de las horas en el horario */
+    font-size:var(--txt);
+
     --paper:#FFFFFF;
     --wash:#F6F5F2;
     --ink:#15161A;
     --ink-2:#585B62;
     --ink-3:#93969C;
-    --line:#DBD8D1;      /* malla */
-    --line-2:#BFBCB3;    /* marco y separadores fuertes */
+    --line:#DBD8D1;
+    --line-2:#BFBCB3;
     --now:#C0442E;
 
     --trabajo:#2F6F7E;  --trabajo-t:#E6F0F2;
     --casa:#A9702A;     --casa-t:#F7EEE0;
     --estudio:#6B5AA6;  --estudio-t:#EFEBF8;
     --personal:#4F7A52; --personal-t:#E8F1E8;
-
     --agua:#3A6EA5;     --agua-t:#EAF2F9;  --agua-l:#B7CEE4;
 
     --sans:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
     --disp:"Archivo","Helvetica Neue",Arial,sans-serif;
-
-    /* Todo el tamaño sale de la altura de la pantalla.
-       Si en tu TV lo ves chico o grande, mueve solo --escala (0.9 – 1.3). */
-    --escala:1;
-    --base:calc(clamp(10.5px, 1.5vh, 26px) * var(--escala));
-    --pad:calc(clamp(9px, 1.35vh, 26px) * var(--escala));
   }
 
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%;overflow:hidden}
   body{
     background:var(--paper);color:var(--ink);
-    font-family:var(--sans);
-    font-size:var(--base);
-    line-height:1.35;-webkit-font-smoothing:antialiased;
+    font-family:var(--sans);font-size:1rem;line-height:1.35;
+    -webkit-font-smoothing:antialiased;
   }
+  /* el texto se parte antes de cortarse a media palabra */
+  .chip span,.ev p,.ev small,.aviso b,.aviso small,.prox span{
+    overflow-wrap:break-word;hyphens:auto;
+  }
+
   .app{
     height:100vh;height:100dvh;
-    display:grid;grid-template-rows:auto 1fr;gap:var(--pad);
-    padding:var(--pad) calc(var(--pad) * 1.25);
+    display:grid;grid-template-rows:auto 1fr;gap:var(--u);
+    padding:var(--u) calc(var(--u) * 1.25);
   }
 
   /* ---------- barra superior ---------- */
-  .top{display:flex;align-items:flex-end;justify-content:space-between;gap:2rem}
+  .top{display:flex;align-items:flex-end;justify-content:space-between;gap:calc(var(--u) * 2)}
   .eyebrow{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-3);font-weight:500}
-  .month{font-family:var(--disp);font-weight:600;font-size:2.1rem;letter-spacing:-.025em;line-height:1.05;margin-top:.15rem}
+  .month{font-family:var(--disp);font-weight:600;font-size:2.1rem;letter-spacing:-.025em;line-height:1.05;margin-top:.1em}
   .month span{color:var(--ink-3);font-weight:400}
-  .top-right{display:flex;align-items:flex-end;gap:1.5rem}
-  .wx{display:flex;align-items:center;gap:.55rem;color:var(--ink-2);font-size:.88rem;padding-bottom:.4rem}
+  .top-right{display:flex;align-items:flex-end;gap:calc(var(--u) * 1.4)}
+  .wx{display:flex;align-items:center;gap:.45em;color:var(--ink-2);font-size:.88rem;padding-bottom:.35em}
   .wx b{font-family:var(--disp);font-weight:600;color:var(--ink);font-size:1.15rem;font-variant-numeric:tabular-nums}
   .wx u{text-decoration:none;color:var(--ink-3);font-variant-numeric:tabular-nums}
-  .ico{width:1.2rem;height:1.2rem;display:block;flex:none}
+  .ico{width:1.2em;height:1.2em;display:block;flex:none}
   .clock{font-family:var(--disp);font-weight:600;font-size:2.55rem;letter-spacing:-.03em;line-height:.95;font-variant-numeric:tabular-nums}
 
   /* ---------- rejilla principal ---------- */
-  .main{display:grid;grid-template-columns:1fr clamp(210px, 24vw, 460px);gap:calc(var(--pad) * 1.2);min-height:0}
+  .main{
+    display:grid;
+    grid-template-columns:1fr clamp(210px, 24vw, 460px);
+    gap:calc(var(--u) * 1.2);min-height:0;
+  }
 
   /* ---------- calendario ---------- */
   .cal{display:flex;flex-direction:column;min-height:0;min-width:0}
-  .dow{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:2px solid var(--line-2);padding-bottom:.4rem}
-  .dow div{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);font-weight:600;padding-left:.4rem}
+  .dow{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:2px solid var(--line-2);padding-bottom:calc(var(--u) * .35)}
+  .dow div{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);font-weight:600;padding-left:calc(var(--u) * .4)}
   .dow .fin{color:var(--ink-3)}
   .weeks{
     flex:1;min-height:0;display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:1fr;
-    border-left:1px solid var(--line);border-top:none;
-    border-right:1px solid var(--line);border-bottom:1px solid var(--line);
+    border-left:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line);
   }
   .cell{
     border-right:1px solid var(--line);border-bottom:1px solid var(--line);
-    padding:.35rem .38rem .3rem;display:flex;flex-direction:column;gap:.25rem;
-    min-height:0;overflow:hidden;
+    padding:calc(var(--u) * .3) calc(var(--u) * .35);
+    display:flex;flex-direction:column;gap:calc(var(--u) * .22);
+    min-height:0;min-width:0;overflow:hidden;
   }
   .cell:nth-child(7n){border-right:none}
   .cell:nth-last-child(-n+7){border-bottom:none}
@@ -80,24 +91,26 @@
   .cell.off .num{color:var(--ink-3)}
   .cell.fin{background:#FCFCFB}
   .cell.off.fin{background:var(--wash)}
-  .head{display:flex;align-items:center;justify-content:space-between;gap:.3rem;min-height:1.45rem}
+  .cell.today{background:#FBFAF6;box-shadow:inset 0 0 0 2px var(--ink)}
+
+  .head{display:flex;align-items:center;gap:.3em;min-height:1.5em}
   .num{
     font-family:var(--disp);font-weight:500;font-size:.95rem;color:var(--ink-2);
-    font-variant-numeric:tabular-nums;padding:.05rem .3rem;
+    font-variant-numeric:tabular-nums;padding:0 .3em;
   }
-  .cell.today{background:#FBFAF6;box-shadow:inset 0 0 0 2px var(--ink)}
-  .today .num{background:var(--ink);color:var(--paper);border-radius:999px;min-width:1.75rem;text-align:center;font-weight:600}
-  .fc{width:.95rem;height:.95rem;opacity:.85;flex:none}
-  .hr{display:flex;align-items:center;gap:.3rem;margin-left:auto;padding-right:.1rem}
+  .today .num{background:var(--ink);color:var(--paper);border-radius:999px;min-width:1.75em;text-align:center;font-weight:600}
+  .hr{display:flex;align-items:center;gap:.3em;margin-left:auto}
+  .fc{width:1em;height:1em;opacity:.85;flex:none}
+  .more{font-size:.72rem;color:var(--ink-3);font-variant-numeric:tabular-nums;white-space:nowrap}
 
   .chip{
-    display:flex;align-items:flex-start;gap:.35rem;border-radius:4px;
-    padding:.2rem .35rem .22rem .35rem;border-left:3px solid var(--c);background:var(--bg);
+    display:flex;align-items:flex-start;gap:.35em;border-radius:4px;
+    padding:.2em .35em .22em;border-left:3px solid var(--c);background:var(--bg);
     font-size:.79rem;line-height:1.28;overflow:hidden;
   }
   .chip time{
     font-family:var(--disp);font-variant-numeric:tabular-nums;color:var(--c);
-    font-weight:600;font-size:.72rem;flex:none;padding-top:.08rem;
+    font-weight:600;font-size:.9em;flex:none;padding-top:.08em;
   }
   .chip span{
     color:var(--ink);min-width:0;
@@ -105,69 +118,81 @@
   }
   .chip.all{background:var(--c);border-left-color:var(--c)}
   .chip.all span{color:#fff;font-weight:500}
-  .more{font-size:.72rem;color:var(--ink-3);font-variant-numeric:tabular-nums;white-space:nowrap}
 
   /* ---------- panel del día ---------- */
-  .day{display:flex;flex-direction:column;min-height:0;border-left:2px solid var(--line-2);padding-left:calc(var(--pad) * 1.15)}
-  .day-head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem}
+  .day{
+    display:flex;flex-direction:column;min-height:0;min-width:0;
+    border-left:2px solid var(--line-2);padding-left:calc(var(--u) * 1.15);
+  }
+  .day-head{display:flex;align-items:baseline;justify-content:space-between;gap:calc(var(--u) * .8)}
   .day-head h2{font-family:var(--disp);font-weight:600;font-size:1.3rem;letter-spacing:-.02em}
-  .day-head .count{font-size:.76rem;color:var(--ink-3)}
+  .day-head .count{font-size:.76rem;color:var(--ink-3);white-space:nowrap}
 
   .aviso{
-    display:flex;gap:.55rem;align-items:flex-start;margin-top:.6rem;
+    display:flex;gap:.5em;align-items:flex-start;margin-top:calc(var(--u) * .55);
     background:var(--agua-t);border-left:3px solid var(--agua);border-radius:5px;
-    padding:.4rem .55rem;
+    padding:.4em .55em;
   }
-  .aviso .ico{width:1.05rem;height:1.05rem;margin-top:.1rem}
+  .aviso .ico{width:1.05em;height:1.05em;margin-top:.15em}
   .aviso b{display:block;font-size:.79rem;color:var(--agua);font-weight:600;line-height:1.25}
   .aviso small{display:block;font-size:.74rem;color:var(--ink-2);line-height:1.3}
 
-  .rail{position:relative;flex:1;min-height:0;margin:.8rem 0 .5rem}
+  .rail{position:relative;flex:1;min-height:0;margin:calc(var(--u) * .8) 0 calc(var(--u) * .5)}
   .hour{position:absolute;left:0;right:0;border-top:1px solid var(--line);z-index:1}
   .hour b{
-    position:absolute;top:-.55rem;left:0;font-family:var(--disp);font-size:.68rem;font-weight:500;
-    color:var(--ink-3);font-variant-numeric:tabular-nums;background:var(--paper);padding-right:.35rem;
+    position:absolute;top:-.6em;left:0;font-family:var(--disp);font-size:.68rem;font-weight:500;
+    color:var(--ink-3);font-variant-numeric:tabular-nums;background:var(--paper);padding-right:.35em;
   }
   .banda{
-    position:absolute;left:2.55rem;right:0;z-index:0;background:var(--agua-t);
+    position:absolute;left:var(--gut);right:0;z-index:0;background:var(--agua-t);
     border-top:1px dashed var(--agua-l);border-bottom:1px dashed var(--agua-l);border-radius:3px;
   }
   .ev{
-    position:absolute;left:2.55rem;right:0;z-index:2;background:var(--bg);
-    border-left:3px solid var(--c);border-radius:5px;padding:.18rem .45rem;overflow:hidden;
+    position:absolute;left:var(--gut);right:0;z-index:2;background:var(--bg);
+    border-left:3px solid var(--c);border-radius:5px;padding:.18em .45em;overflow:hidden;
   }
   .ev time{display:block;font-family:var(--disp);font-size:.68rem;font-weight:600;color:var(--c);font-variant-numeric:tabular-nums}
-  .ev p{font-size:.79rem;line-height:1.25;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .ev small{font-size:.7rem;color:var(--ink-2);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .ev.tight{display:flex;align-items:baseline;gap:.45rem;padding-top:.1rem}
+  .ev p{font-size:.79rem;line-height:1.25;color:var(--ink);overflow:hidden}
+  .ev small{font-size:.7rem;color:var(--ink-2);display:block;overflow:hidden}
+  .ev.tight{display:flex;align-items:baseline;gap:.45em;padding-top:.1em}
   .ev.tight time{flex:none}
-  .nowline{position:absolute;left:2.05rem;right:0;height:0;border-top:1.5px solid var(--now);z-index:4}
+  .ev.tight p{white-space:nowrap;text-overflow:ellipsis}
+  .nowline{position:absolute;left:calc(var(--gut) - var(--u) * .5);right:0;height:0;border-top:1.5px solid var(--now);z-index:4}
   .nowline::before{content:"";position:absolute;left:-3px;top:-3.5px;width:7px;height:7px;border-radius:999px;background:var(--now)}
 
-  .pie{border-top:1px solid var(--line);padding-top:.6rem;display:flex;flex-direction:column;gap:.5rem}
-  .prox{display:flex;align-items:baseline;gap:.5rem;font-size:.78rem}
-  .prox i{font-style:normal;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:600;flex:none}
+  .pie{border-top:1px solid var(--line);padding-top:calc(var(--u) * .55);display:flex;flex-direction:column;gap:calc(var(--u) * .45)}
+  .prox{display:flex;align-items:baseline;gap:.5em;font-size:.78rem;min-width:0}
+  .prox i{font-style:normal;font-size:.88em;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:600;flex:none}
   .prox span{color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .prox b{font-family:var(--disp);font-variant-numeric:tabular-nums;color:var(--ink-2);flex:none}
-  .legend{display:flex;flex-wrap:wrap;gap:.35rem .85rem;padding-right:2.6rem}
-  .legend div{display:flex;align-items:center;gap:.35rem;font-size:.71rem;color:var(--ink-2)}
-  .legend i{width:.5rem;height:.5rem;border-radius:2px;background:var(--c);display:block}
+  .prox b{font-family:var(--disp);font-variant-numeric:tabular-nums;color:var(--ink-2);flex:none;margin-left:auto}
+  .legend{display:flex;flex-wrap:wrap;gap:.35em .85em;padding-right:calc(var(--u) * 2.6)}
+  .legend div{display:flex;align-items:center;gap:.35em;font-size:.71rem;color:var(--ink-2)}
+  .legend i{width:.5em;height:.5em;border-radius:2px;background:var(--c);display:block;flex:none}
 
-  /* ---------- botón de pantalla completa ---------- */
+  /* ---------- controles ---------- */
   #btnFs{
-    position:fixed;right:calc(var(--pad) * 1.25);bottom:calc(var(--pad) * .7);z-index:50;
-    display:grid;place-items:center;width:2rem;height:2rem;
+    position:fixed;right:calc(var(--u) * 1.25);bottom:calc(var(--u) * .7);z-index:50;
+    display:grid;place-items:center;
+    width:calc(var(--u) * 2);height:calc(var(--u) * 2);min-width:26px;min-height:26px;
     color:var(--ink-3);background:var(--paper);
     border:1px solid var(--line);border-radius:999px;cursor:pointer;
     transition:border-color .15s ease, color .15s ease;
   }
   #btnFs:hover{border-color:var(--line-2);color:var(--ink)}
   #btnFs:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-  #btnFs svg{width:.95rem;height:.95rem;display:block}
+  #btnFs svg{width:50%;height:50%;display:block}
   body.fs #btnFs{display:none}
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 
-  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+  #zoomBadge{
+    position:fixed;left:50%;bottom:calc(var(--u) * 1.2);transform:translateX(-50%);z-index:60;
+    background:var(--ink);color:#fff;border-radius:999px;
+    padding:.35em .9em;font-size:13px;font-family:var(--sans);
+    letter-spacing:.01em;pointer-events:none;opacity:0;transition:opacity .18s ease;
+  }
+  #zoomBadge.ver{opacity:.92}
+
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
 <div class="app">
@@ -178,7 +203,7 @@
     </div>
     <div class="top-right">
       <div class="wx" id="wx"></div>
-      <div class="clock" id="clock">17:33</div>
+      <div class="clock" id="clock">--:--</div>
     </div>
   </header>
 
@@ -207,11 +232,12 @@
 </div>
 
 <button id="btnFs" type="button" title="Pantalla completa">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
     <path d="M8.5 3.5h-5v5M15.5 3.5h5v5M8.5 20.5h-5v-5M15.5 20.5h5v-5"></path>
   </svg>
   <span class="sr">Pantalla completa</span>
 </button>
+<div id="zoomBadge"></div>
 
 <script>
 /* ============================================================
@@ -228,13 +254,12 @@ const CAT = {
 const HOY = 8, MES = 8, ANIO = 2026;   // MES: 0 = enero
 
 /* Clima. cond: sol | nubes | lluvia | tormenta | viento
-   aviso: null si no hay nada que advertir ese día          */
+   aviso: null si ese día no hay nada que advertir            */
 const CLIMA = {
   actual : {temp:18, min:6, max:19, cond:"lluvia", texto:"Lluvia por la tarde"},
   aviso  : {ini:15, fin:18.5, cond:"tormenta",
             titulo:"Lluvia fuerte con granizo hacia las 16:00",
             consejo:"Sal con impermeable · el Centro se inunda en la Av. El Sol"},
-  /* pronóstico corto: se dibuja como ícono en la esquina del día */
   pron   : {8:"lluvia", 9:"lluvia", 10:"nubes", 11:"sol", 12:"sol", 13:"viento"}
 };
 
@@ -298,6 +323,8 @@ const EVENTOS = [
 /* ============================================================
    2. Render
    ============================================================ */
+document.documentElement.lang = "es";
+
 const ICO = {
   sol:`<circle cx="12" cy="12" r="4.2" fill="#F1E2C0" stroke="#C99A2E" stroke-width="1.5"/>
        <path d="M12 2.8v2.1M12 19.1v2.1M21.2 12h-2.1M4.9 12h-2.1M18.5 5.5l-1.5 1.5M7 17l-1.5 1.5M18.5 18.5L17 17M7 7L5.5 5.5"
@@ -319,24 +346,26 @@ const hhmm = h => String(Math.floor(h)).padStart(2,"0") + ":" + String(Math.roun
 const porDia = d => EVENTOS.filter(e => e.d === d)
                            .sort((a,b) => (a.all ? -1 : b.all ? 1 : a.ini - b.ini));
 
-/* --- clima en la barra superior --- */
+/* cuánto cabe: depende del alto de la casilla y del tamaño de letra actual */
+function capacidad(){
+  const alto  = window.innerHeight;
+  const linea = TXT * 1.9;                       // alto aproximado de una tarea
+  const celda = (alto * 0.78) / 5;               // alto aproximado de una casilla
+  const caben = Math.floor((celda - TXT * 1.9) / linea);
+  return { chips: Math.max(1, Math.min(3, caben)), paso: celda < linea * 3.4 ? 2 : 1 };
+}
+
 document.getElementById("wx").innerHTML =
   svg(CLIMA.actual.cond, "ico") +
   `<b>${CLIMA.actual.temp}&deg;</b> ${CLIMA.actual.texto}
    <u>${CLIMA.actual.min}&deg; / ${CLIMA.actual.max}&deg;</u>`;
-
-/* Cuántas tareas caben por casilla y cada cuántas horas se rotula el horario:
-   depende de la altura real de la pantalla (720p vs 1080p vs 4K).      */
-const corto  = () => window.innerHeight < 820;
-const MAXCHIP = () => corto() ? 2 : 3;
-const PASOH   = () => corto() ? 2 : 1;
 
 /* --- rejilla del mes --- */
 function pintarMes(){
   const offset   = (new Date(ANIO, MES, 1).getDay() + 6) % 7;   // lunes = 0
   const diasMes  = new Date(ANIO, MES + 1, 0).getDate();
   const diasPrev = new Date(ANIO, MES, 0).getDate();
-  const max = MAXCHIP();
+  const max = capacidad().chips;
   let html = "";
 
   for (let i = 0; i < 35; i++){
@@ -380,8 +409,8 @@ function pintarMes(){
 const INI = 6, FIN = 21;
 function pintarAgenda(){
   const span = FIN - INI;
-  const pos = h => ((Math.min(Math.max(h, INI), FIN) - INI) / span) * 100;
-  const paso = PASOH();
+  const pos  = h => ((Math.min(Math.max(h, INI), FIN) - INI) / span) * 100;
+  const paso = capacidad().paso;
   let html = "";
 
   if (CLIMA.aviso){
@@ -389,12 +418,10 @@ function pintarAgenda(){
     html += `<div class="banda" style="top:${t}%;height:${b - t}%"></div>`;
   }
   for (let h = INI; h <= FIN; h++){
-    const rotulo = ((h - INI) % paso === 0) ? `<b>${hhmm(h)}</b>` : "";
-    html += `<div class="hour" style="top:${pos(h)}%">${rotulo}</div>`;
+    html += `<div class="hour" style="top:${pos(h)}%">${((h - INI) % paso === 0) ? `<b>${hhmm(h)}</b>` : ""}</div>`;
   }
 
-  const evs = porDia(HOY).filter(e => !e.all);
-  evs.forEach(e => {
+  porDia(HOY).filter(e => !e.all).forEach(e => {
     const k = CAT[e.c], dur = e.fin - e.ini;
     const t = pos(e.ini), b = pos(e.fin);
     const tight = dur < 0.8;
@@ -408,10 +435,6 @@ function pintarAgenda(){
   document.getElementById("count").textContent = porDia(HOY).length + " actividades";
 }
 
-pintarMes();
-pintarAgenda();
-
-/* --- leyenda --- */
 document.getElementById("legend").innerHTML =
   Object.values(CAT).map(k => `<div style="--c:${k.c}"><i></i>${k.n}</div>`).join("");
 
@@ -423,31 +446,71 @@ function tic(){
     String(n.getHours()).padStart(2,"0") + ":" + String(n.getMinutes()).padStart(2,"0");
 
   const el = document.getElementById("nowline");
-  if (h >= INI && h <= FIN){
-    el.hidden = false;
-    el.style.top = ((h - INI) / (FIN - INI)) * 100 + "%";
-  } else { el.hidden = true; }
+  if (el){
+    const dentro = h >= INI && h <= FIN;
+    el.hidden = !dentro;
+    if (dentro) el.style.top = ((h - INI) / (FIN - INI)) * 100 + "%";
+  }
 
   const sig = porDia(HOY).filter(e => !e.all && e.ini > h)[0];
   document.getElementById("prox").innerHTML = sig
     ? `<i>Sigue</i><span>${sig.t}</span><b>${hhmm(sig.ini)}</b>`
     : `<i>Sigue</i><span>Nada más por hoy</span>`;
 }
-tic();
+
+/* ============================================================
+   3. Tamaño del texto — Ctrl + rueda, Ctrl + / −, Ctrl + 0
+   Solo cambia la letra: la estructura usa --u y no se mueve.
+   ============================================================ */
+const TXT_MIN = 9, TXT_MAX = 30;
+const porDefecto = () => Math.round(Math.min(22, Math.max(10.5, window.innerHeight * 0.0148)) * 2) / 2;
+
+let TXT = porDefecto();
+try { const g = parseFloat(localStorage.getItem("calTxt")); if (g >= TXT_MIN && g <= TXT_MAX) TXT = g; } catch(_){}
+
+let badgeT;
+function aplicar(avisar){
+  document.documentElement.style.setProperty("--txt", TXT + "px");
+  pintarMes(); pintarAgenda(); tic();
+  if (!avisar) return;
+  try { localStorage.setItem("calTxt", TXT); } catch(_){}
+  const b = document.getElementById("zoomBadge");
+  b.textContent = "Texto " + Math.round(TXT / porDefecto() * 100) + "%";
+  b.classList.add("ver");
+  clearTimeout(badgeT);
+  badgeT = setTimeout(() => b.classList.remove("ver"), 1100);
+}
+function ajustar(paso){
+  TXT = Math.min(TXT_MAX, Math.max(TXT_MIN, Math.round((TXT + paso) * 2) / 2));
+  aplicar(true);
+}
+
+window.addEventListener("wheel", e => {
+  if (!e.ctrlKey) return;
+  e.preventDefault();                       // evita el zoom del navegador
+  ajustar(e.deltaY < 0 ? 0.5 : -0.5);
+}, {passive:false});
+
+window.addEventListener("keydown", e => {
+  if (!(e.ctrlKey || e.metaKey)) return;
+  if (e.key === "+" || e.key === "=")      { e.preventDefault(); ajustar(0.5); }
+  else if (e.key === "-" || e.key === "_") { e.preventDefault(); ajustar(-0.5); }
+  else if (e.key === "0")                  { e.preventDefault(); TXT = porDefecto(); aplicar(true); }
+});
+
+aplicar(false);
 setInterval(tic, 20000);
 
-/* --- si cambia el tamaño de pantalla (o entra a pantalla completa), redibuja --- */
 let espera;
 window.addEventListener("resize", () => {
   clearTimeout(espera);
-  espera = setTimeout(() => { pintarMes(); pintarAgenda(); tic(); }, 250);
+  espera = setTimeout(() => aplicar(false), 250);
 });
 
 /* --- pantalla completa: el botón desaparece al entrar --- */
 (function fs(){
   const btn = document.getElementById("btnFs");
   const el  = document.documentElement;
-
   const activa = () => document.fullscreenElement || document.webkitFullscreenElement;
   const marca  = () => document.body.classList.toggle("fs", !!activa());
 
@@ -456,7 +519,6 @@ window.addEventListener("resize", () => {
     const pedir = el.requestFullscreen || el.webkitRequestFullscreen;
     if (pedir) Promise.resolve(pedir.call(el)).catch(() => {});
   });
-
   document.addEventListener("fullscreenchange", marca);
   document.addEventListener("webkitfullscreenchange", marca);
   marca();
