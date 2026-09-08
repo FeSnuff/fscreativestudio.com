@@ -1,0 +1,394 @@
+<title>Calendario de pared</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#FFFFFF;
+    --wash:#F6F5F2;
+    --ink:#15161A;
+    --ink-2:#585B62;
+    --ink-3:#93969C;
+    --line:#DBD8D1;      /* malla */
+    --line-2:#BFBCB3;    /* marco y separadores fuertes */
+    --now:#C0442E;
+
+    --trabajo:#2F6F7E;  --trabajo-t:#E6F0F2;
+    --casa:#A9702A;     --casa-t:#F7EEE0;
+    --estudio:#6B5AA6;  --estudio-t:#EFEBF8;
+    --personal:#4F7A52; --personal-t:#E8F1E8;
+
+    --agua:#3A6EA5;     --agua-t:#EAF2F9;  --agua-l:#B7CEE4;
+
+    --sans:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
+    --disp:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --pad:clamp(13px, 1.5vh, 28px);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden}
+  body{
+    background:var(--paper);color:var(--ink);
+    font-family:var(--sans);
+    font-size:clamp(12px, 0.95vh + 0.34vw, 21px);
+    line-height:1.35;-webkit-font-smoothing:antialiased;
+  }
+  .app{
+    height:100vh;height:100dvh;
+    display:grid;grid-template-rows:auto 1fr;gap:var(--pad);
+    padding:var(--pad) calc(var(--pad) * 1.25);
+  }
+
+  /* ---------- barra superior ---------- */
+  .top{display:flex;align-items:flex-end;justify-content:space-between;gap:2rem}
+  .eyebrow{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-3);font-weight:500}
+  .month{font-family:var(--disp);font-weight:600;font-size:2.1rem;letter-spacing:-.025em;line-height:1.05;margin-top:.15rem}
+  .month span{color:var(--ink-3);font-weight:400}
+  .top-right{display:flex;align-items:flex-end;gap:1.5rem}
+  .wx{display:flex;align-items:center;gap:.55rem;color:var(--ink-2);font-size:.88rem;padding-bottom:.4rem}
+  .wx b{font-family:var(--disp);font-weight:600;color:var(--ink);font-size:1.15rem;font-variant-numeric:tabular-nums}
+  .wx u{text-decoration:none;color:var(--ink-3);font-variant-numeric:tabular-nums}
+  .ico{width:1.2rem;height:1.2rem;display:block;flex:none}
+  .clock{font-family:var(--disp);font-weight:600;font-size:2.55rem;letter-spacing:-.03em;line-height:.95;font-variant-numeric:tabular-nums}
+
+  /* ---------- rejilla principal ---------- */
+  .main{display:grid;grid-template-columns:1fr minmax(250px, 26vw);gap:calc(var(--pad) * 1.3);min-height:0}
+
+  /* ---------- calendario ---------- */
+  .cal{display:flex;flex-direction:column;min-height:0;min-width:0}
+  .dow{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:2px solid var(--line-2);padding-bottom:.4rem}
+  .dow div{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);font-weight:600;padding-left:.4rem}
+  .dow .fin{color:var(--ink-3)}
+  .weeks{
+    flex:1;min-height:0;display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:1fr;
+    border-left:1px solid var(--line);border-top:none;
+    border-right:1px solid var(--line);border-bottom:1px solid var(--line);
+  }
+  .cell{
+    border-right:1px solid var(--line);border-bottom:1px solid var(--line);
+    padding:.35rem .35rem .3rem;display:flex;flex-direction:column;gap:.2rem;
+    min-height:0;overflow:hidden;
+  }
+  .cell:nth-child(7n){border-right:none}
+  .cell:nth-last-child(-n+7){border-bottom:none}
+  .cell.off{background:var(--wash)}
+  .cell.off .num{color:var(--ink-3)}
+  .cell.fin{background:#FCFCFB}
+  .cell.off.fin{background:var(--wash)}
+  .head{display:flex;align-items:center;justify-content:space-between;gap:.3rem;min-height:1.45rem}
+  .num{
+    font-family:var(--disp);font-weight:500;font-size:.95rem;color:var(--ink-2);
+    font-variant-numeric:tabular-nums;padding:.05rem .3rem;
+  }
+  .cell.today{background:#FBFAF6;box-shadow:inset 0 0 0 2px var(--ink)}
+  .today .num{background:var(--ink);color:var(--paper);border-radius:999px;min-width:1.75rem;text-align:center;font-weight:600}
+  .fc{width:.95rem;height:.95rem;opacity:.85;flex:none}
+
+  .chip{
+    display:flex;align-items:baseline;gap:.4rem;border-radius:4px;
+    padding:.15rem .4rem .18rem .35rem;border-left:3px solid var(--c);background:var(--bg);
+    font-size:.77rem;line-height:1.25;white-space:nowrap;overflow:hidden;
+  }
+  .chip time{font-family:var(--disp);font-variant-numeric:tabular-nums;color:var(--c);font-weight:600;font-size:.71rem;flex:none}
+  .chip span{overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
+  .chip.all{background:var(--c);border-left-color:var(--c)}
+  .chip.all span{color:#fff;font-weight:500}
+  .more{font-size:.71rem;color:var(--ink-3);padding-left:.4rem}
+
+  /* ---------- panel del día ---------- */
+  .day{display:flex;flex-direction:column;min-height:0;border-left:2px solid var(--line-2);padding-left:calc(var(--pad) * 1.15)}
+  .day-head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem}
+  .day-head h2{font-family:var(--disp);font-weight:600;font-size:1.3rem;letter-spacing:-.02em}
+  .day-head .count{font-size:.76rem;color:var(--ink-3)}
+
+  .aviso{
+    display:flex;gap:.55rem;align-items:flex-start;margin-top:.6rem;
+    background:var(--agua-t);border-left:3px solid var(--agua);border-radius:5px;
+    padding:.4rem .55rem;
+  }
+  .aviso .ico{width:1.05rem;height:1.05rem;margin-top:.1rem}
+  .aviso b{display:block;font-size:.79rem;color:var(--agua);font-weight:600;line-height:1.25}
+  .aviso small{display:block;font-size:.74rem;color:var(--ink-2);line-height:1.3}
+
+  .rail{position:relative;flex:1;min-height:0;margin:.8rem 0 .5rem}
+  .hour{position:absolute;left:0;right:0;border-top:1px solid var(--line);z-index:1}
+  .hour b{
+    position:absolute;top:-.55rem;left:0;font-family:var(--disp);font-size:.68rem;font-weight:500;
+    color:var(--ink-3);font-variant-numeric:tabular-nums;background:var(--paper);padding-right:.35rem;
+  }
+  .banda{
+    position:absolute;left:2.55rem;right:0;z-index:0;background:var(--agua-t);
+    border-top:1px dashed var(--agua-l);border-bottom:1px dashed var(--agua-l);border-radius:3px;
+  }
+  .banda em{
+    position:absolute;right:.4rem;bottom:.15rem;font-style:normal;
+    font-size:.68rem;color:var(--agua);letter-spacing:.06em;text-transform:uppercase;font-weight:600;
+  }
+  .ev{
+    position:absolute;left:2.55rem;right:0;z-index:2;background:var(--bg);
+    border-left:3px solid var(--c);border-radius:5px;padding:.18rem .45rem;overflow:hidden;
+  }
+  .ev time{display:block;font-family:var(--disp);font-size:.68rem;font-weight:600;color:var(--c);font-variant-numeric:tabular-nums}
+  .ev p{font-size:.79rem;line-height:1.25;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ev small{font-size:.7rem;color:var(--ink-2);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ev.tight{display:flex;align-items:baseline;gap:.45rem;padding-top:.1rem}
+  .ev.tight time{flex:none}
+  .nowline{position:absolute;left:2.05rem;right:0;height:0;border-top:1.5px solid var(--now);z-index:4}
+  .nowline::before{content:"";position:absolute;left:-3px;top:-3.5px;width:7px;height:7px;border-radius:999px;background:var(--now)}
+
+  .pie{border-top:1px solid var(--line);padding-top:.6rem;display:flex;flex-direction:column;gap:.5rem}
+  .prox{display:flex;align-items:baseline;gap:.5rem;font-size:.78rem}
+  .prox i{font-style:normal;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:600;flex:none}
+  .prox span{color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .prox b{font-family:var(--disp);font-variant-numeric:tabular-nums;color:var(--ink-2);flex:none}
+  .legend{display:flex;flex-wrap:wrap;gap:.35rem .85rem}
+  .legend div{display:flex;align-items:center;gap:.35rem;font-size:.71rem;color:var(--ink-2)}
+  .legend i{width:.5rem;height:.5rem;border-radius:2px;background:var(--c);display:block}
+
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="app">
+  <header class="top">
+    <div>
+      <div class="eyebrow" id="eyebrow">Cusco &middot; Semana 37</div>
+      <h1 class="month">Septiembre <span>2026</span></h1>
+    </div>
+    <div class="top-right">
+      <div class="wx" id="wx"></div>
+      <div class="clock" id="clock">17:33</div>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="cal">
+      <div class="dow">
+        <div>Lun</div><div>Mar</div><div>Mi&eacute;</div><div>Jue</div>
+        <div>Vie</div><div class="fin">S&aacute;b</div><div class="fin">Dom</div>
+      </div>
+      <div class="weeks" id="weeks"></div>
+    </section>
+
+    <aside class="day">
+      <div class="day-head">
+        <h2 id="dayTitle">Martes 8</h2>
+        <div class="count" id="count">&mdash;</div>
+      </div>
+      <div id="avisoBox"></div>
+      <div class="rail" id="rail"></div>
+      <div class="pie">
+        <div class="prox" id="prox"></div>
+        <div class="legend" id="legend"></div>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<script>
+/* ============================================================
+   1. DATOS DE PRUEBA — edita solo de aquí hasta "2. Render"
+   d = día | ini/fin = hora decimal (8.5 = 08:30) | all:true = todo el día
+   ============================================================ */
+const CAT = {
+  trabajo : {n:"Trabajo",  c:"var(--trabajo)",  bg:"var(--trabajo-t)"},
+  estudio : {n:"Estudios", c:"var(--estudio)",  bg:"var(--estudio-t)"},
+  casa    : {n:"Casa",     c:"var(--casa)",     bg:"var(--casa-t)"},
+  personal: {n:"Personal", c:"var(--personal)", bg:"var(--personal-t)"}
+};
+
+const HOY = 8, MES = 8, ANIO = 2026;   // MES: 0 = enero
+
+/* Clima. cond: sol | nubes | lluvia | tormenta | viento
+   aviso: null si no hay nada que advertir ese día          */
+const CLIMA = {
+  actual : {temp:18, min:6, max:19, cond:"lluvia", texto:"Lluvia por la tarde"},
+  aviso  : {ini:15, fin:18.5, cond:"tormenta",
+            titulo:"Lluvia fuerte con granizo hacia las 16:00",
+            consejo:"Sal con impermeable · el Centro se inunda en la Av. El Sol"},
+  /* pronóstico corto: se dibuja como ícono en la esquina del día */
+  pron   : {8:"lluvia", 9:"lluvia", 10:"nubes", 11:"sol", 12:"sol", 13:"viento"}
+};
+
+const EVENTOS = [
+  {d:1,  ini:8,    fin:9,    c:"trabajo",  t:"Revisar pendientes"},
+  {d:1,  ini:18,   fin:20,   c:"estudio",  t:"Termodinámica II"},
+  {d:2,  ini:7,    fin:8,    c:"personal", t:"Correr"},
+  {d:2,  ini:15,   fin:17,   c:"trabajo",  t:"Visita a cliente"},
+  {d:3,  ini:11,   fin:12,   c:"casa",     t:"Pagar recibos"},
+  {d:3,  ini:18,   fin:20,   c:"estudio",  t:"Grupo de estudio"},
+  {d:4,  ini:9,    fin:11,   c:"trabajo",  t:"Instalación de red"},
+  {d:4,  ini:19,   fin:21,   c:"personal", t:"Cine con Andrea"},
+  {d:5,  ini:9,    fin:12,   c:"casa",     t:"Limpieza a fondo"},
+  {d:6,  ini:12,   fin:15,   c:"personal", t:"Almuerzo familiar"},
+  {d:7,  ini:8,    fin:9,    c:"trabajo",  t:"Planificar la semana"},
+  {d:7,  ini:17,   fin:19,   c:"estudio",  t:"AIChE · reunión"},
+
+  {d:8,  ini:6.5,  fin:7.25, c:"personal", t:"Correr en el parque"},
+  {d:8,  ini:8,    fin:9,    c:"trabajo",  t:"Correos y cotizaciones"},
+  {d:8,  ini:10,   fin:11.5, c:"estudio",  t:"Fisicoquímica II", loc:"Laboratorio 3"},
+  {d:8,  ini:12,   fin:12.75,c:"personal", t:"Almuerzo"},
+  {d:8,  ini:13.5, fin:14.5, c:"casa",     t:"Banco y encomienda"},
+  {d:8,  ini:15,   fin:16,   c:"trabajo",  t:"Mantenimiento de PC", loc:"Domicilio · Wanchaq"},
+  {d:8,  ini:16.5, fin:18,   c:"estudio",  t:"Avance Chem-E-Car", loc:"Pruebas de frenado"},
+  {d:8,  ini:18.5, fin:19.25,c:"casa",     t:"Mercado de la semana"},
+  {d:8,  ini:20,   fin:21,   c:"personal", t:"Leer / descansar"},
+
+  {d:9,  ini:9,    fin:10,   c:"trabajo",  t:"Cambio de disco SSD"},
+  {d:9,  ini:14,   fin:16,   c:"estudio",  t:"Informe de laboratorio"},
+  {d:9,  ini:19,   fin:20,   c:"casa",     t:"Arreglar la ducha"},
+  {d:10, ini:10,   fin:12,   c:"trabajo",  t:"Presupuesto de equipos"},
+  {d:10, ini:18,   fin:20,   c:"estudio",  t:"Balance de materia"},
+  {d:11, ini:8.5,  fin:10,   c:"trabajo",  t:"Soporte remoto"},
+  {d:11, ini:17,   fin:19,   c:"personal", t:"Fútbol"},
+  {d:12, ini:7.5,  fin:14,   c:"personal", t:"Excursión a Huchuy Qosqo"},
+  {d:13, ini:11,   fin:13,   c:"casa",     t:"Compras del mes"},
+  {d:14, ini:9,    fin:11,   c:"trabajo",  t:"Formateo de laptops"},
+  {d:14, ini:16,   fin:18,   c:"estudio",  t:"Taller STEM · 5° grado"},
+  {d:15, ini:11,   fin:11.5, c:"casa",     t:"Renovar el internet"},
+  {d:16, ini:18,   fin:20,   c:"estudio",  t:"Parcial: Transferencia"},
+  {d:17, ini:13,   fin:15,   c:"trabajo",  t:"Reunión de coordinación"},
+  {d:18, ini:15,   fin:16,   c:"trabajo",  t:"Respaldo de servidores"},
+  {d:18, ini:19,   fin:22,   c:"personal", t:"Cumpleaños de Marco"},
+  {d:19, ini:10,   fin:18,   c:"personal", t:"Feria en la Plaza"},
+  {d:20, ini:9,    fin:11,   c:"casa",     t:"Lavar el auto"},
+  {d:21, ini:8,    fin:10,   c:"trabajo",  t:"Cotización de repuestos"},
+  {d:21, ini:18,   fin:20,   c:"estudio",  t:"Chem-E-Car: ensamblaje"},
+  {d:22, ini:12,   fin:13,   c:"casa",     t:"Pago del alquiler"},
+  {d:23, all:true, c:"personal", t:"Día de la Primavera"},
+  {d:23, ini:9.5,  fin:11,   c:"trabajo",  t:"Instalar punto de venta"},
+  {d:24, ini:16,   fin:18,   c:"estudio",  t:"Asesoría de tesis"},
+  {d:25, ini:11,   fin:12,   c:"trabajo",  t:"Cierre de caja"},
+  {d:26, ini:10,   fin:13,   c:"casa",     t:"Ordenar el taller"},
+  {d:27, ini:13,   fin:16,   c:"personal", t:"Descanso"},
+  {d:28, ini:9,    fin:11,   c:"trabajo",  t:"Planificar octubre"},
+  {d:28, ini:18,   fin:19.5, c:"estudio",  t:"Informe AIChE"},
+  {d:29, ini:8,    fin:10,   c:"trabajo",  t:"Mantenimiento preventivo"},
+  {d:30, ini:18,   fin:19,   c:"casa",     t:"Cerrar cuentas del mes"}
+];
+
+/* ============================================================
+   2. Render
+   ============================================================ */
+const ICO = {
+  sol:`<circle cx="12" cy="12" r="4.2" fill="#F1E2C0" stroke="#C99A2E" stroke-width="1.5"/>
+       <path d="M12 2.8v2.1M12 19.1v2.1M21.2 12h-2.1M4.9 12h-2.1M18.5 5.5l-1.5 1.5M7 17l-1.5 1.5M18.5 18.5L17 17M7 7L5.5 5.5"
+             stroke="#C99A2E" stroke-width="1.5" stroke-linecap="round"/>`,
+  nubes:`<path d="M7.4 18h9.8a3.6 3.6 0 0 0 .3-7.2 5.2 5.2 0 0 0-9.9-1.2A3.9 3.9 0 0 0 7.4 18Z"
+              fill="#EDEDEA" stroke="#8D9096" stroke-width="1.5" stroke-linejoin="round"/>`,
+  lluvia:`<path d="M7.6 14.6h9.2a3.4 3.4 0 0 0 .3-6.8 5 5 0 0 0-9.5-1.1 3.7 3.7 0 0 0 0 7.9Z"
+               fill="#E7EEF6" stroke="#3A6EA5" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M9 17.4l-.9 3M13 17.4l-.9 3M17 17.4l-.9 3" stroke="#3A6EA5" stroke-width="1.6" stroke-linecap="round"/>`,
+  tormenta:`<path d="M7.6 14.2h9.2a3.4 3.4 0 0 0 .3-6.8 5 5 0 0 0-9.5-1.1 3.7 3.7 0 0 0 0 7.9Z"
+                 fill="#E7EEF6" stroke="#3A6EA5" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M13.4 15.4l-3.5 4.4h2.6l-1 3.4 3.9-4.9h-2.6l1.3-2.9Z" fill="#C99A2E" stroke="#B4762A" stroke-width="1.1" stroke-linejoin="round"/>`,
+  viento:`<path d="M3.5 9.5h9.6a2.6 2.6 0 1 0-2.6-2.6M3.5 14h13a2.6 2.6 0 1 1-2.6 2.6"
+                fill="none" stroke="#8D9096" stroke-width="1.6" stroke-linecap="round"/>`
+};
+const svg = (k, cls) => `<svg class="${cls}" viewBox="0 0 24 24" fill="none">${ICO[k] || ICO.nubes}</svg>`;
+
+const hhmm = h => String(Math.floor(h)).padStart(2,"0") + ":" + String(Math.round((h % 1) * 60)).padStart(2,"0");
+const porDia = d => EVENTOS.filter(e => e.d === d)
+                           .sort((a,b) => (a.all ? -1 : b.all ? 1 : a.ini - b.ini));
+
+/* --- clima en la barra superior --- */
+document.getElementById("wx").innerHTML =
+  svg(CLIMA.actual.cond, "ico") +
+  `<b>${CLIMA.actual.temp}&deg;</b> ${CLIMA.actual.texto}
+   <u>${CLIMA.actual.min}&deg; / ${CLIMA.actual.max}&deg;</u>`;
+
+/* --- rejilla del mes --- */
+(function mes(){
+  const offset   = (new Date(ANIO, MES, 1).getDay() + 6) % 7;   // lunes = 0
+  const diasMes  = new Date(ANIO, MES + 1, 0).getDate();
+  const diasPrev = new Date(ANIO, MES, 0).getDate();
+  let html = "";
+
+  for (let i = 0; i < 35; i++){
+    const n = i - offset + 1;
+    const dentro = n >= 1 && n <= diasMes;
+    const num = dentro ? n : (n < 1 ? diasPrev + n : n - diasMes);
+    const finde = (i % 7) >= 5;
+    const cls = ["cell", dentro ? "" : "off", finde ? "fin" : "", dentro && n === HOY ? "today" : ""].join(" ");
+    const fc = dentro && CLIMA.pron[n] ? svg(CLIMA.pron[n], "fc") : "";
+
+    let chips = "";
+    if (dentro){
+      const evs = porDia(n);
+      evs.slice(0,3).forEach(e => {
+        const k = CAT[e.c];
+        chips += e.all
+          ? `<div class="chip all" style="--c:${k.c}"><span>${e.t}</span></div>`
+          : `<div class="chip" style="--c:${k.c};--bg:${k.bg}"><time>${hhmm(e.ini)}</time><span>${e.t}</span></div>`;
+      });
+      if (evs.length > 3) chips += `<div class="more">+${evs.length - 3} más</div>`;
+    }
+    html += `<div class="${cls}"><div class="head"><div class="num">${num}</div>${fc}</div>${chips}</div>`;
+  }
+  document.getElementById("weeks").innerHTML = html;
+})();
+
+/* --- aviso del clima --- */
+(function aviso(){
+  const a = CLIMA.aviso;
+  if (!a) return;
+  document.getElementById("avisoBox").innerHTML =
+    `<div class="aviso">${svg(a.cond, "ico")}
+       <div><b>${hhmm(a.ini)} – ${hhmm(a.fin)} · ${a.titulo}</b><small>${a.consejo}</small></div>
+     </div>`;
+})();
+
+/* --- agenda del día --- */
+const INI = 6, FIN = 21;
+(function agenda(){
+  const span = FIN - INI;
+  const pos = h => ((Math.min(Math.max(h, INI), FIN) - INI) / span) * 100;
+  let html = "";
+
+  if (CLIMA.aviso){
+    const t = pos(CLIMA.aviso.ini), b = pos(CLIMA.aviso.fin);
+    html += `<div class="banda" style="top:${t}%;height:${b - t}%"><em>lluvia</em></div>`;
+  }
+  for (let h = INI; h <= FIN; h++){
+    html += `<div class="hour" style="top:${pos(h)}%"><b>${hhmm(h)}</b></div>`;
+  }
+
+  const evs = porDia(HOY).filter(e => !e.all);
+  evs.forEach(e => {
+    const k = CAT[e.c], dur = e.fin - e.ini;
+    const t = pos(e.ini), b = pos(e.fin);
+    const tight = dur < 0.8;
+    html += `<div class="ev ${tight ? "tight" : ""}" style="top:${t}%;height:${b - t}%;--c:${k.c};--bg:${k.bg}">
+               <time>${hhmm(e.ini)}</time><p>${e.t}</p>
+               ${(dur >= 1.4 && e.loc) ? `<small>${e.loc}</small>` : ""}
+             </div>`;
+  });
+
+  document.getElementById("rail").innerHTML = html + `<div class="nowline" id="nowline" hidden></div>`;
+  document.getElementById("count").textContent = porDia(HOY).length + " actividades";
+})();
+
+/* --- leyenda --- */
+document.getElementById("legend").innerHTML =
+  Object.values(CAT).map(k => `<div style="--c:${k.c}"><i></i>${k.n}</div>`).join("");
+
+/* --- reloj, línea de "ahora" y lo que sigue --- */
+function tic(){
+  const n = new Date();
+  const h = n.getHours() + n.getMinutes() / 60;
+  document.getElementById("clock").textContent =
+    String(n.getHours()).padStart(2,"0") + ":" + String(n.getMinutes()).padStart(2,"0");
+
+  const el = document.getElementById("nowline");
+  if (h >= INI && h <= FIN){
+    el.hidden = false;
+    el.style.top = ((h - INI) / (FIN - INI)) * 100 + "%";
+  } else { el.hidden = true; }
+
+  const sig = porDia(HOY).filter(e => !e.all && e.ini > h)[0];
+  document.getElementById("prox").innerHTML = sig
+    ? `<i>Sigue</i><span>${sig.t}</span><b>${hhmm(sig.ini)}</b>`
+    : `<i>Sigue</i><span>Nada más por hoy</span>`;
+}
+tic();
+setInterval(tic, 20000);
+</script>
