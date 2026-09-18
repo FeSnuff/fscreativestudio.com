@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calendario</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📅</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Instrument+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/temas.css">
+<link rel="stylesheet" href="/css/calendario.css">
+<link rel="stylesheet" href="/css/portada.css">
+<script>try{document.documentElement.dataset.tema=localStorage.getItem("tema")||"nitido"}catch(e){document.documentElement.dataset.tema="nitido"}</script>
+</head>
+<body>
+
+<div class="app" id="app">
+  <header class="top">
+    <div>
+      <div class="eyebrow" id="eyebrow">—</div>
+      <h1 class="month" id="mes">—</h1>
+    </div>
+    <div class="top-right">
+      <div class="wx" id="wx"></div>
+      <div class="clock" id="reloj">--:--</div>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="cal">
+      <div class="dow" id="dow"></div>
+      <div class="weeks" id="weeks"></div>
+    </section>
+
+    <aside class="day">
+      <div class="day-head">
+        <h2 id="tituloDia">Hoy</h2>
+        <div class="count" id="cuenta">—</div>
+      </div>
+      <div id="avisoBox"></div>
+      <div id="cajaPendientes"></div>
+      <div id="tiraClima"></div>
+      <div class="linea-caja" id="lineaCaja">
+        <div class="linea saltar" id="linea"></div>
+      </div>
+      <div class="pie">
+        <div class="legend" id="legend"></div>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<div id="sinConexion"><i></i> Sin conexión con Google</div>
+
+<div class="controles">
+  <button id="btnInicio" type="button" title="Volver al inicio">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3.5 11.5 12 4l8.5 7.5M5.5 10v10h13V10"></path>
+    </svg>
+    <span class="sr">Inicio</span>
+  </button>
+  <button id="btnFs" type="button" title="Pantalla completa">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8.5 3.5h-5v5M15.5 3.5h5v5M8.5 20.5h-5v-5M15.5 20.5h5v-5"></path>
+    </svg>
+    <span class="sr">Pantalla completa</span>
+  </button>
+</div>
+<div id="badge"></div>
+
+<script type="module">
+  import { abrir } from "/js/portada.js";
+  const { arrancar } = await import("/js/calendario.js");
+  abrir(arrancar);
+</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Banco de pruebas</title>
+
+<script>
+  // Redirige la API de Google al simulador local. Tiene que correr antes que
+  // los módulos, por eso es un <script> normal y va primero.
+  const ORIGEN = location.origin;
+  const real = window.fetch;
+  window.fetch = (entrada, opciones) => {
+    let url = typeof entrada === "string" ? entrada : entrada.url;
+    url = url.replace("https://sheets.googleapis.com", ORIGEN);
+    return real(url, opciones);
+  };
+</script>
+
+<script type="importmap">
+{ "imports": { "/js/auth.js": "/prueba/auth-falso.js" } }
+</script>
+
+<body>
+<pre id="salida">listo</pre>
+
+<script type="module">
+  import * as sheets from "/js/sheets.js";
+  import * as datos from "/js/datos.js";
+  import * as M from "/js/modelos.js";
+  import * as E from "/js/esquema.js";
+  import { peticionesFormato, cuerpoCrear } from "/js/construir.js";
+
+  window.sheets = sheets;
+  window.datos = datos;
+  window.M = M;
+  window.E = E;
+  window.construir = { peticionesFormato, cuerpoCrear };
+  window.listo = true;
+</script>

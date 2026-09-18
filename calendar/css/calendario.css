@@ -1,0 +1,288 @@
+/* Modo Calendario — la pantalla de la TV. Todo cabe sin scroll. --------- */
+
+html,body{overflow:hidden}
+
+.app{
+  height:100vh;height:100dvh;
+  display:grid;grid-template-rows:auto 1fr;gap:var(--u);
+  padding:var(--u) calc(var(--u) * 1.25);
+  animation:entrar .3s ease-out both;
+  transform:translate(var(--dx,0px), var(--dy,0px));   /* anti quemado */
+  transition:opacity .8s ease, filter .8s ease;
+}
+.app.atenuado{opacity:.45;filter:saturate(.75)}
+
+.chip span,.cita .tit,.cita small,.aviso b,.aviso small{overflow-wrap:break-word;hyphens:auto}
+
+/* ---------- barra superior ---------------------------------------------- */
+
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:calc(var(--u) * 2)}
+.eyebrow{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--azul);font-weight:600}
+.month{font-family:var(--disp);font-weight:var(--peso-titulo);font-size:2.1rem;letter-spacing:-.025em;line-height:1.05;margin-top:.1em}
+.month span{color:var(--ink-3);font-weight:400}
+.top-right{display:flex;align-items:flex-end;gap:calc(var(--u) * 1.4)}
+.wx{display:flex;align-items:center;gap:.45em;color:var(--ink-2);font-size:.88rem;padding-bottom:.35em}
+.wx b{font-family:var(--disp);font-weight:600;color:var(--ink);font-size:1.15rem;font-variant-numeric:tabular-nums}
+.wx u{text-decoration:none;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.ico{width:1.2em;height:1.2em;display:block;flex:none}
+.clock{font-family:var(--disp);font-weight:var(--peso-titulo);font-size:2.55rem;letter-spacing:-.03em;line-height:.95;font-variant-numeric:tabular-nums}
+
+/* ---------- rejilla ------------------------------------------------------ */
+
+.main{display:grid;grid-template-columns:1fr clamp(210px, 25vw, 480px);gap:calc(var(--u) * 1.2);min-height:0}
+.cal{display:flex;flex-direction:column;min-height:0;min-width:0}
+.dow{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:2px solid var(--line-2);padding-bottom:calc(var(--u) * .35)}
+.dow div{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);font-weight:600;padding-left:calc(var(--u) * .4)}
+.dow .fin{color:var(--ink-3)}
+.weeks{
+  flex:1;min-height:0;display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:1fr;
+  border-left:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line);
+}
+.cell{
+  border-right:1px solid var(--line);border-bottom:1px solid var(--line);
+  padding:calc(var(--u) * .3) calc(var(--u) * .35);
+  display:flex;flex-direction:column;gap:calc(var(--u) * .22);
+  min-height:0;min-width:0;overflow:hidden;
+}
+.cell:nth-child(7n){border-right:none}
+.cell:nth-last-child(-n+7){border-bottom:none}
+.cell.off{background:var(--wash)}
+.cell.off .num{color:var(--ink-3)}
+.cell.fin{background:var(--fin-bg)}
+.cell.off.fin{background:var(--wash)}
+.cell.today{background:var(--hoy-bg)}
+
+.head{display:flex;align-items:center;gap:.3em;min-height:1.5em}
+.num{font-family:var(--disp);font-weight:500;font-size:.95rem;color:var(--ink-2);font-variant-numeric:tabular-nums;padding:0 .3em}
+.today .num{background:var(--ink);color:var(--paper);border-radius:999px;min-width:1.75em;text-align:center;font-weight:700}
+.hr{display:flex;align-items:center;gap:.3em;margin-left:auto}
+.fc{width:1em;height:1em;opacity:.9;flex:none}
+.more{font-size:.72rem;color:var(--ink-3);font-variant-numeric:tabular-nums;white-space:nowrap}
+/* el día dejó algo sin hacer */
+.olvido{
+  display:grid;place-items:center;min-width:1.25em;height:1.25em;padding:0 .3em;
+  border-radius:999px;background:var(--pend);color:var(--paper);
+  font-family:var(--disp);font-size:.6rem;font-weight:700;line-height:1;
+  font-variant-numeric:tabular-nums;flex:none;
+}
+
+.chip{
+  display:flex;align-items:flex-start;gap:.35em;border-radius:var(--radio-s);
+  padding:.2em .4em .22em;border-left:4px solid var(--c);background:var(--b1);
+  font-size:.79rem;line-height:1.28;overflow:hidden;
+}
+.chip time{font-family:var(--disp);font-variant-numeric:tabular-nums;color:var(--c);font-weight:700;font-size:.9em;flex:none;padding-top:.08em}
+.chip span{
+  color:var(--ink);font-weight:500;min-width:0;overflow:hidden;
+  display:-webkit-box;-webkit-box-orient:vertical;
+  -webkit-line-clamp:var(--lineas-titulo, 2);
+}
+.chip.all{background:var(--c)}
+.chip.all span{color:#fff}
+.chip.hecha span{text-decoration:line-through;color:var(--ink-3)}
+.chip.vencida{--c:var(--pend) !important;background:var(--pend-1) !important}
+.chip.vencida time{color:var(--pend)}
+.chip.vencida span::before{content:"! ";color:var(--pend);font-weight:700}
+
+.dots{display:flex;align-items:center;gap:.3em;flex-wrap:wrap;padding:.15em 0 0 .25em}
+.dots i{width:max(4px,.4em);height:max(4px,.4em);border-radius:2px;background:var(--c);display:block;flex:none}
+.dots i.hecha{background:none;box-shadow:inset 0 0 0 1.5px var(--c)}
+
+/* ---------- panel del día ----------------------------------------------- */
+
+.day{display:flex;flex-direction:column;min-height:0;min-width:0;border-left:2px solid var(--line-2);padding-left:calc(var(--u) * 1.15)}
+.day-head{display:flex;align-items:baseline;justify-content:space-between;gap:.6em;flex-wrap:wrap}
+.day-head h2{font-family:var(--disp);font-weight:var(--peso-titulo);font-size:1.3rem;letter-spacing:-.02em;white-space:nowrap;flex:none}
+.day-head .count{font-size:.74rem;color:var(--ink-3);line-height:1.3;text-align:right;flex:1;min-width:0}
+
+.aviso{
+  display:flex;gap:.5em;align-items:flex-start;margin-top:calc(var(--u) * .55);
+  background:var(--agua-1);border-left:4px solid var(--agua);border-radius:var(--radio-s);
+  padding:.4em .55em;
+}
+.aviso .ico{width:1.05em;height:1.05em;margin-top:.15em}
+.aviso b{display:block;font-size:.79rem;color:var(--agua);font-weight:600;line-height:1.25}
+.aviso small{display:block;font-size:.74rem;color:var(--ink-2);line-height:1.3}
+
+.pendientes{
+  margin-top:calc(var(--u) * .5);background:var(--pend-1);
+  border-left:4px solid var(--pend);border-radius:var(--radio-s);padding:.35em .55em .4em;
+}
+.pendientes .tit{font-size:.72rem;font-weight:700;color:var(--pend-txt);letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15em}
+.pendientes .fila{display:flex;gap:.5em;font-size:.76rem;line-height:1.3;color:var(--ink)}
+.pendientes .fila em{font-style:normal;font-family:var(--disp);font-weight:600;color:var(--pend);font-variant-numeric:tabular-nums;flex:none;min-width:3.2em}
+.pendientes .fila span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pendientes .mas{color:var(--ink-3);font-size:.72rem;padding-left:3.7em}
+
+/* franja de clima por hora: se desplaza igual que la línea del día, con la
+   hora actual siempre en el centro */
+.clima-caja{
+  position:relative;overflow:hidden;height:4.5em;
+  margin-top:calc(var(--u) * .5);
+  border:1px solid var(--line);border-radius:var(--radio-s);background:var(--paper);
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 13%,#000 87%,transparent 100%);
+          mask-image:linear-gradient(90deg,transparent 0,#000 13%,#000 87%,transparent 100%);
+}
+.clima-tira{
+  position:absolute;top:0;bottom:0;left:0;display:flex;
+  transition:transform 12s linear;will-change:transform;
+}
+.clima-tira.saltar{transition:none}
+.clima-tira .h{
+  width:3.7em;flex:none;display:flex;flex-direction:column;align-items:center;gap:.08em;
+  padding:.28em .1em .22em;transition:opacity .6s ease;
+}
+.clima-tira .h.pasada{opacity:.4}
+.clima-tira .h.ahora{background:var(--ahora-bg)}
+.clima-tira .h b{font-family:var(--disp);font-size:.62rem;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.clima-tira .h.ahora b{font-weight:700}
+.clima-tira .h u{text-decoration:none;font-size:.56rem;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.clima-tira .h svg{width:1.05em;height:1.05em}
+.clima-tira .barra{width:80%;height:.26em;border-radius:999px;background:var(--line);overflow:hidden;margin-top:.08em}
+.clima-tira .barra i{display:block;height:100%;background:var(--agua);border-radius:999px}
+.clima-tira .h.moja u{color:var(--agua);font-weight:600}
+.clima-tira .h.manana u::after{content:"+1";font-size:.85em;opacity:.7;padding-left:.15em}
+
+
+/* ---------- la línea del día ---------------------------------------------
+   Todas las horas, vacías incluidas. La hora actual queda clavada al centro
+   y la tira se desliza sola, muy despacio. Lo que se aleja del centro se
+   apaga y pierde nitidez.                                                  */
+
+.linea-caja{
+  position:relative;flex:1;min-height:0;overflow:hidden;
+  margin:calc(var(--u) * .6) 0 calc(var(--u) * .4);
+  --hora:3.1em;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 15%,#000 85%,transparent 100%);
+          mask-image:linear-gradient(180deg,transparent 0,#000 15%,#000 85%,transparent 100%);
+}
+.linea{
+  position:absolute;left:0;right:0;top:0;
+  transition:transform 12s linear;
+  will-change:transform;
+}
+.linea.saltar{transition:none}
+
+/* horas */
+.hlinea{position:absolute;left:0;right:0;border-top:1px solid var(--line);z-index:1}
+.hlinea b{
+  position:absolute;top:-.62em;left:0;font-family:var(--disp);font-size:.68rem;font-weight:500;
+  color:var(--ink-3);font-variant-numeric:tabular-nums;background:var(--paper);padding-right:.4em;
+}
+.hlinea.enpunto{border-top-color:var(--line-2)}
+.hlinea.actual b{color:var(--ink);font-weight:700}
+
+/* zonas de ayer y mañana: se ven, pero se lee que no tocan */
+.zona{position:absolute;left:0;right:0;z-index:0;background:var(--wash);opacity:.55}
+.zona span{
+  position:absolute;right:.5em;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;
+  font-weight:700;color:var(--ink-3);
+}
+.zona.antes span{bottom:.4em}
+.zona.despues span{top:.4em}
+
+/* franja de lluvia */
+.lluvia{
+  position:absolute;left:var(--gut);right:0;z-index:0;background:var(--agua-1);
+  border-top:1px dashed var(--agua-l);border-bottom:1px dashed var(--agua-l);border-radius:var(--radio-s);
+}
+
+/* las citas: tarjeta que ocupa exactamente lo que dura la actividad, ni un
+   píxel más. Nada de altura mínima: si dura media hora, mide media hora. */
+.cita{
+  position:absolute;left:var(--gut);right:0;z-index:2;overflow:hidden;
+  background:var(--b2);border-left:3px solid var(--c);border-radius:var(--radio-s);
+  padding:.06em .45em;display:flex;flex-direction:column;justify-content:flex-start;
+  transition:opacity .5s ease;
+}
+.cita .cab{display:flex;align-items:baseline;gap:.5em;min-width:0}
+.cita time{
+  flex:none;font-family:var(--disp);font-size:.7rem;font-weight:700;
+  color:var(--c);font-variant-numeric:tabular-nums;line-height:1.25;
+}
+.cita .tit{
+  font-size:.8rem;line-height:1.25;color:var(--ink);min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.cita small{
+  font-size:.69rem;line-height:1.2;color:var(--ink-3);display:block;
+  overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+}
+
+/* la prioridad se nota en el relleno y en el grosor de la barra */
+.cita.alta{background:var(--b1);border-left-width:5px}
+.cita.alta .tit{font-weight:600}
+.cita.media .tit{font-weight:500}
+.cita.baja{background:var(--suave);border-left-width:2px;border-left-color:var(--line-2)}
+.cita.baja .tit{color:var(--ink-2);font-weight:400}
+.cita.baja time{color:var(--ink-3)}
+
+.cita.hecha{opacity:.45}
+.cita.hecha .tit{text-decoration:line-through}
+.cita.vencida{background:var(--pend-1);border-left-color:var(--pend);border-left-width:5px}
+.cita.vencida time{color:var(--pend)}
+.cita.vencida time::after{content:" !";font-weight:700}
+.cita.vencida .tit{color:var(--pend-txt)}
+.cita.otrodia{background:none;border-left-style:dashed;border-left-color:var(--line-2);opacity:.45}
+.cita.otrodia .tit{color:var(--ink-3);font-style:italic}
+.cita.otrodia time{color:var(--ink-3)}
+
+/* la que está pasando: solo pesa más, sin resaltado añadido */
+.cita.ahora{z-index:3;border-left-width:6px}
+.cita.ahora .tit{font-weight:700;color:var(--ink)}
+.cita.ahora time{font-weight:700}
+
+.cita.avisando .tit{animation:latido 3s ease-in-out infinite}
+@keyframes latido{0%,100%{opacity:1}50%{opacity:.45}}
+
+.cita .gota{width:.8em;height:.8em;position:absolute;right:.25em;top:.2em;opacity:.8}
+
+
+.linea-vacia{
+  position:absolute;inset:0;display:grid;place-items:center;
+  color:var(--ink-3);font-size:.85rem;text-align:center;z-index:4;pointer-events:none;
+}
+
+.pie{border-top:1px solid var(--line);padding-top:calc(var(--u) * .55)}
+.legend{display:flex;flex-wrap:wrap;gap:.35em .8em;padding-right:calc(var(--u) * 4.6)}
+.legend div{display:flex;align-items:center;gap:.35em;font-size:.71rem;color:var(--ink-2)}
+.legend i{width:.55em;height:.55em;border-radius:2px;background:var(--c);display:block;flex:none}
+.legend .pt i{border-radius:999px;background:var(--ink-3);width:.42em;height:.42em}
+
+/* ---------- controles ---------------------------------------------------- */
+
+.controles{
+  position:fixed;right:calc(var(--u) * 1.25);bottom:calc(var(--u) * .7);z-index:50;
+  display:flex;gap:calc(var(--u) * .4);
+}
+.controles button{
+  display:grid;place-items:center;
+  width:calc(var(--u) * 2);height:calc(var(--u) * 2);min-width:26px;min-height:26px;
+  color:var(--ink-3);background:var(--paper);border:1px solid var(--line);border-radius:999px;
+  transition:border-color .15s ease,color .15s ease;
+}
+.controles button:hover{border-color:var(--azul);color:var(--azul)}
+.controles button:focus-visible{outline:2px solid var(--azul);outline-offset:2px}
+.controles svg{width:50%;height:50%;display:block}
+body.fs .controles{opacity:0;pointer-events:none}
+body.fs .controles:hover{opacity:1;pointer-events:auto}
+
+#badge{
+  position:fixed;left:50%;bottom:calc(var(--u) * 1.2);transform:translateX(-50%);z-index:60;
+  background:var(--ink);color:var(--paper);border-radius:999px;padding:.35em .9em;font-size:13px;
+  pointer-events:none;opacity:0;transition:opacity .18s ease;
+}
+#badge.ver{opacity:.92}
+
+#sinConexion{
+  position:fixed;left:calc(var(--u) * 1.25);bottom:calc(var(--u) * .9);z-index:55;
+  display:none;align-items:center;gap:.45em;font-size:.72rem;color:var(--error);
+  background:var(--error-1);border:1px solid var(--error-line);border-radius:999px;padding:.3em .7em;
+}
+#sinConexion.ver{display:flex}
+#sinConexion i{width:.45em;height:.45em;border-radius:999px;background:var(--error);display:block}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important}
+  .linea{transition:none!important}
+}

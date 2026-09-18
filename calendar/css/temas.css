@@ -1,0 +1,178 @@
+/* Estilos visuales. Cada bloque solo redefine tokens de base.css, así que
+   ninguno necesita tocar los componentes. El elegido se guarda en la
+   configuración de la cuenta, no en el dispositivo: al cambiarlo, todas las
+   pantallas conectadas se repintan solas.                                  */
+
+/* ---------------------------------------------------------------- 1. NÍTIDO
+   El de siempre: blanco, líneas finas, color solo donde informa.          */
+:root[data-tema="nitido"]{ /* usa los valores por defecto de base.css */ }
+
+
+/* ----------------------------------------------------------------- 2. PAPEL
+   Editorial y formal. Crema, titulares con serif, esquinas casi rectas.   */
+:root[data-tema="papel"]{
+  --paper:#FCFBF7;
+  --wash:#F2EFE6;
+  --suave:#F7F5EE;
+  --fin-bg:#F8F6EF;
+  --hoy-bg:#EDE2CC;
+  --ahora-bg:#E7DBC1;
+  --realce:rgba(90,70,35,.07);
+
+  --ink:#221F1A;
+  --ink-2:#5A544A;
+  --ink-3:#96907F;
+  --line:#E0D9C8;
+  --line-2:#C2B9A2;
+
+  --azul:#7A5C2E;   --azul-1:#F0E7D6;  --azul-2:#5B4320;
+  --agua:#3E5F7A;   --agua-1:#E6EDF3;  --agua-l:#B4C7D6;
+  --now:#A8342A;
+  --pend:#9A6A15;   --pend-1:#F4EBD6;  --pend-txt:#6B4808;  --pend-line:#DFCFA6;
+  --error:#963029;  --error-1:#F6E7E4; --error-line:#E0C4BF;
+
+  --radio:3px;  --radio-s:2px;  --radio-g:5px;
+  --sombra:0 6px 18px rgba(60,50,30,.10);
+  --entrada-bg:radial-gradient(120% 80% at 50% 0%, #F4EFE2 0%, #FCFBF7 60%);
+  --disp:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --peso-titulo:600;
+}
+:root[data-tema="papel"] .month,
+:root[data-tema="papel"] .marca h1{letter-spacing:-.01em}
+:root[data-tema="papel"] .eyebrow{letter-spacing:.22em}
+
+
+/* ----------------------------------------------------------------- 3. SMART
+   Panel de casa inteligente: fondo carbón y acentos que brillan.          */
+:root[data-tema="smart"]{
+  color-scheme:dark;
+
+  --paper:#0F1216;
+  --wash:#171B21;
+  --suave:#141920;
+  --fin-bg:#131820;
+  --hoy-bg:#16303A;
+  --ahora-bg:#14323D;
+  --realce:rgba(34,211,238,.10);
+
+  --ink:#EEF3F8;
+  --ink-2:#9FAAB9;
+  --ink-3:#616C7B;
+  --line:#242A33;
+  --line-2:#3A424E;
+
+  --azul:#22D3EE;   --azul-1:#0E2A33;  --azul-2:#0E7490;
+  --agua:#60A5FA;   --agua-1:#12243D;  --agua-l:#2C4A73;
+  --now:#FB7185;    --now-halo:rgba(251,113,133,.5);
+  --pend:#FBBF24;   --pend-1:#2A2010;  --pend-txt:#FCD34D;  --pend-line:#4A3714;
+  --error:#FB7185;  --error-1:#2A1219; --error-line:#4C2029;
+
+  --radio:12px;  --radio-s:8px;  --radio-g:18px;
+  --sombra:0 10px 30px rgba(0,0,0,.5);
+  --boton-txt:#0F1216;
+  --barra-bg:rgba(15,18,22,.94);
+  --entrada-bg:radial-gradient(120% 80% at 50% 0%, #16222B 0%, #0F1216 60%);
+}
+:root[data-tema="smart"] .boton{background:var(--azul);color:var(--boton-txt)}
+:root[data-tema="smart"] .boton.claro{background:transparent;color:var(--ink);border-color:var(--line-2)}
+:root[data-tema="smart"] .mas{background:var(--azul);color:var(--boton-txt);box-shadow:0 8px 26px rgba(34,211,238,.3)}
+:root[data-tema="smart"] .brindis{background:var(--azul);color:var(--boton-txt)}
+:root[data-tema="smart"] .chip.all span{color:#0F1216}
+:root[data-tema="smart"] .cita.ahora .tit{color:#FFFFFF}
+
+
+/* ------------------------------------------------------------------ 4. VIVO
+   Colorido y redondeado, con más presencia del color de cada categoría.   */
+:root[data-tema="vivo"]{
+  --paper:#FFFFFF;
+  --wash:#F6F2FE;
+  --suave:#FBF8FF;
+  --fin-bg:#FCFAFF;
+  --hoy-bg:#EFE3FD;
+  --ahora-bg:#E8D8FC;
+  --realce:rgba(124,58,237,.09);
+
+  --ink:#1B1233;
+  --ink-2:#584C74;
+  --ink-3:#9B90B4;
+  --line:#EBE2FA;
+  --line-2:#D2C4EC;
+
+  --azul:#7C3AED;   --azul-1:#EFE7FE;  --azul-2:#5B21B6;
+  --agua:#2563EB;   --agua-1:#E4EDFD;  --agua-l:#A9C2F2;
+  --now:#F43F5E;    --now-halo:rgba(244,63,94,.5);
+  --pend:#F97316;   --pend-1:#FFEEDF;  --pend-txt:#9A3412;  --pend-line:#FBCFA5;
+  --error:#DB2777;  --error-1:#FDE9F2; --error-line:#F7C2DA;
+
+  --radio:14px;  --radio-s:9px;  --radio-g:22px;
+  --sombra:0 10px 28px rgba(93,49,175,.14);
+  --entrada-bg:radial-gradient(120% 85% at 50% 0%, #F3E8FF 0%, #FFF5F9 45%, #FFFFFF 75%);
+  --peso-titulo:700;
+}
+:root[data-tema="vivo"] .boton{background:linear-gradient(135deg,var(--azul),#C026D3)}
+:root[data-tema="vivo"] .mas{background:linear-gradient(135deg,var(--azul),#C026D3)}
+:root[data-tema="vivo"] .chip{border-left-width:0;padding-left:.55em}
+:root[data-tema="vivo"] .chip::before{
+  content:"";position:absolute;left:.2em;top:.35em;bottom:.35em;width:3px;
+  border-radius:99px;background:var(--c);
+}
+:root[data-tema="vivo"] .chip{position:relative}
+
+
+/* ------------------------------------------------------------------ 5. MONO
+   Técnico y a alto contraste: monoespaciada, sin curvas, cero adorno.     */
+:root[data-tema="mono"]{
+  --paper:#FFFFFF;
+  --wash:#F4F4F4;
+  --suave:#FAFAFA;
+  --fin-bg:#F9F9F9;
+  --hoy-bg:#E6E6E6;
+  --ahora-bg:#DEDEDE;
+  --realce:rgba(0,0,0,.06);
+
+  --ink:#0A0A0A;
+  --ink-2:#454545;
+  --ink-3:#8C8C8C;
+  --line:#DCDCDC;
+  --line-2:#A8A8A8;
+
+  --azul:#111111;   --azul-1:#EBEBEB;  --azul-2:#000000;
+  --agua:#1F4E9C;   --agua-1:#E8EDF6;  --agua-l:#AFC0DC;
+  --now:#D40D2C;    --now-halo:rgba(212,13,44,.5);
+  --pend:#8A5A00;   --pend-1:#F5EEDF;  --pend-txt:#5E3D00;  --pend-line:#D9C79B;
+  --error:#B00020;  --error-1:#F7E7E9; --error-line:#E0BFC4;
+
+  --radio:0px;  --radio-s:0px;  --radio-g:0px;
+  --sombra:0 2px 0 rgba(0,0,0,.10);
+  --entrada-bg:#FFFFFF;
+  --sans:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --disp:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --peso-titulo:700;
+}
+:root[data-tema="mono"] .month,
+:root[data-tema="mono"] .marca h1{letter-spacing:-.04em}
+:root[data-tema="mono"] .eyebrow,
+:root[data-tema="mono"] .dow div{letter-spacing:.08em}
+
+
+/* ---------- muestras del selector de estilos ----------------------------- */
+
+.temas{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:10px}
+.tema{
+  display:flex;flex-direction:column;gap:9px;padding:11px;text-align:left;
+  border:2px solid var(--line);border-radius:var(--radio);background:var(--paper);
+  transition:border-color .18s ease,transform .15s ease;
+}
+.tema:hover{transform:translateY(-2px)}
+.tema[aria-pressed="true"]{border-color:var(--azul)}
+.tema .muestra{
+  height:56px;border-radius:calc(var(--radio) - 2px);overflow:hidden;
+  display:flex;flex-direction:column;justify-content:center;gap:4px;padding:8px;
+  border:1px solid rgba(128,128,128,.22);
+}
+.tema .muestra i{display:block;height:6px;border-radius:99px}
+.tema .muestra i:nth-child(1){width:70%}
+.tema .muestra i:nth-child(2){width:45%}
+.tema .muestra i:nth-child(3){width:58%}
+.tema .nombre{font-size:13.5px;font-weight:600}
+.tema .que{font-size:11.5px;color:var(--ink-3);line-height:1.35}

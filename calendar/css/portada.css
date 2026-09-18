@@ -1,0 +1,52 @@
+/* La pantalla de arranque. Usa los mismos tokens que el resto, así que
+   respeta el estilo elegido desde el primer instante.                       */
+
+.portada{
+  position:fixed; inset:0; z-index:9000;
+  display:grid; place-items:center;
+  background:var(--paper); color:var(--ink);
+  transition:opacity .4s ease, visibility .4s;
+}
+.portada.fuera{ opacity:0; visibility:hidden; pointer-events:none }
+
+.portada-caja{
+  display:flex; flex-direction:column; align-items:center; gap:18px;
+  text-align:center; padding:28px; max-width:min(420px, 88vw);
+}
+
+.portada-marca{ display:flex; align-items:center; gap:12px; color:var(--acento) }
+.portada-marca svg{ width:34px; height:34px }
+.portada-marca h1{
+  font-family:var(--disp); font-size:27px; font-weight:600;
+  letter-spacing:-.01em; color:var(--ink); margin:0;
+}
+
+.portada-estado{
+  font-size:15px; color:var(--ink-2); margin:0; line-height:1.5;
+  min-height:1.4em;
+}
+
+.portada-boton{
+  display:inline-flex; align-items:center; gap:10px;
+  padding:11px 20px; border:1px solid var(--line); border-radius:999px;
+  background:var(--entrada-bg, #fff); color:var(--ink);
+  font:inherit; font-size:14.5px; font-weight:500; cursor:pointer;
+  transition:background .15s ease, border-color .15s ease, transform .1s ease;
+}
+.portada-boton:hover:not(:disabled){ border-color:var(--ink-3) }
+.portada-boton:active:not(:disabled){ transform:translateY(1px) }
+.portada-boton:disabled{ opacity:.55; cursor:default }
+
+.portada-nota{
+  font-size:12.5px; color:var(--ink-3); margin:0; line-height:1.55;
+  max-width:34ch;
+}
+
+/* En la TV todo un poco más grande, que se lee de lejos. */
+@media (min-width: 1100px){
+  .portada-marca svg{ width:44px; height:44px }
+  .portada-marca h1{ font-size:34px }
+  .portada-estado{ font-size:18px }
+  .portada-boton{ font-size:16px; padding:13px 24px }
+  .portada-nota{ font-size:14px; max-width:40ch }
+}

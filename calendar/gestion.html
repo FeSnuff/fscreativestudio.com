@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5">
+<meta name="theme-color" content="#ffffff">
+<title>Gestión · Calendario</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Instrument+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/temas.css">
+<link rel="stylesheet" href="/css/gestion.css">
+<link rel="stylesheet" href="/css/portada.css">
+<script>try{document.documentElement.dataset.tema=localStorage.getItem("tema")||"nitido"}catch(e){document.documentElement.dataset.tema="nitido"}</script>
+</head>
+<body>
+
+<div class="marco">
+
+  <!-- ---------------- cabecera ---------------- -->
+  <header class="cabecera">
+    <div class="fila">
+      <div>
+        <h1 id="tituloVista">Agenda</h1>
+        <div class="sub" id="subtitulo">—</div>
+      </div>
+      <div class="navfecha" id="navFecha">
+        <button id="antes" title="Semana anterior" aria-label="Semana anterior">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <button class="hoy" id="irHoy">Hoy</button>
+        <button id="despues" title="Semana siguiente" aria-label="Semana siguiente">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="buscador oculto" id="cajaBuscar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+      <input id="buscar" type="search" placeholder="Buscar por título o detalle" autocomplete="off">
+    </div>
+
+    <div class="filtros" id="filtros"></div>
+  </header>
+
+  <!-- ---------------- agenda ---------------- -->
+  <main class="lista" id="lista"></main>
+
+  <!-- ---------------- ajustes ---------------- -->
+  <div id="ajustes" class="oculto"></div>
+</div>
+
+<button class="mas" id="btnNueva" title="Nueva actividad" aria-label="Nueva actividad">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+</button>
+
+<div class="barra">
+  <nav>
+    <button data-vista="agenda" aria-current="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="16" rx="2.5"/><path d="M3.5 9.5h17M8 2.8v3.4M16 2.8v3.4"/></svg>
+      Agenda
+    </button>
+    <button data-vista="pendientes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8.5v4.2l2.8 1.7"/><circle cx="12" cy="12" r="8.5"/></svg>
+      Sin cerrar
+      <i class="globo" id="globoPend" hidden></i>
+    </button>
+    <button data-vista="buscar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+      Buscar
+    </button>
+    <button data-vista="ajustes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.6M12 18.6v2.6M21.2 12h-2.6M5.4 12H2.8M18.5 5.5l-1.8 1.8M7.3 16.7l-1.8 1.8M18.5 18.5l-1.8-1.8M7.3 7.3L5.5 5.5"/></svg>
+      Ajustes
+    </button>
+  </nav>
+</div>
+
+<!-- ---------------- hoja de edición ---------------- -->
+<div class="velo" id="velo">
+  <section class="hoja" role="dialog" aria-modal="true" aria-labelledby="hojaTitulo">
+    <div class="hoja-top">
+      <h2 id="hojaTitulo">Nueva actividad</h2>
+      <button class="cerrar" id="cerrarHoja" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <form class="forma" id="forma"></form>
+  </section>
+</div>
+
+<div class="brindis" id="brindis"></div>
+
+<script type="module">
+  import { abrir } from "/js/portada.js";
+  const { arrancar } = await import("/js/gestion.js");
+  abrir(arrancar);
+</script>
+</body>
+</html>

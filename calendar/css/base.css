@@ -1,0 +1,135 @@
+/* Tokens y piezas compartidas. Todo lo que un tema puede cambiar vive aquí
+   como variable; temas.css solo redefine estas mismas. -------------------- */
+
+:root{
+  --u:clamp(9px, 1.35vh, 26px);      /* estructura: no cambia con el zoom  */
+  --txt:15px;                         /* solo texto: Ctrl + rueda           */
+  --gut:calc(var(--txt) * 3);         /* canal de horas en la línea del día */
+  font-size:var(--txt);
+
+  /* --- superficie --- */
+  --paper:#FFFFFF;
+  --wash:#F7F6F3;
+  --suave:#FBFBFA;
+  --fin-bg:#FCFCFA;                   /* casillas de sábado y domingo       */
+  /* El "ahora" se marca rellenando, nunca con bordes ni líneas.            */
+  --hoy-bg:#F0EDE6;                   /* la casilla de hoy en el mes        */
+  --ahora-bg:#EBE7DE;                 /* la hora en curso en la franja      */
+  --realce:rgba(20,21,26,.05);        /* banda suave del centro de la línea */
+
+  /* --- tinta --- */
+  --ink:#14151A;
+  --ink-2:#565961;
+  --ink-3:#93969D;
+  --line:#DEDBD4;
+  --line-2:#BFBCB3;
+
+  /* --- acentos --- */
+  --azul:#0891A5;   --azul-1:#DBF1F6;  --azul-2:#0B6E7E;
+  --agua:#1D6FE0;   --agua-1:#E3EEFC;  --agua-l:#A9C6EF;
+  --now:#E11D48;
+  --pend:#D97706;   --pend-1:#FDF0DC;  --pend-txt:#8A4B04;  --pend-line:#F3D9AE;
+  --error:#B4123A;  --error-1:#FEECEF; --error-line:#F7CBD5;
+
+  /* --- forma --- */
+  --radio:10px;
+  --radio-s:5px;
+  --radio-g:16px;
+  --sombra:0 8px 22px rgba(20,21,26,.10);
+  --boton-txt:#FFFFFF;
+  --barra-bg:rgba(255,255,255,.96);
+  --entrada-bg:radial-gradient(120% 80% at 50% 0%, #F3FAFB 0%, #FFFFFF 55%);
+  --peso-titulo:600;
+
+  /* --- letra --- */
+  --sans:"Instrument Sans",-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --disp:"Archivo","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+
+  color-scheme:light;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:var(--sans);font-size:1rem;line-height:1.4;
+  -webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent;
+  transition:background .35s ease,color .35s ease;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:none}
+a{color:inherit}
+
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+@keyframes entrar{from{opacity:0}to{opacity:1}}
+@keyframes subir{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes pulso{0%,100%{box-shadow:0 0 0 0 var(--now-halo,rgba(225,29,72,.5))}
+                 55%    {box-shadow:0 0 0 .5em transparent}}
+
+/* ---------- login ------------------------------------------------------- */
+
+.entrada{min-height:100dvh;display:grid;place-items:center;padding:24px;background:var(--entrada-bg)}
+.tarjeta{width:min(380px,100%);animation:subir .35s ease-out both;display:flex;flex-direction:column;gap:18px}
+.marca{display:flex;align-items:center;gap:12px}
+.marca .glifo{
+  width:44px;height:44px;border-radius:calc(var(--radio) + 3px);display:grid;place-items:center;
+  background:linear-gradient(145deg,var(--azul),var(--azul-2));color:#fff;
+  font-family:var(--disp);font-weight:700;font-size:19px;
+  box-shadow:0 6px 18px color-mix(in srgb, var(--azul) 30%, transparent);
+}
+.marca h1{font-family:var(--disp);font-size:22px;font-weight:var(--peso-titulo);letter-spacing:-.02em}
+.marca p{font-size:13px;color:var(--ink-3);margin-top:1px}
+
+.campo{display:flex;flex-direction:column;gap:6px}
+.campo label{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.campo input,.campo select,.campo textarea{
+  width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:var(--radio);
+  background:var(--paper);transition:border-color .15s ease,box-shadow .15s ease;
+}
+.campo input:focus,.campo select:focus,.campo textarea:focus{
+  outline:none;border-color:var(--azul);box-shadow:0 0 0 3px var(--azul-1);
+}
+.campo input[type="date"],.campo input[type="time"]{min-height:44px}
+
+.boton{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px 16px;border-radius:var(--radio);font-weight:600;
+  background:var(--ink);color:var(--boton-txt);transition:opacity .15s ease,transform .1s ease;
+}
+.boton:hover{opacity:.9}
+.boton:active{transform:scale(.985)}
+.boton:disabled{opacity:.5;cursor:default}
+.boton.claro{background:var(--paper);color:var(--ink);border:1.5px solid var(--line)}
+.boton.peligro{background:var(--error-1);color:var(--error);border:1.5px solid var(--error-line)}
+
+.aviso-error{
+  font-size:13.5px;color:var(--error);background:var(--error-1);
+  border:1px solid var(--error-line);border-radius:var(--radio-s);
+  padding:9px 12px;animation:subir .2s ease-out both;line-height:1.45;
+}
+.pie-nota{font-size:12.5px;color:var(--ink-3);text-align:center;line-height:1.5}
+
+/* ---------- selector de modo -------------------------------------------- */
+
+.inicio{min-height:100dvh;display:flex;flex-direction:column;padding:24px;gap:22px;max-width:760px;margin:0 auto}
+.inicio header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:10px}
+.modos{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));flex:1;align-content:center}
+.modo{
+  display:flex;flex-direction:column;gap:10px;padding:22px;border-radius:var(--radio-g);
+  border:1.5px solid var(--line);background:var(--paper);text-decoration:none;
+  transition:border-color .18s ease,transform .18s ease,box-shadow .18s ease;
+  animation:subir .35s ease-out both;
+}
+.modo:nth-child(2){animation-delay:.06s}
+.modo:nth-child(3){animation-delay:.12s}
+.modo:hover{border-color:var(--tono);transform:translateY(-2px);box-shadow:var(--sombra)}
+.modo .icono{width:42px;height:42px;border-radius:var(--radio);display:grid;place-items:center;background:var(--tono-1);color:var(--tono)}
+.modo .icono svg{width:22px;height:22px}
+.modo h2{font-family:var(--disp);font-size:17px;font-weight:var(--peso-titulo)}
+.modo p{font-size:13.5px;color:var(--ink-2);line-height:1.45}
+.modo .mas{margin-top:2px;font-size:12.5px;font-weight:600;color:var(--tono)}
+
+.enlace-simple{font-size:13px;color:var(--ink-3);text-decoration:none;padding:6px 2px}
+.enlace-simple:hover{color:var(--ink)}
