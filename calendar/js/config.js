@@ -8,7 +8,7 @@
    protege es la lista de orígenes autorizados que configuras en Google
    Cloud: solo tu dominio puede usarlo.                                      */
 
-export const CLIENT_ID = "PON_AQUI_TU_ID.apps.googleusercontent.com";
+export const CLIENT_ID = "1007745366060-8p3392ddrgmlh7sa7uccta9fepcjnttk.apps.googleusercontent.com";
 
 /* Nombre del archivo que la app crea en tu Drive la primera vez. */
 export const NOMBRE_HOJA = "Calendario de pared";

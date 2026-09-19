@@ -5,9 +5,9 @@
    Esta pantalla NUNCA escribe: solo lee. Así dos TVs encendidas no pueden
    pisarse entre ellas ni con el celular.                                  */
 
-import * as U from "/js/comun.js";
-import * as datos from "/js/datos.js";
-import * as clima from "/js/clima.js";
+import * as U from "./comun.js";
+import * as datos from "./datos.js";
+import * as clima from "./clima.js";
 
 const $ = (id) => document.getElementById(id);
 
@@ -530,7 +530,9 @@ function antiQuemado() {
     const pedir = raiz.requestFullscreen || raiz.webkitRequestFullscreen;
     if (pedir) Promise.resolve(pedir.call(raiz)).catch(() => {});
   });
-  $("btnInicio").addEventListener("click", () => (location.href = "/inicio"));
+  // Relativo a propósito: la app tiene que funcionar igual colgada de la raíz
+  // del dominio o dentro de una subcarpeta.
+  $("btnInicio").addEventListener("click", () => (location.href = "index.html"));
   document.addEventListener("fullscreenchange", marcar);
   document.addEventListener("webkitfullscreenchange", marcar);
   marcar();

@@ -1,0 +1,37 @@
+<!doctype html>
+<meta charset="utf-8"><title>Reconexión silenciosa</title>
+<body>
+<script>
+  // El escenario se elige con ?caso=
+  const caso = new URLSearchParams(location.search).get("caso");
+  window.__llamadas = [];
+  let intento = 0;
+  window.google = { accounts: { oauth2: {
+    initTokenClient: (cfg) => ({
+      ...cfg,
+      requestAccessToken(op) {
+        window.__llamadas.push(op);
+        intento++;
+        if (caso === "bien")
+          return setTimeout(() => this.callback({ access_token:"t", expires_in:3600 }), 20);
+        if (caso === "lento")           // el primer intento se pierde, el segundo va
+          return intento === 1 ? null
+            : setTimeout(() => this.callback({ access_token:"t", expires_in:3600 }), 20);
+        if (caso === "sinsesion")
+          return setTimeout(() => this.callback({ error:"login_required" }), 20);
+      },
+    }),
+    revoke: (t, cb) => cb && cb(),
+  } } };
+  localStorage.setItem("entro_alguna_vez","1");
+  localStorage.setItem("calendario_correo","luisfifer705@gmail.com");
+</script>
+<script type="module">
+  const auth = await import("../js/auth.js?v=" + Math.random());
+  const t0 = Date.now();
+  const r = { caso: new URLSearchParams(location.search).get("caso") };
+  r.revivio = await auth.iniciar("123-abc.apps.googleusercontent.com", ()=>{});
+  r.tardoMs = Date.now() - t0;
+  r.llamadas = window.__llamadas;
+  window.listo = r;
+</script>

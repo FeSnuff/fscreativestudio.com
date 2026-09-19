@@ -1,9 +1,9 @@
 /* Modo Gestión — agregar, editar y organizar actividades desde el celular. */
 
-import * as U from "/js/comun.js";
-import * as datos from "/js/datos.js";
-import * as clima from "/js/clima.js";
-import * as arranque from "/js/arranque.js";
+import * as U from "./comun.js";
+import * as datos from "./datos.js";
+import * as clima from "./clima.js";
+import * as arranque from "./arranque.js";
 
 const $ = (id) => document.getElementById(id);
 

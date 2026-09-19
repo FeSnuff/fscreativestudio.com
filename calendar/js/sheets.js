@@ -46,6 +46,9 @@ async function pedir(url, opciones = {}, reintento = true) {
   try { detalle = JSON.parse(texto)?.error?.message || texto; } catch {}
 
   if ((r.status === 401 || r.status === 403) && reintento && /credential|token|auth/i.test(detalle)) {
+    // El token guardado puede estar revocado aunque no haya caducado: se tira
+    // y se pide uno nuevo, en vez de reintentar con el mismo.
+    auth.invalidar();
     return pedir(url, opciones, false);
   }
   if (r.status === 429 && reintento) {

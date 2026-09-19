@@ -76,6 +76,12 @@ Sube el contenido de esta carpeta tal cual. Sirve cualquier host de archivos
 estáticos; los planes gratuitos alcanzan de sobra porque no hay nada que
 ejecutar del lado del servidor.
 
+**Todas las rutas son relativas**, así que da igual dónde la cuelgues: en la
+raíz (`https://calendario.tudominio.com`) o dentro de una subcarpeta
+(`https://tudominio.com/calendario/`, que es lo que sale en GitHub Pages).
+Lo único es que la carpeta se suba entera, con `js/` y `css/` al lado de los
+HTML.
+
 **Dos requisitos:**
 
 1. **Tiene que ser `https`.** Google no entrega credenciales por `http`, y el

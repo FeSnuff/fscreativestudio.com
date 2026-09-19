@@ -63,6 +63,15 @@ export async function abrir(arrancarPantalla) {
                    "No tiene acceso al resto de tu Drive.";
   boton.hidden = false;
 
+  // Si el intento de reconectar solo falló, aquí se ve por qué. Sin esto hay
+  // que abrir las herramientas del navegador para averiguarlo.
+  if (arranque.auth.ultimoMotivo) {
+    const pista = document.createElement("p");
+    pista.className = "portada-pista";
+    pista.textContent = `Reconexión automática: ${arranque.auth.ultimoMotivo}`;
+    nota.after(pista);
+  }
+
   boton.addEventListener("click", async () => {
     boton.disabled = true;
     nota.textContent = "";

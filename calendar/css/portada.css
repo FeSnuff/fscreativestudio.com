@@ -26,6 +26,11 @@
   min-height:1.4em;
 }
 
+/* Ojo con el orden: una regla de autor con display le gana al
+   [hidden]{display:none} del navegador, así que el atributo hidden del botón
+   se ignoraba y salía siempre. Esta línea lo devuelve a su sitio. */
+.portada-boton[hidden]{ display:none }
+
 .portada-boton{
   display:inline-flex; align-items:center; gap:10px;
   padding:11px 20px; border:1px solid var(--line); border-radius:999px;
@@ -49,4 +54,12 @@
   .portada-estado{ font-size:18px }
   .portada-boton{ font-size:16px; padding:13px 24px }
   .portada-nota{ font-size:14px; max-width:40ch }
+}
+
+/* La razón por la que no se pudo reconectar solo. Discreta: solo importa
+   cuando algo va mal. */
+.portada-pista{
+  font-size:11.5px; color:var(--ink-3); opacity:.8; margin:0;
+  font-family:var(--mono, ui-monospace, monospace); line-height:1.5;
+  max-width:44ch; word-break:break-word;
 }

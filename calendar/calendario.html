@@ -8,10 +8,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Instrument+Sans:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="/css/base.css">
-<link rel="stylesheet" href="/css/temas.css">
-<link rel="stylesheet" href="/css/calendario.css">
-<link rel="stylesheet" href="/css/portada.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/temas.css">
+<link rel="stylesheet" href="css/calendario.css">
+<link rel="stylesheet" href="css/portada.css">
 <script>try{document.documentElement.dataset.tema=localStorage.getItem("tema")||"nitido"}catch(e){document.documentElement.dataset.tema="nitido"}</script>
 </head>
 <body>
@@ -71,8 +71,8 @@
 <div id="badge"></div>
 
 <script type="module">
-  import { abrir } from "/js/portada.js";
-  const { arrancar } = await import("/js/calendario.js");
+  import { abrir } from "./js/portada.js";
+  const { arrancar } = await import("./js/calendario.js");
   abrir(arrancar);
 </script>
 </body>

@@ -1,0 +1,37 @@
+<!doctype html>
+<meta charset="utf-8"><title>Google que no contesta</title>
+<link rel="stylesheet" href="../css/base.css">
+<link rel="stylesheet" href="../css/temas.css">
+<link rel="stylesheet" href="../css/portada.css">
+<body>
+<script>
+  // Un GIS que acepta la petición y jamás llama al callback: exactamente el
+  // cuelgue que reportó el usuario.
+  window.google = { accounts: { oauth2: {
+    initTokenClient: (cfg) => ({ ...cfg, requestAccessToken(){ /* silencio */ } }),
+    revoke: () => {},
+  } } };
+  try { localStorage.setItem("entro_alguna_vez", "1"); } catch(e) {}
+</script>
+<script type="module">
+  const auth = await import("../js/auth.js");
+  const t0 = Date.now();
+  window.resultado = { inicio: t0 };
+  try {
+    const revivio = await auth.iniciar("123-abc.apps.googleusercontent.com", () => {});
+    window.resultado.revivio = revivio;
+  } catch (e) {
+    window.resultado.error = e.message;
+  }
+  window.resultado.tardo = Date.now() - t0;
+  window.resultado.colgado = false;
+
+  // y el botón: ¿respeta hidden?
+  const b = document.createElement("button");
+  b.className = "portada-boton"; b.hidden = true; b.textContent = "Entrar";
+  document.body.appendChild(b);
+  window.resultado.ocultoRespetado = getComputedStyle(b).display === "none";
+  b.hidden = false;
+  window.resultado.visibleAlMostrar = getComputedStyle(b).display !== "none";
+  window.listo = true;
+</script>

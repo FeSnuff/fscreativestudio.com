@@ -1,0 +1,27 @@
+<!doctype html>
+<meta charset="utf-8"><title>Tras recargar</title>
+<body>
+<script>
+  window.__llamadas = [];
+  window.google = { accounts: { oauth2: {
+    initTokenClient: (cfg) => ({
+      ...cfg,
+      requestAccessToken(op) {
+        window.__llamadas.push(op);
+        setTimeout(() => this.callback({ access_token: "tok2", expires_in: 3600 }), 10);
+      },
+    }),
+    revoke: (t, cb) => cb && cb(),
+  } } };
+</script>
+<script type="module">
+  const auth = await import("../js/auth.js?v=" + Date.now());
+  const r = {};
+  // el localStorage ya trae lo de la sesión anterior
+  r.habiaCorreo = localStorage.getItem("calendario_correo");
+  const revivio = await auth.iniciar("123-abc.apps.googleusercontent.com", ()=>{});
+  r.revivioSolo = revivio;                    // true = no hay que tocar nada
+  r.opcionesDeLaRenovacion = window.__llamadas[0];
+  r.huboBotonDeEntrar = window.__llamadas.length !== 1;
+  window.listo = r;
+</script>

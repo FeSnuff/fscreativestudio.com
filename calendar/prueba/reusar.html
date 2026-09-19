@@ -1,0 +1,31 @@
+<!doctype html>
+<meta charset="utf-8"><title>Reusar el token</title>
+<body>
+<script>
+  const caso = new URLSearchParams(location.search).get("caso");
+  window.__llamadasAGoogle = 0;
+  window.google = { accounts: { oauth2: {
+    initTokenClient: (cfg) => ({ ...cfg, requestAccessToken(op) {
+      window.__llamadasAGoogle++;
+      setTimeout(() => this.callback({ error: "login_required" }), 15);   // silencioso siempre falla
+    }}),
+    revoke: (t, cb) => cb && cb(),
+  } } };
+  localStorage.setItem("entro_alguna_vez","1");
+  if (caso === "vigente")
+    localStorage.setItem("calendario_token", JSON.stringify({ token:"tok-bueno", caducaEn: Date.now() + 50*60000 }));
+  if (caso === "caducado")
+    localStorage.setItem("calendario_token", JSON.stringify({ token:"tok-viejo", caducaEn: Date.now() - 1000 }));
+  if (caso === "sinnada") localStorage.removeItem("calendario_token");
+</script>
+<script type="module">
+  const auth = await import("../js/auth.js?v=" + Math.random());
+  const r = { caso: new URLSearchParams(location.search).get("caso") };
+  const t0 = Date.now();
+  r.entro = await auth.iniciar("123-abc.apps.googleusercontent.com", ()=>{});
+  r.tardoMs = Date.now() - t0;
+  r.llamadasAGoogle = window.__llamadasAGoogle;
+  r.motivo = auth.ultimoMotivo;
+  if (r.entro) r.tokenUsado = await auth.vigente();
+  window.listo = r;
+</script>

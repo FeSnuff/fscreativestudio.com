@@ -8,9 +8,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Instrument+Sans:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="/css/base.css">
-<link rel="stylesheet" href="/css/temas.css">
-<link rel="stylesheet" href="/css/portada.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/temas.css">
+<link rel="stylesheet" href="css/portada.css">
 <style>
   .resumen{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:var(--ink-2)}
   .resumen b{font-family:var(--disp);font-size:17px;color:var(--ink);display:block;font-variant-numeric:tabular-nums}
@@ -40,7 +40,7 @@
   <div class="resumen" id="resumen"></div>
 
   <nav class="modos">
-    <a class="modo" href="/calendario.html" style="--tono:#0891A5;--tono-1:#DBF1F6">
+    <a class="modo" href="calendario.html" style="--tono:#0891A5;--tono-1:#DBF1F6">
       <div class="icono">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <rect x="2.5" y="4.5" width="19" height="13" rx="2"></rect><path d="M8 21h8M12 17.5V21"></path>
@@ -51,7 +51,7 @@
       <span class="mas">Abrir pantalla →</span>
     </a>
 
-    <a class="modo" href="/gestion.html" style="--tono:#7C3AED;--tono-1:#EBE3FE">
+    <a class="modo" href="gestion.html" style="--tono:#7C3AED;--tono-1:#EBE3FE">
       <div class="icono">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M4 6.5h11M4 12h16M4 17.5h9"></path><circle cx="18.5" cy="6.5" r="2.2"></circle><circle cx="16" cy="17.5" r="2.2"></circle>
@@ -80,9 +80,9 @@
 </main>
 
 <script type="module">
-import { abrir } from "/js/portada.js";
-import * as arranque from "/js/arranque.js";
-import { fechaLarga, hoyIso, sumarDias } from "/js/comun.js";
+import { abrir } from "./js/portada.js";
+import * as arranque from "./js/arranque.js";
+import { fechaLarga, hoyIso, sumarDias } from "./js/comun.js";
 
 const $ = (id) => document.getElementById(id);
 $("fecha").textContent = fechaLarga(hoyIso());

@@ -121,6 +121,12 @@ const servidor = http.createServer(async (pet, res) => {
   // Con ?prueba=1 inyectamos el desvío hacia el simulador y el auth de
   // mentira. Así las páginas reales se prueban sin tocarles una línea.
   if (path.extname(archivo) === ".html" && url.searchParams.get("prueba") === "1") {
+    // La clave del import map es la URL ya resuelta, así que depende de en qué
+    // carpeta esté la página. Se calcula sola para poder probar la app tanto en
+    // la raíz como dentro de una subcarpeta.
+    const dir = url.pathname.slice(0, url.pathname.lastIndexOf("/") + 1);
+    const mapa = { [`${dir}js/auth.js`]: "/prueba/auth-falso.js",
+                   "/js/auth.js": "/prueba/auth-falso.js" };
     cuerpo = cuerpo.toString().replace("<head>", `<head>
 <script>
   (() => { const real = window.fetch, o = location.origin;
@@ -128,7 +134,7 @@ const servidor = http.createServer(async (pet, res) => {
       .replace("https://sheets.googleapis.com", o)
       .replace("https://www.googleapis.com", o), op); })();
 </script>
-<script type="importmap">{"imports":{"/js/auth.js":"/prueba/auth-falso.js"}}</script>`);
+<script type="importmap">${JSON.stringify({ imports: mapa })}</script>`);
   }
 
   res.writeHead(200, { "Content-Type": TIPOS[path.extname(archivo)] || "text/plain" });

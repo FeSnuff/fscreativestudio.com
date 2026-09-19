@@ -1,0 +1,39 @@
+<!doctype html>
+<meta charset="utf-8"><title>¿Qué le pide a Google?</title>
+<body>
+<script>
+  // Google falso que apunta con qué opciones lo llaman y responde bien.
+  window.__llamadas = [];
+  window.google = { accounts: { oauth2: {
+    initTokenClient: (cfg) => ({
+      ...cfg,
+      requestAccessToken(op) {
+        window.__llamadas.push(op);
+        setTimeout(() => this.callback({ access_token: "tok-" + Date.now(), expires_in: 3600 }), 10);
+      },
+    }),
+    revoke: (t, cb) => cb && cb(),
+  } } };
+  // userinfo falso
+  const realFetch = window.fetch;
+  window.fetch = (u, o) => String(u).includes("userinfo")
+    ? Promise.resolve(new Response(JSON.stringify({ email: "luisfifer705@gmail.com" }), {status:200}))
+    : realFetch(u, o);
+</script>
+<script type="module">
+  const auth = await import("../js/auth.js?v=" + Date.now());
+  const r = { paso: [] };
+
+  // --- 1. primera vez: no hay nada guardado
+  localStorage.clear();
+  const revivio1 = await auth.iniciar("123-abc.apps.googleusercontent.com", ()=>{});
+  r.primeraCarga_revivio = revivio1;                 // false: nunca entró
+  await auth.entrar();                               // el clic del botón
+  r.opcionesDelLogin = window.__llamadas.at(-1);
+  await auth.cuenta();
+  r.correoGuardado = localStorage.getItem("calendario_correo");
+  r.marcaGuardada = localStorage.getItem("entro_alguna_vez");
+
+  window.__llamadas.length = 0;
+  window.listo = r;
+</script>
