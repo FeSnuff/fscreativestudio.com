@@ -32,6 +32,7 @@
 
 @layer base {
   html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  html, body { overflow-x: clip; max-width: 100%; }
   html.lenis, html.lenis body { height: auto; }
   .lenis.lenis-smooth { scroll-behavior: auto !important; }
   body { @apply bg-paper text-ink font-sans; font-size: 1.0625rem; line-height: 1.65; }
@@ -73,13 +74,11 @@
     background-size: 48px 48px;
   }
 
-  /* soft glow in brand colors: gradients only (no blur filter) so it never flickers */
+  /* soft glow in brand colors: gradients only (no blur filter) and static (no animation) */
   .aurora { position: absolute; pointer-events: none; opacity: .5; overflow: visible; }
-  .aurora::before, .aurora::after { content: ""; position: absolute; border-radius: 50%; will-change: transform; transform: translateZ(0); }
-  .aurora::before { width: 70%; height: 80%; left: 0; top: 5%; background: radial-gradient(closest-side, rgb(26 212 217 / .55), rgb(26 212 217 / 0)); animation: drift-a 40s ease-in-out infinite alternate; }
-  .aurora::after { width: 65%; height: 75%; right: 0; bottom: 0; background: radial-gradient(closest-side, rgb(182 82 212 / .55), rgb(182 82 212 / 0)); animation: drift-b 48s ease-in-out infinite alternate; }
-  @keyframes drift-a { to { transform: translate3d(6%, 4%, 0); } }
-  @keyframes drift-b { to { transform: translate3d(-5%, -4%, 0); } }
+  .aurora::before, .aurora::after { content: ""; position: absolute; border-radius: 50%; }
+  .aurora::before { width: 70%; height: 80%; left: 0; top: 5%; background: radial-gradient(closest-side, rgb(26 212 217 / .55), rgb(26 212 217 / 0)); }
+  .aurora::after { width: 65%; height: 75%; right: 0; bottom: 0; background: radial-gradient(closest-side, rgb(182 82 212 / .55), rgb(182 82 212 / 0)); }
 
   .glow { position: absolute; pointer-events: none; background: radial-gradient(closest-side, color-mix(in srgb, var(--g) 70%, transparent), transparent); }
 

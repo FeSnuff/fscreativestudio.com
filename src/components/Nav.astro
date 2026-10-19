@@ -16,7 +16,7 @@ const path = Astro.url.pathname;
   <div class="wrap flex h-[72px] items-center justify-between gap-6">
     <a href={lp(lang, '/')} class="flex items-center gap-3 font-display text-[1.05rem] font-semibold tracking-tight" aria-label="FS Creative Studio">
       <img src="/brand/fs-mark.png" alt="" width="26" height="33" class="h-8 w-auto" />
-      <span>FS Creative Studio</span>
+      <span translate="no">FS Creative Studio</span>
     </a>
     <nav class="hidden lg:block" aria-label="Main">
       <ul class="flex items-center gap-8 text-[0.95rem]">
@@ -26,7 +26,7 @@ const path = Astro.url.pathname;
       </ul>
     </nav>
     <div class="hidden lg:flex items-center gap-5">
-      <a href={altPath} hreflang={lang === 'en' ? 'es' : 'en'} class="text-sm opacity-70 hover:opacity-100" title={t.lang}>{t.langShort}</a>
+      <a href={altPath} hreflang={lang === 'en' ? 'es' : 'en'} class="text-sm opacity-70 hover:opacity-100" title={t.lang} data-lang-switch={lang === 'en' ? 'es' : 'en'}>{t.langShort}</a>
       <a href={lp(lang, '/contact/')} class="btn nav-cta !py-2.5 !px-5 text-sm">{t.cta}</a>
     </div>
     <button data-menu-btn class="lg:hidden -mr-2 p-2" aria-expanded="false" aria-controls="mobile-menu">
@@ -41,7 +41,7 @@ const path = Astro.url.pathname;
       </ul>
       <div class="mt-6 flex items-center justify-between gap-4">
         <a href={lp(lang, '/contact/')} class="btn btn-light flex-1">{t.cta}</a>
-        <a href={altPath} class="btn btn-ghost">{t.langShort}</a>
+        <a href={altPath} class="btn btn-ghost" data-lang-switch={lang === 'en' ? 'es' : 'en'}>{t.langShort}</a>
       </div>
     </nav>
   </div>

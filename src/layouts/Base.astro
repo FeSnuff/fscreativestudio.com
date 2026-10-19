@@ -25,6 +25,23 @@ const alt = new URL(altPath, Astro.site);
     <link rel="alternate" hreflang={lang === 'en' ? 'es' : 'en'} href={alt} />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="theme-color" content="#06052d" />
+    <script is:inline>
+      // First visit from a Spanish-language browser on an English page: go to the Spanish version.
+      // A language chosen with the EN/ES switch is remembered and always respected.
+      (function () {
+        try {
+          var path = location.pathname, isEs = path === '/es' || path.indexOf('/es/') === 0;
+          var pref = localStorage.getItem('fs-lang');
+          var want = pref || ((navigator.language || '').toLowerCase().indexOf('es') === 0 ? 'es' : 'en');
+          if (want === 'es' && !isEs) location.replace('/es' + path + location.search + location.hash);
+          else if (pref === 'en' && isEs) location.replace((path.replace(/^\/es/, '') || '/') + location.search + location.hash);
+        } catch (e) {}
+      })();
+      document.addEventListener('click', function (e) {
+        var a = e.target.closest && e.target.closest('[data-lang-switch]');
+        if (a) try { localStorage.setItem('fs-lang', a.getAttribute('data-lang-switch')); } catch (err) {}
+      });
+    </script>
     <meta property="og:type" content="website" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={desc} />
