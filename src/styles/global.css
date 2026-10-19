@@ -1,0 +1,96 @@
+@import "tailwindcss";
+@import "@fontsource-variable/schibsted-grotesk";
+@import "@fontsource/ibm-plex-sans/400.css";
+@import "@fontsource/ibm-plex-sans/500.css";
+@import "@fontsource/ibm-plex-sans/600.css";
+
+@theme {
+  --color-night: #06052d;
+  --color-night-2: #110f3f;
+  --color-night-3: #1d1a57;
+  --color-paper: #f5f6fb;
+  --color-ink: #14123a;
+  --color-muted: #595877;
+  --color-line: #e2e3ee;
+  --color-cyan: #1ad4d9;
+  --color-violet: #b652d4;
+  --color-signal: #5b4bf0;
+  --color-mint: #17b890;
+  --color-amber: #f2a33a;
+  --color-lilac: #f4f0fd;
+  --color-mist: #ebf8f9;
+  --color-cyan-ink: #0a8b90;
+  --color-violet-ink: #8a33aa;
+  --color-mint-ink: #0e8566;
+  --color-amber-ink: #a8650a;
+  --font-display: "Schibsted Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@view-transition { navigation: auto; }
+
+@layer base {
+  html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+  body { @apply bg-paper text-ink font-sans; font-size: 1.0625rem; line-height: 1.65; }
+  h1, h2, h3, h4 { @apply font-display text-balance; letter-spacing: -0.025em; line-height: 1.04; }
+  p { text-wrap: pretty; }
+  ::selection { background: var(--color-cyan); color: var(--color-night); }
+  :focus-visible { outline: 2px solid var(--color-cyan); outline-offset: 3px; border-radius: 6px; }
+  section[id] { scroll-margin-top: 6rem; }
+}
+
+@layer components {
+  .wrap { @apply mx-auto w-full max-w-[1240px] px-5 sm:px-8; }
+  .measure { max-width: 62ch; }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-[0.95rem] font-semibold;
+    transition: transform .25s var(--ease-out-soft), background-color .25s, color .25s, box-shadow .25s;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn-light { @apply bg-white text-night; }
+  .btn-light:hover { box-shadow: 0 0 0 4px rgb(26 212 217 / .25), 0 10px 40px -6px rgb(182 82 212 / .55); }
+  .btn-dark { @apply bg-night text-white; }
+  .btn-dark:hover { box-shadow: 0 0 0 4px rgb(91 75 240 / .22), 0 10px 30px -8px rgb(91 75 240 / .6); }
+  .btn-ghost { @apply text-white ring-1 ring-white/25; }
+  .btn-ghost:hover { @apply bg-white/10; }
+  .btn-ghost-dark { @apply text-ink ring-1 ring-ink/20; }
+  .btn-ghost-dark:hover { @apply bg-ink/5; }
+
+  .link-u { background: linear-gradient(currentColor,currentColor) 0 100% / 0 1px no-repeat; transition: background-size .35s var(--ease-out-soft); }
+  .link-u:hover { background-size: 100% 1px; }
+
+  /* the brand "connection" line: the only place the gradient appears besides the logo */
+  .flow-line { background: linear-gradient(90deg, var(--color-cyan), var(--color-violet)); }
+
+  .blueprint {
+    background-image:
+      linear-gradient(rgb(255 255 255 / .045) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / .045) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  /* soft glow in brand colors: gradients only (no blur filter) so it never flickers */
+  .aurora { position: absolute; pointer-events: none; opacity: .5; overflow: visible; }
+  .aurora::before, .aurora::after { content: ""; position: absolute; border-radius: 50%; will-change: transform; transform: translateZ(0); }
+  .aurora::before { width: 70%; height: 80%; left: 0; top: 5%; background: radial-gradient(closest-side, rgb(26 212 217 / .55), rgb(26 212 217 / 0)); animation: drift-a 40s ease-in-out infinite alternate; }
+  .aurora::after { width: 65%; height: 75%; right: 0; bottom: 0; background: radial-gradient(closest-side, rgb(182 82 212 / .55), rgb(182 82 212 / 0)); animation: drift-b 48s ease-in-out infinite alternate; }
+  @keyframes drift-a { to { transform: translate3d(6%, 4%, 0); } }
+  @keyframes drift-b { to { transform: translate3d(-5%, -4%, 0); } }
+
+  .glow { position: absolute; pointer-events: none; background: radial-gradient(closest-side, color-mix(in srgb, var(--g) 70%, transparent), transparent); }
+
+  .grad-text { background: linear-gradient(100deg, var(--color-cyan-ink), var(--color-signal) 55%, var(--color-violet-ink)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .accent-dot { width: .6rem; height: .6rem; border-radius: 999px; background: var(--accent); box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 18%, transparent); }
+
+  .ui-window { @apply rounded-2xl bg-white text-ink; box-shadow: 0 30px 80px -20px rgb(6 5 45 / .55), 0 0 0 1px rgb(255 255 255 / .08); }
+  .ui-chip { @apply inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-medium; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+  @view-transition { navigation: none; }
+}

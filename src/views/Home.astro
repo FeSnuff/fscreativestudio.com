@@ -1,0 +1,248 @@
+---
+import Base from '../layouts/Base.astro';
+import HeroSystem from '../components/HeroSystem.astro';
+import Mock from '../components/Mock.astro';
+import Network from '../components/Network.astro';
+import CTA from '../components/CTA.astro';
+import ProcessSteps from '../components/ProcessSteps.astro';
+import WorkList from '../components/WorkList.astro';
+import { ui } from '../i18n/ui';
+import { solutions, solColor } from '../data/solutions';
+import { site } from '../data/site';
+import { lp, type Lang } from '../data/site';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = ui[lang];
+const sols = solutions[lang];
+const indColors = ['#0a8b90', '#4a3bd6', '#8a33aa', '#a8650a', '#0e8566', '#5b4bf0'];
+const indIcons = ['<path d="M4 8h16v11H4zM9 8V5h6v3M4 13h16"/>', '<path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>', '<path d="M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z"/><path d="M9 11h6M12 8v6"/>', '<path d="M14.5 5.5a3.5 3.5 0 00-4.6 4.6L4 16l2 2 5.9-5.9a3.5 3.5 0 004.6-4.6l-2.1 2.1-2-2z"/>', '<path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/>', '<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>'];
+---
+<Base lang={lang} altPath={lp(lang === 'en' ? 'es' : 'en', '/')}>
+  <!-- HERO -->
+  <section class="relative overflow-hidden bg-night text-white">
+    <div class="blueprint absolute inset-0 [mask-image:radial-gradient(ellipse_at_70%_40%,black,transparent_75%)]"></div>
+    <Network seed={3} />
+    <div class="wrap relative grid items-center gap-16 pb-24 pt-36 lg:grid-cols-12 lg:gap-10 lg:pb-32 lg:pt-44">
+      <div class="lg:col-span-6">
+        <h1 data-hero-h1 class="text-[2.6rem] font-semibold sm:text-6xl lg:text-[4.1rem]">{t.hero.h1}</h1>
+        <p data-hero-sub class="mt-7 max-w-[52ch] text-lg text-white/72">{t.hero.sub}</p>
+        <div data-hero-cta class="mt-10 flex flex-wrap gap-3">
+          <a href={lp(lang, '/contact/')} class="btn btn-light">{t.hero.cta}</a>
+          <a href={lp(lang, '/solutions/')} class="btn btn-ghost">{t.hero.cta2}</a>
+        </div>
+        <p data-hero-note class="mt-8 text-sm text-white/50">{t.hero.note}</p>
+      </div>
+      <div class="relative lg:col-span-6 lg:pl-6">
+        <HeroSystem lang={lang} />
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLEM + DATA -->
+  <section class="bg-lilac py-24 lg:py-32">
+    <div class="wrap grid gap-14 lg:grid-cols-12">
+      <div class="lg:col-span-5">
+        <h2 class="text-4xl font-semibold sm:text-5xl">{t.problem.h2}</h2>
+        <p class="mt-6 measure text-muted">{t.problem.p}</p>
+      </div>
+      <dl class="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:col-span-7 lg:pl-8">
+        {t.problem.stats.map((s) => (
+          <div class="border-t border-ink/15 pt-5" data-reveal>
+            <dt class="grad-text font-display text-6xl font-semibold tracking-tight">{s.n}</dt>
+            <dd class="mt-3 text-ink/85">{s.l}</dd>
+            <dd class="mt-2 text-sm text-muted"><a href={s.u} target="_blank" rel="noopener" class="link-u">{s.s}</a></dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <!-- CONNECT (pinned scroll scene) -->
+  <section class="relative bg-white" data-connect>
+    <div class="wrap grid min-h-dvh items-center gap-12 py-24 lg:grid-cols-12" data-connect-pin>
+      <div class="lg:col-span-5">
+        <h2 class="text-4xl font-semibold sm:text-5xl">{t.connect.h2}</h2>
+        <ol class="mt-10 space-y-7">
+          {t.connect.steps.map((s, i) => (
+            <li class="grid grid-cols-[2rem_1fr] gap-3 transition-opacity duration-500" data-connect-step={i}>
+              <span class="font-display text-sm font-semibold text-signal">{i + 1}</span>
+              <div>
+                <h3 class="text-xl font-semibold tracking-tight">{s.t}</h3>
+                <p class="mt-1.5 text-muted">{s.d}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <div class="lg:col-span-7">
+        <div class="relative mx-auto aspect-[5/4] w-full max-w-[560px]" data-connect-stage>
+          <div class="absolute inset-[6%] rounded-3xl bg-night p-[1.5px]" data-connect-frame>
+            <div class="flow-line absolute inset-0 rounded-3xl opacity-0" data-connect-glow></div>
+            <div class="relative flex h-full flex-col rounded-[calc(1.5rem-1.5px)] bg-night p-4 text-white sm:p-7" data-connect-panel>
+              <div class="flex items-center gap-2.5">
+                <img src="/brand/fs-mark.png" alt="" class="h-5 w-auto" />
+                <span class="font-display font-semibold" data-connect-label>{t.connect.system}</span>
+              </div>
+              <div class="mt-4 grid flex-1 grid-cols-3 gap-2 sm:mt-5 sm:gap-3">
+                {t.connect.pieces.map((p, i) => (
+                  <div class="flex flex-col justify-between rounded-xl bg-white/[.06] p-2.5 ring-1 ring-white/10 sm:p-3" data-piece={i}>
+                    <span class="piece-icon" data-kind={i}></span>
+                    <span class="text-[11.5px] font-medium leading-tight sm:text-[13px]">{p}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOLUTIONS (list + sticky preview) -->
+  <section class="bg-paper py-24 lg:py-32" id="solutions">
+    <div class="wrap grid gap-14 lg:grid-cols-12">
+      <div class="lg:col-span-5">
+        <div class="lg:sticky lg:top-28">
+          <h2 class="text-4xl font-semibold sm:text-5xl">{t.sol.h2}</h2>
+          <p class="mt-6 measure text-muted">{t.sol.p}</p>
+          <div class="relative mt-12 hidden aspect-[4/3] lg:block" data-sol-preview>
+            {sols.map((s, i) => (
+              <div class:list={['absolute inset-0 transition-[opacity,transform] duration-500 ease-out-soft', i === 0 ? 'opacity-100' : 'pointer-events-none translate-y-3 opacity-0']} data-sol-mock={i}>
+                <div class="glow -inset-16 opacity-70" style={`--g:${solColor[s.slug].c}`} aria-hidden="true"></div>
+                <Mock variant={s.mock} lang={lang} class="relative" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      <ul class="lg:col-span-7 lg:pl-8">
+        {sols.map((s, i) => (
+          <li class="sol-row group relative border-t border-ink/15 last:border-b" data-sol-row={i} style={`--accent:${solColor[s.slug].c};--accent-ink:${solColor[s.slug].ink}`}>
+            <span class="sol-bar absolute -left-px top-0 h-full w-[3px] origin-top scale-y-0 transition-transform duration-500" style="background:var(--accent)" aria-hidden="true"></span>
+            <a href={lp(lang, `/solutions/${s.slug}/`)} class="grid gap-3 py-9 sm:grid-cols-[1fr_auto] sm:items-baseline sm:gap-8 sm:pl-6">
+              <div>
+                <h3 class="flex items-center gap-4 text-2xl font-semibold tracking-tight transition-colors group-hover:text-[var(--accent-ink)] sm:text-[1.9rem]"><span class="accent-dot shrink-0"></span>{s.title}</h3>
+                <p class="mt-3 max-w-[54ch] text-muted">{s.short}</p>
+              </div>
+              <span class="text-sm font-medium text-ink/70 group-hover:text-ink">{t.sol.more}</span>
+            </a>
+            <div class="relative pb-8 lg:hidden"><div class="glow -inset-6 opacity-60" style="--g:var(--accent)" aria-hidden="true"></div><Mock variant={s.mock} lang={lang} class="relative" /></div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- INDUSTRIES -->
+  <section class="bg-mist py-24 lg:py-32">
+    <div class="wrap">
+      <div class="grid gap-6 lg:grid-cols-12">
+        <h2 class="text-4xl font-semibold sm:text-5xl lg:col-span-6">{t.industries.h2}</h2>
+        <p class="measure text-muted lg:col-span-5 lg:col-start-8 lg:self-end">{t.industries.p}</p>
+      </div>
+      <ul class="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {t.industries.list.map((x, i) => (
+          <li class="group rounded-2xl bg-white p-7 ring-1 ring-ink/5 transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_-20px_rgb(6_5_45/.25)]" style={`--accent:${indColors[i]}`}>
+            <span class="grid h-11 w-11 place-items-center rounded-xl" style="background:color-mix(in srgb, var(--accent) 16%, white);color:var(--accent)">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={indIcons[i]} />
+            </span>
+            <h3 class="mt-5 text-xl font-semibold tracking-tight">{x.t}</h3>
+            <p class="mt-2 text-muted">{x.d}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- WORK -->
+  <section class="bg-night py-24 text-white lg:py-32">
+    <div class="wrap">
+      <div class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h2 class="text-4xl font-semibold sm:text-5xl">{t.work.h2}</h2>
+          <p class="mt-5 measure text-white/60">{t.work.p}</p>
+        </div>
+        <a href={lp(lang, '/work/')} class="btn btn-ghost self-start sm:self-auto">{t.work.all}</a>
+      </div>
+      <WorkList lang={lang} limit={6} dark />
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="bg-paper py-24 lg:py-32">
+    <div class="wrap">
+      <h2 class="text-4xl font-semibold sm:text-5xl">{t.process.h2}</h2>
+      <p class="mt-5 measure text-muted">{t.process.p}</p>
+      <ProcessSteps lang={lang} />
+    </div>
+  </section>
+
+  <!-- TRUST -->
+  <section class="bg-white py-24">
+    <div class="wrap grid gap-12 lg:grid-cols-12">
+      <h2 class="text-4xl font-semibold lg:col-span-4">{t.trust.h2}</h2>
+      <dl class="grid gap-10 sm:grid-cols-2 lg:col-span-8">
+        {t.trust.items.map((x, i) => (
+          <div style={`--accent:${['#1ad4d9', '#5b4bf0', '#17b890', '#b652d4'][i]}`}>
+            <dt class="flex items-center gap-3 text-lg font-semibold">
+              <span class="accent-dot"></span>{x.t}
+            </dt>
+            <dd class="mt-2 pl-5 text-muted">{x.d}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <!-- HUMAN -->
+  <section class="relative overflow-hidden bg-lilac py-24 lg:py-32">
+    <div class="wrap grid items-center gap-14 lg:grid-cols-12">
+      <div class="lg:col-span-6">
+        <h2 class="text-4xl font-semibold sm:text-5xl">{t.human.h2}</h2>
+        <p class="mt-6 measure text-lg text-muted">{t.human.p}</p>
+        <div class="mt-9 flex flex-wrap gap-3">
+          <a href={`https://wa.me/${site.whatsapp}`} target="_blank" rel="noopener" class="btn btn-dark">{t.human.btn}</a>
+          <a href={site.phoneHref} class="btn btn-ghost-dark">{t.human.call}</a>
+        </div>
+      </div>
+      <div class="lg:col-span-5 lg:col-start-8" data-human-chat>
+        <div class="relative">
+          <div class="glow -inset-16 opacity-50" style="--g:#1ad4d9;transform:translate(-12%,-10%)" aria-hidden="true"></div><div class="glow -inset-16 opacity-50" style="--g:#b652d4;transform:translate(12%,10%)" aria-hidden="true"></div>
+          <div class="relative rounded-3xl bg-white p-5 shadow-[0_30px_70px_-30px_rgb(6_5_45/.35)] ring-1 ring-ink/5">
+            <div class="flex items-center gap-3 border-b border-line pb-4">
+              <span class="relative grid h-11 w-11 place-items-center rounded-full bg-night">
+                <img src="/brand/fs-mark.png" alt="" class="h-6 w-auto" />
+                <span class="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-mint ring-2 ring-white"></span>
+              </span>
+              <div>
+                <p class="font-semibold leading-tight">{site.ownerName || 'FS Creative Studio'}</p>
+                <p class="text-sm text-muted">{t.human.from}</p>
+              </div>
+            </div>
+            <div class="space-y-3 pt-5">
+              <p class="max-w-[85%] rounded-2xl rounded-tl-md bg-paper px-4 py-3 text-[0.97rem]" data-bubble>{t.human.bubble}</p>
+              <p class="ml-auto w-fit rounded-2xl rounded-tr-md bg-signal px-4 py-3 text-[0.97rem] text-white" data-bubble>{lang === 'en' ? 'We quote in Excel and track jobs on a whiteboard 😅' : 'Cotizamos en Excel y controlamos trabajos en una pizarra 😅'}</p>
+              <p class="flex w-fit items-center gap-1 rounded-2xl rounded-tl-md bg-paper px-4 py-3" data-bubble aria-hidden="true"><span class="typing"></span><span class="typing"></span><span class="typing"></span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CTA lang={lang} />
+</Base>
+
+<style is:global>
+  .sol-row.is-active .sol-bar, .sol-row:hover .sol-bar { transform: scaleY(1); }
+  .typing { width: 7px; height: 7px; border-radius: 50%; background: var(--color-muted); opacity: .5; animation: typing 1.2s infinite ease-in-out; }
+  .typing:nth-child(2) { animation-delay: .15s; } .typing:nth-child(3) { animation-delay: .3s; }
+  @keyframes typing { 0%, 60%, 100% { transform: translateY(0); opacity: .35; } 30% { transform: translateY(-4px); opacity: .9; } }
+  .piece-icon { display:block; width: 22px; height: 22px; border-radius: 6px; background: color-mix(in srgb, currentColor 14%, transparent); position: relative; }
+  .piece-icon[data-kind='0'] { background: repeating-linear-gradient(0deg, rgb(26 212 217 / .55) 0 2px, transparent 2px 6px), repeating-linear-gradient(90deg, rgb(26 212 217 / .55) 0 2px, transparent 2px 7px); }
+  .piece-icon[data-kind='1'] { background: linear-gradient(135deg, transparent 45%, color-mix(in srgb, currentColor 60%, transparent) 46% 54%, transparent 55%), color-mix(in srgb, currentColor 14%, transparent); }
+  .piece-icon[data-kind='2'] { border-radius: 50% 50% 50% 4px; background: rgb(23 184 144 / .7); }
+  .piece-icon[data-kind='3'] { background: linear-gradient(color-mix(in srgb, currentColor 55%, transparent) 0 0) 4px 6px / 14px 2px no-repeat, linear-gradient(color-mix(in srgb, currentColor 55%, transparent) 0 0) 4px 11px / 10px 2px no-repeat, linear-gradient(color-mix(in srgb, currentColor 55%, transparent) 0 0) 4px 16px / 12px 2px no-repeat, color-mix(in srgb, currentColor 14%, transparent); }
+  .piece-icon[data-kind='4'] { background: linear-gradient(rgb(182 82 212 / .8) 0 0) top / 100% 6px no-repeat, color-mix(in srgb, currentColor 14%, transparent); }
+  .piece-icon[data-kind='5'] { background: linear-gradient(rgb(242 163 58 / .8) 0 0) 4px 14px / 14px 3px no-repeat, color-mix(in srgb, currentColor 14%, transparent); }
+</style>

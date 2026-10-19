@@ -1,0 +1,53 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from './PageHeader.astro';
+import { site, lp, otherLang, type Lang } from '../data/site';
+interface Props { lang: Lang; kind: 'privacy' | 'terms' }
+const { lang, kind } = Astro.props;
+const date = lang === 'en' ? 'October 2026' : 'octubre de 2026';
+const C = {
+  privacy: {
+    en: { h: 'Privacy policy', s: [
+      ['What we collect', 'When you contact us we receive the information you choose to send: name, company, email, phone and the details of your request. We do not use advertising trackers on this site.'],
+      ['How we use it', 'Only to reply to your request, prepare a proposal and deliver contracted services. We never sell or rent personal information.'],
+      ['Client data in our projects', 'Data inside the systems we build belongs to our clients. We access it only to deliver and support the service, under the confidentiality terms of each agreement.'],
+      ['Service providers', 'We may use trusted providers for hosting, email and form delivery. They process data only on our instructions.'],
+      ['Your choices', 'You can ask us to access, correct or delete your information at any time by contacting us.'],
+    ] },
+    es: { h: 'Política de privacidad', s: [
+      ['Qué recopilamos', 'Cuando nos contactas recibimos la información que decides enviar: nombre, empresa, correo, teléfono y el detalle de tu solicitud. No usamos rastreadores publicitarios en este sitio.'],
+      ['Cómo la usamos', 'Solo para responder tu solicitud, preparar una propuesta y prestar los servicios contratados. Nunca vendemos ni alquilamos información personal.'],
+      ['Datos de clientes en nuestros proyectos', 'Los datos dentro de los sistemas que construimos pertenecen a nuestros clientes. Accedemos a ellos solo para prestar y dar soporte al servicio, bajo la confidencialidad de cada acuerdo.'],
+      ['Proveedores', 'Podemos usar proveedores de confianza para hosting, correo y envío de formularios. Procesan datos solo bajo nuestras instrucciones.'],
+      ['Tus opciones', 'Puedes pedirnos acceder, corregir o eliminar tu información en cualquier momento contactándonos.'],
+    ] },
+  },
+  terms: {
+    en: { h: 'Terms of use', s: [
+      ['This website', 'The content of this site is informational. It does not constitute an offer; every engagement is defined in a written proposal and agreement.'],
+      ['Projects', 'Scope, price, timeline, ownership and confidentiality for each project are set out in the signed agreement, which prevails over anything on this site.'],
+      ['Payments', 'Services are invoiced in US dollars. Payment methods and schedules are specified in each agreement.'],
+      ['Intellectual property', 'Unless the agreement says otherwise, clients own the custom code and data produced for them once paid in full.'],
+      ['Liability', 'We work to keep this site accurate and available, but it is provided as is.'],
+    ] },
+    es: { h: 'Términos de uso', s: [
+      ['Este sitio', 'El contenido de este sitio es informativo. No constituye una oferta; cada servicio se define en una propuesta y un acuerdo por escrito.'],
+      ['Proyectos', 'El alcance, precio, plazos, propiedad y confidencialidad de cada proyecto se establecen en el acuerdo firmado, que prevalece sobre este sitio.'],
+      ['Pagos', 'Los servicios se facturan en dólares estadounidenses. Los medios y fechas de pago se especifican en cada acuerdo.'],
+      ['Propiedad intelectual', 'Salvo que el acuerdo diga lo contrario, el cliente es dueño del código a medida y los datos producidos para él una vez pagados en su totalidad.'],
+      ['Responsabilidad', 'Procuramos que este sitio sea preciso y esté disponible, pero se ofrece tal cual.'],
+    ] },
+  },
+};
+const c = C[kind][lang];
+const path = kind === 'privacy' ? '/privacy/' : '/terms/';
+---
+<Base lang={lang} title={c.h} altPath={lp(otherLang(lang), path)}>
+  <PageHeader title={c.h} lang={lang} crumb={c.h} lead={(lang === 'en' ? 'Last updated ' : 'Última actualización: ') + date} />
+  <section class="bg-paper py-16 lg:py-24">
+    <div class="wrap max-w-3xl space-y-10">
+      {c.s.map(([h, p]) => (<div><h2 class="text-2xl font-semibold">{h}</h2><p class="mt-3 text-muted">{p}</p></div>))}
+      <p class="text-muted">{lang === 'en' ? 'Questions:' : 'Consultas:'} <a class="link-u text-ink" href={site.phoneHref}>{site.phoneDisplay}</a></p>
+    </div>
+  </section>
+</Base>

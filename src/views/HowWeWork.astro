@@ -1,0 +1,57 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from './PageHeader.astro';
+import ProcessSteps from '../components/ProcessSteps.astro';
+import CTA from '../components/CTA.astro';
+import { ui } from '../i18n/ui';
+import { lp, otherLang, type Lang } from '../data/site';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = ui[lang];
+---
+<Base lang={lang} title={t.processPage.h1} description={t.processPage.p} altPath={lp(otherLang(lang), '/how-we-work/')}>
+  <PageHeader title={t.processPage.h1} lead={t.processPage.p} lang={lang} crumb={t.processPage.h1} accent="#5b4bf0">
+    <ol slot="aside" class="relative space-y-4 rounded-3xl bg-night-2/95 shadow-[0_30px_60px_-30px_rgb(0_0_0/.6)] p-6 ring-1 ring-white/10">
+      {t.process.steps.map((s, i) => (
+        <li class="flex items-center gap-4">
+          <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full text-sm font-semibold" style={`background:${['#0a8b90','#4a3bd6','#8a33aa','#0e8566','#a8650a'][i]}`}>{i + 1}</span>
+          <span class="flex-1 font-medium">{s.t}</span>
+          <span class="text-sm text-white/55">{s.w}</span>
+        </li>
+      ))}
+    </ol>
+  </PageHeader>
+  <section class="bg-paper py-20 lg:py-28">
+    <div class="wrap"><ProcessSteps lang={lang} /></div>
+  </section>
+  <section class="bg-white py-20 lg:py-28">
+    <div class="wrap grid gap-12 lg:grid-cols-12">
+      <h2 class="text-3xl font-semibold sm:text-4xl lg:col-span-4">{t.trust.h2}</h2>
+      <dl class="grid gap-10 sm:grid-cols-2 lg:col-span-8">
+        {t.trust.items.map((x) => (
+          <div><dt class="text-lg font-semibold">{x.t}</dt><dd class="mt-2 text-muted">{x.d}</dd></div>
+        ))}
+      </dl>
+    </div>
+  </section>
+  <section class="bg-paper py-20 lg:py-28">
+    <div class="wrap grid gap-12 lg:grid-cols-12">
+      <h2 class="text-3xl font-semibold sm:text-4xl lg:col-span-4">{t.processPage.faqH}</h2>
+      <div class="lg:col-span-8">
+        {t.processPage.faq.map((f) => (
+          <details class="group border-t border-ink/15 last:border-b">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-6 text-lg font-semibold tracking-tight [&::-webkit-details-marker]:hidden">
+              {f.q}
+              <span class="relative h-4 w-4 shrink-0" aria-hidden="true">
+                <span class="absolute left-0 top-1/2 h-[1.5px] w-4 -translate-y-1/2 bg-ink"></span>
+                <span class="absolute left-1/2 top-0 h-4 w-[1.5px] -translate-x-1/2 bg-ink transition-transform duration-300 group-open:scale-y-0"></span>
+              </span>
+            </summary>
+            <p class="measure pb-7 text-muted">{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+  <CTA lang={lang} />
+</Base>

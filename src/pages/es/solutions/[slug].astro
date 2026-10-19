@@ -1,0 +1,7 @@
+---
+import V from '../../../views/SolutionDetail.astro';
+import { solutions } from '../../../data/solutions';
+export const getStaticPaths = () => solutions.en.map((s) => ({ params: { slug: s.slug } }));
+const { slug } = Astro.params;
+---
+<V lang="es" slug={slug!} />

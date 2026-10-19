@@ -1,0 +1,19 @@
+---
+/* Full-bleed plexus network background (drawn and animated by src/scripts/plexus.ts). */
+interface Props { class?: string; seed?: number }
+const { class: cls, seed = 7 } = Astro.props;
+---
+<div class:list={['net-wrap pointer-events-none absolute inset-0 overflow-hidden', cls]} aria-hidden="true">
+  <canvas data-plexus data-seed={seed} class="block h-full w-full"></canvas>
+</div>
+
+<script>
+  import { initPlexus } from '../scripts/plexus';
+  initPlexus();
+</script>
+
+<style>
+  /* keep the text side clean: the network fades in from the left (from the top on phones) */
+  .net-wrap { -webkit-mask-image: linear-gradient(100deg, rgb(0 0 0 / .12) 0%, rgb(0 0 0 / .3) 35%, #000 65%); mask-image: linear-gradient(100deg, rgb(0 0 0 / .12) 0%, rgb(0 0 0 / .3) 35%, #000 65%); }
+  @media (max-width: 767px) { .net-wrap { -webkit-mask-image: linear-gradient(180deg, transparent 15%, rgb(0 0 0 / .45) 60%, #000); mask-image: linear-gradient(180deg, transparent 15%, rgb(0 0 0 / .45) 60%, #000); } }
+</style>

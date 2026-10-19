@@ -1,0 +1,45 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from './PageHeader.astro';
+import Mock from '../components/Mock.astro';
+import CTA from '../components/CTA.astro';
+import { ui } from '../i18n/ui';
+import { solutions, solColor } from '../data/solutions';
+import { lp, otherLang, type Lang } from '../data/site';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = ui[lang];
+---
+<Base lang={lang} title={t.solIndex.h1} description={t.solIndex.p} altPath={lp(otherLang(lang), '/solutions/')}>
+  <PageHeader title={t.solIndex.h1} lead={t.solIndex.p} lang={lang} crumb={t.solIndex.h1}>
+    <ul slot="aside" class="rounded-3xl bg-night-2/95 shadow-[0_30px_60px_-30px_rgb(0_0_0/.6)] p-3 ring-1 ring-white/10 backdrop-blur-0">
+      {solutions[lang].map((s) => (
+        <li><a href={lp(lang, `/solutions/${s.slug}/`)} class="group flex items-center gap-3 rounded-2xl px-4 py-3 transition-colors hover:bg-white/[.08]" style={`--accent:${solColor[s.slug].c}`}>
+          <span class="accent-dot shrink-0"></span><span class="flex-1 font-medium">{s.title}</span>
+          <span class="text-white/40 transition-transform group-hover:translate-x-1" aria-hidden="true">›</span>
+        </a></li>
+      ))}
+    </ul>
+  </PageHeader>
+  <section class="bg-paper py-20 lg:py-28">
+    <div class="wrap space-y-24 lg:space-y-32">
+      {solutions[lang].map((s, i) => (
+        <article class="grid items-center gap-10 lg:grid-cols-12 lg:gap-16" data-reveal style={`--accent:${solColor[s.slug].c};--accent-ink:${solColor[s.slug].ink}`}>
+          <div class:list={['lg:col-span-6', i % 2 === 1 && 'lg:order-2']}>
+            <span class="accent-dot block"></span>
+            <h2 class="mt-6 text-3xl font-semibold sm:text-[2.6rem]">{s.title}</h2>
+            <p class="mt-5 measure text-lg text-muted">{s.short}</p>
+            <ul class="mt-7 grid gap-x-6 gap-y-2 sm:grid-cols-2">
+              {s.builds.slice(0, 4).map((b) => <li class="flex gap-2.5 text-[0.97rem]"><span class="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full" style="background:var(--accent-ink)"></span>{b.t}</li>)}
+            </ul>
+            <a href={lp(lang, `/solutions/${s.slug}/`)} class="btn btn-dark mt-9">{t.sol.more}</a>
+          </div>
+          <div class:list={['lg:col-span-6', i % 2 === 1 && 'lg:order-1']}>
+            <div class="relative"><div class="glow -inset-14 opacity-50" style="--g:var(--accent)" aria-hidden="true"></div><Mock variant={s.mock} lang={lang} class="relative" /></div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+  <CTA lang={lang} />
+</Base>

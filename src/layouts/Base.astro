@@ -1,0 +1,52 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { ui } from '../i18n/ui';
+import type { Lang } from '../data/site';
+
+interface Props { lang: Lang; title?: string; description?: string; altPath: string; navTheme?: 'dark' | 'light' }
+const { lang, title, description, altPath, navTheme = 'dark' } = Astro.props;
+const t = ui[lang];
+const pageTitle = title ? `${title} | FS Creative Studio` : t.meta.title;
+const desc = description ?? t.meta.desc;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const alt = new URL(altPath, Astro.site);
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={desc} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang={lang} href={canonical} />
+    <link rel="alternate" hreflang={lang === 'en' ? 'es' : 'en'} href={alt} />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="theme-color" content="#06052d" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={desc} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL('/brand/og.png', Astro.site)} />
+    <meta property="og:locale" content={lang === 'en' ? 'en_US' : 'es_US'} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org', '@type': 'ProfessionalService', name: 'FS Creative Studio',
+      url: 'https://fscreativestudio.com', telephone: '+1-571-315-6093', areaServed: 'US',
+      address: { '@type': 'PostalAddress', addressRegion: 'VA', addressCountry: 'US' },
+      availableLanguage: ['English', 'Spanish'], description: desc,
+    })} />
+  </head>
+  <body class="min-h-dvh flex flex-col">
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] btn btn-light">Skip to content</a>
+    <Nav lang={lang} altPath={altPath} theme={navTheme} />
+    <main id="main" class="flex-1"><slot /></main>
+    <Footer lang={lang} />
+    <script>
+      import { initMotion } from '../scripts/motion';
+      initMotion();
+    </script>
+  </body>
+</html>

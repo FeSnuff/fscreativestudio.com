@@ -1,0 +1,27 @@
+---
+import Network from '../components/Network.astro';
+import { lp, type Lang } from '../data/site';
+interface Props { title: string; lead?: string; accent?: string; lang?: Lang; crumb?: string }
+const { title, lead, accent = '#1ad4d9', lang = 'en', crumb } = Astro.props;
+const hasAside = Astro.slots.has('aside');
+---
+<section class="relative overflow-hidden bg-night text-white">
+  <div class="blueprint absolute inset-0 [mask-image:linear-gradient(to_bottom,black,transparent)]"></div>
+  <Network seed={5} />
+  <div class="absolute inset-x-0 bottom-0 h-[3px]" style={`background:linear-gradient(90deg, ${accent}, #5b4bf0 60%, #b652d4)`} aria-hidden="true"></div>
+  <div class:list={['wrap relative grid gap-10 pb-14 pt-28 sm:pt-32 lg:pb-20 lg:pt-36', hasAside && 'lg:grid-cols-12 lg:items-center lg:gap-14']}>
+    <div class:list={[hasAside && 'lg:col-span-7']}>
+      {crumb && (
+        <nav class="mb-5 flex items-center gap-2 text-sm" aria-label="Breadcrumb">
+          <a href={lp(lang, '/')} class="text-white/55 hover:text-white">{lang === 'en' ? 'Home' : 'Inicio'}</a>
+          <span class="text-white/30" aria-hidden="true">/</span>
+          <span style={`color:${accent}`}>{crumb}</span>
+        </nav>
+      )}
+      <h1 data-hero-h1 class="max-w-[18ch] text-4xl font-semibold sm:text-5xl lg:text-6xl">{title}</h1>
+      {lead && <p data-hero-sub class="mt-5 max-w-[56ch] text-base text-white/72 sm:text-lg">{lead}</p>}
+      <slot />
+    </div>
+    {hasAside && <div class="relative lg:col-span-5" data-hero-cta><slot name="aside" /></div>}
+  </div>
+</section>

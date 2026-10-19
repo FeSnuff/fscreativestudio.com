@@ -1,0 +1,84 @@
+---
+import { ui } from '../i18n/ui';
+import type { Lang } from '../data/site';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const m = ui[lang].mock;
+const [c0, c1, c2, c3] = m.cards;
+const card = (c: string[], id: string, status: 'amber' | 'signal' | 'mint' | 'muted') => ({ c, id, status });
+const cols = [
+  [card(c3, 'alder', 'muted')],
+  [card(c0, 'ridgeway', 'signal'), card(c1, 'harbor', 'signal')],
+  [card(c2, 'monroe', 'mint')],
+  [],
+];
+const dot: Record<string, string> = { amber: 'bg-amber', signal: 'bg-signal', mint: 'bg-mint', muted: 'bg-muted/40' };
+---
+<div class="relative" data-hero-system aria-hidden="true">
+  <div class="ui-window overflow-hidden" data-hs-window>
+    <div class="flex items-center gap-3 border-b border-line px-4 py-3">
+      <img src="/brand/fs-mark.png" alt="" class="h-4 w-auto" />
+      <span class="font-display text-sm font-semibold">{m.app}</span>
+      <span class="ml-auto hidden h-6 w-40 rounded-full bg-paper sm:block"></span>
+      <span class="h-6 w-6 rounded-full bg-gradient-to-br from-cyan to-violet"></span>
+    </div>
+    <div class="flex">
+      <aside class="hidden w-28 shrink-0 border-r border-line p-3 text-[12px] xl:block">
+        {m.nav.map((n, i) => (
+          <div class:list={['mb-1 rounded-md px-2 py-1.5', i === 1 ? 'bg-paper font-semibold text-ink' : 'text-muted']}>{n}</div>
+        ))}
+      </aside>
+      <div class="min-w-0 flex-1 p-3 sm:p-4">
+        <div class="mb-3 flex items-end justify-between">
+          <div>
+            <div class="text-[11px] text-muted">{m.kpi}</div>
+            <div class="font-display text-xl font-semibold" data-hs-kpi>$43,350</div>
+          </div>
+          <div class="flex gap-1">
+            <span class="h-1.5 w-8 rounded-full bg-cyan/70"></span><span class="h-1.5 w-5 rounded-full bg-violet/60"></span><span class="h-1.5 w-3 rounded-full bg-line"></span>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-2 sm:grid-cols-4">
+          {cols.map((col, ci) => (
+            <div class:list={['min-h-[168px] rounded-lg bg-paper p-1.5', ci === 3 && 'hidden sm:block']} data-hs-col={ci}>
+              <div class="mb-1.5 flex items-center justify-between px-1 text-[10.5px] font-medium text-muted">
+                <span class="truncate">{m.cols[ci]}</span>
+              </div>
+              <div class="flex flex-col gap-1.5" data-hs-list>
+                {col.map((k) => (
+                  <div class="rounded-md bg-white p-2 shadow-[0_1px_2px_rgb(6_5_45/.08)] ring-1 ring-line/80" data-hs-card={k.id}>
+                    <div class="flex items-start gap-1.5">
+                      <span class:list={['mt-[5px] h-1.5 w-1.5 shrink-0 rounded-full', dot[k.status]]} data-hs-dot></span>
+                      <span class="line-clamp-2 text-[11px] font-semibold leading-tight">{k.c[0]}</span>
+                    </div>
+                    <div class="mt-0.5 truncate text-[10px] text-muted">{k.c[1]}</div>
+                    <div class="mt-1 text-[10.5px] font-medium tabular-nums">{k.c[2]}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div data-hs-toast class="absolute -right-3 -top-9 w-60 rounded-xl bg-white p-3 text-ink shadow-2xl ring-1 ring-line sm:-right-8">
+    <div class="flex items-start gap-2.5">
+      <span class="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-mint/15 text-mint">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <div>
+        <div class="text-[13px] font-semibold">{m.toast}</div>
+        <div class="text-[11.5px] text-muted">{m.toastSub}</div>
+      </div>
+    </div>
+  </div>
+
+  <div data-hs-thread class="absolute -bottom-12 -left-3 w-64 rounded-xl bg-night-2 p-3 text-white shadow-2xl ring-1 ring-white/10 sm:-left-10">
+    <div class="flex items-center gap-2 text-[11px] text-white/60">
+      <span class="grid h-5 w-5 place-items-center rounded-full bg-cyan/20 text-[10px] font-semibold text-cyan">A</span>{m.who}
+    </div>
+    <p class="mt-1.5 text-[13px] leading-snug">{m.thread}</p>
+  </div>
+</div>

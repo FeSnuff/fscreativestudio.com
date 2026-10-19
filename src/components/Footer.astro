@@ -1,0 +1,41 @@
+---
+import { ui } from '../i18n/ui';
+import { solutions } from '../data/solutions';
+import { site, lp, type Lang } from '../data/site';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = ui[lang];
+---
+<footer class="bg-night text-white/80">
+  <div class="flow-line h-px w-full opacity-60"></div>
+  <div class="wrap grid gap-12 py-16 md:grid-cols-12">
+    <div class="md:col-span-5">
+      <a href={lp(lang, '/')} class="flex items-center gap-3 font-display text-lg font-semibold text-white">
+        <img src="/brand/fs-mark.png" alt="" width="26" height="33" class="h-9 w-auto" /> FS Creative Studio
+      </a>
+      <p class="mt-5 max-w-sm">{t.footer.tag}</p>
+    </div>
+    <div class="md:col-span-4">
+      <p class="font-display text-white">{t.nav.solutions}</p>
+      <ul class="mt-4 space-y-2.5 text-[0.95rem]">
+        {solutions[lang].map((s) => <li><a class="link-u hover:text-white" href={lp(lang, `/solutions/${s.slug}/`)}>{s.title}</a></li>)}
+      </ul>
+    </div>
+    <div class="md:col-span-3">
+      <p class="font-display text-white">{t.nav.contact}</p>
+      <ul class="mt-4 space-y-2.5 text-[0.95rem]">
+        {site.ownerName && <li class="text-white">{site.ownerName}</li>}
+        <li><a class="link-u hover:text-white" href={site.phoneHref}>{site.phoneDisplay}</a></li>
+        <li><a class="link-u hover:text-white" href={`https://wa.me/${site.whatsapp}`} rel="noopener" target="_blank">WhatsApp</a></li>
+        <li>{site.location[lang]}</li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap flex flex-col gap-3 border-t border-white/10 py-6 text-sm text-white/55 sm:flex-row sm:items-center sm:justify-between">
+    <p>© {site.year} FS Creative Studio. {t.footer.rights}</p>
+    <ul class="flex gap-6">
+      <li><a class="hover:text-white" href={lp(lang, '/privacy/')}>{t.footer.legal[0]}</a></li>
+      <li><a class="hover:text-white" href={lp(lang, '/terms/')}>{t.footer.legal[1]}</a></li>
+    </ul>
+  </div>
+</footer>

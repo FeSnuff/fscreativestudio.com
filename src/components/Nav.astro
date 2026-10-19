@@ -1,0 +1,60 @@
+---
+import { ui } from '../i18n/ui';
+import { lp, type Lang } from '../data/site';
+interface Props { lang: Lang; altPath: string; theme: 'dark' | 'light' }
+const { lang, altPath, theme } = Astro.props;
+const t = ui[lang].nav;
+const links = [
+  { href: lp(lang, '/solutions/'), label: t.solutions },
+  { href: lp(lang, '/work/'), label: t.work },
+  { href: lp(lang, '/how-we-work/'), label: t.process },
+  { href: lp(lang, '/contact/'), label: t.contact },
+];
+const path = Astro.url.pathname;
+---
+<header data-nav data-theme={theme} class="fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,color] duration-300">
+  <div class="wrap flex h-[72px] items-center justify-between gap-6">
+    <a href={lp(lang, '/')} class="flex items-center gap-3 font-display text-[1.05rem] font-semibold tracking-tight" aria-label="FS Creative Studio">
+      <img src="/brand/fs-mark.png" alt="" width="26" height="33" class="h-8 w-auto" />
+      <span>FS Creative Studio</span>
+    </a>
+    <nav class="hidden lg:block" aria-label="Main">
+      <ul class="flex items-center gap-8 text-[0.95rem]">
+        {links.map((l) => (
+          <li><a href={l.href} class:list={['link-u py-1 opacity-80 hover:opacity-100 transition-opacity', path.startsWith(l.href) && 'opacity-100 font-medium']}>{l.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+    <div class="hidden lg:flex items-center gap-5">
+      <a href={altPath} hreflang={lang === 'en' ? 'es' : 'en'} class="text-sm opacity-70 hover:opacity-100" title={t.lang}>{t.langShort}</a>
+      <a href={lp(lang, '/contact/')} class="btn nav-cta !py-2.5 !px-5 text-sm">{t.cta}</a>
+    </div>
+    <button data-menu-btn class="lg:hidden -mr-2 p-2" aria-expanded="false" aria-controls="mobile-menu">
+      <span class="sr-only">{t.menu}</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path data-l1 d="M3 8h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" class="origin-center transition-transform duration-300"/><path data-l2 d="M3 16h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" class="origin-center transition-transform duration-300"/></svg>
+    </button>
+  </div>
+  <div id="mobile-menu" data-menu hidden class="lg:hidden h-[calc(100dvh-72px)] overflow-y-auto bg-night text-white">
+    <nav class="wrap pb-8 pt-2" aria-label="Mobile">
+      <ul class="flex flex-col">
+        {links.map((l) => <li><a href={l.href} class="block border-b border-white/10 py-4 font-display text-2xl">{l.label}</a></li>)}
+      </ul>
+      <div class="mt-6 flex items-center justify-between gap-4">
+        <a href={lp(lang, '/contact/')} class="btn btn-light flex-1">{t.cta}</a>
+        <a href={altPath} class="btn btn-ghost">{t.langShort}</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<style>
+  [data-nav][data-theme='dark'] { color: white; }
+  [data-nav][data-theme='light'] { color: var(--color-ink); }
+  [data-nav][data-theme='dark'] .nav-cta { background: white; color: var(--color-night); }
+  [data-nav][data-theme='light'] .nav-cta { background: var(--color-night); color: white; }
+  [data-nav].is-scrolled[data-theme='dark'] { background: rgb(6 5 45 / .82); backdrop-filter: blur(14px) saturate(1.4); box-shadow: 0 1px 0 rgb(255 255 255 / .06); }
+  [data-nav].is-scrolled[data-theme='light'] { background: rgb(245 246 251 / .85); backdrop-filter: blur(14px) saturate(1.4); box-shadow: 0 1px 0 var(--color-line); }
+  [data-nav].is-open { background: var(--color-night); color: white; }
+  [data-nav].is-open [data-l1] { transform: translateY(4px) rotate(45deg); }
+  [data-nav].is-open [data-l2] { transform: translateY(-4px) rotate(-45deg); }
+</style>

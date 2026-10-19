@@ -1,0 +1,91 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from './PageHeader.astro';
+import { ui } from '../i18n/ui';
+import { site, lp, otherLang, type Lang } from '../data/site';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = ui[lang].contact;
+const field = 'mt-2 w-full rounded-xl border border-line bg-white px-4 py-3 text-ink outline-none transition-[border-color,box-shadow] focus:border-signal focus:ring-4 focus:ring-signal/15';
+---
+<Base lang={lang} title={t.h1} description={t.p} altPath={lp(otherLang(lang), '/contact/')}>
+  <PageHeader title={t.h1} lead={t.p} lang={lang} crumb={ui[lang].nav.contact} accent="#17b890">
+<div slot="aside" class="rounded-3xl bg-night-2/95 shadow-[0_30px_60px_-30px_rgb(0_0_0/.6)] p-7 ring-1 ring-white/10">
+          <p class="font-display text-2xl font-semibold tracking-tight">{t.direct}</p>
+          {site.ownerName && <p class="mt-4 text-white/80">{site.ownerName}</p>}
+          <a href={site.phoneHref} class="mt-4 block font-display text-xl link-u">{site.phoneDisplay}</a>
+          <p class="mt-2 text-sm text-white/60">{t.hours}</p>
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href={site.phoneHref} class="btn btn-light">{t.call}</a>
+            <a href={`https://wa.me/${site.whatsapp}`} target="_blank" rel="noopener" class="btn btn-ghost">{t.wa}</a>
+          </div>
+          <p class="mt-8 border-t border-white/10 pt-6 text-sm text-white/60">{site.location[lang]}</p>
+        </div>
+  </PageHeader>
+  <section class="bg-paper py-16 lg:py-24">
+    <div class="wrap grid gap-14 lg:grid-cols-12">
+      <form class="lg:col-span-10" data-contact-form data-key={site.web3formsKey} data-wa={site.whatsapp}
+        data-msg-sending={t.sending} data-msg-ok={t.ok} data-msg-err={t.err} data-msg-wa={t.viaWa} novalidate>
+        <input type="hidden" name="subject" value="New assessment request · fscreativestudio.com" />
+        <input type="checkbox" name="botcheck" class="hidden" tabindex="-1" autocomplete="off" />
+        <div class="grid gap-6 sm:grid-cols-2">
+          <label class="block text-sm font-medium">{t.name} *<input required name="name" autocomplete="name" class={field} /></label>
+          <label class="block text-sm font-medium">{t.company}<input name="company" autocomplete="organization" class={field} /></label>
+          <label class="block text-sm font-medium">{t.email} *<input required type="email" name="email" autocomplete="email" class={field} /></label>
+          <label class="block text-sm font-medium">{t.phone}<input type="tel" name="phone" autocomplete="tel" class={field} /></label>
+        </div>
+        <fieldset class="mt-8">
+          <legend class="text-sm font-medium">{t.area}</legend>
+          <div class="mt-3 flex flex-wrap gap-2">
+            {t.areas.map((a) => (
+              <label class="cursor-pointer">
+                <input type="checkbox" name="area" value={a} class="peer sr-only" />
+                <span class="inline-block rounded-full bg-white px-4 py-2 text-sm ring-1 ring-line transition-colors peer-checked:bg-night peer-checked:text-white peer-checked:ring-night peer-focus-visible:ring-2 peer-focus-visible:ring-signal">{a}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+        <label class="mt-8 block text-sm font-medium">{t.msg} *
+          <textarea required name="message" rows="5" placeholder={t.msgPh} class={field + ' resize-y'}></textarea>
+        </label>
+        <div class="mt-8 flex flex-wrap items-center gap-5">
+          <button type="submit" class="btn btn-dark">{t.send}</button>
+          <p class="text-sm text-muted" role="status" aria-live="polite" data-form-status></p>
+        </div>
+      </form>
+
+    </div>
+  </section>
+</Base>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+  if (form) {
+    const status = form.querySelector<HTMLElement>('[data-form-status]')!;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      const fd = new FormData(form);
+      const areas = fd.getAll('area').join(', ');
+      const key = form.dataset.key;
+      const text = [
+        `${fd.get('name')}${fd.get('company') ? ' · ' + fd.get('company') : ''}`,
+        `${fd.get('email')}${fd.get('phone') ? ' · ' + fd.get('phone') : ''}`,
+        areas, '', String(fd.get('message') || ''),
+      ].filter((l, i) => l !== '' || i === 3).join('\n');
+      if (!key) {
+        window.open(`https://wa.me/${form.dataset.wa}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+        status.textContent = form.dataset.msgWa!;
+        return;
+      }
+      status.textContent = form.dataset.msgSending!;
+      try {
+        fd.set('access_key', key); fd.set('area', areas); fd.delete('botcheck');
+        const r = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: fd });
+        const j = await r.json();
+        if (!j.success) throw new Error();
+        form.reset(); status.textContent = form.dataset.msgOk!;
+      } catch { status.textContent = form.dataset.msgErr!; }
+    });
+  }
+</script>

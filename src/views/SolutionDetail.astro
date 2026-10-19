@@ -1,0 +1,79 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from './PageHeader.astro';
+import Mock from '../components/Mock.astro';
+import CTA from '../components/CTA.astro';
+import { ui } from '../i18n/ui';
+import { solutions, solColor } from '../data/solutions';
+import { lp, otherLang, type Lang } from '../data/site';
+interface Props { lang: Lang; slug: string }
+const { lang, slug } = Astro.props;
+const t = ui[lang];
+const list = solutions[lang];
+const idx = list.findIndex((s) => s.slug === slug);
+const s = list[idx];
+const next = list[(idx + 1) % list.length];
+const col = solColor[slug];
+---
+<Base lang={lang} title={s.title} description={s.short} altPath={lp(otherLang(lang), `/solutions/${slug}/`)}>
+  <PageHeader title={s.title} lead={s.lead} accent={col.c} lang={lang} crumb={t.solIndex.h1}>
+    <div class="mt-10 flex flex-wrap gap-3" data-hero-cta>
+      <a href={lp(lang, '/contact/')} class="btn btn-light">{t.sdetail.cta}</a>
+      <a href={lp(lang, '/solutions/')} class="btn btn-ghost">{t.sol.all}</a>
+    </div>
+    <Mock slot="aside" variant={s.mock} lang={lang} />
+  </PageHeader>
+
+  <section class="bg-paper py-20 lg:py-28">
+    <div class="wrap grid gap-14 lg:grid-cols-12">
+      <div class="lg:col-span-5">
+        <h2 class="text-3xl font-semibold sm:text-4xl">{t.sdetail.problems}</h2>
+        <ul class="mt-8 space-y-4">
+          {s.problems.map((p) => (
+            <li class="border-l-2 pl-4 text-ink/85" style={`border-color:${col.c}`}>{p}</li>
+          ))}
+        </ul>
+      </div>
+      <div class="lg:col-span-7 lg:pl-8">
+        <div class="relative"><div class="glow -inset-14 opacity-50" style={`--g:${col.c}`} aria-hidden="true"></div><Mock variant={s.mock} lang={lang} class="relative lg:mt-2" /></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-white py-20 lg:py-28">
+    <div class="wrap">
+      <h2 class="text-3xl font-semibold sm:text-4xl">{t.sdetail.builds}</h2>
+      <dl class="mt-12 grid gap-x-12 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+        {s.builds.map((b) => (
+          <div class="border-t-2 pt-5" style={`border-color:${col.c}`} data-reveal>
+            <dt class="text-xl font-semibold tracking-tight">{b.t}</dt>
+            <dd class="mt-2 text-muted">{b.d}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <section class="py-20 lg:py-24" style={`background:${col.tint}`}>
+    <div class="wrap grid gap-12 lg:grid-cols-12">
+      <div class="lg:col-span-5">
+        <h2 class="text-2xl font-semibold sm:text-3xl">{t.sdetail.examples}</h2>
+        <ul class="mt-6 space-y-3">
+          {s.examples.map((e) => <li class="flex gap-3"><span class="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full" style={`background:${col.ink}`}></span>{e}</li>)}
+        </ul>
+      </div>
+      <div class="rounded-3xl bg-night p-8 text-white sm:p-10 lg:col-span-7">
+        <p class="text-sm" style={`color:${col.c}`}>{t.sdetail.outcome}</p>
+        <p class="mt-3 font-display text-2xl font-semibold leading-snug tracking-tight sm:text-3xl">{s.outcome}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-line bg-white">
+    <a href={lp(lang, `/solutions/${next.slug}/`)} class="group wrap flex flex-col gap-2 py-14 sm:flex-row sm:items-baseline sm:justify-between">
+      <span class="text-sm text-muted">{t.sdetail.next}</span>
+      <span class="font-display text-3xl font-semibold tracking-tight transition-colors group-hover:text-signal sm:text-4xl">{next.title}</span>
+    </a>
+  </section>
+  <CTA lang={lang} />
+</Base>

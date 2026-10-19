@@ -1,0 +1,19 @@
+---
+import { ui } from '../i18n/ui';
+import type { Lang } from '../data/site';
+interface Props { lang: Lang; limit?: number; dark?: boolean }
+const { lang, limit, dark = false } = Astro.props;
+const items = ui[lang].work.items.slice(0, limit ?? 99);
+---
+<ul class:list={['mt-14 grid sm:grid-cols-2 lg:grid-cols-3', dark ? 'border-t border-white/12' : 'border-t border-ink/15']}>
+  {items.map((w) => (
+    <li class:list={['flex flex-col border-b py-8 sm:pr-8', dark ? 'border-white/12' : 'border-ink/15']} data-reveal>
+      <p class:list={['text-sm', dark ? 'text-cyan' : 'text-signal']}>{w.s}</p>
+      <h3 class="mt-2 text-2xl font-semibold tracking-tight">{w.t}</h3>
+      <p class:list={['mt-3 flex-1', dark ? 'text-white/65' : 'text-muted']}>{w.d}</p>
+      <ul class="mt-5 flex flex-wrap gap-2">
+        {w.tags.map((tg) => <li class:list={['rounded-full px-2.5 py-0.5 text-xs', dark ? 'bg-white/8 text-white/70' : 'bg-paper text-muted ring-1 ring-line']}>{tg}</li>)}
+      </ul>
+    </li>
+  ))}
+</ul>

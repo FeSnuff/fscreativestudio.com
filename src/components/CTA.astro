@@ -1,0 +1,20 @@
+---
+import { ui } from '../i18n/ui';
+import { site, lp, type Lang } from '../data/site';
+import Network from './Network.astro';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = ui[lang].cta;
+---
+<section class="relative overflow-hidden bg-night text-white">
+  <div class="blueprint absolute inset-0 [mask-image:radial-gradient(ellipse_at_20%_100%,black,transparent_70%)]"></div>
+  <Network seed={11} />
+  <div class="wrap relative py-24 lg:py-32">
+    <h2 class="max-w-[18ch] text-4xl font-semibold sm:text-6xl">{t.h2}</h2>
+    <p class="mt-6 max-w-[56ch] text-lg text-white/70">{t.p}</p>
+    <div class="mt-10 flex flex-wrap gap-3">
+      <a href={lp(lang, '/contact/')} class="btn btn-light">{t.btn}</a>
+      <a href={`https://wa.me/${site.whatsapp}`} target="_blank" rel="noopener" class="btn btn-ghost">{t.wa}</a>
+    </div>
+  </div>
+</section>

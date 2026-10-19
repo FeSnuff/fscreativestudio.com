@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from './PageHeader.astro';
+import WorkList from '../components/WorkList.astro';
+import CTA from '../components/CTA.astro';
+import { ui } from '../i18n/ui';
+import { lp, otherLang, type Lang } from '../data/site';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = ui[lang];
+---
+<Base lang={lang} title={t.workIndex.h1} description={t.workIndex.p} altPath={lp(otherLang(lang), '/work/')}>
+  <PageHeader title={t.workIndex.h1} lead={t.workIndex.p} lang={lang} crumb={t.workIndex.h1} accent="#b652d4">
+    <div slot="aside" class="rounded-3xl bg-night-2/95 shadow-[0_30px_60px_-30px_rgb(0_0_0/.6)] p-6 ring-1 ring-white/10">
+      <p class="font-display text-5xl font-semibold">{t.work.items.length}</p>
+      <p class="mt-1 text-white/65">{lang === 'en' ? 'selected projects across these sectors' : 'proyectos seleccionados en estos sectores'}</p>
+      <ul class="mt-5 flex flex-wrap gap-2">
+        {[...new Set(t.work.items.map((w) => w.s))].map((sec, i) => (
+          <li class="rounded-full px-3 py-1 text-sm" style={`background:${['#1ad4d9','#5b4bf0','#b652d4','#17b890','#f2a33a'][i % 5]}22;color:${['#7eeaed','#a59cf8','#dba3ec','#7fdcc3','#f7c983'][i % 5]}`}>{sec}</li>
+        ))}
+      </ul>
+    </div>
+  </PageHeader>
+  <section class="bg-paper py-16 lg:py-24">
+    <div class="wrap">
+      <p class="measure text-muted">{t.work.p}</p>
+      <WorkList lang={lang} />
+    </div>
+  </section>
+  <CTA lang={lang} />
+</Base>

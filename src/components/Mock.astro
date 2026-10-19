@@ -1,0 +1,102 @@
+---
+/* Small illustrative interface for each solution. Decorative only. */
+import type { Lang } from '../data/site';
+interface Props { variant: 'board' | 'thread' | 'flow' | 'platform' | 'status'; lang: Lang; class?: string }
+const { variant, lang, class: cls } = Astro.props;
+const es = lang === 'es';
+const L = (en: string, sp: string) => (es ? sp : en);
+---
+<div class:list={['ui-window overflow-hidden text-[12px]', cls]} aria-hidden="true">
+  {variant === 'board' && (
+    <div class="p-4">
+      <div class="mb-3 flex items-center justify-between">
+        <span class="font-display text-sm font-semibold">{L('Clients', 'Clientes')}</span>
+        <span class="ui-chip bg-signal/10 text-signal">128 {L('active', 'activos')}</span>
+      </div>
+      <div class="divide-y divide-line rounded-lg ring-1 ring-line">
+        {[
+          ['Ridgeway Dental', L('Signed', 'Firmado'), 'mint', '$18,400'],
+          ['Harbor Logistics', L('Quoted', 'Cotizado'), 'signal', '$7,250'],
+          ['Monroe & Pike LLP', L('In progress', 'En curso'), 'amber', '$12,900'],
+          ['Alder Clinic', L('Request', 'Solicitud'), 'muted', '$4,800'],
+        ].map(([n, s, c, v]) => (
+          <div class="flex items-center gap-3 px-3 py-2.5">
+            <span class="grid h-7 w-7 place-items-center rounded-full bg-paper text-[11px] font-semibold">{n[0]}</span>
+            <span class="flex-1 truncate font-medium">{n}</span>
+            <span class:list={['ui-chip', c === 'mint' && 'bg-mint/12 text-mint', c === 'signal' && 'bg-signal/10 text-signal', c === 'amber' && 'bg-amber/15 text-[#a5650c]', c === 'muted' && 'bg-paper text-muted']}>{s}</span>
+            <span class="w-16 text-right tabular-nums">{v}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+  {variant === 'thread' && (
+    <div class="grid grid-cols-5">
+      <div class="col-span-2 border-r border-line p-3">
+        <div class="font-display text-sm font-semibold">{L('Job #2318', 'Trabajo #2318')}</div>
+        <div class="mt-1 text-muted">Monroe & Pike LLP</div>
+        <div class="mt-3 space-y-2">
+          {[[L('Scope approved', 'Alcance aprobado'), true], [L('Materials ordered', 'Materiales pedidos'), true], [L('Crew scheduled', 'Cuadrilla asignada'), false]].map(([t, d]) => (
+            <div class="flex items-center gap-2"><span class:list={['h-3.5 w-3.5 rounded-[4px] ring-1', d ? 'bg-mint ring-mint' : 'ring-line']}></span><span class:list={[!d && 'text-muted']}>{t}</span></div>
+          ))}
+        </div>
+      </div>
+      <div class="col-span-3 space-y-2.5 bg-paper/60 p-3">
+        <div class="max-w-[90%] rounded-lg bg-white p-2 ring-1 ring-line"><b class="block text-[11px]">David</b>{L('Client approved the revised scope. Attaching the signed PDF.', 'El cliente aprobó el alcance revisado. Adjunto el PDF firmado.')}</div>
+        <div class="ml-auto max-w-[90%] rounded-lg bg-night p-2 text-white"><b class="block text-[11px] text-white/60">Ana</b>{L('Materials ordered. Crew confirmed for Monday.', 'Materiales pedidos. Cuadrilla confirmada para el lunes.')}</div>
+        <div class="flex items-center gap-2 rounded-lg bg-white p-2 ring-1 ring-line"><span class="ui-chip bg-amber/15 text-[#a5650c]">{L('Approval', 'Aprobación')}</span><span class="flex-1 truncate">{L('Discount 8% · requested by Ana', 'Descuento 8% · solicitado por Ana')}</span><span class="rounded-md bg-night px-2 py-0.5 text-[11px] text-white">{L('Approve', 'Aprobar')}</span></div>
+      </div>
+    </div>
+  )}
+  {variant === 'flow' && (
+    <div class="p-4">
+      <div class="font-display text-sm font-semibold">{L('Quote to cash', 'De cotización a cobro')}</div>
+      <div class="mt-4 flex items-center">
+        {[[L('Quote', 'Cotización'), 'done'], [L('Contract', 'Contrato'), 'done'], [L('Signature', 'Firma'), 'done'], [L('Invoice', 'Factura'), 'now'], [L('Paid', 'Pagado'), 'next']].map(([t, s], i, a) => (
+          <>
+            <div class="flex flex-col items-center gap-1.5">
+              <span class:list={['grid h-8 w-8 place-items-center rounded-full text-[11px] font-semibold', s === 'done' && 'bg-night text-white', s === 'now' && 'bg-white text-night ring-2 ring-cyan', s === 'next' && 'bg-paper text-muted']}>{i + 1}</span>
+              <span class:list={['text-[10.5px]', s === 'next' && 'text-muted']}>{t}</span>
+            </div>
+            {i < a.length - 1 && <span class:list={['mb-5 h-0.5 flex-1', s === 'done' ? 'flow-line' : 'bg-line']}></span>}
+          </>
+        ))}
+      </div>
+      <div class="mt-4 rounded-lg bg-paper p-3">
+        <div class="flex justify-between"><span class="text-muted">{L('Invoice', 'Factura')} #1042</span><span class="font-semibold tabular-nums">$18,400.00</span></div>
+        <div class="mt-1 flex justify-between"><span class="text-muted">{L('Auto-reminder', 'Recordatorio automático')}</span><span>{L('in 3 days', 'en 3 días')}</span></div>
+      </div>
+    </div>
+  )}
+  {variant === 'platform' && (
+    <div>
+      <div class="flex items-center gap-2 border-b border-line px-3 py-2"><span class="h-2 w-2 rounded-full bg-line"></span><span class="h-2 w-2 rounded-full bg-line"></span><span class="ml-2 flex-1 rounded-full bg-paper px-3 py-1 text-[10.5px] text-muted">yourcompany.com/{L('request', 'solicitud')}</span></div>
+      <div class="grid grid-cols-5 gap-3 p-4">
+        <div class="col-span-3 space-y-2">
+          <div class="font-display text-[15px] font-semibold leading-tight">{L('Request a quote', 'Solicita una cotización')}</div>
+          <div class="h-7 rounded-md bg-paper ring-1 ring-line"></div>
+          <div class="h-7 rounded-md bg-paper ring-1 ring-line"></div>
+          <div class="h-12 rounded-md bg-paper ring-1 ring-line"></div>
+          <div class="inline-block rounded-full bg-night px-3 py-1.5 text-[11px] text-white">{L('Send request', 'Enviar solicitud')}</div>
+        </div>
+        <div class="col-span-2 flex flex-col justify-center gap-2">
+          <div class="flow-line h-0.5 w-full"></div>
+          <div class="rounded-lg bg-night p-2.5 text-white"><div class="text-[10px] text-white/60">{L('New client created', 'Nuevo cliente creado')}</div><div class="font-semibold">Alder Clinic</div><div class="mt-1 ui-chip bg-white/10 text-white/80">{L('Job #2319', 'Trabajo #2319')}</div></div>
+        </div>
+      </div>
+    </div>
+  )}
+  {variant === 'status' && (
+    <div class="p-4">
+      <div class="mb-3 flex items-center justify-between"><span class="font-display text-sm font-semibold">{L('System health', 'Estado del sistema')}</span><span class="ui-chip bg-mint/12 text-mint">● {L('All systems normal', 'Todo en orden')}</span></div>
+      <div class="flex h-10 items-end gap-[3px]">
+        {Array.from({ length: 40 }).map((_, i) => <span class:list={['flex-1 rounded-sm', i === 27 ? 'bg-amber h-6' : 'bg-mint/70 h-9']}></span>)}
+      </div>
+      <div class="mt-3 grid grid-cols-3 gap-2">
+        {[[L('Uptime', 'Disponibilidad'), '99.98%'], [L('Last backup', 'Último respaldo'), '02:00'], [L('Open tickets', 'Tickets abiertos'), '2']].map(([k, v]) => (
+          <div class="rounded-lg bg-paper p-2"><div class="text-[10.5px] text-muted">{k}</div><div class="font-display text-base font-semibold">{v}</div></div>
+        ))}
+      </div>
+    </div>
+  )}
+</div>
