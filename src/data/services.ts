@@ -116,12 +116,12 @@ export const services: Service[] = [
     stage: 'crecer',
     visible: true,
     icon: 'u-cotizacion',
-    // Portal = paquete de herramientas: USD 250 + USD 25/mes (hasta 200 cotizaciones/mes), mínimo 12 meses.
+    // Portal = paquete de herramientas: USD 250 + USD 25/mes (hasta 200 cotizaciones/mes), mínimo 6 meses.
     // Los escalones de más volumen NO se publican (brief): solo "escala con tu negocio".
     price: {
       setup: 250,
       monthly: 25,
-      minMonths: 12,
+      minMonths: 6,
       limit: { es: 'hasta 200 cotizaciones al mes', en: 'up to 200 quotes a month' },
     },
     demo: 'cotizacion',
@@ -144,7 +144,7 @@ export const services: Service[] = [
         ],
         terms: [
           'La mensualidad es el mantenimiento: tu oficina siempre funcionando, con respaldos y actualizaciones.',
-          'Mínimo 12 meses; después, mes a mes. El primer año son USD 550 en total (USD 250 + 12 × USD 25). No incluye la web; juntas: USD 500 + USD 25/mes → USD 800 el primer año.',
+          'Mínimo 6 meses; después, mes a mes. El primer año son USD 550 en total (USD 250 + 12 × USD 25). No incluye la web; juntas: USD 500 + USD 25/mes → USD 800 el primer año.',
           '¿Más volumen? La mensualidad escala con tu negocio. Nunca te cortamos el servicio: si un mes pasas de tu plan, ese mes se cobra con tu plan actual y te avisamos con semanas de anticipación.',
           'Si cancelas, te entregamos tus datos en un archivo: clientes, cotizaciones y contratos firmados.',
         ],
@@ -166,7 +166,7 @@ export const services: Service[] = [
         ],
         terms: [
           'The monthly fee is maintenance: your office always running, with backups and updates.',
-          "12-month minimum; then month to month. The first year is $550 in total ($250 + 12 × $25). The website isn't included; both together: $500 + $25/mo → $800 for the first year.",
+          "6-month minimum; then month to month. The first year is $550 in total ($250 + 12 × $25). The website isn't included; both together: $500 + $25/mo → $800 for the first year.",
           'More volume? The monthly fee scales with your business. We never cut off your service: if you go over your plan one month, that month is billed at your current plan, and we give you weeks of notice.',
           'If you cancel, we hand you your data in a file: customers, quotes and signed contracts.',
         ],

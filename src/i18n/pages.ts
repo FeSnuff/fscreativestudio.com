@@ -74,9 +74,9 @@ export const pages = definePages({
       priceCards: {
         web: { h: 'Página web', cond: 'Inicial del 30–50 %, el resto al entregar.', p: 'Aparece en Google y Google Maps cuando te buscan. En español e inglés, lista para el celular. Todo a tu nombre.' },
         redes: { h: 'Todas tus redes, en orden', cond: 'USD 200 para empezar · USD 250 al terminar.', p: 'Un número, un logo y tus cuentas a tu nombre.' },
-        oficina: { h: 'Tu oficina en el celular', cond: 'Mínimo 12 meses; después, mes a mes. Hasta 200 cotizaciones al mes. USD 550 el primer año.', p: 'Cotiza, haz firmar y cobra desde el celular. No incluye la web; juntas: USD 500.' },
+        oficina: { h: 'Tu oficina en el celular', cond: 'Mínimo 6 meses; después, mes a mes. Hasta 200 cotizaciones al mes. USD 550 el primer año.', p: 'Cotiza, haz firmar y cobra desde el celular. No incluye la web; juntas: USD 500.' },
       },
-      combo: ['Web + oficina en el celular:', 'USD 500 + USD 25/mes → USD 800 el primer año · hasta 200 cotizaciones al mes · mínimo 12 meses.'],
+      combo: ['Web + oficina en el celular:', 'USD 500 + USD 25/mes → USD 800 el primer año · hasta 200 cotizaciones al mes · mínimo 6 meses.'],
       maint: ['Mantenimiento de tu web (opcional):', 'USD 25/mes. Con la oficina, ya viene incluido.'],
       comboLink: 'Qué incluye cada uno',
       finalH: 'Escríbenos. Te respondemos claro.',
@@ -143,9 +143,9 @@ export const pages = definePages({
       priceCards: {
         web: { h: 'Website', cond: '30–50% deposit to start, the rest on delivery.', p: 'Show up on Google and Google Maps when people search for you. In English and Spanish, built for phones. All in your name.' },
         redes: { h: 'All your accounts, in order', cond: '$200 to start · $250 when it’s done.', p: 'One number, one logo, and your accounts in your name.' },
-        oficina: { h: 'Your office on your phone', cond: '12-month minimum; then month to month. Up to 200 quotes a month. $550 for the first year.', p: "Quote, get it signed and get paid from your phone. The website isn't included; both together: $500." },
+        oficina: { h: 'Your office on your phone', cond: '6-month minimum; then month to month. Up to 200 quotes a month. $550 for the first year.', p: "Quote, get it signed and get paid from your phone. The website isn't included; both together: $500." },
       },
-      combo: ['Website + office on your phone:', '$500 + $25/mo → $800 for the first year · up to 200 quotes a month · 12-month minimum.'],
+      combo: ['Website + office on your phone:', '$500 + $25/mo → $800 for the first year · up to 200 quotes a month · 6-month minimum.'],
       maint: ['Website maintenance (optional):', "$25/mo. With the office, it's already included."],
       comboLink: "What's included in each",
       finalH: 'Send us a message. Get a straight answer.',
@@ -190,7 +190,7 @@ export const pages = definePages({
         },
         {
           h: 'Tu oficina en el celular: USD 250 + USD 25/mes (USD 550 el primer año)',
-          items: ['La oficina siempre lleva su mensualidad, con un mínimo de 12 meses.', 'USD 25 al mes cubre hasta 200 cotizaciones al mes. Contratos, facturas y clientes son ilimitados.', 'Nunca te cortamos el servicio. Si un mes pasas de tu plan, ese mes se cobra con tu plan actual. Desde el mes siguiente se ajusta, y te avisamos con semanas de anticipación.', 'Agregar herramientas también puede cambiar la mensualidad. Te la cotizamos antes.', 'Después de los 12 meses sigue mes a mes y puedes cancelarlo cuando quieras.', 'Si cancelas, te entregamos tus datos en un archivo: clientes, cotizaciones y contratos firmados.', 'El mantenimiento de una web sola sigue siendo opcional y mes a mes.'],
+          items: ['La oficina siempre lleva su mensualidad, con un mínimo de 6 meses.', 'USD 25 al mes cubre hasta 200 cotizaciones al mes. Contratos, facturas y clientes son ilimitados.', 'Nunca te cortamos el servicio. Si un mes pasas de tu plan, ese mes se cobra con tu plan actual. Desde el mes siguiente se ajusta, y te avisamos con semanas de anticipación.', 'Agregar herramientas también puede cambiar la mensualidad. Te la cotizamos antes.', 'Después de los 6 meses sigue mes a mes y puedes cancelarlo cuando quieras.', 'Si cancelas, te entregamos tus datos en un archivo: clientes, cotizaciones y contratos firmados.', 'El mantenimiento de una web sola sigue siendo opcional y mes a mes.'],
         },
         {
           h: 'Cómo se cobran los extras',
@@ -257,7 +257,7 @@ export const pages = definePages({
         },
         {
           h: 'Your office on your phone: $250 + $25/mo ($550 for the first year)',
-          items: ['The office always comes with its monthly fee, with a 12-month minimum.', '$25/month covers up to 200 quotes a month. Contracts, invoices and customers are unlimited.', 'We never cut off your service. If you go over your plan one month, that month is billed at your current plan. The fee adjusts from the next month, and we give you weeks of notice.', 'Adding tools can also change the monthly fee. We quote it first.', 'After 12 months it goes month to month, and you can cancel anytime.', 'If you cancel, we hand you your data in a file: customers, quotes and signed contracts.', 'Maintenance for a website on its own is still optional and month to month.'],
+          items: ['The office always comes with its monthly fee, with a 6-month minimum.', '$25/month covers up to 200 quotes a month. Contracts, invoices and customers are unlimited.', 'We never cut off your service. If you go over your plan one month, that month is billed at your current plan. The fee adjusts from the next month, and we give you weeks of notice.', 'Adding tools can also change the monthly fee. We quote it first.', 'After 6 months it goes month to month, and you can cancel anytime.', 'If you cancel, we hand you your data in a file: customers, quotes and signed contracts.', 'Maintenance for a website on its own is still optional and month to month.'],
         },
         {
           h: 'How extras are charged',
@@ -409,7 +409,7 @@ export const pages = definePages({
       waFail: '¿No se abrió WhatsApp? Escríbenos al +1 (571) 315-6093 desde tu celular o a info@fscreativestudio.com.',
       form: {
         h: '¿Prefieres dejarnos tus datos?',
-        sub: 'Te respondemos por el medio que nos dejes, en menos de 24 horas en días hábiles.',
+        sub: 'Te respondemos lo antes posible, por el medio que nos dejes.',
         name: 'Tu nombre',
         contact: 'WhatsApp, teléfono o correo',
         contactHint: 'Con uno basta.',
@@ -448,7 +448,7 @@ export const pages = definePages({
       waFail: "WhatsApp didn't open? Message +1 (571) 315-6093 from your phone or email info@fscreativestudio.com.",
       form: {
         h: 'Rather leave us your details?',
-        sub: "We'll get back to you the way you prefer, within 24 hours on business days.",
+        sub: "We'll get back to you as soon as we can, the way you prefer.",
         name: 'Your name',
         contact: 'WhatsApp, phone or email',
         contactHint: 'Any one is fine.',

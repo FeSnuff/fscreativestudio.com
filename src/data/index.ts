@@ -93,7 +93,7 @@ export const priceParts = (price: Price, lang: Lang): { setup?: string; monthly?
   };
 };
 
-/** Precio en una línea: "USD 250 + USD 25/mes · mínimo 12 meses · hasta 200 cotizaciones al mes". */
+/** Precio en una línea: "USD 250 + USD 25/mes · mínimo 6 meses · hasta 200 cotizaciones al mes". */
 export const priceLine = (price: Price, lang: Lang): string => {
   const p = priceParts(price, lang);
   const amount = [p.setup, p.monthly].filter(Boolean).join(' + ');
