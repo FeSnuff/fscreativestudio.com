@@ -1,0 +1,129 @@
+---
+/** Formulario corto de contacto (alternativa a WhatsApp). Lo recibe el Worker de `formulario/` y llega a info@. */
+import type { Lang } from '../i18n/langs';
+import { pages } from '../i18n/pages';
+import { pathFor } from '../i18n/routes';
+import { FORM } from '../config/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const f = pages.contact[lang].form;
+---
+<section class="sec3" aria-labelledby="h-form">
+  <div class="wrap">
+    <form class="card cform rv" id="cform" novalidate data-endpoint={FORM.endpoint} data-lang={lang}
+      data-msg-ok={f.ok} data-msg-err={f.err} data-msg-missing={f.missing} data-msg-sending={f.sending}>
+      <div>
+        <h2 class="h3" id="h-form">{f.h}</h2>
+        <p>{f.sub}</p>
+      </div>
+      <div class="cf-row">
+        <label class="cf-field">
+          <span>{f.name}</span>
+          <input name="nombre" type="text" autocomplete="name" maxlength="80" required />
+        </label>
+        <label class="cf-field">
+          <span>{f.contact}</span>
+          <input name="contacto" type="text" autocomplete="email" inputmode="email" maxlength="120" required aria-describedby="cf-contact-hint" />
+          <small id="cf-contact-hint">{f.contactHint}</small>
+        </label>
+      </div>
+      <label class="cf-field">
+        <span>{f.need}</span>
+        <select name="necesita">
+          {Object.entries(f.needs).map(([v, label]) => <option value={v}>{label}</option>)}
+        </select>
+      </label>
+      <label class="cf-field">
+        <span>{f.msg}</span>
+        <textarea name="mensaje" rows="4" maxlength="2000" aria-describedby="cf-msg-hint"></textarea>
+        <small id="cf-msg-hint">{f.msgHint}</small>
+      </label>
+      <!-- Trampa para robots: oculta para personas y lectores de pantalla. -->
+      <div class="cf-trap" aria-hidden="true">
+        <label>Web<input name="web" type="text" tabindex="-1" autocomplete="off" /></label>
+      </div>
+      <div class="cf-ts" data-sitekey={FORM.turnstileSiteKey}></div>
+      <div class="cf-foot">
+        <button class="btn btn-primary" type="submit">{f.send}</button>
+        <p class="cf-priv">{f.privacy} <a href={pathFor('privacy', lang)}>{f.privacyLink}</a></p>
+      </div>
+      <p class="cf-status" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<script>
+  type TS = { render: (el: HTMLElement, o: Record<string, unknown>) => string; reset: (id?: string) => void; getResponse: (id?: string) => string | undefined };
+  const form = document.getElementById('cform') as HTMLFormElement | null;
+  if (form) {
+    const status = form.querySelector('.cf-status') as HTMLElement;
+    const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    const tsBox = form.querySelector('.cf-ts') as HTMLElement;
+    const label = btn.textContent;
+    let widget: string | undefined;
+
+    // Turnstile se carga solo en esta página y solo cuando el formulario se acerca a la pantalla.
+    const loadTs = () => {
+      if (document.getElementById('ts-script')) return;
+      (window as unknown as { onTsLoad: () => void }).onTsLoad = () => {
+        const ts = (window as unknown as { turnstile: TS }).turnstile;
+        widget = ts.render(tsBox, { sitekey: tsBox.dataset.sitekey, language: form.dataset.lang, appearance: 'interaction-only', theme: 'light' });
+      };
+      const s = document.createElement('script');
+      s.id = 'ts-script';
+      s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTsLoad';
+      s.async = true;
+      document.head.appendChild(s);
+    };
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { io.disconnect(); loadTs(); } }, { rootMargin: '400px' });
+      io.observe(form);
+    } else loadTs();
+    form.addEventListener('focusin', loadTs, { once: true });
+
+    const say = (msg: string, kind: '' | 'ok' | 'err') => { status.textContent = msg; status.dataset.kind = kind; };
+
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const fd = new FormData(form);
+      const nombre = String(fd.get('nombre') || '').trim();
+      const contacto = String(fd.get('contacto') || '').trim();
+      if (!nombre || !contacto) {
+        say(form.dataset.msgMissing!, 'err');
+        (form.querySelector(nombre ? '[name="contacto"]' : '[name="nombre"]') as HTMLElement).focus();
+        return;
+      }
+      const ts = (window as unknown as { turnstile?: TS }).turnstile;
+      btn.disabled = true;
+      btn.textContent = form.dataset.msgSending!;
+      say('', '');
+      try {
+        const r = await fetch(form.dataset.endpoint!, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nombre, contacto,
+            necesita: fd.get('necesita'),
+            mensaje: fd.get('mensaje'),
+            web: fd.get('web'),
+            lang: form.dataset.lang,
+            turnstile: ts && widget ? ts.getResponse(widget) || '' : '',
+          }),
+        });
+        const j = await r.json().catch(() => ({ ok: false }));
+        if (!j.ok) throw new Error(j.error || 'error');
+        form.reset();
+        say(form.dataset.msgOk!, 'ok');
+      } catch {
+        say(form.dataset.msgErr!, 'err');
+      } finally {
+        if (ts && widget) ts.reset(widget);
+        btn.disabled = false;
+        btn.textContent = label;
+      }
+    });
+  }
+</script>

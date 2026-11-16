@@ -8,6 +8,7 @@ import { alternatesFor, pathFor } from '../i18n/routes';
 import { pages } from '../i18n/pages';
 import { smsLink, telLink, useTranslations, waLink } from '../i18n/ui';
 import MiniShot from '../components/MiniShot.astro';
+import ContactForm from '../components/ContactForm.astro';
 import { BUSINESS, activeSocials } from '../config/site';
 
 interface Props {
@@ -61,6 +62,8 @@ const socials = activeSocials();
       </div>
     </div>
   </section>
+
+  <ContactForm lang={lang} />
 
   <section class="sec3" aria-labelledby="h-tell">
     <div class="wrap grid2">

@@ -17,6 +17,15 @@ export const FLAGS = {
 
 export type FlagName = keyof typeof FLAGS;
 
+/**
+ * Formulario de contacto: lo recibe el Worker propio (carpeta `formulario/`) y lo reenvía a info@.
+ * turnstileSiteKey es pública (va en el HTML); el secreto vive solo en el Worker.
+ */
+export const FORM = {
+  endpoint: 'https://contacto.fscreativelab.com/enviar',
+  turnstileSiteKey: '0x4AAAAAAGDbCHtSMeDjhtFH',
+} as const;
+
 /** Datos reales del negocio (brief). No agregar dirección: no hay una pública. */
 export const BUSINESS = {
   name: 'FS Creative Studio',

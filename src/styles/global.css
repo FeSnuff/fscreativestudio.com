@@ -341,3 +341,20 @@ dialog.modal .m-head .chip { font-size: 11px; }
   .tool-card { padding: 14px; }
   #herramientas .group-p { font-size: 15px; }
 }
+
+/* Formulario de contacto */
+.cform { max-width: 760px; margin: 0 auto; gap: 18px; }
+.cf-row { display: grid; gap: 18px; }
+@media (min-width: 640px) { .cf-row { grid-template-columns: 1fr 1fr; } }
+.cf-field { display: grid; gap: 6px; font-weight: 500; color: var(--text); }
+.cf-field small { font-weight: 400; font-size: 14px; color: var(--text-3); }
+.cf-field input, .cf-field select, .cf-field textarea { width: 100%; font: inherit; font-weight: 400; font-size: 16px; color: var(--text); background: var(--bg); border: 1px solid var(--line-strong); border-radius: var(--r-md); padding: 12px 14px; min-height: 48px; }
+.cf-field textarea { resize: vertical; min-height: 110px; }
+.cf-field input:focus-visible, .cf-field select:focus-visible, .cf-field textarea:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; border-color: var(--accent); }
+.cf-trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.cf-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; }
+.cf-priv { font-size: 14px; color: var(--text-3); }
+.cf-status:empty { display: none; }
+.cf-status { padding: 12px 14px; border-radius: var(--r-md); font-weight: 500; }
+.cf-status[data-kind="ok"] { background: rgb(37 211 102 / .12); color: var(--text); border: 1px solid rgb(37 211 102 / .45); }
+.cf-status[data-kind="err"] { background: var(--danger-soft); color: var(--danger); }
