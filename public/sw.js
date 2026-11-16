@@ -7,7 +7,7 @@
  * Para cambiar de estrategia, subir VERSION (borra las cachés anteriores).
  * Para DESACTIVARLO en producción: ver README ("Apagar el service worker").
  */
-const VERSION = 'fs-v3';
+const VERSION = 'fs-v4';
 const PAGES = `${VERSION}-pages`;
 const ASSETS = `${VERSION}-assets`;
 const OFFLINE_FALLBACK = ['/', '/en/'];

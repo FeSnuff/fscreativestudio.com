@@ -29,7 +29,7 @@ body{width:1200px;height:630px;overflow:hidden;background:#0B0B14;color:#EDEDF5;
 body::before{content:"";position:absolute;inset:0;background:radial-gradient(40% 60% at 85% 35%,rgb(109 74 255 / .55),transparent 70%),radial-gradient(30% 45% at 100% 100%,rgb(226 85 200 / .45),transparent 70%),radial-gradient(35% 50% at 60% 0%,rgb(59 130 246 / .35),transparent 70%)}
 body::after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgb(237 237 245 / .14) 1.2px,transparent 1.6px);background-size:28px 28px;-webkit-mask-image:radial-gradient(70% 90% at 80% 40%,#000,transparent 75%)}
 .in{position:relative;z-index:1;padding:64px 72px;height:100%;display:flex;flex-direction:column}
-.logo{height:46px;width:auto;align-self:flex-start}
+.brand{display:flex;align-items:center;gap:16px;align-self:flex-start}.ico{height:56px;width:56px}.logo{height:46px;width:auto}
 h1{margin-top:auto;font-size:68px;line-height:1.04;letter-spacing:-.035em;font-weight:600;color:#fff;max-width:860px}
 .mark{position:relative;white-space:nowrap}
 .mark::after{content:"";position:absolute;left:-.04em;right:-.04em;bottom:.02em;height:.13em;background:linear-gradient(100deg,#6D4AFF,#3B82F6 55%,#E255C8);border-radius:4px;z-index:-1}
@@ -39,7 +39,7 @@ ul{display:flex;gap:12px;list-style:none;padding:0;margin-top:36px}
 li{padding:10px 18px;border-radius:999px;border:1px solid rgb(155 135 255 / .45);background:rgb(20 20 31 / .8);font-size:19px;color:#EDEDF5}
 .url{position:absolute;right:72px;top:76px;font-family:"Geist Mono",monospace;font-size:20px;letter-spacing:.06em;color:#9B87FF}
 </style></head><body><div class="in">
-<img class="logo" src="${u('logo/horizontal-A-oscuro.svg')}" alt="">
+<div class="brand"><img class="ico" src="${u('icons/icon.svg')}" alt=""><img class="logo" src="${u('logo/logotipo-W1-oscuro.svg')}" alt=""></div>
 <h1>${T[lang].a} <span class="mark">${T[lang].b}</span></h1>
 <p>${T[lang].sub} <b>${T[lang].subB}</b></p>
 <ul>${T[lang].chips.map((c) => `<li>${c}</li>`).join('')}</ul>

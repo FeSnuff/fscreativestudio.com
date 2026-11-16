@@ -12,7 +12,8 @@ import { pages } from '../i18n/pages';
 import { useTranslations } from '../i18n/ui';
 import { getGallery, getService, getTool, servicePath, toolPath } from '../data';
 import type { GalleryKind } from '../data/types';
-import { projects, SHOT, shotSrc } from '../data/projects';
+import Showcase from '../components/Showcase.astro';
+import { projects, SHOT, webSrc } from '../data/projects';
 
 interface Props {
   lang: Lang;
@@ -43,17 +44,14 @@ const linkOf = (g: (typeof items)[number]) => {
         <h2 class="h2" id="h-proj">{p.projH}</h2>
         <p>{p.projP}</p>
       </div>
-      <ul class="gal">
+      <ul class="pj-list">
         {projects.map((pj, i) => {
           const tx = pj.text[lang];
           return (
             <li>
-              <article class="shot pj rv" style={`--i:${i}`}>
-                <div class="pj-stage">
-                  <div class="pj-win"><img src={shotSrc(pj.id, 'd')} width={SHOT.d.w} height={SHOT.d.h} loading="lazy" decoding="async" alt={p.altD(pj.name)} /></div>
-                  <div class="pj-phone"><img src={shotSrc(pj.id, 'm')} width={SHOT.m.w} height={SHOT.m.h} loading="lazy" decoding="async" alt={p.altM(pj.name)} /></div>
-                </div>
-                <div class="shot-body">
+              <article class="pj rv" style={`--i:${i}`}>
+                <div class="pj-show"><Showcase lang={lang} project={pj} /></div>
+                <div class="pj-info">
                   <div class="pj-tags">
                     <span class:list={['tag', pj.status === 'live' ? 'tag-ok' : 'tag-dev']}>{p.status[pj.status]}</span>
                     {pj.own && <span class="tag tag-v">{p.own}</span>}
@@ -61,6 +59,10 @@ const linkOf = (g: (typeof items)[number]) => {
                   <h3>{pj.name}</h3>
                   <p class="pj-meta">{tx.trade} · {tx.place}</p>
                   <p>{tx.did}</p>
+                  <figure class="pj-web">
+                    <img src={webSrc(pj.id)} width={SHOT.web.w} height={SHOT.web.h} loading="lazy" decoding="async" alt={p.altD(pj.name)} />
+                    <figcaption>{p.webLabel}</figcaption>
+                  </figure>
                 </div>
               </article>
             </li>

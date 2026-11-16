@@ -95,11 +95,11 @@ img,svg{display:block}
 
 .logo3d{position:absolute;left:50%;top:44%;width:var(--ls);height:var(--ls);margin:calc(var(--ls) / -2) 0 0 calc(var(--ls) / -2);padding:0;border:0;background:none;perspective:620px;z-index:2;border-radius:24%;-webkit-tap-highlight-color:transparent}
 .l3d{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg))}
-.l3d .lyr{position:absolute;inset:0;border-radius:23.4%;background:var(--c);transform:translateZ(var(--z))}
-.l3d .face{position:absolute;inset:0;border-radius:23.4%;overflow:hidden;transform:translateZ(1px);background:linear-gradient(150deg,#22936E 0%,#6D4AFF 48%,#10533E 100%);box-shadow:inset 0 1px 0 rgb(255 255 255 / .28),inset 0 -2px 0 rgb(0 0 0 / .25)}
-.l3d .face svg{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 2px 0 rgb(6 21 15 / .45))}
+.l3d .lyr{position:absolute;inset:0;border-radius:22.5%;background:var(--c);transform:translateZ(var(--z))}
+.l3d .face{position:absolute;inset:0;border-radius:22.5%;overflow:hidden;transform:translateZ(1px);background:#6D4AFF;box-shadow:inset 0 1px 0 rgb(255 255 255 / .28),inset 0 -2px 0 rgb(0 0 0 / .25)}
+.l3d .face svg{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 2px 0 rgb(40 20 110 / .45))}
 .l3d .spec{position:absolute;inset:0;background:radial-gradient(circle at var(--lx,32%) var(--ly,22%),rgb(255 255 255 / .55),rgb(255 255 255 / .08) 32%,transparent 58%);mix-blend-mode:overlay}
-.l3d .rim{position:absolute;inset:0;border-radius:23.4%;padding:1.5px;transform:translateZ(1.5px);background:conic-gradient(from var(--ra,0deg),#9B87FF,#55B8FF,#A58BFF,#9B87FF);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.8}
+.l3d .rim{position:absolute;inset:0;border-radius:22.5%;padding:1.5px;transform:translateZ(1.5px);background:conic-gradient(from var(--ra,0deg),#9B87FF,#55B8FF,#A58BFF,#9B87FF);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.8}
 .l3d .glow{position:absolute;left:4%;right:4%;bottom:-30%;height:30%;border-radius:50%;background:radial-gradient(closest-side,rgb(109 74 255 / .6),transparent);filter:blur(12px);transform:translateZ(-40px)}
 .logo3d.spin .l3d{animation:spin 900ms var(--ease-out)}
 @keyframes spin{from{transform:rotateY(-360deg)}}
@@ -288,7 +288,7 @@ body.menu-open{overflow:hidden}
 .morph{position:relative;display:grid;place-items:center;min-height:min(640px,78svh);perspective:1200px}
 .morph-glow{position:absolute;width:min(520px,90%);aspect-ratio:1;border-radius:50%;background:radial-gradient(closest-side,rgb(109 74 255 / .45),rgb(59 130 246 / .2) 55%,transparent);filter:blur(10px)}
 .morph .logo3d{position:absolute;left:50%;top:50%;--ls:clamp(140px,14vw,200px);margin:calc(var(--ls) / -2) 0 0 calc(var(--ls) / -2);transform-style:preserve-3d}
-.l3d .face{background:linear-gradient(135deg,#6D4AFF,#3B82F6)}
+.l3d .face{background:linear-gradient(150deg,#7652FF,#6D4AFF 55%,#5B3BE8)}
 .l3d .lyr{background:var(--c)}
 .hphone-wrap{position:relative;display:grid;justify-items:center;gap:16px;transform-style:preserve-3d;transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg))}
 .hphone{width:min(290px,64vw);aspect-ratio:300/600;box-shadow:0 0 0 1px rgb(237 237 245 / .14),0 50px 100px -40px #000,0 0 90px -20px rgb(109 74 255 / .7)}
@@ -586,3 +586,18 @@ body.menu-open{overflow:hidden}
   .idx2 button:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
   .prog2{display:none}
 }
+
+/* Logo: ícono (monograma W1) + logotipo con "creative" violeta */
+.brand .lockup{display:inline-flex;align-items:center;gap:10px}
+.brand .mark{height:32px;width:32px;display:block;border-radius:22%}
+@media (max-width:420px){.brand .mark{height:26px;width:26px}}
+
+/* Relieve 3D real del monograma: capas del glifo sobre la placa (costados lavanda, frente blanco) */
+.hero3 .logo3d{transform-style:flat}
+.l3d .gly{position:absolute;inset:0;transform:translateZ(var(--z));pointer-events:none}
+.l3d .gly svg{display:block;width:100%;height:100%;fill:var(--g)}
+.l3d .gly.front svg{filter:drop-shadow(0 0 6px rgb(255 255 255 / .35))}
+/* Armado: las capas de la letra suben una por una hasta formar el relieve (solo en la intro del hero) */
+@keyframes armar{from{transform:translateZ(0);opacity:0}to{transform:translateZ(var(--z));opacity:1}}
+.hero3 .l3d .gly{animation:armar .45s cubic-bezier(.2,.8,.2,1.15) both;animation-delay:calc(.55s + var(--i) * .1s)}
+.hero3 .l3d .gly.front{animation-duration:.55s}

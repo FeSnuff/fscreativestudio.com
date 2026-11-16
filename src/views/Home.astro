@@ -14,7 +14,8 @@ import { pages } from '../i18n/pages';
 import { telLink, useTranslations, waLink } from '../i18n/ui';
 import { BUSINESS } from '../config/site';
 import type { DemoId } from '../demos/registry';
-import { projects, SHOT, shotSrc } from '../data/projects';
+import Showcase from '../components/Showcase.astro';
+import { projects } from '../data/projects';
 
 interface Props {
   lang: Lang;
@@ -33,12 +34,13 @@ const rows = [
   { k: 'maps', name: 'Google Maps', icon: 'b-googlemaps', color: '#4285F4', st: '--i:3;--dx:-8px;--dy:3px;--r:1.8deg', b: { txt: '—', style: 'border:1.5px dashed #8A8D96;color:#8A8D96' }, a: '(555) 010-0142' },
   { k: 'nextdoor', name: 'Nextdoor', icon: 'u-vecindario', color: '', st: '--i:4;--dx:5px;--dy:0px;--r:-1.2deg', b: { txt: '—', style: 'border:1.5px dashed #8A8D96;color:#8A8D96' }, a: '(555) 010-0142' },
 ] as const;
-const FS_PATH = 'M20.87 42.68L17.14 42.68L17.14 21.32L30.62 21.32L30.62 24.69L19.31 24.69L20.87 23.13L20.87 30.56L30.07 30.56L30.07 33.90L20.87 33.90L20.87 42.68ZM40.93 43.16L40.93 43.16Q38.59 43.16 36.86 42.23Q35.13 41.29 34.14 39.60Q33.14 37.90 32.96 35.58L32.96 35.58L36.75 35.37Q36.93 36.84 37.50 37.82Q38.08 38.80 38.99 39.29Q39.91 39.79 41.11 39.79L41.11 39.79Q42.26 39.79 43.05 39.49Q43.85 39.19 44.27 38.59Q44.69 37.99 44.69 37.11L44.69 37.11Q44.69 36.24 44.27 35.59Q43.85 34.95 42.77 34.41Q41.69 33.86 39.67 33.29L39.67 33.29Q37.50 32.72 36.12 31.95Q34.74 31.19 34.08 30.04Q33.41 28.90 33.41 27.19L33.41 27.19Q33.41 25.26 34.27 23.83Q35.13 22.40 36.77 21.62Q38.41 20.84 40.69 20.84L40.69 20.84Q42.95 20.84 44.54 21.70Q46.14 22.55 47.06 24.13Q47.97 25.71 48.18 27.88L48.18 27.88L44.39 28.06Q44.24 26.89 43.76 26.03Q43.28 25.17 42.48 24.69Q41.69 24.21 40.54 24.21L40.54 24.21Q39.01 24.21 38.11 24.96Q37.20 25.71 37.20 26.98L37.20 26.98Q37.20 27.82 37.61 28.39Q38.02 28.96 39.01 29.41Q40.00 29.86 41.81 30.35L41.81 30.35Q44.27 31.04 45.73 31.94Q47.19 32.84 47.84 34.09Q48.48 35.34 48.48 37.05L48.48 37.05Q48.48 38.89 47.55 40.27Q46.62 41.66 44.93 42.41Q43.25 43.16 40.93 43.16Z';
+const FS_PATH = 'M110.67 71.68L350.52 71.68L350.52 114.74L207.85 114.74L207.85 166.17L165.60 208.41L165.60 207.02L290.23 207.02L290.23 253.80L165.60 253.80L165.60 253.10L207.85 295.34L207.85 389.32L110.67 389.32L110.67 346.26L137.56 346.26L137.56 114.74L110.67 114.74ZM233.44 155.71L401.33 155.71L401.33 200.37L188.78 200.37ZM188.50 260.77L358.56 260.77L401.23 303.45L401.23 397.05L357.96 440.32L214.61 440.32L189.93 415.65L189.93 395.71L328.80 395.71L328.80 346.29L369.76 305.35L233.07 305.35Z';
+const glyphLayers = [['3px', '#5B42D6'], ['5px', '#6A52E0'], ['7px', '#7A64E8'], ['9px', '#8A77EE'], ['11px', '#9B8AF3'], ['13px', '#AC9EF7'], ['15px', '#BDB1FA'], ['17px', '#CEC5FC']];
 const layers = [['-2px', '#5A3DE0'], ['-4px', '#5A3DE0'], ['-6px', '#5236CC'], ['-8px', '#5236CC'], ['-10px', '#4A30B8'], ['-12px', '#4A30B8'], ['-14px', '#422AA4'], ['-16px', '#422AA4'], ['-18px', '#3A2490'], ['-20px', '#3A2490'], ['-22px', '#321F7C'], ['-24px', '#321F7C']];
 ---
 <Base lang={lang} title={p.title} description={p.description} alternates={alternatesFor('home')}>
-  <!-- Ícono FS (cara oficial con degradado) para los logos "después" del panel de redes -->
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="fsi-s" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6D4AFF"></stop><stop offset="1" stop-color="#3B82F6"></stop></linearGradient></defs><symbol id="fs-mark" viewBox="0 0 64 64"><rect width="64" height="64" rx="14.98" fill="url(#fsi-s)"></rect><path d={FS_PATH} fill="#fff"></path></symbol></svg>
+  <!-- Ícono FS oficial (monograma blanco sobre violeta #6D4AFF) para los logos "después" del panel de redes -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs></defs><symbol id="fs-glyph" viewBox="0 0 512 512"><path d={FS_PATH}></path></symbol><symbol id="fs-mark" viewBox="0 0 512 512"><path d="M115 0H397C460.48 0 512 51.52 512 115V397C512 460.48 460.48 512 397 512H115C51.52 512 0 460.48 0 397V115C0 51.52 51.52 0 115 0Z" fill="#6D4AFF"></path><path d={FS_PATH} fill="#fff"></path></symbol></svg>
 
   <!-- 1 · HERO: el logo se abre en el teléfono que muestra lo que vendemos -->
   <section class="hero3" id="hero" aria-labelledby="h1">
@@ -56,7 +58,7 @@ const layers = [['-2px', '#5A3DE0'], ['-4px', '#5A3DE0'], ['-6px', '#5236CC'], [
       <div class="morph" id="morph" role="img" aria-label={p.morphLabel}>
         <div class="morph-glow" aria-hidden="true"></div>
         <div class="logo3d" id="logo3d" aria-hidden="true">
-          <span class="l3d" id="l3d"><span class="glow"></span>{layers.map(([z, c]) => <span class="lyr" style={`--z:${z};--c:${c}`}></span>)}<span class="face"><svg viewBox="0 0 64 64"><path d={FS_PATH} fill="#fff"></path></svg><span class="spec"></span></span></span>
+          <span class="l3d" id="l3d"><span class="glow"></span>{layers.map(([z, c]) => <span class="lyr" style={`--z:${z};--c:${c}`}></span>)}<span class="face"><span class="spec"></span></span>{glyphLayers.map(([z, c], i) => <span class="gly" style={`--z:${z};--g:${c};--i:${i}`}><svg viewBox="0 0 512 512"><use href="#fs-glyph" /></svg></span>)}<span class="gly front" style="--z:19px;--g:#fff;--i:8"><svg viewBox="0 0 512 512"><use href="#fs-glyph" /></svg></span></span>
         </div>
         <div class="hphone-wrap" id="hphone-wrap" aria-hidden="true">
           <div class="phone2 hphone"><div class="screen2" id="hscreen"></div></div>
@@ -153,10 +155,10 @@ const layers = [['-2px', '#5A3DE0'], ['-4px', '#5A3DE0'], ['-6px', '#5236CC'], [
         <h2 class="h3" id="h-trabajos">{p.workH}</h2>
         <a class="btn btn-ghost btn-sm" href={`${pathFor('work', lang)}#proyectos`}>{p.workLink} <Icon name="u-flecha-derecha" /></a>
       </div>
-      <ul class="pj-strip rv">
-        {projects.map((pj) => (
-          <li>
-            <img src={shotSrc(pj.id, 'd')} width={SHOT.d.w} height={SHOT.d.h} loading="lazy" decoding="async" alt={p.workAlt(pj.name)} />
+      <ul class="pj-strip">
+        {projects.map((pj, i) => (
+          <li class="rv" style={`--i:${i}`}>
+            <div class="pj-tile"><Showcase lang={lang} project={pj} size="sm" /></div>
             <span><b>{pj.name}</b> {pj.text[lang].trade}</span>
           </li>
         ))}

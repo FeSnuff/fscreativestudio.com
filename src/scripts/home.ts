@@ -146,29 +146,44 @@ if (story && scene && hero) {
     } else {
       wrap.style.opacity = '0';
       heroShow(0);
+      // Intro 3D: el contenedor solo aparece/escala (la opacidad aplana el 3D si va en la pieza que gira);
+      // la pieza 3D (#l3d) gira para lucir el relieve que se arma capa por capa (CSS .gly) y se "abre" de canto.
       logo.animate(
         [
-          { transform: 'scale(.5) rotateY(-40deg)', opacity: 0 },
-          { transform: 'scale(1) rotateY(0)', opacity: 1, offset: 0.45 },
-          { transform: 'scale(1) rotateY(0)', opacity: 1, offset: 0.7 },
-          { transform: 'scale(1.25) rotateY(90deg)', opacity: 0 },
+          { transform: 'scale(.6)', opacity: 0 },
+          { transform: 'scale(1)', opacity: 1, offset: 0.12 },
+          { transform: 'scale(1.05)', opacity: 1, offset: 0.86 },
+          { transform: 'scale(1.25)', opacity: 0 },
         ],
-        { duration: 1900, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' },
+        { duration: 4000, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' },
+      );
+      const giro = $('l3d')?.animate(
+        [
+          { transform: 'rotateY(0) rotateX(0)' },
+          { transform: 'rotateY(-10deg) rotateX(6deg)', offset: 0.12 },
+          { transform: 'rotateY(-16deg) rotateX(8deg)', offset: 0.4 },
+          { transform: 'rotateY(-42deg) rotateX(14deg)', offset: 0.57 },
+          { transform: 'rotateY(38deg) rotateX(-10deg)', offset: 0.78 },
+          { transform: 'rotateY(0) rotateX(0)', offset: 0.86 },
+          { transform: 'rotateY(90deg) rotateX(0)' },
+        ],
+        { duration: 4000, easing: 'cubic-bezier(.45,0,.25,1)', fill: 'forwards' },
       );
       const a = wrap.animate(
         [
           { transform: 'rotateY(-90deg) scale(.55)', opacity: 0 },
           { transform: 'rotateY(0) scale(1)', opacity: 1 },
         ],
-        { duration: 800, delay: 1400, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' },
+        { duration: 800, delay: 3500, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' },
       );
       a.onfinish = () => {
         wrap.style.opacity = '';
         logo.style.display = 'none';
+        giro?.cancel();
         hstart = performance.now();
       };
-      setTimeout(() => (wrap.style.opacity = ''), 1400);
-      hstart = performance.now() + 1500;
+      setTimeout(() => (wrap.style.opacity = ''), 3500);
+      hstart = performance.now() + 3600;
     }
   }
 
