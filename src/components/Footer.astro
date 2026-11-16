@@ -20,7 +20,7 @@ const year = new Date().getFullYear();
     <div class="g">
       <div>
         <a class="brand" href={pathFor('home', lang)}><Logo variant="auto" alt={t.logoLabel} /></a>
-        <p>{t.footer.tagline}<br />{t.footer.where}</p>
+        <p>{t.footer.tagline}{t.footer.where.split(' · ').map((x) => <><br />{x}</>)}</p>
       </div>
       <div>
         <h2 class="ftr-h">{t.footer.site}</h2>

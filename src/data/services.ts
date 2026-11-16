@@ -14,7 +14,7 @@ export const services: Service[] = [
     icon: 'u-globo',
     price: { setup: 250, note: { es: 'Inicial del 30–50 %, el resto al entregar.', en: '30–50% deposit to start, the rest on delivery.' } },
     cta: { es: 'Quiero mi web', en: 'I want my website' },
-    wa: { es: 'Hola, me interesa la web de USD 250. Mi negocio se dedica a:', en: "Hi, I'm interested in the $250 website. My business does:" },
+    wa: { es: 'Hola, me interesa la web de USD 250. Mi negocio se dedica a:', en: "Hi, I'm interested in the $250 website. My business does:" },
     text: {
       es: {
         slug: 'pagina-web',
@@ -31,11 +31,11 @@ export const services: Service[] = [
         ],
         terms: [
           'Pago: inicial del 30–50 %, el resto al entregar.',
-          'Mantenimiento opcional: USD 25/mes, mes a mes.',
+          'Mantenimiento opcional: USD 25/mes, mes a mes.',
           'No incluye logo nuevo, tienda en línea, blog, reservas con pago ni correo con tu dominio (se pueden agregar).',
         ],
-        seoTitle: 'Página web para negocios desde USD 250 | FS Creative Studio',
-        seoDescription: 'Una web rápida para tu negocio desde USD 250, siempre en español y en inglés. Al terminar, dominio y cuentas quedan a tu nombre, con tus claves.',
+        seoTitle: 'Página web para negocios desde USD 250 | FS Creative Studio',
+        seoDescription: 'Una web rápida para tu negocio desde USD 250, siempre en español y en inglés. Al terminar, dominio y cuentas quedan a tu nombre, con tus claves.',
       },
       en: {
         slug: 'website',
@@ -65,9 +65,9 @@ export const services: Service[] = [
     stage: 'encontrar',
     visible: true,
     icon: 'u-vecindario',
-    price: { setup: 450, note: { es: 'USD 200 para empezar · USD 250 al terminar.', en: '$200 to start · $250 when it’s done.' } },
+    price: { setup: 450, note: { es: 'USD 200 para empezar · USD 250 al terminar.', en: '$200 to start · $250 when it’s done.' } },
     cta: { es: 'Quiero ordenar mis redes', en: 'Sort out my accounts' },
-    wa: { es: 'Hola, quiero ordenar mis redes (USD 450). Hoy tengo:', en: 'Hi, I want to sort out my social accounts ($450). Right now I have:' },
+    wa: { es: 'Hola, quiero ordenar mis redes (USD 450). Hoy tengo:', en: 'Hi, I want to sort out my social accounts ($450). Right now I have:' },
     text: {
       es: {
         slug: 'todas-tus-redes',
@@ -82,12 +82,12 @@ export const services: Service[] = [
           'Un mensaje listo para pedir reseñas a tus clientes contentos.',
         ],
         terms: [
-          'Pago: USD 200 para empezar · USD 250 al terminar.',
+          'Pago: USD 200 para empezar · USD 250 al terminar.',
           '¿Quieres que además publiquemos por ti cada mes? Consúltanos.',
           'Recuperar una cuenta perdida depende de lo que permita cada plataforma. Hacemos todo lo posible.',
         ],
         seoTitle: 'Redes sociales y Google Maps en orden | FS Creative Studio',
-        seoDescription: 'Facebook, Instagram, WhatsApp Business, Google Maps y Nextdoor en orden: un solo número, un logo y cuentas a tu nombre. USD 450.',
+        seoDescription: 'Facebook, Instagram, WhatsApp Business, Google Maps y Nextdoor en orden: un solo número, un logo y cuentas a tu nombre. USD 450.',
       },
       en: {
         slug: 'all-your-profiles',
@@ -116,7 +116,7 @@ export const services: Service[] = [
     stage: 'crecer',
     visible: true,
     icon: 'u-cotizacion',
-    // Portal = paquete de herramientas: USD 250 + USD 25/mes (hasta 200 cotizaciones/mes), mínimo 6 meses.
+    // Portal = paquete de herramientas: USD 250 + USD 25/mes (hasta 200 cotizaciones/mes), mínimo 6 meses.
     // Los escalones de más volumen NO se publican (brief): solo "escala con tu negocio".
     price: {
       setup: 250,
@@ -144,12 +144,12 @@ export const services: Service[] = [
         ],
         terms: [
           'La mensualidad es el mantenimiento: tu oficina siempre funcionando, con respaldos y actualizaciones.',
-          'Mínimo 6 meses; después, mes a mes. El primer año son USD 550 en total (USD 250 + 12 × USD 25). No incluye la web; juntas: USD 500 + USD 25/mes → USD 800 el primer año.',
+          'Mínimo 6 meses; después, mes a mes. El primer año son USD 550 en total (USD 250 + 12 × USD 25). No incluye la web; juntas: USD 500 + USD 25/mes → USD 800 el primer año.',
           '¿Más volumen? La mensualidad escala con tu negocio. Nunca te cortamos el servicio: si un mes pasas de tu plan, ese mes se cobra con tu plan actual y te avisamos con semanas de anticipación.',
           'Si cancelas, te entregamos tus datos en un archivo: clientes, cotizaciones y contratos firmados.',
         ],
         seoTitle: 'Cotiza, firma y cobra desde el celular | FS Creative Studio',
-        seoDescription: 'Tu oficina en el celular: cotizaciones en PDF, contratos con firma, facturas, clientes y agenda. USD 250 + USD 25/mes (hasta 200 cotizaciones).',
+        seoDescription: 'Tu oficina en el celular: cotizaciones en PDF, contratos con firma, facturas, clientes y agenda. USD 250 + USD 25/mes (hasta 200 cotizaciones).',
       },
       en: {
         slug: 'online-office',
@@ -225,7 +225,7 @@ export const services: Service[] = [
     icon: 'u-proteccion',
     price: { monthly: 25, minMonths: 0 },
     cta: { es: 'Quiero mantenimiento', en: 'I want maintenance' },
-    wa: { es: 'Hola, quiero el mantenimiento de USD 25 al mes.', en: "Hi, I'd like the $25/month maintenance." },
+    wa: { es: 'Hola, quiero el mantenimiento de USD 25 al mes.', en: "Hi, I'd like the $25/month maintenance." },
     text: {
       es: {
         slug: 'mantenimiento',
@@ -240,8 +240,8 @@ export const services: Service[] = [
           'Cambios pequeños: textos, enlaces e imágenes.',
         ],
         terms: ['No incluye cambios grandes ni rediseños. Esos te los cotizamos aparte.'],
-        seoTitle: 'Mantenimiento web: USD 25 al mes | FS Creative Studio',
-        seoDescription: 'Copias de seguridad, aviso si tu web se cae, renovaciones, actualizaciones y cambios pequeños por USD 25 al mes. Opcional y mes a mes.',
+        seoTitle: 'Mantenimiento web: USD 25 al mes | FS Creative Studio',
+        seoDescription: 'Copias de seguridad, aviso si tu web se cae, renovaciones, actualizaciones y cambios pequeños por USD 25 al mes. Opcional y mes a mes.',
       },
       en: {
         slug: 'maintenance',

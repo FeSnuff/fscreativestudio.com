@@ -74,9 +74,9 @@ const biz = es ? 'Tu Negocio' : 'Your Business Co.';
       <div class="scr2">
         <div class="abar"><b>{es ? 'Tus canales' : 'Your channels'}</b><span class="chip chip-ok">{es ? 'En orden' : 'In order'}</span></div>
         {[['b-facebook', 'Facebook', '#0866FF'], ['b-instagram', 'Instagram', '#FF0069'], ['b-whatsapp', 'WhatsApp Business', '#25D366'], ['b-googlemaps', 'Google Maps', '#4285F4']].map(([ic, n, c]) => (
-          <div class="mchan"><svg class="ic" style={`color:${c}`}><use href={I(ic)} /></svg><span class="nm">{n}</span><span class="fs"></span></div>
+          <div class="mchan"><svg class="ic" style={`color:${c}`}><use href={I(ic)} /></svg><span class="nm">{n}</span><span class="fs"><svg class="ic"><use href={I('u-check')} /></svg></span></div>
         ))}
-        <div class="mchan"><svg class="ic" style="fill:none"><use href={I('u-vecindario')} /></svg><span class="nm">Nextdoor</span><span class="fs"></span></div>
+        <div class="mchan"><svg class="ic" style="fill:none"><use href={I('u-vecindario')} /></svg><span class="nm">Nextdoor</span><span class="fs"><svg class="ic"><use href={I('u-check')} /></svg></span></div>
         <div class="mrow"><span>{es ? 'Un número' : 'One number'}</span><b>(555) 010-0142</b></div>
       </div>
     )}
@@ -84,7 +84,7 @@ const biz = es ? 'Tu Negocio' : 'Your Business Co.';
       <div class="scr2">
         <div class="abar"><b>{es ? 'Publicación' : 'Post'}</b><span class="chip chip-pink">ES · EN</span></div>
         <div class="mpost"><span class="pa">{es ? 'Antes' : 'Before'}</span><span class="pb">{es ? 'Después' : 'After'}</span><span class="pl"><i></i>{biz}</span></div>
-        <div class="mrow"><span>{es ? '¡Así quedó! / Here’s the result!' : 'Here’s the result! / ¡Así quedó!'}</span></div>
+        <div class="mrow"><span>{es ? '¡Así quedó!' : 'Here’s the result!'}</span><span class="mbadge mb-v">ES · EN</span></div>
       </div>
     )}
     {mini === 'assistant' && (
@@ -97,6 +97,43 @@ const biz = es ? 'Tu Negocio' : 'Your Business Co.';
           <div class="bubble">Send me your ZIP code and I’ll confirm.</div>
           <span class="mhand"><i></i>{es ? 'Pasada a una persona' : 'Handed to a person'}</span>
         </div>
+      </div>
+    )}
+    {mini === 'review' && (
+      <div class="scr2">
+        <div class="abar"><b>{es ? 'Reseñas' : 'Reviews'}</b><span class="chip chip-accent">Google</span></div>
+        <div class="mchat">
+          <div class="bubble">{es ? 'Gracias por elegirnos, Ana. ¿Nos dejas tu reseña? Toma un minuto.' : 'Thanks for choosing us, Ana. Would you leave us a review? It takes a minute.'}<span class="mlink">{es ? 'Dejar reseña' : 'Leave a review'} →</span></div>
+        </div>
+        <div class="mrev"><span class="stars" aria-hidden="true">★★★★★</span><b>Ana Ríos</b><span>{es ? '"Puntuales y claros con el precio."' : '"On time and clear about the price."'}</span></div>
+        <div class="mrow"><span>{es ? 'Pedido automático' : 'Automatic request'}</span><span class="mbadge mb-v">{es ? 'Al terminar' : 'After the job'}</span></div>
+      </div>
+    )}
+    {mini === 'wa-send' && (
+      <div class="scr2">
+        <div class="abar"><b>{es ? 'Cotización #1042' : 'Quote #1042'}</b><span class="chip chip-accent">PDF</span></div>
+        <div class="file2" style="margin-top:0"><svg class="ic"><use href={I('u-pdf')} /></svg><span>{es ? 'Cotizacion-1042.pdf' : 'Quote-1042.pdf'}<small>84 KB</small></span></div>
+        <div class="mchat"><div class="bubble">{es ? 'Hola Ana, aquí está tu cotización. Puedes firmarla desde el celular.' : "Hi Ana, here's your quote. You can sign it from your phone."}</div></div>
+        <div class="btn2 on"><svg><use href={I('b-whatsapp')} /></svg>{es ? 'Enviar por WhatsApp' : 'Send on WhatsApp'}</div>
+        <span class="mhand"><i></i>{es ? 'Tú solo tocas enviar' : 'You just tap send'}</span>
+      </div>
+    )}
+    {mini === 'clients' && (
+      <div class="scr2">
+        <div class="abar"><b>{es ? 'Cliente' : 'Customer'}</b><span class="chip chip-accent">{es ? 'Ficha' : 'File'}</span></div>
+        <div class="who2"><span class="av2">AR</span><span>Ana Ríos<br /><small>(555) 010-0142</small></span></div>
+        <div class="mrow"><span>{es ? 'Cotización #1042' : 'Quote #1042'}</span><span class="mbadge mb-ok">{es ? 'Pagada' : 'Paid'}</span></div>
+        <div class="mrow"><span>{es ? 'Contrato' : 'Contract'}</span><span class="mbadge mb-p">{es ? 'Firmado' : 'Signed'}</span></div>
+        <div class="mrow"><span>{es ? 'Próxima visita' : 'Next visit'}</span><b>{es ? 'mar 9:30' : 'Tue 9:30'}</b></div>
+        <div class="terms2"><b>{es ? 'Nota' : 'Note'}</b>{es ? 'Prefiere WhatsApp.' : 'Prefers WhatsApp.'}</div>
+      </div>
+    )}
+    {mini === 'portal-edit' && (
+      <div class="scr2">
+        <div class="abar"><b>{es ? 'Tu web · precios' : 'Your site · prices'}</b><span class="chip chip-accent">{es ? 'Editar' : 'Edit'}</span></div>
+        {items.slice(0, 3).map(([n, v], i) => <div class:list={['mrow', 'medit', i === 1 && 'on']}><span>{n}</span><b>${i === 1 ? 375 : v}</b></div>)}
+        <span class="mhand"><i></i>{es ? 'Cambiaste "Servicio completo"' : 'You changed "Full service"'}</span>
+        <span class="msave">{es ? 'Guardar y publicar' : 'Save and publish'}</span>
       </div>
     )}
   </div></div>

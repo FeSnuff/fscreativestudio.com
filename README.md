@@ -8,7 +8,7 @@ Diseño v3 (`design/maqueta/index.html`, `design/tokens.css`), textos de `docs/0
 - Estilos: `src/styles/tokens.css` (copia de `design/tokens.css`) + `maqueta.css` (CSS de la maqueta v3, sin lo exclusivo de la maqueta) + `global.css` (fuentes Geist autoalojadas, páginas internas, galería, modal).
 - Home: `src/views/Home.astro` + `src/components/PhoneScreens.astro` + `src/scripts/home.ts` (hero logo→teléfono, historia de 5 pasos, redes). Común: `src/scripts/site.ts` (WhatsApp único por pantalla, menú móvil, aviso de idioma `fs_lang` solo en ES, revelado). Movimiento reducido: clase `.still` puesta en `<head>`.
 - View Transitions: regla CSS `@view-transition { navigation: auto; }` (sin JS; ya no se usa `ClientRouter`).
-- Logo, favicon e íconos: SVG oficiales en `public/logo/`, `public/favicon.svg`, `public/icons/` (sprite de `design/iconos/sprite.svg`). PWA: `public/manifest.webmanifest` (theme `#6D4AFF`) + PNG 180/192/512.
+- Logo, favicon e íconos: SVG oficiales en `public/logo/`, `public/favicon.svg`, `public/icons/` (sprite de `design/iconos/sprite.svg`). PWA: `public/manifest.webmanifest` (`theme_color` y `background_color` `#0B0B14`, igual que la meta `theme-color`; el violeta de marca #6D4AFF va en el ícono) + PNG 180/192/512.
 - og:image 1200×630 por idioma: `public/og/og-es.png` y `og-en.png`, generadas con `node scripts/og.mjs`.
 - Demos reales: `cd ../demos && npm run build`, luego copiar `../demos/dist/*` a `public/demos/` (ids `cotizacion`, `tablero`, `asistente`; enlaces `/#demo-<id>`).
 - QA: `npm run build && node scripts/qa.mjs` (Edge headless por CDP, escritorio 1440×900 y móvil 390×844; capturas en `test-output/capturas/`). El servidor de vista previa y Edge se cierran por PID.
@@ -68,7 +68,7 @@ public/                 CNAME, robots.txt, manifest, íconos SVG, sw.js
 ## Idioma (sin redirección automática)
 
 - El selector de idioma es un `<a href>` real a la página equivalente.
-- Si el navegador está en el otro idioma y no hay preferencia guardada, aparece un aviso discreto: "View this site in English?" en las páginas en español y "¿Ver este sitio en español?" en las páginas en inglés.
+- Si el navegador está en el otro idioma y no hay preferencia guardada, aparece un aviso discreto **solo en las páginas en español**: "View this site in English?". En `/en/` no hay aviso (decisión pendiente con el dueño: agregar "¿Ver este sitio en español?"). El aviso se marca como visto apenas se muestra (`fs_lang_notice`), así sale una sola vez por visitante.
 - "Sí", "No, gracias" y el selector guardan la elección en `localStorage` (`fs_lang`, siempre dentro de try/catch). Esa elección solo oculta el aviso: el sitio nunca redirige solo.
 
 ## Agregar un servicio o una herramienta
@@ -125,9 +125,9 @@ Para integrar:
 
 Si el diseñador renombra alguna variable, ajusta la tabla y busca usos con `grep -r "var(--" src`.
 
-Las fuentes Geist / Geist Mono todavía no se cargan (se usa la de sistema como respaldo). Cuando lleguen, se pueden autoalojar en WOFF2 con `preload`.
+Las fuentes Geist / Geist Mono están autoalojadas en WOFF2 (`public/fonts/`, `@font-face` en `global.css`) y se precargan con `preload` en `Base.astro`.
 
-**Logo e íconos:** `src/components/Logo.astro` y `public/icons/*.svg` son provisionales; se reemplazan por los de `design/logo`. Además, conviene agregar PNG de 192 y 512 px, `apple-touch-icon` y una imagen OG de 1200×630.
+**Logo e íconos:** logo nuevo (monograma FS blanco sobre violeta #6D4AFF + logotipo con "creative" en violeta) en `src/components/Logo.astro` y `public/logo/`; íconos en `public/icons/sprite.svg`. Ya existen los PNG 180/192/512, `apple-touch-icon` y las imágenes OG 1200×630 (`og-es.png`, `og-en.png`; si se cambian, publicarlas con otro nombre o `?v=` porque WhatsApp/Facebook guardan la vista previa).
 
 ## Integrar las demos (`demos/`)
 
@@ -181,7 +181,7 @@ GitHub Pages no permite 301 de servidor. Por eso `src/config/redirects.ts` hace 
 | `/terms/` | `/en/privacy/` |
 | `/how-we-work/` | `/en/` |
 | `/solutions/` | `/en/services/` |
-| `/solutions/management-systems/`, `team-collaboration`, `process-automation` | `/en/services/online-office/` |
+| `/solutions/management-systems/`, `team-collaboration`, `process-automation` | `/en/services/` |
 | `/solutions/digital-platform/` | `/en/services/website/` |
 | `/solutions/support-continuity/` | `/en/services/maintenance/` |
 | `/es/` | `/` |

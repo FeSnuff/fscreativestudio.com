@@ -10,7 +10,7 @@ interface Props {
 }
 const { lang, price, noPrice } = Astro.props;
 const cur = lang === 'es' ? 'USD' : '$';
-const sp = lang === 'es' ? ' ' : '';
+const sp = lang === 'es' ? ' ' : ''; // espacio no separable: "USD" nunca queda solo al final de la línea
 const per = lang === 'es' ? '/mes' : '/mo';
 const from = lang === 'es' ? 'desde ' : 'from ';
 ---

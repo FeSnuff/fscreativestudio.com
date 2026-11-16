@@ -14,7 +14,7 @@ const f = pages.contact[lang].form;
 <section class="sec3" aria-labelledby="h-form">
   <div class="wrap">
     <form class="card cform rv" id="cform" novalidate data-endpoint={FORM.endpoint} data-lang={lang}
-      data-msg-ok={f.ok} data-msg-err={f.err} data-msg-missing={f.missing} data-msg-sending={f.sending}>
+      data-msg-ok={f.ok} data-msg-err={f.err} data-msg-sending={f.sending} data-msg-verifying={f.verifying} data-msg-verify-fail={f.verifyFail}>
       <div>
         <h2 class="h3" id="h-form">{f.h}</h2>
         <p>{f.sub}</p>
@@ -22,12 +22,14 @@ const f = pages.contact[lang].form;
       <div class="cf-row">
         <label class="cf-field">
           <span>{f.name}</span>
-          <input name="nombre" type="text" autocomplete="name" maxlength="80" required />
+          <input name="nombre" type="text" autocomplete="name" maxlength="80" required aria-describedby="cf-nombre-err" />
+          <small class="cf-err" id="cf-nombre-err" data-missing={f.nameMissing} hidden></small>
         </label>
         <label class="cf-field">
           <span>{f.contact}</span>
-          <input name="contacto" type="text" autocomplete="email" inputmode="email" maxlength="120" required aria-describedby="cf-contact-hint" />
+          <input name="contacto" type="text" autocomplete="email" inputmode="email" maxlength="120" required aria-describedby="cf-contact-hint cf-contacto-err" />
           <small id="cf-contact-hint">{f.contactHint}</small>
+          <small class="cf-err" id="cf-contacto-err" data-missing={f.contactMissing} data-bad={f.contactBad} hidden></small>
         </label>
       </div>
       <label class="cf-field">
@@ -56,26 +58,61 @@ const f = pages.contact[lang].form;
 </section>
 
 <script>
-  type TS = { render: (el: HTMLElement, o: Record<string, unknown>) => string; reset: (id?: string) => void; getResponse: (id?: string) => string | undefined };
+  type TS = {
+    render: (el: HTMLElement, o: Record<string, unknown>) => string;
+    reset: (id?: string) => void;
+    execute: (id?: string) => void;
+    getResponse: (id?: string) => string | undefined;
+  };
   const form = document.getElementById('cform') as HTMLFormElement | null;
   if (form) {
     const status = form.querySelector('.cf-status') as HTMLElement;
     const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
     const tsBox = form.querySelector('.cf-ts') as HTMLElement;
     const label = btn.textContent;
+    const d = form.dataset;
+    const tsApi = () => (window as unknown as { turnstile?: TS }).turnstile;
     let widget: string | undefined;
-
-    // Turnstile se carga solo en esta página y solo cuando el formulario se acerca a la pantalla.
+    // Turnstile: el token llega por callback; si vence se pide otro; si el script o el widget fallan, se avisa claro.
+    let token = '';
+    let tsFailed = false;
+    let waiters: Array<() => void> = [];
+    const wake = () => {
+      waiters.forEach((w) => w());
+      waiters = [];
+    };
     const loadTs = () => {
       if (document.getElementById('ts-script')) return;
       (window as unknown as { onTsLoad: () => void }).onTsLoad = () => {
-        const ts = (window as unknown as { turnstile: TS }).turnstile;
-        widget = ts.render(tsBox, { sitekey: tsBox.dataset.sitekey, language: form.dataset.lang, appearance: 'interaction-only', theme: 'light' });
+        widget = tsApi()!.render(tsBox, {
+          sitekey: tsBox.dataset.sitekey,
+          language: d.lang,
+          appearance: 'interaction-only',
+          theme: 'light',
+          callback: (t: string) => {
+            token = t;
+            tsFailed = false;
+            wake();
+          },
+          'expired-callback': () => {
+            token = '';
+            if (widget) tsApi()?.reset(widget);
+          },
+          'error-callback': () => {
+            token = '';
+            tsFailed = true;
+            wake();
+          },
+        });
       };
       const s = document.createElement('script');
       s.id = 'ts-script';
       s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTsLoad';
       s.async = true;
+      s.onerror = () => {
+        tsFailed = true;
+        wake();
+      };
       document.head.appendChild(s);
     };
     if ('IntersectionObserver' in window) {
@@ -83,25 +120,68 @@ const f = pages.contact[lang].form;
       io.observe(form);
     } else loadTs();
     form.addEventListener('focusin', loadTs, { once: true });
-
+    /** Espera el token (hasta 8 s). Devuelve '' si Turnstile no cargó o no pudo verificar. */
+    const getToken = (): Promise<string> => {
+      loadTs();
+      if (token) return Promise.resolve(token);
+      if (tsFailed) return Promise.resolve('');
+      const ts = tsApi();
+      if (ts && widget) {
+        try {
+          ts.execute(widget);
+        } catch {
+          /* ya en curso */
+        }
+      }
+      return new Promise((res) => {
+        const t = window.setTimeout(() => res(token), 8000);
+        waiters.push(() => {
+          clearTimeout(t);
+          res(token);
+        });
+      });
+    };
     const say = (msg: string, kind: '' | 'ok' | 'err') => { status.textContent = msg; status.dataset.kind = kind; };
-
+    /** Error por campo: aria-invalid + texto asociado (aria-describedby). */
+    const mark = (name: string, msg: string) => {
+      const input = form.querySelector(`[name="${name}"]`) as HTMLInputElement;
+      const err = form.querySelector(`#cf-${name}-err`) as HTMLElement;
+      if (msg) input.setAttribute('aria-invalid', 'true');
+      else input.removeAttribute('aria-invalid');
+      err.textContent = msg;
+      err.hidden = !msg;
+      return input;
+    };
+    /** Contacto válido: un correo (algo@algo.algo) o un número con al menos 7 dígitos. */
+    const contactOk = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || v.replace(/\D/g, '').length >= 7;
     form.addEventListener('submit', async (ev) => {
       ev.preventDefault();
       const fd = new FormData(form);
       const nombre = String(fd.get('nombre') || '').trim();
       const contacto = String(fd.get('contacto') || '').trim();
-      if (!nombre || !contacto) {
-        say(form.dataset.msgMissing!, 'err');
-        (form.querySelector(nombre ? '[name="contacto"]' : '[name="nombre"]') as HTMLElement).focus();
+      const errC = form.querySelector('#cf-contacto-err') as HTMLElement;
+      const nameMsg = nombre ? '' : (form.querySelector('#cf-nombre-err') as HTMLElement).dataset.missing!;
+      const contactMsg = !contacto ? errC.dataset.missing! : contactOk(contacto) ? '' : errC.dataset.bad!;
+      const nameInput = mark('nombre', nameMsg);
+      const contactInput = mark('contacto', contactMsg);
+      if (nameMsg || contactMsg) {
+        say(nameMsg || contactMsg, 'err');
+        (nameMsg ? nameInput : contactInput).focus();
         return;
       }
-      const ts = (window as unknown as { turnstile?: TS }).turnstile;
       btn.disabled = true;
-      btn.textContent = form.dataset.msgSending!;
+      btn.textContent = d.msgVerifying!;
       say('', '');
+      const tsToken = await getToken();
+      if (!tsToken) {
+        say(d.msgVerifyFail!, 'err');
+        btn.disabled = false;
+        btn.textContent = label;
+        return;
+      }
+      btn.textContent = d.msgSending!;
       try {
-        const r = await fetch(form.dataset.endpoint!, {
+        const r = await fetch(d.endpoint!, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -109,17 +189,20 @@ const f = pages.contact[lang].form;
             necesita: fd.get('necesita'),
             mensaje: fd.get('mensaje'),
             web: fd.get('web'),
-            lang: form.dataset.lang,
-            turnstile: ts && widget ? ts.getResponse(widget) || '' : '',
+            lang: d.lang,
+            turnstile: tsToken,
           }),
         });
         const j = await r.json().catch(() => ({ ok: false }));
         if (!j.ok) throw new Error(j.error || 'error');
         form.reset();
-        say(form.dataset.msgOk!, 'ok');
-      } catch {
-        say(form.dataset.msgErr!, 'err');
+        say(d.msgOk!, 'ok');
+      } catch (e) {
+        say((e as Error).message === 'verificacion' ? d.msgVerifyFail! : d.msgErr!, 'err');
       } finally {
+        // Un token sirve una sola vez: se pide uno nuevo para el próximo envío.
+        token = '';
+        const ts = tsApi();
         if (ts && widget) ts.reset(widget);
         btn.disabled = false;
         btn.textContent = label;

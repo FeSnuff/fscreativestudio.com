@@ -31,6 +31,22 @@ function paint(sc: HTMLElement, s: number, swapLang = true): void {
   }
 }
 
+/**
+ * Móvil/tablet (<960 px): los teléfonos se dibujan a su tamaño de diseño (300×600) y se escalan enteros con
+ * `zoom` (CSS: --pz-h hero, --pz-s historia), así el contenido de la pantalla nunca se corta.
+ * Alto objetivo = 52 % / 54 % del alto chico de pantalla (svh, estable aunque aparezca la barra del navegador), máx. 600.
+ */
+const svhProbe = d.createElement('div');
+svhProbe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:100svh;visibility:hidden;pointer-events:none';
+d.body.appendChild(svhProbe);
+const fitPhones = () => {
+  const svh = svhProbe.offsetHeight || innerHeight;
+  root.style.setProperty('--pz-h', (Math.min(svh * 0.52, 600) / 600).toFixed(3));
+  root.style.setProperty('--pz-s', (Math.min(svh * 0.54, 600) / 600).toFixed(3));
+};
+fitPhones();
+addEventListener('resize', fitPhones);
+
 const story = $('historia');
 const scene = $('scene');
 const hero = $('hero');
@@ -320,11 +336,8 @@ if (story && scene && hero) {
     paused = v;
     root.classList.toggle('hero-paused', v);
     if (!pauseBtn) return;
+    // Botón de alternancia: etiqueta fija ("Pausar animación") y el estado lo dice aria-pressed.
     pauseBtn.setAttribute('aria-pressed', String(v));
-    const label = (v ? pauseBtn.dataset.play : pauseBtn.dataset.pause) ?? '';
-    pauseBtn.setAttribute('aria-label', label);
-    const lbl = pauseBtn.querySelector('.lbl');
-    if (lbl) lbl.textContent = label;
     if (v) {
       drawField(0, true);
       wrap.style.setProperty('--rx', '0deg');

@@ -22,7 +22,7 @@ const web = getService('web')!;
 const redes = getService('redes')!;
 const oficina = getService('oficina')!;
 const cur = lang === 'es' ? 'USD' : '$';
-const sp = lang === 'es' ? ' ' : '';
+const sp = lang === 'es' ? ' ' : ''; // espacio no separable: "USD" nunca queda solo al final de la línea
 const per = lang === 'es' ? '/mes' : '/mo';
 const cards = [
   { s: web, c: p.priceCards.web, dark: false },

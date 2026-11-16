@@ -182,6 +182,12 @@ if (ln && root.lang === 'es') {
     };
     ln.style.setProperty('--ln-ms', `${ms}ms`);
     ln.hidden = false;
+    // Se marca como visto apenas se muestra: no se repite aunque se navegue con teclado, Atrás o una URL escrita.
+    try {
+      localStorage.setItem(NOTICE_SEEN, '1');
+    } catch {
+      /* sin almacenamiento */
+    }
     // El texto se escribe después de mostrar la región para que los lectores de pantalla lo anuncien.
     const msg = ln.querySelector<HTMLElement>('[data-msg]');
     if (msg) requestAnimationFrame(() => (msg.textContent = msg.dataset.msg ?? ''));

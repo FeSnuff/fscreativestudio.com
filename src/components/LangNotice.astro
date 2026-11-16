@@ -15,10 +15,10 @@ interface Props {
 const { target } = Astro.props;
 const t = useTranslations('es').notice;
 ---
-<aside class="langnote" id="langnote" lang="en" role="region" aria-label={t.label} hidden>
+<aside class="langnote" id="langnote" lang="es" role="region" aria-label={t.label} hidden>
   <Icon name="u-globo" />
-  <span aria-live="polite" data-msg={t.text}></span>
-  <a class="ln-yes" href={target} hreflang="en" data-set-lang="en">{t.yes}</a>
-  <button class="ln-no" type="button" lang="es">{t.no}</button>
+  <span lang="en" aria-live="polite" data-msg={t.text}></span>
+  <a class="ln-yes" href={target} hreflang="en" lang="en" data-set-lang="en">{t.yes}</a>
+  <button class="ln-no" type="button">{t.no}</button>
   <i class="ln-timer" aria-hidden="true"></i>
 </aside>

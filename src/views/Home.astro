@@ -55,6 +55,8 @@ const layers = [['-2px', '#5A3DE0'], ['-4px', '#5A3DE0'], ['-6px', '#5236CC'], [
         </div>
         <p class="hero3-where"><Icon name="u-ubicacion" />{p.where}</p>
       </div>
+      <!-- Pausa (WCAG 2.2.2): escritorio abajo a la derecha del hero; móvil en la esquina del teléfono, en la primera pantalla -->
+      <button class="hero-pause" id="hero-pause" type="button" aria-pressed="false" aria-label={p.pause}><Icon name="u-pausa" class="i-pause" /><Icon name="u-reproducir" class="i-play" /><span class="lbl">{p.pause}</span></button>
       <div class="morph" id="morph" role="img" aria-label={p.morphLabel}>
         <div class="morph-glow" aria-hidden="true"></div>
         <div class="logo3d" id="logo3d" aria-hidden="true">
@@ -66,7 +68,6 @@ const layers = [['-2px', '#5A3DE0'], ['-4px', '#5A3DE0'], ['-6px', '#5236CC'], [
         </div>
       </div>
     </div>
-    <button class="hero-pause" id="hero-pause" type="button" aria-pressed="false" data-pause={p.pause} data-play={p.play} aria-label={p.pause}><Icon name="u-pausa" class="i-pause" /><Icon name="u-reproducir" class="i-play" /><span class="lbl">{p.pause}</span></button>
     <a class="scroll-cue" href="#historia"><span>{p.cue}</span><Icon name="u-descargar" /></a>
   </section>
 

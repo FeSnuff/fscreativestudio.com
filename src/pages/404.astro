@@ -16,7 +16,7 @@ const en = useTranslations('en');
       <h1 class="h1" id="page-h1">{notFound.h1.es}</h1>
       <p class="phero-sub">{notFound.p.es}</p>
       <div class="nf-links">
-        <a class="btn btn-primary" href={routes.home.es}>{notFound.links.es.home}</a>
+        <a class="btn btn-ghost-d" href={routes.home.es}>{notFound.links.es.home}</a>
         <a class="btn btn-ghost-d" href={routes.services.es}>{notFound.links.es.services}</a>
         <a class="btn btn-wa" href={waLink(es.waMessages.default)} target="_blank" rel="noopener"><Icon name="b-whatsapp" class="ic" />{notFound.links.es.wa}</a>
       </div>
@@ -26,7 +26,7 @@ const en = useTranslations('en');
         <div class="nf-links">
           <a class="btn btn-ghost-d" href={routes.home.en}>{notFound.links.en.home}</a>
           <a class="btn btn-ghost-d" href={routes.services.en}>{notFound.links.en.services}</a>
-          <a class="btn btn-ghost-d" href={waLink(en.waMessages.default)} target="_blank" rel="noopener">{notFound.links.en.wa}</a>
+          <a class="btn btn-wa" href={waLink(en.waMessages.default)} target="_blank" rel="noopener"><Icon name="b-whatsapp" class="ic" />{notFound.links.en.wa}</a>
         </div>
       </div>
     </div>

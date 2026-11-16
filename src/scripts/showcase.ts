@@ -53,6 +53,8 @@ function setup(root: HTMLElement) {
       t.setAttribute('aria-selected', String(i === idx));
       t.tabIndex = i === idx ? 0 : -1;
     });
+    // El panel (la pantalla) se nombra con la pestaña activa.
+    if (tabs[idx]) imgs[idx].parentElement?.setAttribute('aria-labelledby', tabs[idx].id);
     if (cap) cap.textContent = tabs[idx]?.dataset.cap ?? cap.textContent;
     if (focusTab) tabs[idx]?.focus();
     root.dataset.idx = String(idx);
@@ -61,8 +63,8 @@ function setup(root: HTMLElement) {
   const setUserPaused = (v: boolean) => {
     userPaused = v;
     if (pauseBtn) {
+      // Etiqueta fija; el estado lo dice solo aria-pressed.
       pauseBtn.setAttribute('aria-pressed', String(v));
-      pauseBtn.setAttribute('aria-label', (v ? pauseBtn.dataset.play : pauseBtn.dataset.pause) ?? '');
       root.classList.toggle('vit-held', v);
     }
     sync();

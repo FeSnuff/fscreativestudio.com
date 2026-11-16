@@ -86,6 +86,7 @@ async function openDemo(id: DemoId, trigger: HTMLElement | null): Promise<void> 
     pushed = true;
   }
   if (!dialog.open) dialog.showModal();
+  document.documentElement.style.overflow = 'hidden'; // el fondo no se desplaza con la demo abierta
   dialog.querySelector<HTMLElement>('[data-demo-close]')?.focus();
 
   try {
@@ -105,6 +106,7 @@ async function openDemo(id: DemoId, trigger: HTMLElement | null): Promise<void> 
 function cleanup(): void {
   // El evento "close" llega en una tarea aparte: si ya se abrió otra demo, no hay nada que limpiar.
   if (dialog?.open) return;
+  document.documentElement.style.overflow = '';
   openToken++;
   unmountCurrent();
   dialog?.querySelector('#demo-modal-body')?.replaceChildren();

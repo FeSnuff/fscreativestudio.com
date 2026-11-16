@@ -17,8 +17,10 @@ interface Props {
   crumbs?: Crumb[];
 }
 const { lang, kick, title, sub, crumbs = [] } = Astro.props;
+/** El visual puede venir vacío (p. ej. una ficha sin mini propio): entonces no se reserva su columna. */
+const visual = Astro.slots.has('visual') ? (await Astro.slots.render('visual')).trim() : '';
 ---
-<section class:list={['phero', Astro.slots.has('visual') && 'has-visual']} aria-labelledby="page-h1">
+<section class:list={['phero', visual && 'has-visual']} aria-labelledby="page-h1">
   <div class="wrap phero-grid">
     <div class="phero-in">
       {crumbs.length > 1 && <Breadcrumbs lang={lang} crumbs={crumbs} />}
@@ -27,6 +29,6 @@ const { lang, kick, title, sub, crumbs = [] } = Astro.props;
       {sub && <p class="phero-sub">{sub}</p>}
       <slot />
     </div>
-    {Astro.slots.has('visual') && <div class="phero-visual"><slot name="visual" /></div>}
+    {visual && <div class="phero-visual" set:html={visual} />}
   </div>
 </section>

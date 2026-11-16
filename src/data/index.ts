@@ -80,7 +80,7 @@ const PRICE_WORDS: Localized<{ from: string; month: string; min: (n: number) => 
 };
 
 export const money = (n: number, lang: Lang): string =>
-  lang === 'es' ? `USD ${n.toLocaleString('es-US')}` : `$${n.toLocaleString('en-US')}`;
+  lang === 'es' ? `USD ${n.toLocaleString('es-US')}` : `$${n.toLocaleString('en-US')}`;
 
 /** Partes visibles del precio: pago único, mensualidad, condición y límite. */
 export const priceParts = (price: Price, lang: Lang): { setup?: string; monthly?: string; term?: string; limit?: string } => {

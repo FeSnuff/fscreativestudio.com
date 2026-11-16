@@ -37,8 +37,12 @@ const description = text.seoDescription ?? text.summary;
 const wa = pkg ? pkg.wa[lang] : t.waMessages.custom;
 const ctaLabel = pkg ? pkg.cta[lang] : t.cta.tellUs;
 /** Visual del encabezado (mini-interfaz con datos de ejemplo). */
-const MINI: Record<string, MiniUi> = { cotizador: 'quote', 'contratos-firma': 'sign', facturas: 'invoice', 'envio-whatsapp': 'quote', clientes: 'schedule', agenda: 'schedule', 'calculadora-web': 'web-prices', 'imagenes-redes': 'before-after', 'resenas-google': 'assistant' };
-const mini = MINI[tool.id] ?? 'web-one';
+const MINI: Record<string, MiniUi> = { cotizador: 'quote', 'contratos-firma': 'sign', facturas: 'invoice', 'envio-whatsapp': 'wa-send', clientes: 'clients', agenda: 'schedule', 'calculadora-web': 'web-prices', 'imagenes-redes': 'before-after', 'resenas-google': 'review', 'editar-web': 'portal-edit' };
+/** Sin mini propio (p. ej. subir fotos, otras a medida): mejor sin visual que con uno que no corresponde. */
+const mini = MINI[tool.id];
+/** Sin paquete, la tarjeta de al lado ya dice el nombre del grupo: el título de abajo no lo repite. */
+const catName = cat?.text[lang] ?? '';
+const moreTitle = `${lang === 'es' ? 'Otras' : 'Other'} ${catName.charAt(0).toLowerCase()}${catName.slice(1)}`;
 const siblings = getTools({ category: tool.category }).filter((x) => x.id !== tool.id && !x.noindex).slice(0, 3);
 ---
 <Base lang={lang} title={title} description={description} alternates={toolAlternates(tool)} breadcrumbs={crumbs} noindex={tool.noindex}
@@ -49,7 +53,7 @@ const siblings = getTools({ category: tool.category }).filter((x) => x.id !== to
       <a class="btn btn-wa btn-lg" href={waLink(wa)} target="_blank" rel="noopener"><Icon name="b-whatsapp" class="ic" />{ctaLabel}</a>
       {tool.demo && <DemoButton lang={lang} demo={tool.demo} class="btn btn-ghost-d" />}
     </div>
-    <MiniShot slot="visual" lang={lang} mini={mini} label={pages.work[lang].alt(text.name)} />
+    {mini && <MiniShot slot="visual" lang={lang} mini={mini} label={pages.work[lang].alt(text.name)} />}
   </PageHero>
 
   <section class="sec3" aria-labelledby="h-det">
@@ -83,7 +87,7 @@ const siblings = getTools({ category: tool.category }).filter((x) => x.id !== to
   {siblings.length > 0 && (
     <section class="sec3" aria-labelledby="h-more">
       <div class="wrap">
-        <div class="head3 rv"><h2 class="h2" id="h-more">{cat?.text[lang]}</h2></div>
+        <div class="head3 rv"><h2 class="h2" id="h-more">{pkg ? cat?.text[lang] : moreTitle}</h2></div>
         <ul class="tool-grid">{siblings.map((x) => <ToolCard lang={lang} tool={x} showLabel={false} />)}</ul>
       </div>
     </section>

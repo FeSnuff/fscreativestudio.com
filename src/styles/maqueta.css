@@ -241,7 +241,7 @@ svg:has(> use[href*="#b-"]){fill:currentColor;stroke:none}
 .lang1 .ic{width:16px;height:16px}
 .lang1:hover{border-color:var(--stage-violet)}
 .menu-btn{color:var(--stage-text);border-color:rgb(237 237 245 / .18)}
-.hdr.hero-cta-visible .hdr-cta{visibility:hidden}
+.hdr.hero-cta-visible .hdr-cta{display:none}
 @media (max-width:959px){.hdr .hdr-cta{display:inline-flex;width:44px;min-height:44px;padding:0;justify-content:center}.hdr .hdr-cta .lbl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}.hdr .hdr-tools{gap:6px}.lang1{padding:0 10px}}
 @media (min-width:960px){.hdr .hdr-cta{display:inline-flex}}
 .ftr .brand{display:inline-flex}
@@ -281,7 +281,7 @@ body.menu-open{overflow:hidden}
 .hero3 .mark::after{background:var(--fs-grad);height:.13em;bottom:.02em;opacity:1}
 .hero3-sub{font-size:var(--t-lead);color:var(--stage-text-2)}
 .hero3-sub b{color:#fff;font-weight:600}
-.hero3 .cta-row{gap:12px 16px}
+.hero3 .cta-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px}
 @media (min-width:960px){.hero3-grid{grid-template-columns:1.25fr .75fr}}
 
 /* Escena del logo que se abre en teléfono */
@@ -302,7 +302,14 @@ body.menu-open{overflow:hidden}
 .scroll-cue{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:999px;color:var(--stage-text-2);text-decoration:none;font-size:15px;border:1px solid rgb(237 237 245 / .14)}
 .scroll-cue .ic{width:18px;height:18px;animation:cue2 1.8s var(--ease-in-out) infinite}
 @keyframes cue2{50%{transform:translateY(3px)}}
-@media (max-width:959px){.hero3{min-height:auto;padding:28px 0 96px}.morph{min-height:auto;padding:8px 0}.hphone{width:auto;height:min(52svh,440px)}.scroll-cue{display:none}}
+@media (max-width:959px){.hero3{min-height:auto;padding:28px 0 96px}.morph{min-height:auto;padding:8px 0}.scroll-cue{display:none}
+  /* Teléfono a su tamaño de diseño (300×600) escalado entero con zoom (--pz-h lo calcula home.ts del alto de pantalla): no se corta su contenido */
+  .hero3 .hphone{width:300px;height:auto;zoom:var(--pz-h,.62)}
+  .hphone-wrap{transform-origin:50% 0}
+  /* Móvil: título → subtítulo → logo/teléfono → botones → ubicación (el logo entra en la primera pantalla) */
+  .hero3-grid{gap:20px}.hero3-copy{display:contents}.hero3 .h1{order:1}.hero3-sub{order:2}.morph{order:3}.hero3 .cta-row{order:4}.hero3-where{order:5}
+  /* El logo arranca pegado al subtítulo, en el borde superior del teléfono, y el teléfono se abre desde ahí (transform-origin arriba) */
+  .morph .logo3d{top:calc(8px + var(--ls) / 2)}}
 
 /* ---------- Teléfono y pantallas (compartido hero/historia) */
 .phone2{position:relative;width:min(300px,62vw);aspect-ratio:300/600;border-radius:44px;background:#05050A;padding:10px;box-shadow:0 0 0 1px rgb(237 237 245 / .14),0 50px 90px -40px #000}
@@ -329,14 +336,14 @@ body.menu-open{overflow:hidden}
 .it2 .v{font-family:var(--mono);font-size:13px}
 .tot2{margin-top:auto;display:flex;justify-content:space-between;align-items:center;padding:14px;border-radius:14px;background:#12121C;color:#EDEDF5;font-weight:600}
 .tot2 span:last-child{font-family:var(--mono);font-size:18px;color:#9B87FF}
-.paper2{position:relative;margin:2px auto 0;width:78%;aspect-ratio:8.5/10;background:#fff;border-radius:8px;box-shadow:0 18px 40px -16px rgb(18 18 28 / .4);padding:14px;display:flex;flex-direction:column;gap:7px;transform:translateY(calc((1 - var(--s,1)) * 30%));opacity:calc(.2 + var(--s,1) * .8)}
+.paper2{position:relative;margin:2px auto 0;width:78%;aspect-ratio:8.5/10;background:#fff;border-radius:8px;box-shadow:0 18px 40px -16px rgb(18 18 28 / .4);padding:14px;display:flex;flex-direction:column;gap:7px;transform:translateY(calc((1 - var(--s,1)) * 8%));opacity:calc(.2 + var(--s,1) * .8)}
 .paper2 .hd{display:flex;align-items:center;gap:8px;margin:-14px -14px 6px;padding:11px 14px;background:linear-gradient(135deg,#6D4AFF,#3B82F6);border-radius:8px 8px 0 0;color:#fff;font-size:11px;font-weight:600}
 .paper2 .hd i{width:16px;height:16px;border-radius:4px;background:rgb(255 255 255 / .9)}
 .paper2 u{display:block;height:5px;border-radius:3px;background:#E1E1EA;text-decoration:none}
 .paper2 .sm{margin-top:auto;display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;border-top:1px solid #E1E1EA;padding-top:6px}
 .bar2{height:5px;border-radius:3px;background:#E1E1EA;overflow:hidden;flex:none}
 .bar2 i{display:block;height:100%;background:var(--fs-grad);transform-origin:left;transform:scaleX(var(--s,1))}
-.file2{display:flex;align-items:center;gap:10px;font-size:13px;position:relative;z-index:1;background:#F6F6FA}
+.file2{display:flex;align-items:center;gap:10px;font-size:13px;position:relative;z-index:1;background:#F6F6FA;margin-top:12px}
 .file2 svg{width:22px;height:22px;color:#B42318}
 .file2 small{display:block;color:#646577;font-size:12px}
 .btn2{display:flex;align-items:center;justify-content:center;gap:8px;min-height:42px;border-radius:12px;background:#25D366;color:#04210F;font-weight:600;font-size:13px;opacity:0;transform:translateY(8px);transition:opacity 300ms,transform 300ms var(--ease-out)}
@@ -355,7 +362,7 @@ body.menu-open{overflow:hidden}
 .signed2{display:flex;gap:8px;align-items:center;font-size:13px;color:#136C35;font-weight:600;opacity:0;transition:opacity 300ms}
 .signed2 svg{width:16px;height:16px;stroke-width:2.5}
 .signed2.on{opacity:1}
-.stamp2{align-self:center;margin:10px auto 4px;width:136px;height:136px;flex:none;border-radius:50%;display:grid;place-items:center;text-align:center;border:3px solid #136C35;color:#136C35;background:radial-gradient(circle,#E7F6EC 62%,#fff 63%);transform:rotate(-8deg) scale(calc(.4 + min(1, var(--s,1) * 1.6) * .6));opacity:min(1,calc(var(--s,1) * 2))}
+.stamp2{align-self:center;margin:10px auto 4px;width:136px;height:136px;flex:none;border-radius:50%;display:grid;place-items:center;text-align:center;border:3px solid #136C35;color:#136C35;background:radial-gradient(circle,#E7F6EC 62%,#fff 63%);transform:rotate(-8deg) scale(calc(.75 + min(1, var(--s,1) * 4) * .25));opacity:min(1,calc(.55 + var(--s,1) * 4))}
 .stamp2 b{display:block;font-size:24px;letter-spacing:-.02em;white-space:nowrap}
 .dep2{display:flex;justify-content:space-between;padding:11px 12px;border-radius:12px;background:#fff;border:1px solid #E1E1EA;font-size:13px}
 .dep2 b{font-family:var(--mono)}
@@ -431,21 +438,7 @@ body.menu-open{overflow:hidden}
   .st2 h2{font-size:1.75rem;max-width:none}
   .st2 p{font-size:1rem}
   .prog2{width:100%;max-width:240px}
-  .phone2{width:auto;height:min(54svh,460px)}
-  .scr2{padding:42px 12px 12px;gap:7px;font-size:12px}
-  .it2 small{display:none}
-  .it2{padding:8px 10px}
-  .stamp2{width:110px;height:110px}
-  .stamp2 b{font-size:20px}
-  .sig2{min-height:90px}
-  .bub2{display:none}
-  .whero strong{font-size:18px}
-  .whero{padding:14px 12px}
-  .wbtns span{padding:0 9px;font-size:11.5px}
-  .wform{display:none}
-  .wbtns{flex-wrap:wrap}
-  .wsvc div{font-size:12px;padding:8px 10px}
-  .wsvc b::before{content:none}
+  .scene .phone2{width:300px;height:auto;zoom:var(--pz-s,.66)}
 }
 
 /* ---------- Secciones claras */
@@ -601,3 +594,12 @@ body.menu-open{overflow:hidden}
 @keyframes armar{from{transform:translateZ(0);opacity:0}to{transform:translateZ(var(--z));opacity:1}}
 .hero3 .l3d .gly{animation:armar .45s cubic-bezier(.2,.8,.2,1.15) both;animation-delay:calc(.55s + var(--i) * .1s)}
 .hero3 .l3d .gly.front{animation-duration:.55s}
+
+/* Verificación P1/P2 (16/11): en celulares angostos la píldora de precio puede partirse en 2 líneas
+   (no se sale de la pantalla ni empuja el teléfono) y el formulario de ejemplo del paso 1 se compacta. */
+@media (max-width:400px){
+  .offer span{white-space:normal;text-align:center;max-width:calc(100vw - 40px);font-size:14px;line-height:1.35;border-radius:20px}
+  .wform{gap:5px;padding:9px;margin:2px 12px 10px}
+  .wform i{padding:6px 9px}
+  .wform em{padding:6px 12px}
+}

@@ -22,21 +22,23 @@ const uid = `vit-${pj.id}-${size}`;
 <div class:list={['vit', `vit-${size}`]} data-vit role="group" aria-roledescription="carrusel" aria-label={p.vitLabel(pj.name)}>
   <div class="vit-stage">
     <div class="vit-dev" data-vit-dev>
-      <div class="vit-screen" id={`${uid}-scr`} aria-live="off">
+      <div class="vit-screen" id={`${uid}-scr`} role="tabpanel" aria-labelledby={`${uid}-tab-0`} aria-live="off">
         {tx.screens.map((s, n) => (
           <img class:list={['vit-img', n === 0 && 'is-on']} data-vit-img src={sysSrc(pj.id, n + 1)} width={SHOT.sys.w} height={SHOT.sys.h} loading="lazy" decoding="async" alt={p.altSys(pj.name, s)} aria-hidden={n === 0 ? undefined : 'true'} />
         ))}
       </div>
     </div>
-    <button class="vit-pause" type="button" data-vit-pause hidden aria-pressed="false" aria-label={p.vitPause} data-pause={p.vitPause} data-play={p.vitPlay}><Icon name="u-pausa" class="i-pause" /><Icon name="u-reproducir" class="i-play" /></button>
   </div>
   {size === 'lg' && <p class="vit-cap" data-vit-cap>{tx.screens[0]}</p>}
-  <div class="vit-tabs" role="tablist" aria-label={p.vitTabs} data-vit-tabs hidden>
-    {tx.tabs.map((t, n) => (
-      <button type="button" role="tab" class="vit-tab" data-vit-tab={n} aria-selected={n === 0 ? 'true' : 'false'} tabindex={n === 0 ? 0 : -1} aria-controls={`${uid}-scr`} aria-label={size === 'sm' ? `${t}: ${tx.screens[n]}` : undefined} data-cap={tx.screens[n]}>
-        {size === 'lg' ? t : <span class="sr">{t}</span>}
-      </button>
-    ))}
+  <div class="vit-ctrl">
+    <div class="vit-tabs" role="tablist" aria-label={p.vitTabs} data-vit-tabs hidden>
+      {tx.tabs.map((t, n) => (
+        <button type="button" role="tab" class="vit-tab" id={`${uid}-tab-${n}`} data-vit-tab={n} aria-selected={n === 0 ? 'true' : 'false'} tabindex={n === 0 ? 0 : -1} aria-controls={`${uid}-scr`} aria-label={size === 'sm' ? (tx.screens[n].startsWith(t) ? tx.screens[n] : `${t}: ${tx.screens[n]}`) : undefined} data-cap={tx.screens[n]}>
+          {size === 'lg' ? t : <span class="sr">{t}</span>}
+        </button>
+      ))}
+    </div>
+    <button class="vit-pause" type="button" data-vit-pause hidden aria-pressed="false" aria-label={p.vitPause}><Icon name="u-pausa" class="i-pause" /><Icon name="u-reproducir" class="i-play" /></button>
   </div>
 </div>
 

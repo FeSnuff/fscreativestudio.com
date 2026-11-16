@@ -112,7 +112,7 @@ export interface Tool {
 export type GalleryKind = 'webs' | 'herramientas' | 'redes' | 'whatsapp';
 
 /** Mini-interfaz HTML con datos de ejemplo que pinta cada tarjeta de la galería. */
-export type MiniUi = 'web-one' | 'web-prices' | 'quote' | 'sign' | 'invoice' | 'schedule' | 'social' | 'before-after' | 'assistant';
+export type MiniUi = 'web-one' | 'web-prices' | 'quote' | 'sign' | 'invoice' | 'schedule' | 'social' | 'before-after' | 'assistant' | 'review' | 'wa-send' | 'clients' | 'portal-edit';
 
 export interface GalleryItem {
   id: string;
