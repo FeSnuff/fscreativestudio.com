@@ -1,0 +1,23 @@
+---
+/**
+ * Logotipo horizontal A oficial (SVG de design/logo, copiado a public/logo).
+ * Reglas (04-diseno v3 §2): sin lema, mínimo 96 px de ancho; no estirar, girar ni recolorear.
+ * - variant "dark": para fondo oscuro (header).
+ * - variant "auto": versión clara, y la oscura si el sistema está en modo oscuro (footer).
+ */
+interface Props {
+  variant: 'dark' | 'auto';
+  alt: string;
+}
+const { variant, alt } = Astro.props;
+const H = 30;
+const W = Math.round((362 / 56) * H);
+---
+{variant === 'dark' ? (
+  <img class="logo" src="/logo/horizontal-A-oscuro.svg" width={W} height={H} alt={alt} />
+) : (
+  <picture>
+    <source srcset="/logo/horizontal-A-oscuro.svg" media="(prefers-color-scheme: dark)" />
+    <img class="logo" src="/logo/horizontal-A-claro.svg" width={W} height={H} alt={alt} />
+  </picture>
+)}

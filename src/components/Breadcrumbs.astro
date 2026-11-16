@@ -1,0 +1,19 @@
+---
+import type { Lang } from '../i18n/langs';
+import { useTranslations } from '../i18n/ui';
+import type { Crumb } from '../lib/schema';
+
+interface Props {
+  lang: Lang;
+  crumbs: Crumb[];
+}
+const { lang, crumbs } = Astro.props;
+const t = useTranslations(lang);
+---
+<nav class="crumbs" aria-label={t.breadcrumbsLabel}>
+  <ol>
+    {crumbs.map((c, i) => (
+      <li>{i < crumbs.length - 1 ? <a href={c.path}>{c.name}</a> : <span aria-current="page">{c.name}</span>}</li>
+    ))}
+  </ol>
+</nav>

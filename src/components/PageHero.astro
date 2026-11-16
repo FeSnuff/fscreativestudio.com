@@ -1,0 +1,32 @@
+---
+/**
+ * Encabezado oscuro de las páginas internas (mismo escenario que el hero de la home:
+ * fondo #0B0B14, resplandores violeta/azul/rosado, grilla). Lleva migas, antetítulo con
+ * degradado, H1, bajada y un slot para botones o precio. Slot "visual": el producto a la derecha
+ * (mini-interfaz con datos de ejemplo), para no dejar la mitad del banner vacía.
+ */
+import type { Lang } from '../i18n/langs';
+import type { Crumb } from '../lib/schema';
+import Breadcrumbs from './Breadcrumbs.astro';
+
+interface Props {
+  lang: Lang;
+  kick?: string;
+  title: string;
+  sub?: string;
+  crumbs?: Crumb[];
+}
+const { lang, kick, title, sub, crumbs = [] } = Astro.props;
+---
+<section class:list={['phero', Astro.slots.has('visual') && 'has-visual']} aria-labelledby="page-h1">
+  <div class="wrap phero-grid">
+    <div class="phero-in">
+      {crumbs.length > 1 && <Breadcrumbs lang={lang} crumbs={crumbs} />}
+      {kick && <p class="kick kick-d">{kick}</p>}
+      <h1 class="h1" id="page-h1">{title}</h1>
+      {sub && <p class="phero-sub">{sub}</p>}
+      <slot />
+    </div>
+    {Astro.slots.has('visual') && <div class="phero-visual"><slot name="visual" /></div>}
+  </div>
+</section>

@@ -1,41 +1,47 @@
 ---
-import { ui } from '../i18n/ui';
-import { solutions } from '../data/solutions';
-import { site, lp, type Lang } from '../data/site';
-interface Props { lang: Lang }
+import type { Lang } from '../i18n/langs';
+import { pathFor, type RouteKey } from '../i18n/routes';
+import { telLink, useTranslations, waLink } from '../i18n/ui';
+import { BUSINESS, activeSocials } from '../config/site';
+import Icon from './Icon.astro';
+import Logo from './Logo.astro';
+
+interface Props {
+  lang: Lang;
+}
 const { lang } = Astro.props;
-const t = ui[lang];
+const t = useTranslations(lang);
+const links: RouteKey[] = ['services', 'work', 'about', 'contact', 'privacy'];
+const socials = activeSocials();
+const year = new Date().getFullYear();
 ---
-<footer class="bg-night text-white/80">
-  <div class="flow-line h-px w-full opacity-60"></div>
-  <div class="wrap grid gap-12 py-16 md:grid-cols-12">
-    <div class="md:col-span-5">
-      <a href={lp(lang, '/')} class="flex items-center gap-3 font-display text-lg font-semibold text-white">
-        <img src="/brand/fs-mark.png" alt="" width="26" height="33" class="h-9 w-auto" /> <span translate="no">FS Creative Studio</span>
-      </a>
-      <p class="mt-5 max-w-sm">{t.footer.tag}</p>
+<footer class="ftr" id="ftr">
+  <div class="wrap">
+    <div class="g">
+      <div>
+        <a class="brand" href={pathFor('home', lang)}><Logo variant="auto" alt={t.logoLabel} /></a>
+        <p>{t.footer.tagline}<br />{t.footer.where}</p>
+      </div>
+      <div>
+        <h2 class="ftr-h">{t.footer.site}</h2>
+        <ul>{links.map((k) => <li><a href={pathFor(k, lang)}>{t.nav[k]}</a></li>)}</ul>
+      </div>
+      <div>
+        <h2 class="ftr-h">{t.footer.contact}</h2>
+        <ul>
+          <li><a href={waLink(t.waMessages.default)} target="_blank" rel="noopener">WhatsApp</a></li>
+          <li><a href={telLink()}>{BUSINESS.phoneDisplay}</a></li>
+          <li><a href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a></li>
+          {socials.length > 0 && (
+            <li class="soc">
+              {socials.map(([name, url]) => (
+                <a href={url} target="_blank" rel="noopener me" aria-label={t.footer.social(name)}><Icon name={name === 'Facebook' ? 'b-facebook' : 'b-instagram'} /></a>
+              ))}
+            </li>
+          )}
+        </ul>
+      </div>
     </div>
-    <div class="md:col-span-4">
-      <p class="font-display text-white">{t.nav.solutions}</p>
-      <ul class="mt-4 space-y-2.5 text-[0.95rem]">
-        {solutions[lang].map((s) => <li><a class="link-u hover:text-white" href={lp(lang, `/solutions/${s.slug}/`)}>{s.title}</a></li>)}
-      </ul>
-    </div>
-    <div class="md:col-span-3">
-      <p class="font-display text-white">{t.nav.contact}</p>
-      <ul class="mt-4 space-y-2.5 text-[0.95rem]">
-        {site.ownerName && <li class="text-white">{site.ownerName}</li>}
-        <li><a class="link-u hover:text-white" href={site.phoneHref}>{site.phoneDisplay}</a></li>
-        <li><a class="link-u hover:text-white" href={`https://wa.me/${site.whatsapp}`} rel="noopener" target="_blank">WhatsApp</a></li>
-        <li>{site.location[lang]}</li>
-      </ul>
-    </div>
-  </div>
-  <div class="wrap flex flex-col gap-3 border-t border-white/10 py-6 text-sm text-white/55 sm:flex-row sm:items-center sm:justify-between">
-    <p>© {site.year} FS Creative Studio. {t.footer.rights}</p>
-    <ul class="flex gap-6">
-      <li><a class="hover:text-white" href={lp(lang, '/privacy/')}>{t.footer.legal[0]}</a></li>
-      <li><a class="hover:text-white" href={lp(lang, '/terms/')}>{t.footer.legal[1]}</a></li>
-    </ul>
+    <div class="bt"><span>© {year} {BUSINESS.name}</span><span>{t.footer.rights}</span></div>
   </div>
 </footer>

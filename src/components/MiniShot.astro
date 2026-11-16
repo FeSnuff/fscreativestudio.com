@@ -1,0 +1,103 @@
+---
+/**
+ * Mini-interfaz HTML de la galería de Trabajo, con DATOS DE EJEMPLO (lista única: Visita inicial $60,
+ * Servicio completo $350, Hora adicional $45, Producto $80; cliente Ana Ríos; #1042; $455.00).
+ * Sin nombres de clientes reales, sin teléfonos reales y sin enlaces. Es decorativa: el texto
+ * equivalente está en la tarjeta (alt en aria-label).
+ */
+import type { Lang } from '../i18n/langs';
+import type { MiniUi } from '../data/types';
+
+interface Props {
+  lang: Lang;
+  mini: MiniUi;
+  label: string;
+}
+const { lang, mini, label } = Astro.props;
+const es = lang === 'es';
+const I = (id: string) => `/icons/sprite.svg#${id}`;
+const items = es
+  ? [['Visita inicial', 60, true], ['Servicio completo', 350, true], ['Hora adicional', 45, true], ['Producto', 80, false]]
+  : [['Initial visit', 60, true], ['Full service', 350, true], ['Extra hour', 45, true], ['Product', 80, false]];
+const biz = es ? 'Tu Negocio' : 'Your Business Co.';
+---
+<div class="shot-stage" role="img" aria-label={label}>
+  <div class="mini2"><div class="screen2">
+    {mini === 'web-one' && (
+      <div class="scr2 web">
+        <div class="wnav"><i></i><b>{biz}</b><span class="wl"><b class="es">ES</b><b class="en">EN</b></span></div>
+        <div class="whero"><strong>{es ? 'Servicio confiable, cerca de ti.' : 'Reliable service, close to you.'}</strong><p>{es ? 'Cotización gratis · Respondemos rápido' : 'Free quote · Fast replies'}</p><div class="wbtns"><span class="b1">{es ? 'Llamar' : 'Call'}</span><span class="b2">WhatsApp</span></div></div>
+        <div class="mgal"><i></i><i></i><i></i><i></i></div>
+      </div>
+    )}
+    {mini === 'web-prices' && (
+      <div class="scr2 web">
+        <div class="wnav"><i></i><b>{biz}</b><span class="wl"><b class="es">ES</b><b class="en">EN</b></span></div>
+        <div class="wsvc">{items.slice(0, 3).map(([n, v]) => <div><span>{n}</span><b>${v}</b></div>)}</div>
+        <div class="wform" style="display:grid"><b>{es ? 'Pide tu cotización' : 'Request a quote'}</b><i>{es ? 'Nombre' : 'Name'}</i><i>{es ? 'Teléfono' : 'Phone'}</i><em>{es ? 'Enviar' : 'Send'}</em></div>
+      </div>
+    )}
+    {mini === 'quote' && (
+      <div class="scr2">
+        <div class="abar"><b>{es ? 'Cotización #1042' : 'Quote #1042'}</b><span class="chip chip-info">{es ? 'Borrador' : 'Draft'}</span></div>
+        <div class="who2"><span class="av2">AR</span>Ana Ríos</div>
+        {items.map(([n, v, on]) => <div class:list={['it2', on && 'on']}><span class="ck"><svg class="ic"><use href={I('u-check')} /></svg></span><span>{n}</span><span class="v">${v}</span></div>)}
+        <div class="tot2"><span>Total</span><span class="tnum">$455.00</span></div>
+      </div>
+    )}
+    {mini === 'sign' && (
+      <div class="scr2" style="--s:1">
+        <div class="abar"><b>{es ? 'Contrato #1042' : 'Contract #1042'}</b><span class="chip chip-pink">{es ? 'Por firmar' : 'To sign'}</span></div>
+        <div class="terms2"><b>{es ? 'Lo que acordamos' : 'What we agreed'}</b>{es ? 'Total $455.00 · Anticipo $136.50.' : 'Total $455.00 · Deposit $136.50.'}</div>
+        <div class="agree2"><span class="box2"><svg class="ic"><use href={I('u-check')} /></svg></span>{es ? 'Leí y acepto.' : "I've read and accept."}</div>
+        <div class="sig2"><svg viewBox="0 0 240 100" preserveAspectRatio="none"><path d="M8 70c10-30 20-48 28-46 9 2-6 50 4 50 9 0 14-34 22-34 7 0 1 28 9 28 9 0 12-20 20-20s6 18 14 18c10 0 16-30 26-30 8 0 4 24 12 24 9 0 18-12 30-12 10 0 20 6 50 2"></path></svg><small>Ana Ríos</small></div>
+      </div>
+    )}
+    {mini === 'invoice' && (
+      <div class="scr2" style="--s:1">
+        <div class="abar"><b>{es ? 'Factura #1042' : 'Invoice #1042'}</b><span class="chip chip-ok">{es ? 'Pagada' : 'Paid'}</span></div>
+        <div class="stamp2"><span><b>{es ? 'Pagado ✓' : 'Paid ✓'}</b></span></div>
+        <div class="dep2"><span>Total</span><b>$455.00</b></div>
+        <div class="mrow"><span>{es ? 'Recordatorio' : 'Reminder'}</span><span class="mbadge mb-p">{es ? 'Listo' : 'Ready'}</span></div>
+      </div>
+    )}
+    {mini === 'schedule' && (
+      <div class="scr2">
+        <div class="abar"><b>{es ? 'Hoy' : 'Today'}</b><span class="chip chip-accent">{es ? '3 trabajos' : '3 jobs'}</span></div>
+        <div class="mrow"><span><b>8:00</b> {items[0][0]}</span><span class="mbadge mb-ok">{es ? 'Listo' : 'Done'}</span></div>
+        <div class="mrow"><span><b>9:30</b> {items[1][0]}</span><span class="mbadge mb-b">{es ? 'Ahora' : 'Now'}</span></div>
+        <div class="mrow"><span><b>15:30</b> {items[2][0]}</span><span class="mbadge mb-v">{es ? 'Hoy' : 'Today'}</span></div>
+        <div class="terms2"><b>Ana Ríos</b>{es ? 'Trabajos: 2 · Pagado: $455.00' : 'Jobs: 2 · Paid: $455.00'}<span>{es ? '"Prefiere que le escriban por WhatsApp."' : '"Prefers WhatsApp."'}</span></div>
+      </div>
+    )}
+    {mini === 'social' && (
+      <div class="scr2">
+        <div class="abar"><b>{es ? 'Tus canales' : 'Your channels'}</b><span class="chip chip-ok">{es ? 'En orden' : 'In order'}</span></div>
+        {[['b-facebook', 'Facebook', '#0866FF'], ['b-instagram', 'Instagram', '#FF0069'], ['b-whatsapp', 'WhatsApp Business', '#25D366'], ['b-googlemaps', 'Google Maps', '#4285F4']].map(([ic, n, c]) => (
+          <div class="mchan"><svg class="ic" style={`color:${c}`}><use href={I(ic)} /></svg><span class="nm">{n}</span><span class="fs"></span></div>
+        ))}
+        <div class="mchan"><svg class="ic" style="fill:none"><use href={I('u-vecindario')} /></svg><span class="nm">Nextdoor</span><span class="fs"></span></div>
+        <div class="mrow"><span>{es ? 'Un número' : 'One number'}</span><b>(555) 010-0142</b></div>
+      </div>
+    )}
+    {mini === 'before-after' && (
+      <div class="scr2">
+        <div class="abar"><b>{es ? 'Publicación' : 'Post'}</b><span class="chip chip-pink">ES · EN</span></div>
+        <div class="mpost"><span class="pa">{es ? 'Antes' : 'Before'}</span><span class="pb">{es ? 'Después' : 'After'}</span><span class="pl"><i></i>{biz}</span></div>
+        <div class="mrow"><span>{es ? '¡Así quedó! / Here’s the result!' : 'Here’s the result! / ¡Así quedó!'}</span></div>
+      </div>
+    )}
+    {mini === 'assistant' && (
+      <div class="scr2">
+        <div class="abar"><b>{biz}</b><span class="chip chip-accent">{es ? 'Asistente' : 'Assistant'}</span></div>
+        <div class="mchat">
+          <div class="bubble in">{es ? 'Hola, ¿cuánto cobran?' : 'Hi! How much do you charge?'}</div>
+          <div class="bubble">{es ? 'El precio lo confirma una persona del equipo. ¿Qué necesitas?' : 'Someone from the team confirms the price. What do you need?'}</div>
+          <div class="bubble in">Hi! Do you cover my area?</div>
+          <div class="bubble">Send me your ZIP code and I’ll confirm.</div>
+          <span class="mhand"><i></i>{es ? 'Pasada a una persona' : 'Handed to a person'}</span>
+        </div>
+      </div>
+    )}
+  </div></div>
+</div>

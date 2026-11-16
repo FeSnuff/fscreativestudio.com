@@ -1,10 +1,34 @@
 ---
+/** 404 única y bilingüe (GitHub Pages sirve una sola 404.html), español primero. noindex. */
 import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { routes } from '../i18n/routes';
+import { notFound } from '../i18n/pages';
+import { useTranslations, waLink } from '../i18n/ui';
+
+const es = useTranslations('es');
+const en = useTranslations('en');
 ---
-<Base lang="en" title="Page not found" altPath="/es/">
-  <section class="bg-night text-white"><div class="wrap pb-32 pt-48">
-    <h1 class="text-6xl font-semibold">Page not found</h1>
-    <p class="mt-6 text-white/70">The page you are looking for moved or never existed. / La página que buscas no existe.</p>
-    <div class="mt-10 flex gap-3"><a href="/" class="btn btn-light">Go to home</a><a href="/es/" class="btn btn-ghost">Ir al inicio</a></div>
-  </div></section>
+<Base lang="es" title={notFound.title} description={notFound.p.es} alternates={{ es: routes.home.es, en: routes.home.en }} noindex notFound>
+  <section class="phero nf" aria-labelledby="page-h1">
+    <div class="wrap phero-in">
+      <p class="kick kick-d">404</p>
+      <h1 class="h1" id="page-h1">{notFound.h1.es}</h1>
+      <p class="phero-sub">{notFound.p.es}</p>
+      <div class="nf-links">
+        <a class="btn btn-primary" href={routes.home.es}>{notFound.links.es.home}</a>
+        <a class="btn btn-ghost-d" href={routes.services.es}>{notFound.links.es.services}</a>
+        <a class="btn btn-wa" href={waLink(es.waMessages.default)} target="_blank" rel="noopener"><Icon name="b-whatsapp" class="ic" />{notFound.links.es.wa}</a>
+      </div>
+      <div class="nf-en" lang="en">
+        <p class="h3">{notFound.h1.en}</p>
+        <p>{notFound.p.en}</p>
+        <div class="nf-links">
+          <a class="btn btn-ghost-d" href={routes.home.en}>{notFound.links.en.home}</a>
+          <a class="btn btn-ghost-d" href={routes.services.en}>{notFound.links.en.services}</a>
+          <a class="btn btn-ghost-d" href={waLink(en.waMessages.default)} target="_blank" rel="noopener">{notFound.links.en.wa}</a>
+        </div>
+      </div>
+    </div>
+  </section>
 </Base>

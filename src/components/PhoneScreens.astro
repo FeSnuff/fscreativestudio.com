@@ -1,0 +1,99 @@
+---
+/**
+ * Las 5 pantallas del teléfono (historia y, clonadas por JS, el hero). Datos de ejemplo ÚNICOS:
+ * Visita inicial $60 · Servicio completo $350 · Hora adicional $45 · Producto $80 (sin marcar) ·
+ * cliente Ana Ríos · cotización #1042 · total $455.00 · anticipo 30 % $136.50 · sello "Pagado ✓".
+ * La web de ejemplo es bilingüe: empieza en el idioma de la página y cambia al otro al avanzar.
+ */
+import type { Lang } from '../i18n/langs';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const es = lang === 'es';
+/** [idioma de la página, el otro] para la web de ejemplo. */
+const pair = (esText: string, enText: string): [string, string] => (es ? [esText, enText] : [enText, esText]);
+const web = {
+  biz: es ? 'Tu Negocio' : 'Your Business Co.',
+  langs: es ? ['ES', 'EN'] : ['EN', 'ES'],
+  title: pair('Servicio confiable, cerca de ti.', 'Reliable service, close to you.'),
+  tag: pair('Cotización gratis · Respondemos rápido', 'Free quote · Fast replies'),
+  ask: pair('Pedir cotización', 'Get a quote'),
+  svc: [pair('Visita inicial', 'Initial visit'), pair('Servicio completo', 'Full service'), pair('Hora adicional', 'Extra hour')],
+  form: pair('Pide tu cotización', 'Request a quote'),
+  name: pair('Nombre', 'Name'),
+  phone: pair('Teléfono', 'Phone'),
+  send: pair('Enviar', 'Send'),
+};
+const s = es
+  ? {
+      quote: 'Cotización #1042', draft: 'Borrador',
+      items: [['Visita inicial', '1 visita'], ['Servicio completo', 'según lista'], ['Hora adicional', '1 h'], ['Producto', 'opcional']],
+      total: 'Total', pdf: 'PDF listo', logo: 'con tu logo', paperHd: 'Tu Negocio · Cotización #1042', file: 'Cotizacion-1042.pdf',
+      sendWa: 'Enviar por WhatsApp', bub: 'Hola Ana, aquí está tu cotización de Tu Negocio. Puedes firmarla desde el celular. ¡Gracias!',
+      contract: 'Contrato #1042', toSign: 'Por firmar', agreed: 'Lo que acordamos', terms: 'Trabajo según la cotización #1042 · Total $455.00 · Anticipo $136.50.',
+      agree: 'Leí y acepto la cotización y sus condiciones.', sigOf: 'Firma de Ana Ríos', signedAt: 'Firmado 3:42 p. m.', signBtn: 'Firmar y aceptar', signedBtn: 'Firmado ✓',
+      invoice: 'Factura #1042', paidChip: 'Pagada', stamp: 'Pagado ✓', dep: 'Anticipo recibido', ready: 'Mensaje listo para enviar', thanks: '"¡Gracias, Ana! Recibimos tu pago."', tap: 'Tú tocas enviar',
+    }
+  : {
+      quote: 'Quote #1042', draft: 'Draft',
+      items: [['Initial visit', '1 visit'], ['Full service', 'per price list'], ['Extra hour', '1 hr'], ['Product', 'optional']],
+      total: 'Total', pdf: 'PDF ready', logo: 'with your logo', paperHd: 'Your Business Co. · Quote #1042', file: 'Quote-1042.pdf',
+      sendWa: 'Send on WhatsApp', bub: "Hi Ana, here's your quote from Your Business Co. You can sign it right from your phone. Thanks!",
+      contract: 'Contract #1042', toSign: 'To sign', agreed: 'What we agreed', terms: 'Work per quote #1042 · Total $455.00 · Deposit $136.50.',
+      agree: "I've read and accept the quote and its terms.", sigOf: 'Signature: Ana Ríos', signedAt: 'Signed 3:42 PM', signBtn: 'Sign and accept', signedBtn: 'Signed ✓',
+      invoice: 'Invoice #1042', paidChip: 'Paid', stamp: 'Paid ✓', dep: 'Deposit received', ready: 'Message ready to send', thanks: '"Thanks, Ana! We got your payment."', tap: 'You tap send',
+    };
+const prices = [60, 350, 45, 80];
+const at = ['.15', '.4', '.65', undefined];
+const I = (id: string) => `/icons/sprite.svg#${id}`;
+---
+<!-- 1 · Web de ejemplo (cambia de idioma con el avance) -->
+<div class="scr2 web" data-s="1">
+  <div class="wnav"><i></i><b>{web.biz}</b><span class="wl" data-at=".5"><b class="es">{web.langs[0]}</b><b class="en">{web.langs[1]}</b></span></div>
+  <div class="whero">
+    <strong><span class="es">{web.title[0]}</span><span class="en">{web.title[1]}</span></strong>
+    <p><span class="es">{web.tag[0]}</span><span class="en">{web.tag[1]}</span></p>
+    <div class="wbtns"><span class="b1"><span class="es">{web.ask[0]}</span><span class="en">{web.ask[1]}</span></span><span class="b2">WhatsApp</span></div>
+  </div>
+  <div class="wsvc">
+    {web.svc.map((n, i) => <div><span class="es">{n[0]}</span><span class="en">{n[1]}</span><b>${prices[i]}</b></div>)}
+  </div>
+  <div class="wform"><b><span class="es">{web.form[0]}</span><span class="en">{web.form[1]}</span></b><i><span class="es">{web.name[0]}</span><span class="en">{web.name[1]}</span></i><i><span class="es">{web.phone[0]}</span><span class="en">{web.phone[1]}</span></i><em><span class="es">{web.send[0]}</span><span class="en">{web.send[1]}</span></em></div>
+</div>
+<!-- 2 · Cotiza -->
+<div class="scr2" data-s="2">
+  <div class="abar"><b>{s.quote}</b><span class="chip chip-info">{s.draft}</span></div>
+  <div class="who2"><span class="av2">AR</span>Ana Ríos</div>
+  {s.items.map(([n, sm], i) => (
+    <div class="it2" data-at={at[i]} data-v={prices[i]}><span class="ck"><svg class="ic"><use href={I('u-check')} /></svg></span><span>{n}<small>{sm}</small></span><span class="v">${prices[i]}.00</span></div>
+  ))}
+  <div class="tot2"><span>{s.total}</span><span class="tnum tot-v">$455.00</span></div>
+</div>
+<!-- 3 · PDF -->
+<div class="scr2" data-s="3">
+  <div class="abar"><b>{s.pdf}</b><span class="chip chip-accent">{s.logo}</span></div>
+  <div class="paper2"><div class="hd"><i></i>{s.paperHd}</div><u style="width:40%"></u><u style="width:90%;margin-top:6px"></u><u style="width:84%"></u><u style="width:62%"></u><div class="sm"><span>TOTAL</span><span>$455.00</span></div></div>
+  <div class="file2"><svg class="ic"><use href={I('u-pdf')} /></svg><span>{s.file}<small>84 KB</small></span></div>
+  <div class="bar2"><i></i></div>
+  <div class="btn2" data-at=".6"><svg><use href={I('b-whatsapp')} /></svg>{s.sendWa}</div>
+  <div class="bub2" data-at=".85">{s.bub}</div>
+</div>
+<!-- 4 · Firma -->
+<div class="scr2" data-s="4">
+  <div class="abar"><b>{s.contract}</b><span class="chip chip-pink">{s.toSign}</span></div>
+  <div class="terms2"><b>{s.agreed}</b>{s.terms}</div>
+  <div class="agree2"><span class="box2"><svg class="ic"><use href={I('u-check')} /></svg></span>{s.agree}</div>
+  <div class="sig2"><svg viewBox="0 0 240 100" preserveAspectRatio="none"><path d="M8 70c10-30 20-48 28-46 9 2-6 50 4 50 9 0 14-34 22-34 7 0 1 28 9 28 9 0 12-20 20-20s6 18 14 18c10 0 16-30 26-30 8 0 4 24 12 24 9 0 18-12 30-12 10 0 20 6 50 2"></path></svg><small>{s.sigOf}</small></div>
+  <div class="signed2" data-at=".92"><svg class="ic"><use href={I('u-check')} /></svg>{s.signedAt}</div>
+  <div class="sbtn2" data-at=".92"><span class="no">{s.signBtn}</span><span class="ok">{s.signedBtn}</span></div>
+</div>
+<!-- 5 · Pagado -->
+<div class="scr2" data-s="5">
+  <div class="abar"><b>{s.invoice}</b><span class="chip chip-ok">{s.paidChip}</span></div>
+  <div class="stamp2"><span><b>{s.stamp}</b></span></div>
+  <div class="dep2"><span>{s.total}</span><b>$455.00</b></div>
+  <div class="dep2"><span>{s.dep}</span><b>$136.50</b></div>
+  <div class="toast2" data-at=".55"><span class="wi"><svg><use href={I('b-whatsapp')} /></svg></span><span><b>{s.ready}</b><br />{s.thanks}<small>{s.tap}</small></span></div>
+</div>

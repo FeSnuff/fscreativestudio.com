@@ -1,0 +1,48 @@
+---
+/**
+ * Cabecera oscura (maqueta v3): logo SVG oficial · Servicios y precios · Trabajo · Nosotros · Contacto ·
+ * un solo control de idioma · botón "Escríbenos" (WhatsApp) · menú móvil accesible.
+ * El botón de WhatsApp se oculta mientras hay otro botón de WhatsApp a la vista (scripts/site.ts).
+ */
+import type { Lang, Localized } from '../i18n/langs';
+import { otherLang } from '../i18n/langs';
+import { pathFor, type RouteKey } from '../i18n/routes';
+import { telLink, useTranslations, waLink } from '../i18n/ui';
+import { BUSINESS } from '../config/site';
+import Icon from './Icon.astro';
+import Logo from './Logo.astro';
+
+interface Props {
+  lang: Lang;
+  alternates: Localized<string>;
+}
+const { lang, alternates } = Astro.props;
+const t = useTranslations(lang);
+const other = otherLang(lang);
+const items: RouteKey[] = ['services', 'work', 'about', 'contact'];
+const current = Astro.url.pathname;
+/** "page" solo en la página exacta; "true" en sus páginas hijas (p. ej. una ficha de servicio). */
+const isCurrent = (href: string) => (current === href ? 'page' : current.startsWith(href) ? 'true' : undefined);
+---
+<header class="hdr" id="hdr">
+  <div class="wrap">
+    <a class="brand" href={pathFor('home', lang)}><Logo variant="dark" alt={t.logoLabel} /></a>
+    <nav class="nav" aria-label={t.navLabel}>
+      {items.map((key) => <a href={pathFor(key, lang)} aria-current={isCurrent(pathFor(key, lang))}>{t.nav[key]}</a>)}
+    </nav>
+    <div class="hdr-tools">
+      <a class="lang1" href={alternates[other]} hreflang={other} lang={other} data-set-lang={other} aria-label={t.langSwitch.label}><Icon name="u-globo" />{t.langSwitch.short}</a>
+      <a class="btn btn-wa btn-sm hdr-cta" href={waLink(t.waMessages.default)} target="_blank" rel="noopener"><Icon name="b-whatsapp" class="ic" /><span class="lbl">{t.cta.short}</span></a>
+      <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="mmenu" aria-label={t.menu} data-open-label={t.menuClose} data-closed-label={t.menu}><Icon name="u-menu" class="ic-open" /><Icon name="u-cerrar" class="ic-close" /></button>
+    </div>
+  </div>
+</header>
+
+<div class="mmenu" id="mmenu" hidden>
+  <nav aria-label={t.mobileNavLabel}>
+    {items.map((key) => <a href={pathFor(key, lang)} aria-current={isCurrent(pathFor(key, lang))}>{t.nav[key]}</a>)}
+  </nav>
+  <a class="btn btn-wa btn-lg" href={waLink(t.waMessages.default)} target="_blank" rel="noopener"><Icon name="b-whatsapp" class="ic" />{t.cta.whatsapp}</a>
+  <a class="mm-tel" href={telLink()}>{BUSINESS.phoneDisplay}</a>
+  <a class="mm-lang" href={alternates[other]} hreflang={other} lang={other} data-set-lang={other}>{t.langSwitch.long}</a>
+</div>

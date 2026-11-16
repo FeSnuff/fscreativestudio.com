@@ -1,0 +1,97 @@
+---
+/** Ficha de un servicio (generada desde src/data/services.ts). */
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import PriceAmount from '../components/PriceAmount.astro';
+import ToolCard from '../components/ToolCard.astro';
+import DemoButton from '../components/DemoButton.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Icon from '../components/Icon.astro';
+import type { Lang } from '../i18n/langs';
+import { pathFor } from '../i18n/routes';
+import { useTranslations, waLink } from '../i18n/ui';
+import { getStages, priceParts, serviceAlternates, servicePath, toolsOfService } from '../data';
+import type { Service } from '../data/types';
+import { serviceNode } from '../lib/schema';
+import { pages } from '../i18n/pages';
+import MiniShot from '../components/MiniShot.astro';
+import type { MiniUi } from '../data/types';
+
+interface Props {
+  lang: Lang;
+  service: Service;
+}
+const { lang, service } = Astro.props;
+const t = useTranslations(lang);
+const text = service.text[lang];
+const stage = getStages().find((s) => s.id === service.stage);
+const tools = toolsOfService(service);
+const parts = service.price ? priceParts(service.price, lang) : undefined;
+const path = servicePath(service, lang);
+const crumbs = [
+  { name: t.nav.home, path: pathFor('home', lang) },
+  { name: t.nav.services, path: pathFor('services', lang) },
+  { name: text.name, path },
+];
+const title = text.seoTitle ?? `${text.name} | FS Creative Studio`;
+const description = text.seoDescription ?? text.summary;
+const kick = stage?.text[lang].title;
+/** Visual del encabezado: la mini-interfaz de ejemplo que muestra el producto. */
+const MINI: Record<string, MiniUi> = { web: 'web-prices', redes: 'social', oficina: 'quote', asistente: 'assistant', mantenimiento: 'web-one' };
+const mini = MINI[service.id] ?? 'web-one';
+/** Máximo 3 beneficios a la vista; la oficina los muestra como herramientas (sin repetir la lista). */
+const benefits = tools.length > 0 ? [] : text.includes.slice(0, 3);
+const faq = pages.services[lang].faq;
+---
+<Base lang={lang} title={title} description={description} alternates={serviceAlternates(service)} breadcrumbs={crumbs}
+  jsonLd={[serviceNode({ name: text.name, description, path, lang, price: service.price })]}>
+  <PageHero lang={lang} kick={kick} title={text.name} sub={text.summary} crumbs={crumbs}>
+    <div class="price-hero">
+      <PriceAmount lang={lang} price={service.price} noPrice={t.cta.askUs} />
+      {parts && (parts.term || parts.limit) && <span class="cond">{[parts.term, parts.limit].filter(Boolean).join(' · ')}</span>}
+      {service.price?.note && <span class="cond">{service.price.note[lang]}</span>}
+    </div>
+    <div class="cta-row">
+      <a class="btn btn-wa btn-lg" href={waLink(service.wa[lang])} target="_blank" rel="noopener"><Icon name="b-whatsapp" class="ic" />{service.cta[lang]}</a>
+      {service.demo && <DemoButton lang={lang} demo={service.demo} label={t.cta.tryDemo} class="btn btn-ghost-d" />}
+    </div>
+    <MiniShot slot="visual" lang={lang} mini={mini} label={pages.work[lang].alt(text.name)} />
+  </PageHero>
+
+  <section class="sec3" aria-labelledby="h-incl">
+    <div class="wrap grid2">
+      {benefits.length > 0 && (
+        <article class="card rv">
+          <h2 class="h3" id="h-incl">{t.includes}</h2>
+          <ul class="ticks">{benefits.map((x) => <li><Icon name="u-check" />{x}</li>)}</ul>
+        </article>
+      )}
+      {tools.length > 0 && <h2 class="sr" id="h-incl">{t.includes}</h2>}
+      {text.terms && (
+        <article class="card rv">
+          <h2 class="h3">{t.terms}</h2>
+          <ul class="ticks pink">{text.terms.slice(0, 3).map((x) => <li><Icon name="u-info" />{x}</li>)}</ul>
+          <a class="btn btn-ghost txt-link" href={`${pathFor('services', lang)}#letra-chica`}>{pages.services[lang].fineH} <Icon name="u-flecha-derecha" /></a>
+        </article>
+      )}
+    </div>
+  </section>
+
+  {tools.length > 0 && (
+    <section class="sec3" aria-labelledby="h-tools">
+      <div class="wrap">
+        <div class="head3 rv"><h2 class="h2" id="h-tools">{t.toolsIncluded}</h2></div>
+        <ul class="tool-grid">{tools.map((tool) => <ToolCard lang={lang} tool={tool} showLabel={false} />)}</ul>
+      </div>
+    </section>
+  )}
+
+  <section class="sec3" aria-labelledby="h-faq">
+    <div class="wrap">
+      <div class="head3 rv"><h2 class="h2" id="h-faq">{pages.services[lang].faqH}</h2></div>
+      <div class="faq">{faq.slice(0, 4).map((f) => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}</div>
+    </div>
+  </section>
+
+  <CtaBand lang={lang} title={pages.services[lang].ctaH} text={pages.services[lang].ctaP} wa={service.wa[lang]} label={service.cta[lang]} />
+</Base>

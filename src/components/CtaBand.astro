@@ -1,0 +1,30 @@
+---
+/** Cierre oscuro reutilizable (mismo escenario que el cierre de la home), con WhatsApp y teléfono. */
+import type { Lang } from '../i18n/langs';
+import { telLink, useTranslations, waLink } from '../i18n/ui';
+import { BUSINESS } from '../config/site';
+import Icon from './Icon.astro';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  text?: string;
+  /** Mensaje pre-escrito de WhatsApp (05 §11); por defecto, el general. */
+  wa?: string;
+  label?: string;
+}
+const { lang, title, text, wa, label } = Astro.props;
+const t = useTranslations(lang);
+---
+<section class="sec3 cta-band" aria-labelledby="h-cta">
+  <div class="wrap">
+    <div class="stage close2 rv">
+      <i class="hud-c a"></i><i class="hud-c b"></i><i class="hud-c c"></i><i class="hud-c d"></i>
+      <h2 class="h2" id="h-cta">{title}</h2>
+      {text && <p>{text}</p>}
+      <a class="btn btn-wa btn-lg" href={waLink(wa ?? t.waMessages.default)} target="_blank" rel="noopener"><Icon name="b-whatsapp" class="ic" />{label ?? t.cta.whatsapp}</a>
+      <p class="alt">{lang === 'es' ? 'o llámanos:' : 'or call us:'} <a href={telLink()}>{BUSINESS.phoneDisplay}</a> · <a href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a></p>
+      <slot />
+    </div>
+  </div>
+</section>

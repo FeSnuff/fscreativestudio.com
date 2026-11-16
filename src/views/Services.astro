@@ -1,0 +1,145 @@
+---
+/**
+ * Servicios y precios (05 §3), versión corta: las mismas 3 tarjetas de precio de la home (+ web y oficina
+ * con el total del primer año y el mantenimiento), herramientas incluidas vs. a tu medida, demos,
+ * la letra chica en acordeones cerrados y las preguntas frecuentes.
+ */
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import PriceCards from '../components/PriceCards.astro';
+import ToolCard from '../components/ToolCard.astro';
+import DemoButton from '../components/DemoButton.astro';
+import CtaBand from '../components/CtaBand.astro';
+import MiniShot from '../components/MiniShot.astro';
+import Icon from '../components/Icon.astro';
+import type { Lang } from '../i18n/langs';
+import { alternatesFor, pathFor } from '../i18n/routes';
+import { pages } from '../i18n/pages';
+import { useTranslations, waLink } from '../i18n/ui';
+import { getService, getTools, servicePath, toolCategories } from '../data';
+import { paymentMethods } from '../data/payments';
+import type { DemoId } from '../demos/registry';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const p = pages.services[lang];
+const home = pages.home[lang];
+const t = useTranslations(lang);
+const asistente = getService('asistente');
+const mantenimiento = getService('mantenimiento');
+const crumbs = [
+  { name: t.nav.home, path: pathFor('home', lang) },
+  { name: t.nav.services, path: pathFor('services', lang) },
+];
+const demoOrder: [DemoId, string, string][] = [
+  ['cotizacion', 'u-cotizacion', 'rgb(109 74 255 / .45)'],
+  ['asistente', 'u-mensaje', 'rgb(226 85 200 / .35)'],
+  ['tablero', 'u-agenda', 'rgb(59 130 246 / .4)'],
+];
+const jumps = [
+  { href: '#precios', label: home.pricesKick },
+  { href: '#herramientas', label: p.toolsH },
+  { href: '#demos', label: p.demosH },
+  { href: '#letra-chica', label: p.fineH },
+  { href: '#preguntas', label: p.faqH },
+];
+---
+<Base lang={lang} title={p.title} description={p.description} alternates={alternatesFor('services')} breadcrumbs={crumbs}>
+  <PageHero lang={lang} kick={p.kick} title={p.h1} sub={p.sub} crumbs={crumbs}>
+    <nav class="jump" aria-label={p.jump}>{jumps.map((j) => <a href={j.href}>{j.label}</a>)}</nav>
+    <MiniShot slot="visual" lang={lang} mini="quote" label={pages.work[lang].alt(home.demoBtns.cotizacion)} />
+  </PageHero>
+
+  <section class="sec3" id="precios" aria-labelledby="h-precios">
+    <div class="wrap">
+      <div class="head3 rv">
+        <p class="kick">{home.pricesKick}</p>
+        <h2 class="h2" id="h-precios">{home.pricesH}</h2>
+        <p>{home.pricesP} {home.where}</p>
+      </div>
+      <PriceCards lang={lang} details />
+      {mantenimiento && (
+        <p class="more-line"><a class="btn btn-ghost btn-sm txt-link" href={servicePath(mantenimiento, lang)}>{mantenimiento.text[lang].name} <Icon name="u-flecha-derecha" /></a></p>
+      )}
+    </div>
+  </section>
+
+  <section class="sec3 alt" id="herramientas" aria-labelledby="h-tools">
+    <div class="wrap">
+      <div class="head3 rv">
+        <p class="kick">{home.toolsKick}</p>
+        <h2 class="h2" id="h-tools">{p.toolsH}</h2>
+        <p>{p.toolsSub}</p>
+      </div>
+      {toolCategories.map((cat) => (
+        <>
+          <h3 class="group-h"><span class:list={['tag', cat.id === 'medida' ? 'tag-p' : 'tag-v']}>{cat.id === 'medida' ? cat.noPriceLabel?.[lang] : lang === 'es' ? 'Incluido' : 'Included'}</span>{cat.text[lang]}</h3>
+          {cat.intro && <p class="group-p">{cat.intro[lang]}</p>}
+          <ul class="tool-grid">
+            {cat.id === 'medida' && asistente && (
+              <li class="tool-card medida">
+                <span class="ic-tile"><Icon name={asistente.icon} /></span>
+                <h3><a href={servicePath(asistente, lang)}>{asistente.text[lang].name}</a></h3>
+                <p>{asistente.text[lang].summary}</p>
+              </li>
+            )}
+            {getTools({ category: cat.id }).map((tool) => <ToolCard lang={lang} tool={tool} showLabel={false} />)}
+          </ul>
+          {cat.id === 'medida' && <p style="margin-top:16px"><a class="btn btn-secondary btn-sm" href={waLink(t.waMessages.custom)} target="_blank" rel="noopener">{t.cta.tellUs}</a></p>}
+        </>
+      ))}
+    </div>
+  </section>
+
+  <section class="sec3" id="demos" aria-labelledby="h-demos">
+    <div class="wrap">
+      <div class="head3 rv">
+        <h2 class="h2" id="h-demos">{p.demosH}</h2>
+        <p>{p.demosSub}</p>
+      </div>
+      <div class="grid3">
+        {demoOrder.map(([id, icon, acc]) => (
+          <article class="demo-card rv" style={`--acc:${acc}`}>
+            <h3>{p.demoCards[id].h}</h3>
+            <p>{p.demoCards[id].p}</p>
+            <ul class="chips">{p.demoCards[id].tags.map((tag) => <li class="chip">{tag}</li>)}</ul>
+            <DemoButton lang={lang} demo={id} icon={icon} class="btn btn-ghost-d btn-sm" />
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="sec3 alt" id="letra-chica" aria-labelledby="h-fine">
+    <div class="wrap">
+      <div class="head3 rv">
+        <h2 class="h2" id="h-fine">{p.fineH}</h2>
+      </div>
+      <div class="faq fine-acc">
+        <details>
+          <summary>{p.directH}</summary>
+          <ul>{p.direct.map((x) => <li>{x}</li>)}</ul>
+          <p><a href={waLink(t.waMessages.posts)} target="_blank" rel="noopener">{lang === 'es' ? '¿Publicaciones mensuales en tus redes? Consúltanos.' : 'Monthly posts on your social media? Ask us.'}</a></p>
+        </details>
+        {p.fine.map((f) => (
+          <details><summary>{f.h}</summary><ul>{f.items.map((x) => <li>{x}</li>)}</ul></details>
+        ))}
+      </div>
+      <h3 class="group-h">{p.payH}</h3>
+      <ul class="paybrands">{paymentMethods.map((m) => <li><Icon name={m.icon} />{m.text[lang]}</li>)}</ul>
+    </div>
+  </section>
+
+  <section class="sec3" id="preguntas" aria-labelledby="h-faq">
+    <div class="wrap">
+      <div class="head3 rv"><h2 class="h2" id="h-faq">{p.faqH}</h2></div>
+      <div class="faq">
+        {p.faq.map((f) => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand lang={lang} title={p.ctaH} text={p.ctaP} />
+</Base>

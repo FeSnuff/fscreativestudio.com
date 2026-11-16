@@ -1,0 +1,54 @@
+---
+/**
+ * Las 3 tarjetas de precio de la maqueta v3 (web · redes · oficina oscura) + la nota punteada con
+ * "web + oficina" (total del primer año) y el mantenimiento. Se usa igual en la home y en Servicios.
+ */
+import type { Lang } from '../i18n/langs';
+import { pages } from '../i18n/pages';
+import { useTranslations, waLink } from '../i18n/ui';
+import { getService, servicePath } from '../data';
+import Icon from './Icon.astro';
+
+interface Props {
+  lang: Lang;
+  /** En Servicios cada tarjeta enlaza a su ficha; en la home, la nota enlaza a Servicios. */
+  details?: boolean;
+  moreHref?: string;
+}
+const { lang, details = false, moreHref } = Astro.props;
+const p = pages.home[lang];
+const t = useTranslations(lang);
+const web = getService('web')!;
+const redes = getService('redes')!;
+const oficina = getService('oficina')!;
+const cur = lang === 'es' ? 'USD' : '$';
+const sp = lang === 'es' ? ' ' : '';
+const per = lang === 'es' ? '/mes' : '/mo';
+const cards = [
+  { s: web, c: p.priceCards.web, dark: false },
+  { s: redes, c: p.priceCards.redes, dark: false },
+  { s: oficina, c: p.priceCards.oficina, dark: true },
+];
+---
+<div class="prices3">
+  {cards.map(({ s, c, dark }, i) => (
+    <article class:list={['pc', dark && 'dark', 'rv']} style={`--i:${i}`}>
+      <h3>{c.h}</h3>
+      <div class="amt3">
+        <span class="cur">{cur}</span>{sp}{s.price?.setup}
+        {s.price?.monthly !== undefined && <> <span class="plus">+</span> <span class="cur">{cur}</span>{sp}{s.price.monthly}<span class="per">{per}</span></>}
+      </div>
+      <p class="cond">{c.cond}</p>
+      <p>{c.p}</p>
+      <div class="pc-acts">
+        <a class:list={['btn', dark ? 'btn-primary' : 'btn-secondary']} href={waLink(s.wa[lang])} target="_blank" rel="noopener">{t.cta.want}</a>
+        {details && <a class="btn btn-ghost btn-sm txt-link" href={servicePath(s, lang)}>{t.cta.details} <Icon name="u-flecha-derecha" /></a>}
+      </div>
+    </article>
+  ))}
+</div>
+<div class="combo rv">
+  <div><b>{p.combo[0]}</b> {p.combo[1]}</div>
+  <div><b>{p.maint[0]}</b> {p.maint[1]}</div>
+  {moreHref && <a class="btn btn-ghost txt-link" href={moreHref}>{p.comboLink} <Icon name="u-flecha-derecha" /></a>}
+</div>

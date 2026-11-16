@@ -1,0 +1,24 @@
+---
+/**
+ * Aviso de idioma TEMPORAL (04-diseno v3 §4 / 07 punto 3). Existe SOLO en las páginas en español:
+ * en /en/ no se renderiza nunca. Superpuesto (position: fixed, sin CLS) y oculto por defecto;
+ * scripts/site.ts lo muestra solo si el navegador no está en español y no hay `fs_lang` guardado.
+ * Se va a los ~7 s, con scroll, clic fuera o Esc (Tab no lo cierra). Solo la elección explícita guarda `fs_lang`.
+ */
+import { useTranslations } from '../i18n/ui';
+import Icon from './Icon.astro';
+
+interface Props {
+  /** Ruta de esta página en inglés. */
+  target: string;
+}
+const { target } = Astro.props;
+const t = useTranslations('es').notice;
+---
+<aside class="langnote" id="langnote" lang="en" role="region" aria-label={t.label} hidden>
+  <Icon name="u-globo" />
+  <span aria-live="polite" data-msg={t.text}></span>
+  <a class="ln-yes" href={target} hreflang="en" data-set-lang="en">{t.yes}</a>
+  <button class="ln-no" type="button" lang="es">{t.no}</button>
+  <i class="ln-timer" aria-hidden="true"></i>
+</aside>

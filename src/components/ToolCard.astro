@@ -1,0 +1,24 @@
+---
+import type { Lang } from '../i18n/langs';
+import type { Tool } from '../data/types';
+import { toolNoPriceLabel, toolPath } from '../data';
+import { useTranslations } from '../i18n/ui';
+import Icon from './Icon.astro';
+
+interface Props {
+  lang: Lang;
+  tool: Tool;
+  /** Chip "Incluida en…"/"A cotizar": se oculta cuando el grupo ya lo dice. */
+  showLabel?: boolean;
+}
+const { lang, tool, showLabel = true } = Astro.props;
+const t = useTranslations(lang);
+const text = tool.text[lang];
+const label = toolNoPriceLabel(tool, lang, t.includedIn) ?? t.priceOnRequest;
+---
+<li class:list={['tool-card', tool.category]}>
+  <span class="ic-tile"><Icon name={tool.icon} class="ic" /></span>
+  <h3><a href={toolPath(tool, lang)}>{text.name}</a></h3>
+  <p>{text.summary}</p>
+  {showLabel && <span class:list={['tag', tool.category === 'medida' ? 'tag-p' : 'tag-v']}>{label}</span>}
+</li>

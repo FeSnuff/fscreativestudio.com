@@ -1,0 +1,58 @@
+---
+/** Nosotros (05 §5 + "Cómo funciona" de 05 §2.8): página de la EMPRESA, sin nombre ni foto del dueño. */
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Icon from '../components/Icon.astro';
+import type { Lang } from '../i18n/langs';
+import { alternatesFor, pathFor } from '../i18n/routes';
+import { pages } from '../i18n/pages';
+import { useTranslations } from '../i18n/ui';
+import { activeSocials } from '../config/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const p = pages.about[lang];
+const t = useTranslations(lang);
+const crumbs = [
+  { name: t.nav.home, path: pathFor('home', lang) },
+  { name: t.nav.about, path: pathFor('about', lang) },
+];
+const icons = ['u-clientes', 'u-rayo', 'u-proteccion', 'u-cerrar'];
+---
+<Base lang={lang} title={p.title} description={p.description} alternates={alternatesFor('about')} breadcrumbs={crumbs}>
+  <PageHero lang={lang} kick={p.kick} title={p.h1} sub={p.intro} crumbs={crumbs}>
+    <p class="phero-sub"><b>{p.direct}</b></p>
+  </PageHero>
+
+  <section class="sec3" aria-label={p.h1}>
+    <div class="wrap grid2">
+      {p.blocks.map((b, i) => (
+        <article class="card rv">
+          <span class="ic-tile"><Icon name={icons[i]} class="ic" /></span>
+          <h2 class="h3">{b.h}</h2>
+          {i < 2 ? (
+            <div class="prose-sm">{b.items.map((x) => <p>{x}</p>)}</div>
+          ) : (
+            <ul class:list={['ticks', i === 3 && 'pink']}>{b.items.map((x) => <li><Icon name={i === 3 ? 'u-cerrar' : 'u-check'} />{x}</li>)}</ul>
+          )}
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="sec3" aria-labelledby="h-how">
+    <div class="wrap">
+      <div class="head3 rv"><h2 class="h2" id="h-how">{p.howH}</h2></div>
+      <ol class="steps3">{p.how.map((s) => <li class="rv"><b>{s.h}</b><p>{s.p}</p></li>)}</ol>
+    </div>
+  </section>
+
+  <CtaBand lang={lang} title={p.ctaH}>
+    {activeSocials().length > 0 && (
+      <p class="alt">{p.social} {activeSocials().map(([name, url], i) => <>{i > 0 && ' · '}<a href={url} target="_blank" rel="noopener me">{name}</a></>)}</p>
+    )}
+  </CtaBand>
+</Base>

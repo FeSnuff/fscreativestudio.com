@@ -1,6 +1,4 @@
 node_modules/
 dist/
 .astro/
-shot.mjs
-scroll.mjs
-_respaldo/
+test-output/

@@ -1,0 +1,12 @@
+---
+/** Una página por servicio visible (generada desde src/data/services.ts). */
+import View from '../../views/ServiceDetail.astro';
+import { getServices } from '../../data';
+import type { Service } from '../../data/types';
+
+export function getStaticPaths() {
+  return getServices().map((service) => ({ params: { slug: service.text.es.slug }, props: { service } }));
+}
+const { service } = Astro.props as { service: Service };
+---
+<View lang="es" service={service} />

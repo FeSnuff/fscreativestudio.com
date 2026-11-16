@@ -1,0 +1,26 @@
+---
+/** Monto con el formato de la maqueta: "USD 250 + USD 25/mes" (mismo peso visual) o un chip suave "Consúltanos" (no parece botón). */
+import type { Lang } from '../i18n/langs';
+import type { Price } from '../data/types';
+
+interface Props {
+  lang: Lang;
+  price?: Price;
+  noPrice?: string;
+}
+const { lang, price, noPrice } = Astro.props;
+const cur = lang === 'es' ? 'USD' : '$';
+const sp = lang === 'es' ? ' ' : '';
+const per = lang === 'es' ? '/mes' : '/mo';
+const from = lang === 'es' ? 'desde ' : 'from ';
+---
+{price ? (
+  <div class="amt3">
+    {price.from && <span class="per">{from}</span>}
+    {price.setup !== undefined && <><span class="cur">{cur}</span>{sp}{price.setup}</>}
+    {price.setup !== undefined && price.monthly !== undefined && <> <span class="plus">+</span> </>}
+    {price.monthly !== undefined && <><span class="cur">{cur}</span>{sp}{price.monthly}<span class="per">{per}</span></>}
+  </div>
+) : (
+  <p class="price-chip"><span class="tag tag-p">{noPrice}</span></p>
+)}

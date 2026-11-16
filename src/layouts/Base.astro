@@ -1,69 +1,102 @@
 ---
+/**
+ * Layout base: <head> SEO completo (canonical, hreflang es/en/x-default, OG con imagen 1200×630,
+ * JSON-LD), View Transitions (CSS @view-transition, sin JS), PWA, cabecera, pie, aviso de idioma
+ * (solo ES) y modal de demos.
+ */
+import '../styles/tokens.css';
+import '../styles/maqueta.css';
 import '../styles/global.css';
-import Nav from '../components/Nav.astro';
+import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { ui } from '../i18n/ui';
-import type { Lang } from '../data/site';
+import LangNotice from '../components/LangNotice.astro';
+import DemoModal from '../components/DemoModal.astro';
+import { LANG_META, LANGS, X_DEFAULT_LANG, otherLang, type Lang, type Localized } from '../i18n/langs';
+import { absoluteUrl } from '../i18n/routes';
+import { useTranslations } from '../i18n/ui';
+import { BUSINESS } from '../config/site';
+import { breadcrumbNode, businessNode, graph, websiteNode, type Crumb, type JsonLdNode } from '../lib/schema';
 
-interface Props { lang: Lang; title?: string; description?: string; altPath: string; navTheme?: 'dark' | 'light' }
-const { lang, title, description, altPath, navTheme = 'dark' } = Astro.props;
-const t = ui[lang];
-const pageTitle = title ? `${title} | FS Creative Studio` : t.meta.title;
-const desc = description ?? t.meta.desc;
-const canonical = new URL(Astro.url.pathname, Astro.site);
-const alt = new URL(altPath, Astro.site);
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  /** Ruta de esta página en cada idioma (del mapa de rutas o de los datos). */
+  alternates: Localized<string>;
+  /** Migas desde Inicio hasta la página actual (incluida). Vacío en la home. */
+  breadcrumbs?: Crumb[];
+  /** Nodos JSON-LD extra de la página (Service, etc.). */
+  jsonLd?: JsonLdNode[];
+  noindex?: boolean;
+  /** 404 bilingüe: sin canonical, hreflang, JSON-LD ni aviso de idioma. */
+  notFound?: boolean;
+}
+
+const { lang, title, description, alternates, breadcrumbs = [], jsonLd = [], noindex = false, notFound = false } = Astro.props;
+const t = useTranslations(lang);
+const canonical = absoluteUrl(alternates[lang]);
+const meta = LANG_META[lang];
+const other = otherLang(lang);
+const ogImage = absoluteUrl(`/og/og-${lang}.png`);
+const ogAlt = lang === 'es' ? 'FS Creative Studio: cotiza, haz firmar y cobra desde el celular. Tu web y tu oficina en línea, desde USD 250.' : 'FS Creative Studio: quote, get it signed and get paid from your phone. Your website and online office, from $250.';
+
+const nodes: JsonLdNode[] = [businessNode(), websiteNode(lang), ...jsonLd];
+if (breadcrumbs.length > 1) nodes.push(breadcrumbNode(breadcrumbs));
 ---
 <!doctype html>
-<html lang={lang}>
+<html lang={meta.htmlLang}>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{pageTitle}</title>
-    <meta name="description" content={desc} />
-    <link rel="canonical" href={canonical} />
-    <link rel="alternate" hreflang={lang} href={canonical} />
-    <link rel="alternate" hreflang={lang === 'en' ? 'es' : 'en'} href={alt} />
-    <link rel="icon" type="image/png" href="/favicon.png" />
-    <meta name="theme-color" content="#06052d" />
-    <script is:inline>
-      // First visit from a Spanish-language browser on an English page: go to the Spanish version.
-      // A language chosen with the EN/ES switch is remembered and always respected.
-      (function () {
-        try {
-          var path = location.pathname, isEs = path === '/es' || path.indexOf('/es/') === 0;
-          var pref = localStorage.getItem('fs-lang');
-          var want = pref || ((navigator.language || '').toLowerCase().indexOf('es') === 0 ? 'es' : 'en');
-          if (want === 'es' && !isEs) location.replace('/es' + path + location.search + location.hash);
-          else if (pref === 'en' && isEs) location.replace((path.replace(/^\/es/, '') || '/') + location.search + location.hash);
-        } catch (e) {}
-      })();
-      document.addEventListener('click', function (e) {
-        var a = e.target.closest && e.target.closest('[data-lang-switch]');
-        if (a) try { localStorage.setItem('fs-lang', a.getAttribute('data-lang-switch')); } catch (err) {}
-      });
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    {!notFound && <link rel="canonical" href={canonical} />}
+    {!noindex && LANGS.map((l) => <link rel="alternate" hreflang={l} href={absoluteUrl(alternates[l])} />)}
+    {!noindex && <link rel="alternate" hreflang="x-default" href={absoluteUrl(alternates[X_DEFAULT_LANG])} />}
+
     <meta property="og:type" content="website" />
-    <meta property="og:title" content={pageTitle} />
-    <meta property="og:description" content={desc} />
-    <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={new URL('/brand/og.png', Astro.site)} />
-    <meta property="og:locale" content={lang === 'en' ? 'en_US' : 'es_US'} />
+    <meta property="og:site_name" content={BUSINESS.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {!notFound && <meta property="og:url" content={canonical} />}
+    <meta property="og:locale" content={meta.ogLocale} />
+    <meta property="og:locale:alternate" content={LANG_META[other].ogLocale} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogAlt} />
     <meta name="twitter:card" content="summary_large_image" />
-    <script type="application/ld+json" set:html={JSON.stringify({
-      '@context': 'https://schema.org', '@type': 'ProfessionalService', name: 'FS Creative Studio',
-      url: 'https://fscreativestudio.com', telephone: '+1-571-315-6093', areaServed: 'US',
-      address: { '@type': 'PostalAddress', addressRegion: 'VA', addressCountry: 'US' },
-      availableLanguage: ['English', 'Spanish'], description: desc,
-    })} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/icon-180.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#0B0B14" />
+    <link rel="preload" href="/fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+
+    <script is:inline>
+      /* Antes del primer pintado: JS activo y revelado CSS si existe. Siempre animada (decisión del dueño, 16/11). */
+      (function (r) {
+        r.classList.add('js');
+        if (window.CSS && CSS.supports && CSS.supports('animation-timeline: view()')) r.classList.add('sda');
+      })(document.documentElement);
+    </script>
+    {!notFound && <script type="application/ld+json" set:html={graph(nodes)} />}
   </head>
-  <body class="min-h-dvh flex flex-col">
-    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] btn btn-light">Skip to content</a>
-    <Nav lang={lang} altPath={altPath} theme={navTheme} />
-    <main id="main" class="flex-1"><slot /></main>
+  <body>
+    <a class="skip-top" href="#main">{t.skip}</a>
+    {lang === 'es' && !notFound && <LangNotice target={alternates.en} />}
+    <Header lang={lang} alternates={alternates} />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
     <Footer lang={lang} />
+    <DemoModal lang={lang} />
     <script>
-      import { initMotion } from '../scripts/motion';
-      initMotion();
+      import '../scripts/site';
+      import '../scripts/demo-modal';
+      import '../scripts/sw-register';
     </script>
   </body>
 </html>

@@ -1,248 +1,173 @@
 ---
+/**
+ * Home v3 (design/maqueta/index.html): hero logo→teléfono · historia de 5 pasos · redes antes→después ·
+ * incluido vs. a tu medida + demos · precios · cierre. Un mensaje por pantalla.
+ */
 import Base from '../layouts/Base.astro';
-import HeroSystem from '../components/HeroSystem.astro';
-import Mock from '../components/Mock.astro';
-import Network from '../components/Network.astro';
-import CTA from '../components/CTA.astro';
-import ProcessSteps from '../components/ProcessSteps.astro';
-import WorkList from '../components/WorkList.astro';
-import { ui } from '../i18n/ui';
-import { solutions, solColor } from '../data/solutions';
-import { site } from '../data/site';
-import { lp, type Lang } from '../data/site';
-interface Props { lang: Lang }
+import Icon from '../components/Icon.astro';
+import DemoButton from '../components/DemoButton.astro';
+import PhoneScreens from '../components/PhoneScreens.astro';
+import PriceCards from '../components/PriceCards.astro';
+import type { Lang } from '../i18n/langs';
+import { alternatesFor, pathFor } from '../i18n/routes';
+import { pages } from '../i18n/pages';
+import { telLink, useTranslations, waLink } from '../i18n/ui';
+import { BUSINESS } from '../config/site';
+import type { DemoId } from '../demos/registry';
+
+interface Props {
+  lang: Lang;
+}
 const { lang } = Astro.props;
-const t = ui[lang];
-const sols = solutions[lang];
-const indColors = ['#0a8b90', '#4a3bd6', '#8a33aa', '#a8650a', '#0e8566', '#5b4bf0'];
-const indIcons = ['<path d="M4 8h16v11H4zM9 8V5h6v3M4 13h16"/>', '<path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>', '<path d="M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z"/><path d="M9 11h6M12 8v6"/>', '<path d="M14.5 5.5a3.5 3.5 0 00-4.6 4.6L4 16l2 2 5.9-5.9a3.5 3.5 0 004.6-4.6l-2.1 2.1-2-2z"/>', '<path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/>', '<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>'];
+const p = pages.home[lang];
+const t = useTranslations(lang);
+const accents = ['#6CB0FF', '#9B87FF', '#B9A8FF', '#F07AD8', '#4ADE80'];
+const inclIcons = ['u-cotizacion', 'u-firma', 'u-factura', 'u-clientes', 'u-agenda'];
+const extraIcons = ['u-calculadora', 'b-whatsapp', 'b-google', 'u-imagen'];
+const demoIds: [DemoId, string][] = [['cotizacion', 'u-cotizacion'], ['tablero', 'u-tablero'], ['asistente', 'u-mensaje']];
+const rows = [
+  { k: 'facebook', name: 'Facebook', icon: 'b-facebook', color: '#0866FF', st: '--i:0;--dx:8px;--dy:4px;--r:-1.6deg', b: { txt: 'tn', style: 'background:#2D5BD1;color:#fff;border-radius:50%' }, a: '(555) 010-0142' },
+  { k: 'instagram', name: 'Instagram', icon: 'b-instagram', color: '#FF0069', st: '--i:1;--dx:-6px;--dy:2px;--r:1.4deg', b: { txt: 'TN', style: 'background:#F2A33A;color:#2E2210;transform:rotate(8deg)' }, a: '(555) 010-0142' },
+  { k: 'whatsapp', name: 'WhatsApp Business', icon: 'b-whatsapp', color: '#25D366', st: '--i:2;--dx:10px;--dy:-2px;--r:-1deg', b: { txt: 'TN', style: 'background:#3A3D44;color:#D2D4D9' }, a: '(555) 010-0142 · ES/EN' },
+  { k: 'maps', name: 'Google Maps', icon: 'b-googlemaps', color: '#4285F4', st: '--i:3;--dx:-8px;--dy:3px;--r:1.8deg', b: { txt: '—', style: 'border:1.5px dashed #8A8D96;color:#8A8D96' }, a: '(555) 010-0142' },
+  { k: 'nextdoor', name: 'Nextdoor', icon: 'u-vecindario', color: '', st: '--i:4;--dx:5px;--dy:0px;--r:-1.2deg', b: { txt: '—', style: 'border:1.5px dashed #8A8D96;color:#8A8D96' }, a: '(555) 010-0142' },
+] as const;
+const FS_PATH = 'M20.87 42.68L17.14 42.68L17.14 21.32L30.62 21.32L30.62 24.69L19.31 24.69L20.87 23.13L20.87 30.56L30.07 30.56L30.07 33.90L20.87 33.90L20.87 42.68ZM40.93 43.16L40.93 43.16Q38.59 43.16 36.86 42.23Q35.13 41.29 34.14 39.60Q33.14 37.90 32.96 35.58L32.96 35.58L36.75 35.37Q36.93 36.84 37.50 37.82Q38.08 38.80 38.99 39.29Q39.91 39.79 41.11 39.79L41.11 39.79Q42.26 39.79 43.05 39.49Q43.85 39.19 44.27 38.59Q44.69 37.99 44.69 37.11L44.69 37.11Q44.69 36.24 44.27 35.59Q43.85 34.95 42.77 34.41Q41.69 33.86 39.67 33.29L39.67 33.29Q37.50 32.72 36.12 31.95Q34.74 31.19 34.08 30.04Q33.41 28.90 33.41 27.19L33.41 27.19Q33.41 25.26 34.27 23.83Q35.13 22.40 36.77 21.62Q38.41 20.84 40.69 20.84L40.69 20.84Q42.95 20.84 44.54 21.70Q46.14 22.55 47.06 24.13Q47.97 25.71 48.18 27.88L48.18 27.88L44.39 28.06Q44.24 26.89 43.76 26.03Q43.28 25.17 42.48 24.69Q41.69 24.21 40.54 24.21L40.54 24.21Q39.01 24.21 38.11 24.96Q37.20 25.71 37.20 26.98L37.20 26.98Q37.20 27.82 37.61 28.39Q38.02 28.96 39.01 29.41Q40.00 29.86 41.81 30.35L41.81 30.35Q44.27 31.04 45.73 31.94Q47.19 32.84 47.84 34.09Q48.48 35.34 48.48 37.05L48.48 37.05Q48.48 38.89 47.55 40.27Q46.62 41.66 44.93 42.41Q43.25 43.16 40.93 43.16Z';
+const layers = [['-2px', '#5A3DE0'], ['-4px', '#5A3DE0'], ['-6px', '#5236CC'], ['-8px', '#5236CC'], ['-10px', '#4A30B8'], ['-12px', '#4A30B8'], ['-14px', '#422AA4'], ['-16px', '#422AA4'], ['-18px', '#3A2490'], ['-20px', '#3A2490'], ['-22px', '#321F7C'], ['-24px', '#321F7C']];
 ---
-<Base lang={lang} altPath={lp(lang === 'en' ? 'es' : 'en', '/')}>
-  <!-- HERO -->
-  <section class="relative overflow-hidden bg-night text-white">
-    <div class="blueprint absolute inset-0 [mask-image:radial-gradient(ellipse_at_70%_40%,black,transparent_75%)]"></div>
-    <Network seed={3} />
-    <div class="wrap relative grid items-center gap-16 pb-24 pt-36 lg:grid-cols-12 lg:gap-10 lg:pb-32 lg:pt-44">
-      <div class="lg:col-span-6">
-        <h1 data-hero-h1 class="text-[2.6rem] font-semibold sm:text-6xl lg:text-[4.1rem]">{t.hero.h1}</h1>
-        <p data-hero-sub class="mt-7 max-w-[52ch] text-lg text-white/72">{t.hero.sub}</p>
-        <div data-hero-cta class="mt-10 flex flex-wrap gap-3">
-          <a href={lp(lang, '/contact/')} class="btn btn-light">{t.hero.cta}</a>
-          <a href={lp(lang, '/solutions/')} class="btn btn-ghost">{t.hero.cta2}</a>
+<Base lang={lang} title={p.title} description={p.description} alternates={alternatesFor('home')}>
+  <!-- Ícono FS (cara oficial con degradado) para los logos "después" del panel de redes -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="fsi-s" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6D4AFF"></stop><stop offset="1" stop-color="#3B82F6"></stop></linearGradient></defs><symbol id="fs-mark" viewBox="0 0 64 64"><rect width="64" height="64" rx="14.98" fill="url(#fsi-s)"></rect><path d={FS_PATH} fill="#fff"></path></symbol></svg>
+
+  <!-- 1 · HERO: el logo se abre en el teléfono que muestra lo que vendemos -->
+  <section class="hero3" id="hero" aria-labelledby="h1">
+    <canvas class="field" id="field" aria-hidden="true"></canvas>
+    <div class="wrap hero3-grid">
+      <div class="hero3-copy">
+        <h1 class="h1" id="h1">{p.h1a} <br class="d-br" /><span class="mark">{p.h1b}</span></h1>
+        <p class="hero3-sub">{p.sub} <b>{p.subB}</b></p>
+        <div class="cta-row">
+          <a class="btn btn-wa btn-lg hero-cta" href={waLink(t.waMessages.default)} target="_blank" rel="noopener"><Icon name="b-whatsapp" class="ic" />{t.cta.whatsapp}</a>
+          <DemoButton lang={lang} demo="cotizacion" label={t.cta.oneDemo} class="btn btn-ghost-d" />
         </div>
-        <p data-hero-note class="mt-8 text-sm text-white/50">{t.hero.note}</p>
+        <p class="hero3-where"><Icon name="u-ubicacion" />{p.where}</p>
       </div>
-      <div class="relative lg:col-span-6 lg:pl-6">
-        <HeroSystem lang={lang} />
-      </div>
-    </div>
-  </section>
-
-  <!-- PROBLEM + DATA -->
-  <section class="bg-lilac py-24 lg:py-32">
-    <div class="wrap grid gap-14 lg:grid-cols-12">
-      <div class="lg:col-span-5">
-        <h2 class="text-4xl font-semibold sm:text-5xl">{t.problem.h2}</h2>
-        <p class="mt-6 measure text-muted">{t.problem.p}</p>
-      </div>
-      <dl class="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:col-span-7 lg:pl-8">
-        {t.problem.stats.map((s) => (
-          <div class="border-t border-ink/15 pt-5" data-reveal>
-            <dt class="grad-text font-display text-6xl font-semibold tracking-tight">{s.n}</dt>
-            <dd class="mt-3 text-ink/85">{s.l}</dd>
-            <dd class="mt-2 text-sm text-muted"><a href={s.u} target="_blank" rel="noopener" class="link-u">{s.s}</a></dd>
-          </div>
-        ))}
-      </dl>
-    </div>
-  </section>
-
-  <!-- CONNECT (pinned scroll scene) -->
-  <section class="relative bg-white" data-connect>
-    <div class="wrap grid min-h-dvh items-center gap-12 py-24 lg:grid-cols-12" data-connect-pin>
-      <div class="lg:col-span-5">
-        <h2 class="text-4xl font-semibold sm:text-5xl">{t.connect.h2}</h2>
-        <ol class="mt-10 space-y-7">
-          {t.connect.steps.map((s, i) => (
-            <li class="grid grid-cols-[2rem_1fr] gap-3 transition-opacity duration-500" data-connect-step={i}>
-              <span class="font-display text-sm font-semibold text-signal">{i + 1}</span>
-              <div>
-                <h3 class="text-xl font-semibold tracking-tight">{s.t}</h3>
-                <p class="mt-1.5 text-muted">{s.d}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </div>
-      <div class="lg:col-span-7">
-        <div class="relative mx-auto aspect-[5/4] w-full max-w-[560px]" data-connect-stage>
-          <div class="absolute inset-[6%] rounded-3xl bg-night p-[1.5px]" data-connect-frame>
-            <div class="flow-line absolute inset-0 rounded-3xl opacity-0" data-connect-glow></div>
-            <div class="relative flex h-full flex-col rounded-[calc(1.5rem-1.5px)] bg-night p-4 text-white sm:p-7" data-connect-panel>
-              <div class="flex items-center gap-2.5">
-                <img src="/brand/fs-mark.png" alt="" class="h-5 w-auto" />
-                <span class="font-display font-semibold" data-connect-label>{t.connect.system}</span>
-              </div>
-              <div class="mt-4 grid flex-1 grid-cols-3 gap-2 sm:mt-5 sm:gap-3">
-                {t.connect.pieces.map((p, i) => (
-                  <div class="flex flex-col justify-between rounded-xl bg-white/[.06] p-2.5 ring-1 ring-white/10 sm:p-3" data-piece={i}>
-                    <span class="piece-icon" data-kind={i}></span>
-                    <span class="text-[11.5px] font-medium leading-tight sm:text-[13px]">{p}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+      <div class="morph" id="morph" role="img" aria-label={p.morphLabel}>
+        <div class="morph-glow" aria-hidden="true"></div>
+        <div class="logo3d" id="logo3d" aria-hidden="true">
+          <span class="l3d" id="l3d"><span class="glow"></span>{layers.map(([z, c]) => <span class="lyr" style={`--z:${z};--c:${c}`}></span>)}<span class="face"><svg viewBox="0 0 64 64"><path d={FS_PATH} fill="#fff"></path></svg><span class="spec"></span></span></span>
+        </div>
+        <div class="hphone-wrap" id="hphone-wrap" aria-hidden="true">
+          <div class="phone2 hphone"><div class="screen2" id="hscreen"></div></div>
+          <div class="offer" id="offer"><span class="o-web">{p.offerWeb[0]} <b>{p.offerWeb[1]}</b></span><span class="o-off">{p.offerOffice[0]} <b>{p.offerOffice[1]}</b></span></div>
         </div>
       </div>
     </div>
+    <button class="hero-pause" id="hero-pause" type="button" aria-pressed="false" data-pause={p.pause} data-play={p.play} aria-label={p.pause}><Icon name="u-pausa" class="i-pause" /><Icon name="u-reproducir" class="i-play" /><span class="lbl">{p.pause}</span></button>
+    <a class="scroll-cue" href="#historia"><span>{p.cue}</span><Icon name="u-descargar" /></a>
   </section>
 
-  <!-- SOLUTIONS (list + sticky preview) -->
-  <section class="bg-paper py-24 lg:py-32" id="solutions">
-    <div class="wrap grid gap-14 lg:grid-cols-12">
-      <div class="lg:col-span-5">
-        <div class="lg:sticky lg:top-28">
-          <h2 class="text-4xl font-semibold sm:text-5xl">{t.sol.h2}</h2>
-          <p class="mt-6 measure text-muted">{t.sol.p}</p>
-          <div class="relative mt-12 hidden aspect-[4/3] lg:block" data-sol-preview>
-            {sols.map((s, i) => (
-              <div class:list={['absolute inset-0 transition-[opacity,transform] duration-500 ease-out-soft', i === 0 ? 'opacity-100' : 'pointer-events-none translate-y-3 opacity-0']} data-sol-mock={i}>
-                <div class="glow -inset-16 opacity-70" style={`--g:${solColor[s.slug].c}`} aria-hidden="true"></div>
-                <Mock variant={s.mock} lang={lang} class="relative" />
-              </div>
+  <!-- 2 · HISTORIA: 5 pasos con escena fija -->
+  <section class="story" id="historia" aria-labelledby="h-historia">
+    <a class="skip" href="#redes">{p.skipStory}</a>
+    <div class="scene" id="scene">
+      <div class="wrap scene-grid">
+        <div class="scene-text">
+          <ol class="steps2" id="h-historia" aria-label={p.storyLabel}>
+            {p.steps.map((st, i) => (
+              <li class:list={['st2', i === 0 && 'on']} data-step={i + 1} style={`--acc:${accents[i]}`}><span class="num">0{i + 1}</span><span class="lbl">{st.lbl}</span><h2>{st.h}</h2><p>{st.p}</p></li>
             ))}
-          </div>
+          </ol>
+          <div class="prog2" aria-hidden="true">{p.steps.map(() => <span><i></i></span>)}</div>
+        </div>
+        <div class="scene-visual" aria-hidden="true">
+          <div class="phone2"><div class="screen2" id="screen2"><PhoneScreens lang={lang} /></div></div>
         </div>
       </div>
-      <ul class="lg:col-span-7 lg:pl-8">
-        {sols.map((s, i) => (
-          <li class="sol-row group relative border-t border-ink/15 last:border-b" data-sol-row={i} style={`--accent:${solColor[s.slug].c};--accent-ink:${solColor[s.slug].ink}`}>
-            <span class="sol-bar absolute -left-px top-0 h-full w-[3px] origin-top scale-y-0 transition-transform duration-500" style="background:var(--accent)" aria-hidden="true"></span>
-            <a href={lp(lang, `/solutions/${s.slug}/`)} class="grid gap-3 py-9 sm:grid-cols-[1fr_auto] sm:items-baseline sm:gap-8 sm:pl-6">
-              <div>
-                <h3 class="flex items-center gap-4 text-2xl font-semibold tracking-tight transition-colors group-hover:text-[var(--accent-ink)] sm:text-[1.9rem]"><span class="accent-dot shrink-0"></span>{s.title}</h3>
-                <p class="mt-3 max-w-[54ch] text-muted">{s.short}</p>
-              </div>
-              <span class="text-sm font-medium text-ink/70 group-hover:text-ink">{t.sol.more}</span>
-            </a>
-            <div class="relative pb-8 lg:hidden"><div class="glow -inset-6 opacity-60" style="--g:var(--accent)" aria-hidden="true"></div><Mock variant={s.mock} lang={lang} class="relative" /></div>
-          </li>
-        ))}
-      </ul>
     </div>
   </section>
 
-  <!-- INDUSTRIES -->
-  <section class="bg-mist py-24 lg:py-32">
+  <!-- 3 · QUE TE ENCUENTREN -->
+  <section class="sec2" id="redes" aria-labelledby="h-redes">
     <div class="wrap">
-      <div class="grid gap-6 lg:grid-cols-12">
-        <h2 class="text-4xl font-semibold sm:text-5xl lg:col-span-6">{t.industries.h2}</h2>
-        <p class="measure text-muted lg:col-span-5 lg:col-start-8 lg:self-end">{t.industries.p}</p>
+      <div class="head2 rv">
+        <p class="kick">{p.redesKick}</p>
+        <h2 class="h2" id="h-redes">{p.redesH}</h2>
+        <p>{p.redesP}</p>
       </div>
-      <ul class="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {t.industries.list.map((x, i) => (
-          <li class="group rounded-2xl bg-white p-7 ring-1 ring-ink/5 transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_-20px_rgb(6_5_45/.25)]" style={`--accent:${indColors[i]}`}>
-            <span class="grid h-11 w-11 place-items-center rounded-xl" style="background:color-mix(in srgb, var(--accent) 16%, white);color:var(--accent)">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={indIcons[i]} />
-            </span>
-            <h3 class="mt-5 text-xl font-semibold tracking-tight">{x.t}</h3>
-            <p class="mt-2 text-muted">{x.d}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </section>
-
-  <!-- WORK -->
-  <section class="bg-night py-24 text-white lg:py-32">
-    <div class="wrap">
-      <div class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h2 class="text-4xl font-semibold sm:text-5xl">{t.work.h2}</h2>
-          <p class="mt-5 measure text-white/60">{t.work.p}</p>
-        </div>
-        <a href={lp(lang, '/work/')} class="btn btn-ghost self-start sm:self-auto">{t.work.all}</a>
-      </div>
-      <WorkList lang={lang} limit={6} dark />
-    </div>
-  </section>
-
-  <!-- PROCESS -->
-  <section class="bg-paper py-24 lg:py-32">
-    <div class="wrap">
-      <h2 class="text-4xl font-semibold sm:text-5xl">{t.process.h2}</h2>
-      <p class="mt-5 measure text-muted">{t.process.p}</p>
-      <ProcessSteps lang={lang} />
-    </div>
-  </section>
-
-  <!-- TRUST -->
-  <section class="bg-white py-24">
-    <div class="wrap grid gap-12 lg:grid-cols-12">
-      <h2 class="text-4xl font-semibold lg:col-span-4">{t.trust.h2}</h2>
-      <dl class="grid gap-10 sm:grid-cols-2 lg:col-span-8">
-        {t.trust.items.map((x, i) => (
-          <div style={`--accent:${['#1ad4d9', '#5b4bf0', '#17b890', '#b652d4'][i]}`}>
-            <dt class="flex items-center gap-3 text-lg font-semibold">
-              <span class="accent-dot"></span>{x.t}
-            </dt>
-            <dd class="mt-2 pl-5 text-muted">{x.d}</dd>
+      <div class="find-wrap rv">
+        <div class="chan" id="chan" data-state="before" role="group" aria-label={p.chanLabel}>
+          <div class="tg"><span class="mono">{p.chanLabel}</span>
+            <div class="seg" role="group" aria-label={p.chanToggle}><button type="button" data-st="before" aria-pressed="true">{p.before}</button><button type="button" data-st="after" aria-pressed="false">{p.after}</button></div>
           </div>
-        ))}
-      </dl>
-    </div>
-  </section>
-
-  <!-- HUMAN -->
-  <section class="relative overflow-hidden bg-lilac py-24 lg:py-32">
-    <div class="wrap grid items-center gap-14 lg:grid-cols-12">
-      <div class="lg:col-span-6">
-        <h2 class="text-4xl font-semibold sm:text-5xl">{t.human.h2}</h2>
-        <p class="mt-6 measure text-lg text-muted">{t.human.p}</p>
-        <div class="mt-9 flex flex-wrap gap-3">
-          <a href={`https://wa.me/${site.whatsapp}`} target="_blank" rel="noopener" class="btn btn-dark">{t.human.btn}</a>
-          <a href={site.phoneHref} class="btn btn-ghost-dark">{t.human.call}</a>
-        </div>
-      </div>
-      <div class="lg:col-span-5 lg:col-start-8" data-human-chat>
-        <div class="relative">
-          <div class="glow -inset-16 opacity-50" style="--g:#1ad4d9;transform:translate(-12%,-10%)" aria-hidden="true"></div><div class="glow -inset-16 opacity-50" style="--g:#b652d4;transform:translate(12%,10%)" aria-hidden="true"></div>
-          <div class="relative rounded-3xl bg-white p-5 shadow-[0_30px_70px_-30px_rgb(6_5_45/.35)] ring-1 ring-ink/5">
-            <div class="flex items-center gap-3 border-b border-line pb-4">
-              <span class="relative grid h-11 w-11 place-items-center rounded-full bg-night">
-                <img src="/brand/fs-mark.png" alt="" class="h-6 w-auto" />
-                <span class="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-mint ring-2 ring-white"></span>
-              </span>
-              <div>
-                <p class="font-semibold leading-tight">{site.ownerName || 'FS Creative Studio'}</p>
-                <p class="text-sm text-muted">{t.human.from}</p>
-              </div>
-            </div>
-            <div class="space-y-3 pt-5">
-              <p class="max-w-[85%] rounded-2xl rounded-tl-md bg-paper px-4 py-3 text-[0.97rem]" data-bubble>{t.human.bubble}</p>
-              <p class="ml-auto w-fit rounded-2xl rounded-tr-md bg-signal px-4 py-3 text-[0.97rem] text-white" data-bubble>{lang === 'en' ? 'We quote in Excel and track jobs on a whiteboard 😅' : 'Cotizamos en Excel y controlamos trabajos en una pizarra 😅'}</p>
-              <p class="flex w-fit items-center gap-1 rounded-2xl rounded-tl-md bg-paper px-4 py-3" data-bubble aria-hidden="true"><span class="typing"></span><span class="typing"></span><span class="typing"></span></p>
-            </div>
-          </div>
+          <p class="big"><span class="b">{p.chanBig[0]}</span><span class="a" aria-hidden="true">{p.chanBig[1]}</span></p>
+          <ul class="rows">
+            {rows.map((r) => (
+              <li class="row" style={r.st}>
+                <span class="ci"><svg class="ic" aria-hidden="true" style={r.color ? `color:${r.color}` : undefined}><use href={`/icons/sprite.svg#${r.icon}`} /></svg></span>
+                <span><span class="nm">{r.name}</span><span class="sub"><span class="b">{p.chanRows[r.k]}</span><span class="a" aria-hidden="true">{r.a}</span></span></span>
+                <span class="lgm" aria-hidden="true"><i class="b" style={r.b.style}>{r.b.txt}</i><i class="a"><svg aria-hidden="true"><use href="#fs-mark" /></svg></i><span class="st-ok"><svg class="ic" aria-hidden="true"><use href="/icons/sprite.svg#u-check" /></svg></span></span>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>
   </section>
 
-  <CTA lang={lang} />
+  <!-- 4 · LO QUE INCLUYE + A TU MEDIDA -->
+  <section class="sec2" id="herramientas" aria-labelledby="h-herr" style="padding-top:0">
+    <div class="wrap">
+      <div class="head2 rv">
+        <p class="kick">{p.toolsKick}</p>
+        <h2 class="h2" id="h-herr">{p.toolsH}</h2>
+        <p>{p.toolsP}</p>
+      </div>
+      <div class="incl">
+        <article class="incl-card rv" style="--i:0">
+          <h3><span class="tag tag-v">{p.inclTag}</span> {p.inclTitle}</h3>
+          <ul>{p.incl.map((x, i) => <li><Icon name={inclIcons[i]} class="ic" />{x}</li>)}</ul>
+          <p class="note">{p.inclNote}</p>
+        </article>
+        <article class="incl-card extra rv" style="--i:1">
+          <h3><span class="tag tag-p">{p.extraTag}</span> {p.extraTitle}</h3>
+          <ul>{p.extra.map((x, i) => <li><Icon name={extraIcons[i]} />{x}{i === 1 && <small>{p.extraApi}</small>}</li>)}</ul>
+          <a class="btn btn-secondary btn-sm" href={waLink(t.waMessages.custom)} target="_blank" rel="noopener">{t.cta.askUs}</a>
+        </article>
+      </div>
+      <div class="demos3 rv">
+        <span>{p.demosLead}</span>
+        {demoIds.map(([id, icon]) => <DemoButton lang={lang} demo={id} label={p.demoBtns[id]} icon={icon} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · PRECIOS -->
+  <section class="sec2" id="precios" aria-labelledby="h-precios" style="padding-top:0">
+    <div class="wrap">
+      <div class="head2 rv">
+        <p class="kick">{p.pricesKick}</p>
+        <h2 class="h2" id="h-precios">{p.pricesH}</h2>
+        <p>{p.pricesP}</p>
+      </div>
+      <PriceCards lang={lang} moreHref={pathFor('services', lang)} />
+    </div>
+  </section>
+
+  <!-- 6 · CIERRE -->
+  <section aria-labelledby="h-final" id="cierre">
+    <div class="wrap">
+      <div class="stage close2 rv">
+        <i class="hud-c a"></i><i class="hud-c b"></i><i class="hud-c c"></i><i class="hud-c d"></i>
+        <h2 class="h2" id="h-final">{p.finalH}</h2>
+        <p>{p.finalP}</p>
+        <a class="btn btn-wa btn-lg" href={waLink(t.waMessages.default)} target="_blank" rel="noopener"><Icon name="b-whatsapp" class="ic" />{t.cta.whatsapp}</a>
+        <p class="alt">{p.finalAlt} <a href={telLink()}>{BUSINESS.phoneDisplay}</a></p>
+      </div>
+    </div>
+  </section>
 </Base>
 
-<style is:global>
-  .sol-row.is-active .sol-bar, .sol-row:hover .sol-bar { transform: scaleY(1); }
-  .typing { width: 7px; height: 7px; border-radius: 50%; background: var(--color-muted); opacity: .5; animation: typing 1.2s infinite ease-in-out; }
-  .typing:nth-child(2) { animation-delay: .15s; } .typing:nth-child(3) { animation-delay: .3s; }
-  @keyframes typing { 0%, 60%, 100% { transform: translateY(0); opacity: .35; } 30% { transform: translateY(-4px); opacity: .9; } }
-  .piece-icon { display:block; width: 22px; height: 22px; border-radius: 6px; background: color-mix(in srgb, currentColor 14%, transparent); position: relative; }
-  .piece-icon[data-kind='0'] { background: repeating-linear-gradient(0deg, rgb(26 212 217 / .55) 0 2px, transparent 2px 6px), repeating-linear-gradient(90deg, rgb(26 212 217 / .55) 0 2px, transparent 2px 7px); }
-  .piece-icon[data-kind='1'] { background: linear-gradient(135deg, transparent 45%, color-mix(in srgb, currentColor 60%, transparent) 46% 54%, transparent 55%), color-mix(in srgb, currentColor 14%, transparent); }
-  .piece-icon[data-kind='2'] { border-radius: 50% 50% 50% 4px; background: rgb(23 184 144 / .7); }
-  .piece-icon[data-kind='3'] { background: linear-gradient(color-mix(in srgb, currentColor 55%, transparent) 0 0) 4px 6px / 14px 2px no-repeat, linear-gradient(color-mix(in srgb, currentColor 55%, transparent) 0 0) 4px 11px / 10px 2px no-repeat, linear-gradient(color-mix(in srgb, currentColor 55%, transparent) 0 0) 4px 16px / 12px 2px no-repeat, color-mix(in srgb, currentColor 14%, transparent); }
-  .piece-icon[data-kind='4'] { background: linear-gradient(rgb(182 82 212 / .8) 0 0) top / 100% 6px no-repeat, color-mix(in srgb, currentColor 14%, transparent); }
-  .piece-icon[data-kind='5'] { background: linear-gradient(rgb(242 163 58 / .8) 0 0) 4px 14px / 14px 3px no-repeat, color-mix(in srgb, currentColor 14%, transparent); }
-</style>
+<script>
+  import '../scripts/home';
+</script>

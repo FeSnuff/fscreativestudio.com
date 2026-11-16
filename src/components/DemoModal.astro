@@ -1,0 +1,30 @@
+---
+/**
+ * Modal accesible para las demos (un solo <dialog> por página), con el aspecto de la maqueta v3.
+ * La lógica está en scripts/demo-modal.ts: showModal() (resto de la página inerte), foco atrapado,
+ * Esc y clic fuera cierran, el foco vuelve al botón que lo abrió, y la demo se carga con import()
+ * dinámico solo al abrir.
+ */
+import type { Lang } from '../i18n/langs';
+import { useTranslations, waLink } from '../i18n/ui';
+import Icon from './Icon.astro';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+<dialog id="demo-modal" class="modal" aria-labelledby="demo-modal-title" data-loading={t.modal.loading} data-error={t.modal.error} data-retry={t.modal.retry}>
+  <div class="m-head">
+    <span class="chip chip-accent mono" aria-hidden="true">{t.modal.label}</span>
+    <h2 id="demo-modal-title"></h2>
+    <button class="x" type="button" data-demo-close aria-label={t.modal.close}><Icon name="u-cerrar" /></button>
+  </div>
+  <p class="sr" id="demo-modal-status" role="status"></p>
+  <div class="m-demo" id="demo-modal-body"></div>
+  <div class="m-foot">
+    <small>{t.modal.sample}</small>
+    <a class="btn btn-wa btn-sm" id="demo-modal-wa" href={waLink(t.waMessages.default)} target="_blank" rel="noopener" data-wa-template={t.waMessages.demo('{name}')}><Icon name="b-whatsapp" class="ic" />{t.modal.want}</a>
+  </div>
+</dialog>

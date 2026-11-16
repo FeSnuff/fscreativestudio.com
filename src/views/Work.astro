@@ -1,31 +1,87 @@
 ---
+/** Trabajo (05 §4): galería por tipo con mini-interfaces y datos de ejemplo. Sin nombres de clientes ni enlaces. */
 import Base from '../layouts/Base.astro';
-import PageHeader from './PageHeader.astro';
-import WorkList from '../components/WorkList.astro';
-import CTA from '../components/CTA.astro';
-import { ui } from '../i18n/ui';
-import { lp, otherLang, type Lang } from '../data/site';
-interface Props { lang: Lang }
+import PageHero from '../components/PageHero.astro';
+import MiniShot from '../components/MiniShot.astro';
+import DemoButton from '../components/DemoButton.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Icon from '../components/Icon.astro';
+import type { Lang } from '../i18n/langs';
+import { alternatesFor, pathFor } from '../i18n/routes';
+import { pages } from '../i18n/pages';
+import { useTranslations } from '../i18n/ui';
+import { getGallery, getService, getTool, servicePath, toolPath } from '../data';
+import type { GalleryKind } from '../data/types';
+
+interface Props {
+  lang: Lang;
+}
 const { lang } = Astro.props;
-const t = ui[lang];
+const p = pages.work[lang];
+const t = useTranslations(lang);
+const items = getGallery();
+const kinds: ('all' | GalleryKind)[] = ['all', 'webs', 'herramientas', 'redes', 'whatsapp'];
+const crumbs = [
+  { name: t.nav.home, path: pathFor('home', lang) },
+  { name: t.nav.work, path: pathFor('work', lang) },
+];
+const linkOf = (g: (typeof items)[number]) => {
+  const tool = g.tool ? getTool(g.tool) : undefined;
+  if (tool) return toolPath(tool, lang);
+  const svc = g.service ? getService(g.service) : undefined;
+  return svc ? servicePath(svc, lang) : undefined;
+};
 ---
-<Base lang={lang} title={t.workIndex.h1} description={t.workIndex.p} altPath={lp(otherLang(lang), '/work/')}>
-  <PageHeader title={t.workIndex.h1} lead={t.workIndex.p} lang={lang} crumb={t.workIndex.h1} accent="#b652d4">
-    <div slot="aside" class="rounded-3xl bg-night-2/95 shadow-[0_30px_60px_-30px_rgb(0_0_0/.6)] p-6 ring-1 ring-white/10">
-      <p class="font-display text-5xl font-semibold">{t.work.items.length}</p>
-      <p class="mt-1 text-white/65">{lang === 'en' ? 'selected projects across these sectors' : 'proyectos seleccionados en estos sectores'}</p>
-      <ul class="mt-5 flex flex-wrap gap-2">
-        {[...new Set(t.work.items.map((w) => w.s))].map((sec, i) => (
-          <li class="rounded-full px-3 py-1 text-sm" style={`background:${['#1ad4d9','#5b4bf0','#b652d4','#17b890','#f2a33a'][i % 5]}22;color:${['#7eeaed','#a59cf8','#dba3ec','#7fdcc3','#f7c983'][i % 5]}`}>{sec}</li>
-        ))}
-      </ul>
-    </div>
-  </PageHeader>
-  <section class="bg-paper py-16 lg:py-24">
+<Base lang={lang} title={p.title} description={p.description} alternates={alternatesFor('work')} breadcrumbs={crumbs}>
+  <PageHero lang={lang} kick={p.kick} title={p.h1} sub={p.sub} crumbs={crumbs} />
+
+  <section class="sec3" aria-labelledby="h-gal">
     <div class="wrap">
-      <p class="measure text-muted">{t.work.p}</p>
-      <WorkList lang={lang} />
+      <h2 class="sr" id="h-gal">{p.h1}</h2>
+      <div class="filters" role="group" aria-label={p.filtersLabel} data-filters hidden>
+        {kinds.map((k) => <button type="button" data-kind={k} aria-pressed={k === 'all' ? 'true' : 'false'}>{p.filters[k]}</button>)}
+      </div>
+      <ul class="gal" data-gal>
+        {items.map((g) => {
+          const href = linkOf(g);
+          return (
+            <li data-kind={g.kind}>
+              <article class="shot rv">
+                <MiniShot lang={lang} mini={g.mini} label={p.alt(g.text[lang].title)} />
+                <div class="shot-body">
+                  <h3>{g.text[lang].title}</h3>
+                  <p>{g.text[lang].line}</p>
+                  <div class="acts">
+                    {g.demo && <DemoButton lang={lang} demo={g.demo} />}
+                    {href && <a class="btn btn-ghost btn-sm" href={href}>{p.seeMore} <Icon name="u-flecha-derecha" /></a>}
+                  </div>
+                </div>
+              </article>
+            </li>
+          );
+        })}
+      </ul>
+      <p class="gal-note">{p.note}</p>
     </div>
   </section>
-  <CTA lang={lang} />
+
+  <CtaBand lang={lang} title={p.closeH}>
+    <p class="alt"><a href={`${pathFor('services', lang)}#demos`}>{p.closeLink} →</a></p>
+  </CtaBand>
 </Base>
+
+<script>
+  // Filtros de la galería (mejora progresiva: sin JS se ve todo).
+  const bar = document.querySelector<HTMLElement>('[data-filters]');
+  const gal = document.querySelector<HTMLElement>('[data-gal]');
+  if (bar && gal) {
+    bar.hidden = false;
+    bar.addEventListener('click', (e) => {
+      const b = (e.target as Element).closest<HTMLButtonElement>('button[data-kind]');
+      if (!b) return;
+      const k = b.dataset.kind;
+      bar.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      gal.querySelectorAll<HTMLElement>(':scope > li').forEach((li) => (li.hidden = k !== 'all' && li.dataset.kind !== k));
+    });
+  }
+</script>

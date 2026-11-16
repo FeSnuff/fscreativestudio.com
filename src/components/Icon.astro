@@ -1,0 +1,14 @@
+---
+/**
+ * Ícono del sprite oficial (public/icons/sprite.svg, copia de design/iconos/sprite.svg):
+ * u-* = interfaz (trazo) · b-* = marcas exactas de Simple Icons (relleno, por la regla svg:has(use[href*="#b-"])).
+ * Siempre lleva .ic, que le da el tamaño (sin ella, un SVG de marca crece hasta el ancho del contenedor).
+ */
+interface Props {
+  name: string;
+  class?: string;
+}
+const { name, class: cls } = Astro.props;
+const classes = [...new Set(['ic', ...(cls ?? '').split(' ')].filter(Boolean))].join(' ');
+---
+<svg class={classes} aria-hidden="true" focusable="false"><use href={`/icons/sprite.svg#${name}`} /></svg>

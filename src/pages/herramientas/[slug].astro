@@ -1,0 +1,12 @@
+---
+/** Una página por herramienta visible (generada desde src/data/tools.ts). */
+import View from '../../views/ToolDetail.astro';
+import { getTools } from '../../data';
+import type { Tool } from '../../data/types';
+
+export function getStaticPaths() {
+  return getTools().map((tool) => ({ params: { slug: tool.text.es.slug }, props: { tool } }));
+}
+const { tool } = Astro.props as { tool: Tool };
+---
+<View lang="es" tool={tool} />

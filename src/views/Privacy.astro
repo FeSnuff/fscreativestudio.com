@@ -1,0 +1,30 @@
+---
+/** Privacidad (05 §7). Sin bloque de analítica: el sitio no la usa. */
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import type { Lang } from '../i18n/langs';
+import { alternatesFor, pathFor } from '../i18n/routes';
+import { pages } from '../i18n/pages';
+import { useTranslations } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const p = pages.privacy[lang];
+const t = useTranslations(lang);
+const crumbs = [
+  { name: t.nav.home, path: pathFor('home', lang) },
+  { name: t.nav.privacy, path: pathFor('privacy', lang) },
+];
+---
+<Base lang={lang} title={p.title} description={p.description} alternates={alternatesFor('privacy')} breadcrumbs={crumbs}>
+  <PageHero lang={lang} kick={p.kick} title={p.h1} crumbs={crumbs}>
+    <p class="updated">{p.updated}</p>
+  </PageHero>
+  <section class="sec3">
+    <div class="wrap prose">
+      {p.blocks.map((b) => <section><h2>{b.h}</h2><p>{b.p}</p></section>)}
+    </div>
+  </section>
+</Base>

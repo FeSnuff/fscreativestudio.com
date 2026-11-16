@@ -1,0 +1,18 @@
+---
+/** Botón real que abre una demo en el modal. Sin JS no hace nada, pero el texto de la sección sigue visible. */
+import type { Lang } from '../i18n/langs';
+import { useTranslations } from '../i18n/ui';
+import type { DemoId } from '../demos/registry';
+import Icon from './Icon.astro';
+
+interface Props {
+  lang: Lang;
+  demo: DemoId;
+  label?: string;
+  icon?: string;
+  class?: string;
+}
+const { lang, demo, label, icon = 'u-reproducir', class: cls = 'btn btn-secondary btn-sm' } = Astro.props;
+const t = useTranslations(lang);
+---
+<button type="button" class={cls} data-demo={demo} aria-haspopup="dialog"><Icon name={icon} class="ic" />{label ?? t.cta.tryDemo}</button>

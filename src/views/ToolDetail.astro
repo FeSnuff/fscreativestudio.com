@@ -1,0 +1,93 @@
+---
+/** Ficha de una herramienta (generada desde src/data/tools.ts). El asistente de WhatsApp NO tiene ficha aquí: es un servicio. */
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import ToolCard from '../components/ToolCard.astro';
+import DemoButton from '../components/DemoButton.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Icon from '../components/Icon.astro';
+import type { Lang } from '../i18n/langs';
+import { pathFor } from '../i18n/routes';
+import { useTranslations, waLink } from '../i18n/ui';
+import { categoryOf, getTools, priceLine, servicePath, servicesWithTool, toolAlternates, toolNoPriceLabel, toolPath } from '../data';
+import type { Tool } from '../data/types';
+import { serviceNode } from '../lib/schema';
+import MiniShot from '../components/MiniShot.astro';
+import { pages } from '../i18n/pages';
+import type { MiniUi } from '../data/types';
+
+interface Props {
+  lang: Lang;
+  tool: Tool;
+}
+const { lang, tool } = Astro.props;
+const t = useTranslations(lang);
+const text = tool.text[lang];
+const path = toolPath(tool, lang);
+const pkg = servicesWithTool(tool).find((s) => s.price);
+const label = toolNoPriceLabel(tool, lang, t.includedIn) ?? t.priceOnRequest;
+const cat = categoryOf(tool);
+const crumbs = [
+  { name: t.nav.home, path: pathFor('home', lang) },
+  { name: t.nav.services, path: pathFor('services', lang) },
+  { name: text.name, path },
+];
+const title = `${text.seoTitle ?? text.name} | FS Creative Studio`;
+const description = text.seoDescription ?? text.summary;
+const wa = pkg ? pkg.wa[lang] : t.waMessages.custom;
+const ctaLabel = pkg ? pkg.cta[lang] : t.cta.tellUs;
+/** Visual del encabezado (mini-interfaz con datos de ejemplo). */
+const MINI: Record<string, MiniUi> = { cotizador: 'quote', 'contratos-firma': 'sign', facturas: 'invoice', 'envio-whatsapp': 'quote', clientes: 'schedule', agenda: 'schedule', 'calculadora-web': 'web-prices', 'imagenes-redes': 'before-after', 'resenas-google': 'assistant' };
+const mini = MINI[tool.id] ?? 'web-one';
+const siblings = getTools({ category: tool.category }).filter((x) => x.id !== tool.id && !x.noindex).slice(0, 3);
+---
+<Base lang={lang} title={title} description={description} alternates={toolAlternates(tool)} breadcrumbs={crumbs} noindex={tool.noindex}
+  jsonLd={tool.noindex ? [] : [serviceNode({ name: text.name, description, path, lang, price: tool.price })]}>
+  <PageHero lang={lang} kick={cat?.text[lang]} title={text.name} sub={text.summary} crumbs={crumbs}>
+    <p class="price-chip"><span class:list={['tag', pkg ? 'tag-v' : 'tag-p']}>{label}</span></p>
+    <div class="cta-row">
+      <a class="btn btn-wa btn-lg" href={waLink(wa)} target="_blank" rel="noopener"><Icon name="b-whatsapp" class="ic" />{ctaLabel}</a>
+      {tool.demo && <DemoButton lang={lang} demo={tool.demo} class="btn btn-ghost-d" />}
+    </div>
+    <MiniShot slot="visual" lang={lang} mini={mini} label={pages.work[lang].alt(text.name)} />
+  </PageHero>
+
+  <section class="sec3" aria-labelledby="h-det">
+    <div class="wrap grid2">
+      <article class="card rv">
+        <span class="ic-tile"><Icon name={tool.icon} class="ic" /></span>
+        <h2 class="h3" id="h-det">{t.includes}</h2>
+        <ul class="ticks">{(text.details ?? [text.summary]).slice(0, 3).map((x) => <li><Icon name="u-check" />{x}</li>)}</ul>
+      </article>
+      <article class:list={['card', 'rv', pkg && 'dark']}>
+        {pkg ? (
+          <>
+            <p class="kick kick-d">{t.partOf}</p>
+            <h2 class="h3"><a href={servicePath(pkg, lang)}>{pkg.text[lang].name}</a></h2>
+            <p>{pkg.text[lang].summary}</p>
+            {pkg.price && <p class="limit">{priceLine(pkg.price, lang)}</p>}
+            <a class="btn btn-primary btn-sm" href={servicePath(pkg, lang)}>{t.cta.details} <Icon name="u-flecha-derecha" /></a>
+          </>
+        ) : (
+          <>
+            <p class="kick">{cat?.noPriceLabel?.[lang]}</p>
+            <h2 class="h3">{cat?.text[lang]}</h2>
+            <p>{cat?.intro?.[lang]}</p>
+            <a class="btn btn-secondary btn-sm" href={`${pathFor('services', lang)}#herramientas`}>{t.nav.services} <Icon name="u-flecha-derecha" /></a>
+          </>
+        )}
+      </article>
+    </div>
+  </section>
+
+  {siblings.length > 0 && (
+    <section class="sec3" aria-labelledby="h-more">
+      <div class="wrap">
+        <div class="head3 rv"><h2 class="h2" id="h-more">{cat?.text[lang]}</h2></div>
+        <ul class="tool-grid">{siblings.map((x) => <ToolCard lang={lang} tool={x} showLabel={false} />)}</ul>
+      </div>
+    </section>
+  )}
+
+  <CtaBand lang={lang} title={lang === 'es' ? '¿Te sirve para tu negocio?' : 'Would it work for your business?'} text={lang === 'es' ? 'Cuéntanos cómo trabajas hoy y te decimos qué haríamos primero.' : "Tell us how you work today and we'll tell you what we'd do first."} wa={wa} label={ctaLabel} />
+</Base>
