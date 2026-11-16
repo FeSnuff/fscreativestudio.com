@@ -399,7 +399,7 @@ body.menu-open{overflow:hidden}
 /* ---------- Historia (escena oscura, un acento por paso) */
 .story{position:relative;height:500vh;background:var(--stage-bg);color:var(--stage-text)}
 .scene{position:sticky;top:var(--header-h);height:calc(100svh - var(--header-h));display:grid;align-items:center;overflow:hidden;isolation:isolate}
-.scene::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(38% 55% at 62% 50%,color-mix(in srgb,var(--acc,#9B87FF) 40%,transparent),transparent 70%),radial-gradient(30% 40% at 20% 85%,rgb(109 74 255 / .18),transparent 70%);transition:background 600ms}
+.scene::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(50% 70% at 62% 50%,color-mix(in srgb,var(--acc,#9B87FF) 36%,transparent),transparent 78%),radial-gradient(48% 65% at 26% 48%,color-mix(in srgb,var(--acc,#9B87FF) 16%,transparent),transparent 78%),radial-gradient(40% 50% at 15% 90%,rgb(109 74 255 / .16),transparent 75%),linear-gradient(90deg,rgb(109 74 255 / .06),transparent 60%);transition:background 600ms}
 .scene-grid{display:grid;gap:40px;align-items:center;max-width:1080px}
 .scene-text{display:grid;gap:28px}
 .steps2{display:grid}
@@ -571,3 +571,18 @@ body.menu-open{overflow:hidden}
 @media (min-width:900px){.ftr .g{grid-template-columns:1.6fr 1fr 1fr}}
 .cta-row .btn-ghost{padding:0 10px}
 
+
+/* Índice lateral de los 5 pasos (solo escritorio; en móvil queda la barra) */
+.idx2{display:none}
+@media (min-width:960px){
+  .idx2{position:absolute;right:clamp(16px,3vw,44px);top:50%;transform:translateY(-50%);z-index:2;display:grid;gap:6px}
+  .idx2 button{display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:8px 4px 8px 12px;border:0;background:none;cursor:pointer;color:var(--stage-text-3);font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;border-radius:999px}
+  .idx2 button i{flex:none;width:10px;height:10px;border-radius:50%;border:1.5px solid currentColor;transition:transform 300ms var(--ease-out),background 300ms,border-color 300ms}
+  .idx2 button span{opacity:.75;transition:opacity 300ms,color 300ms}
+  .idx2 button:hover span{opacity:1;color:var(--stage-text)}
+  .idx2 button.on{color:var(--acc)}
+  .idx2 button.on span{opacity:1}
+  .idx2 button.on i{background:var(--acc);border-color:var(--acc);transform:scale(1.35)}
+  .idx2 button:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+  .prog2{display:none}
+}

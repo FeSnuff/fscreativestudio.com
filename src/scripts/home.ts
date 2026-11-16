@@ -40,6 +40,14 @@ if (story && scene && hero) {
   const bars = [...d.querySelectorAll<HTMLElement>('.prog2 i')];
   const N = steps.length;
   let cur = 0;
+  // Índice lateral (escritorio): muestra el paso actual y salta a cualquiera.
+  const idx = [...d.querySelectorAll<HTMLButtonElement>('.idx2 button')];
+  idx.forEach((b) => b.addEventListener('click', () => {
+    const k = Number(b.dataset.go);
+    const span = story.offsetHeight - scene.offsetHeight;
+    const top = story.getBoundingClientRect().top + scrollY;
+    scrollTo({ top: top + span * ((k - 1) + 0.45) / N, behavior: 'smooth' });
+  }));
 
   // ---------- Historia: 5 pasos con escena fija
   const setStory = (step: number, s: number) => {
@@ -50,6 +58,11 @@ if (story && scene && hero) {
         li.classList.toggle('past', i < step - 1);
       });
       scrs.forEach((sc, i) => sc.classList.toggle('on', i === step - 1));
+      idx.forEach((b, i) => {
+        b.classList.toggle('on', i === step - 1);
+        if (i === step - 1) b.setAttribute('aria-current', 'step');
+        else b.removeAttribute('aria-current');
+      });
       const acc = steps[step - 1].style.getPropertyValue('--acc');
       scene.style.setProperty('--acc', acc);
       scene.style.setProperty('--acc-bar', acc);

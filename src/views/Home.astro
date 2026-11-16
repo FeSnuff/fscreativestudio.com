@@ -14,6 +14,7 @@ import { pages } from '../i18n/pages';
 import { telLink, useTranslations, waLink } from '../i18n/ui';
 import { BUSINESS } from '../config/site';
 import type { DemoId } from '../demos/registry';
+import { projects, SHOT, shotSrc } from '../data/projects';
 
 interface Props {
   lang: Lang;
@@ -71,6 +72,9 @@ const layers = [['-2px', '#5A3DE0'], ['-4px', '#5A3DE0'], ['-6px', '#5236CC'], [
   <section class="story" id="historia" aria-labelledby="h-historia">
     <a class="skip" href="#redes">{p.skipStory}</a>
     <div class="scene" id="scene">
+      <nav class="idx2" aria-label={p.storyLabel}>
+        {p.steps.map((st, i) => <button type="button" data-go={i + 1} class:list={[i === 0 && 'on']} aria-current={i === 0 ? 'step' : undefined} style={`--acc:${accents[i]}`}><span>{st.lbl}</span><i></i></button>)}
+      </nav>
       <div class="wrap scene-grid">
         <div class="scene-text">
           <ol class="steps2" id="h-historia" aria-label={p.storyLabel}>
@@ -139,6 +143,24 @@ const layers = [['-2px', '#5A3DE0'], ['-4px', '#5A3DE0'], ['-6px', '#5236CC'], [
         <span>{p.demosLead}</span>
         {demoIds.map(([id, icon]) => <DemoButton lang={lang} demo={id} label={p.demoBtns[id]} icon={icon} />)}
       </div>
+    </div>
+  </section>
+
+  <!-- 4b · PROYECTOS REALES (franja corta → Trabajos) -->
+  <section class="pj-band" aria-labelledby="h-trabajos">
+    <div class="wrap">
+      <div class="pj-band-head rv">
+        <h2 class="h3" id="h-trabajos">{p.workH}</h2>
+        <a class="btn btn-ghost btn-sm" href={`${pathFor('work', lang)}#proyectos`}>{p.workLink} <Icon name="u-flecha-derecha" /></a>
+      </div>
+      <ul class="pj-strip rv">
+        {projects.map((pj) => (
+          <li>
+            <img src={shotSrc(pj.id, 'd')} width={SHOT.d.w} height={SHOT.d.h} loading="lazy" decoding="async" alt={p.workAlt(pj.name)} />
+            <span><b>{pj.name}</b> {pj.text[lang].trade}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   </section>
 
